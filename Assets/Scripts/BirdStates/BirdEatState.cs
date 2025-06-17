@@ -33,11 +33,11 @@ public class BirdEatState : StateBase
             DONext();
             return;
         }
-
-        Vector3 target = _brid.currFood.transform.position + new Vector3(_brid.sr.flipX ? -0.4f : 0.4f, 0.05f, 0);
+        
+        Vector3 target = _brid.currFood.transform.position + new Vector3(_brid.sr.flipX ? -_brid.BirdEatDistance * _brid.BabyBirdSize : _brid.BirdEatDistance * _brid.BabyBirdSize, 0f, 0);
         if (Vector3.Distance(_brid.transform.position, target) > 0.01f)
         {
-            _brid.sr.flipX = target.x > _brid.transform.position.x;
+            _brid.sr.flipX = _brid.currFood.transform.position.x > _brid.transform.position.x;
             _brid.transform.position =
                 Vector3.MoveTowards(_brid.transform.position, target, _brid.moveSpeed * Time.deltaTime);
             _brid.anim.SetFloat("MoveSpeed", 1f);
@@ -63,8 +63,8 @@ public class BirdEatState : StateBase
 
             if (_brid.eatFoodCount == _brid.eatCountForBig)
             {
-                _brid.transform.localScale = Vector3.one * _brid.AdultBirdSize;
-                //_brid.transform.DOScale(_brid.AdultBirdSize, 0.2f);
+                //_brid.transform.localScale = Vector3.one * _brid.AdultBirdSize;
+                _brid.transform.DOScale(_brid.AdultBirdSize, 0.2f);
                 
                 if (GameManager.Instance.nests.Count > 0)
                 {
@@ -80,8 +80,7 @@ public class BirdEatState : StateBase
                 }
             }
 
-            _brid.scaleX = _brid.transform.localScale.x;
-            
+            _brid.originalScale = _brid.transform.localScale;
             if (_brid.currFood != null)
             {
                 GameManager.Instance.ReduceFood(_brid.currFood);

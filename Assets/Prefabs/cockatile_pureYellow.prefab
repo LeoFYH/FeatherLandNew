@@ -27,8 +27,8 @@ Transform:
   m_GameObject: {fileID: 343863069046991755}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: -0.13, y: 2.33, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.17, y: 0.15, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1885250170276666101}
@@ -85,7 +85,7 @@ SpriteRenderer:
   m_Size: {x: 19.2, y: 10.8}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!95 &343863069046991754
@@ -138,7 +138,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.005, y: 0.019, z: 0}
-  m_LocalScale: {x: 0.046, y: 0.04, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 343863069046991752}
@@ -158,8 +158,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkableArea: {fileID: 0}
-  BabyBirdSize: 0.055
-  AdultBirdSize: 0.08
+  BabyBirdSize: 0.8
+  AdultBirdSize: 1
+  BirdEatDistance: 0.3
   BackgroundBirdSize: 0
   nestTrans: {fileID: 0}
   originalPos: {x: 0, y: 0, z: 0}
@@ -186,11 +187,12 @@ MonoBehaviour:
   clickCount: 1
   eatCountForBig: 4
   incomeForBig: 30
-  scaleX: 0
   distance: 0
   eatFoodCount: 0
   eatFoodTime: 1
   currFood: {fileID: 0}
+  originalScale: {x: 0, y: 0, z: 0}
+  lastPerspectiveScale: 1
 --- !u!61 &7270674382561921263
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -262,7 +264,7 @@ Transform:
   m_GameObject: {fileID: 7077765267814181376}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4, y: 5, z: 0}
+  m_LocalPosition: {x: 0.255, y: 0.159, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

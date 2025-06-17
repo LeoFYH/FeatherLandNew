@@ -18,7 +18,7 @@ public class BirdFlyHorizontalState : StateBase
     public override void OnEnter()
     {
         // 随机误差后的飞行高度
-        float flyY = _brid.flyInAirStartPosition.y + Random.Range(-0.5f, 1.0f);
+        float flyY = _brid.flyInAirStartPosition.y + Random.Range(-1.5f, 1.5f);
         // 检查是否已经到达目标高度
         float distanceToTargetY = Mathf.Abs(_brid.transform.position.y - flyY);
         if (distanceToTargetY <= REACH_DISTANCE)
@@ -49,13 +49,13 @@ public class BirdFlyHorizontalState : StateBase
                 _brid.transform.position.z
             );
             
-            float flyTime = (distanceToTargetY / _brid.flySpeed)*1.3f;
+            float flyTime = (distanceToTargetY / _brid.flySpeed) * 1.3f;
             
             // 设置朝向
             _brid.sr.flipX = deltaX > 0;
             
-            // 斜向飞行时scale逐渐缩小到adultbridsize的0.5倍
-            _brid.transform.DOScale(Vector3.one * (_brid.AdultBirdSize * 0.5f), flyTime).SetEase(Ease.Linear);
+            // 斜向飞行时scale逐渐缩小到adultbridsize的0.6倍
+            _brid.transform.DOScale(Vector3.one * (_brid.AdultBirdSize * 0.6f), flyTime).SetEase(Ease.Linear);
             _brid.transform.DOMove(targetPosition, flyTime)
                 .SetEase(Ease.Linear)
                 .OnComplete(() => {
@@ -85,8 +85,8 @@ public class BirdFlyHorizontalState : StateBase
         Camera cam = Camera.main;
 
         // 获取屏幕左右边界的世界坐标
-        float leftEdge = cam.ViewportToWorldPoint(new Vector3(0, 0.5f, 0)).x;
-        float rightEdge = cam.ViewportToWorldPoint(new Vector3(1, 0.5f, 0)).x;
+        float leftEdge = cam.ViewportToWorldPoint(new Vector3(0, 0.5f, 0)).x + 2;
+        float rightEdge = cam.ViewportToWorldPoint(new Vector3(1, 0.5f, 0)).x - 2;
 
         Vector3 target = Vector3.zero;
         bool isFacingLeft = _brid.sr.flipX;

@@ -33,8 +33,7 @@ public class BirdFlyDownState : StateBase
 
         DOTween.Sequence().AppendCallback(() =>
         {
-            _brid.transform.DOScale(_brid.originalScale, time).SetEase(Ease.Linear);
-            _brid.sr.sortingLayerName = "bird";
+            _brid.transform.DOScale(_brid.AdultBirdSize, time).SetEase(Ease.Linear);
             _brid.sr.sortingOrder = 0;
 
             var anim = DOTween.Sequence();

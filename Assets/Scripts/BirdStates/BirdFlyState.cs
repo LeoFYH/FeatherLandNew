@@ -35,7 +35,7 @@ public class BirdFlyState : StateBase
             float flyTime = distance / _brid.flySpeed;
 
             // 飞向目标时逐渐缩小为当前scale的0.8倍
-            Vector3 targetScale = _brid.originalScale * _brid.lastPerspectiveScale;
+            Vector3 targetScale = Vector3.one * _brid.AdultBirdSize * 0.8f;
             _brid.transform.DOScale(targetScale, flyTime).SetEase(Ease.Linear);
 
             _brid.transform.DOMove(target, flyTime).SetEase(Ease.Linear).OnComplete(() =>

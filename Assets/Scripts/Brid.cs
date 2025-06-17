@@ -13,6 +13,8 @@ public class Brid : MonoBehaviour
 
     [Header("Adult Bird Size")]
     public float AdultBirdSize = 0.12f;
+    [Header("Bird Ead Distance")]
+    public float BirdEatDistance = 0.35f;
 
     [Header("Background Bird Size")] 
     public float BackgroundBirdSize;
@@ -43,12 +45,15 @@ public class Brid : MonoBehaviour
     [Header("Click count for following mouse movement")]
     public int clickCount = 5;
 
+    [Header("好感度")]
+    public int totalFavorability = 10;
+    public int currentFavorability = 0;
+    
     [Header("Food count needed for large size")]
     public int eatCountForBig = 2;
     [Header("Income for large size")]
     public int incomeForBig;
-
-    public float scaleX;
+    
     public float distance;
     public float eatFoodCount;
     public float eatFoodTime = 1;
@@ -78,7 +83,7 @@ public class Brid : MonoBehaviour
             }
         }
 
-        scaleX = transform.localScale.x;
+        
         originalPos = transform.position;
         anim = GetComponentInChildren<Animator>();
         sr = GetComponentInChildren<SpriteRenderer>();
@@ -94,10 +99,10 @@ public class Brid : MonoBehaviour
         _stateMachine.AddState(new BirdFlyHorizontalState(_stateMachine));
         startTimer = Time.time;
 
+        transform.localScale = Vector3.one * BabyBirdSize;
         originalScale = transform.localScale;
     }
-
-
+    
     /// Handles bird interaction when clicked
     private void OnMouseDown()
     {
@@ -110,6 +115,10 @@ public class Brid : MonoBehaviour
         go.transform.SetParent(transform);
         go.transform.position = heartPos.position;
         go.transform.localScale = Vector3.one * BabyBirdSize;
+        if (currentFavorability < totalFavorability)
+        {
+            currentFavorability++;
+        }
     }
 
     private void OnMouseEnter()
@@ -136,13 +145,13 @@ public class Brid : MonoBehaviour
                 if (isSmall)
                 {
                     UIManager.Instance.ShowInfoPanel(gameObject, smallPrice, title, desc, 0,
-                        eatFoodCount * 1f / 20, 0, false);
+                        eatFoodCount * 1f / eatCountForBig, currentFavorability * 1f / totalFavorability, false);
                 }
                 else 
                 {
                     UIManager.Instance.infoPanel.IntimacyFill.gameObject.SetActive(true);
                     UIManager.Instance.ShowInfoPanel(gameObject, bigPrice, title, desc, incomeForBig,
-                      0, petTime, true);
+                      1, currentFavorability * 1f / totalFavorability, true);
                 }
             }
 
@@ -197,7 +206,14 @@ public class Brid : MonoBehaviour
 
                 // 用originalScale（建议在Start里存一份）做缩放
                 if (originalScale == Vector3.zero) originalScale = transform.localScale; // 只初始化一次
-                transform.localScale = originalScale * scaleFactor;
+                if (isSmall)
+                {
+                    transform.localScale = Vector3.one * BabyBirdSize * scaleFactor;
+                }
+                else
+                {
+                    transform.localScale = Vector3.one * AdultBirdSize * scaleFactor;
+                }
             }
         }
 

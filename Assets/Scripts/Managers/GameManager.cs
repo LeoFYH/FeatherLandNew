@@ -52,6 +52,16 @@ public class GameManager : MonoBehaviour
         Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mouseWorldPos.z = 0; // 确保Z轴位置正确
         
+        //增加射线检测，如果点击的是鸟，则不生成米粒
+        //创建一条从屏幕射出的射线
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //获得射线检测命中到的目标
+        RaycastHit2D hit = Physics2D.Raycast(ray.origin,ray.direction,Mathf.Infinity);
+        if(hit.collider != null && hit.collider.gameObject.CompareTag("Bird"))
+        {
+            return;
+        }
+        
         WalkableArea walkableArea = FindObjectOfType<WalkableArea>();
         if (walkableArea != null && walkableArea.IsPointInside(new Vector2(mouseWorldPos.x, mouseWorldPos.y)))
         {
