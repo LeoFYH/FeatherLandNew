@@ -31,7 +31,7 @@ public class BirdFlyHorizontalState : StateBase
         {
             // 先斜着飞到目标高度
             _brid.anim.SetBool("Fly", true);
-            _brid.anim.Play("FlyStart");
+            _brid.anim.Play("TakeOff");
             
             // 计算45度角飞行的目标点
             float deltaY = flyY - _brid.transform.position.y;

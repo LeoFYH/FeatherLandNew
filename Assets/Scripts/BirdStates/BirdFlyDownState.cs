@@ -14,7 +14,8 @@ public class BirdFlyDownState : StateBase
     public override void OnEnter()
     {
         _brid.anim.SetBool("Fly", true);
-        _brid.anim.Play("FlyStart");
+        _brid.anim.SetBool("IsTakeOff", false);
+        _brid.anim.Play("FlyFromBranch");
 
         // 获取降落点
         Vector2 landingPoint = GetLandingPoint();
@@ -30,7 +31,6 @@ public class BirdFlyDownState : StateBase
         _brid.sr.flipX = target.x > _brid.transform.position.x;
         float distance = Vector3.Distance(target, _brid.transform.position);
         float time = distance / _brid.flySpeed;
-
         DOTween.Sequence().AppendCallback(() =>
         {
             _brid.transform.DOScale(_brid.AdultBirdSize, time).SetEase(Ease.Linear);
@@ -40,7 +40,9 @@ public class BirdFlyDownState : StateBase
             anim.Append(_brid.transform.DOMove(target, time).SetEase(Ease.Linear));
             anim.AppendCallback(() =>
             {
+                _brid.anim.SetBool("IstakeOff", true);
                 _brid.anim.SetBool("Fly", false);
+                _brid.anim.Play("Landing");
             });
             anim.AppendInterval(2f);
             anim.OnComplete(() =>

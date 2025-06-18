@@ -61,7 +61,6 @@ public class BirdIdleState : StateBase
             }
             else if (index == 1)
             {
-                _brid.anim.SetBool("FlyStart", true);
                 currMachine.ChangeState<BirdFlyState>();
             }
             else

@@ -13,6 +13,7 @@ public class BirdFlyState : StateBase
 
     public override void OnEnter()
     {
+        _brid.anim.SetBool("IsTakeOff", true);
         _brid.anim.SetBool("Fly", true);
         
         if (GameManager.Instance.flyPositions.Count > 0)

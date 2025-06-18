@@ -13,8 +13,9 @@ public class BirdFlyWaitState : StateBase
 
     public override void OnEnter()
     {
+        _brid.anim.SetBool("IsTakeOff", false);
         _brid.anim.SetBool("Fly", false);
-        _brid.anim.Play("FlyWait");
+        //_brid.anim.Play("FlyWait");
 
         if (_brid.nestTrans != null)
         {
