@@ -16,6 +16,8 @@ public class WeatherManager : MonoBehaviour
     public SpriteRenderer foregroundGrass;
     public Material birdMaterial;
     public Weather[] weathers;
+    public CanvasGroup uiGroup;
+    public SpriteRenderer[] others;
 
     private int currentIndex = -1;
 
@@ -122,6 +124,17 @@ public class WeatherManager : MonoBehaviour
         var anim6 = DOTween.Sequence();
         anim6.Append(birdMaterial.DOColor(Color.black, 0.5f));
         anim6.Append(birdMaterial.DOColor(weather.birdColor, 0.5f));
+
+        var anim7 = DOTween.Sequence();
+        anim7.Append(uiGroup.DOFade(0, 0.5f));
+        anim7.Append(uiGroup.DOFade(1, 0.5f));
+
+        for (int i = 0; i < others.Length; i++)
+        {
+            var anim = DOTween.Sequence();
+            anim.Append(others[i].DOColor(Color.black, 0.5f));
+            anim.Append(others[i].DOColor(Color.white, 0.5f));
+        }
     }
 }
 
