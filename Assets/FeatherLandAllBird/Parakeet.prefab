@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7447865854517924190}
   m_Layer: 0
   m_Name: Parakeet
-  m_TagString: Untagged
+  m_TagString: Bird
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -75,9 +75,10 @@ MonoBehaviour:
   heartPos: {fileID: 3003001541492124596}
   flyInAirStartPosition: {x: -0.35718587, y: 5.72, z: -9.973669}
   clickCount: 1
+  totalFavorability: 10
+  currentFavorability: 0
   eatCountForBig: 4
   incomeForBig: 30
-  scaleX: 0
   distance: 0
   eatFoodCount: 0
   eatFoodTime: 1
@@ -217,7 +218,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: fce2b27855dd4954ea748470f0239b12, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

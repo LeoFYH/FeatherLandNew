@@ -56,7 +56,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: fce2b27855dd4954ea748470f0239b12, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -74,7 +74,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -858512627
+  m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 3
   m_Sprite: {fileID: 21300000, guid: 3396d1a13f6da624bac96088cfff2d3b, type: 3}
@@ -185,6 +185,8 @@ MonoBehaviour:
   heartPos: {fileID: 7580150105710783560}
   flyInAirStartPosition: {x: -0.35718587, y: 5.72, z: -9.973669}
   clickCount: 1
+  totalFavorability: 10
+  currentFavorability: 0
   eatCountForBig: 4
   incomeForBig: 30
   distance: 0

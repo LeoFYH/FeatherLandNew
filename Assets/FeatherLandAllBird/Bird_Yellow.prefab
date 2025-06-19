@@ -123,7 +123,7 @@ GameObject:
   - component: {fileID: 7270674382561921263}
   m_Layer: 0
   m_Name: Bird_Yellow
-  m_TagString: Untagged
+  m_TagString: Bird
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -183,11 +183,12 @@ MonoBehaviour:
   title: Cockatiel
   desc: Tropical Birds of Australia
   heartPos: {fileID: 7580150105710783560}
-  flyInAirStartPosition: {x: -0.35718587, y: 5.72, z: -9.973669}
+  flyInAirStartPosition: {x: 0, y: 4, z: 0}
   clickCount: 1
+  totalFavorability: 10
+  currentFavorability: 0
   eatCountForBig: 1
   incomeForBig: 30
-  scaleX: 0
   distance: 0
   eatFoodCount: 0
   eatFoodTime: 1
