@@ -29,6 +29,16 @@ public class BirdFlyState : StateBase
                 _brid.nestTrans.position.y,  // 使用 target 的 Y
                 _brid.transform.position.z
             );
+            
+            //计算飞行方向角度
+            var dirA = target - _brid.transform.position;
+            var dirB = new Vector3(target.x - _brid.transform.position.x, 0, 0);
+            float angle = Mathf.Acos(Vector3.Dot(dirA.normalized, dirB.normalized)) * Mathf.Rad2Deg;
+            if (angle < 45)
+            {
+                currMachine.ChangeState<BirdIdleState>();
+                return;
+            }
 
             _brid.sr.flipX = target.x > _brid.transform.position.x;
 

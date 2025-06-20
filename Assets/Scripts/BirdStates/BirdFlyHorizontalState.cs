@@ -18,7 +18,7 @@ public class BirdFlyHorizontalState : StateBase
     public override void OnEnter()
     {
         // 随机误差后的飞行高度
-        float flyY = _brid.flyInAirStartPosition.y + Random.Range(-1.5f, 1.5f);
+        float flyY = Random.Range(3f, 5.5f);
         // 检查是否已经到达目标高度
         float distanceToTargetY = Mathf.Abs(_brid.transform.position.y - flyY);
         if (distanceToTargetY <= REACH_DISTANCE)
@@ -80,7 +80,7 @@ public class BirdFlyHorizontalState : StateBase
 
     private void Fly()
     {
-        float outScreenOffset = 1.0f; // 飞出屏幕的距离
+        float outScreenOffset = -0.5f; // 飞出屏幕的距离
         float y = _brid.transform.position.y;
         Camera cam = Camera.main;
 

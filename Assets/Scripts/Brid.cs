@@ -109,15 +109,14 @@ public class Brid : MonoBehaviour
         if (!isSmall)
         {
             level++;
-        }
-        
-        GameObject go = Instantiate(heartPre);
-        go.transform.SetParent(transform);
-        go.transform.position = heartPos.position;
-        go.transform.localScale = Vector3.one * BabyBirdSize;
-        if (currentFavorability < totalFavorability)
-        {
-            currentFavorability++;
+            GameObject go = Instantiate(heartPre);
+            go.transform.SetParent(transform);
+            go.transform.position = heartPos.position;
+            go.transform.localScale = Vector3.one * BabyBirdSize;
+            if (currentFavorability < totalFavorability)
+            {
+                currentFavorability++;
+            }
         }
     }
 
