@@ -80,13 +80,13 @@ public class BirdFlyHorizontalState : StateBase
 
     private void Fly()
     {
-        float outScreenOffset = -0.5f; // 飞出屏幕的距离
+        float outScreenOffset = 2f; // 飞出屏幕的距离，改为正数
         float y = _brid.transform.position.y;
         Camera cam = Camera.main;
 
         // 获取屏幕左右边界的世界坐标
-        float leftEdge = cam.ViewportToWorldPoint(new Vector3(0, 0.5f, 0)).x + 2;
-        float rightEdge = cam.ViewportToWorldPoint(new Vector3(1, 0.5f, 0)).x - 2;
+        float leftEdge = cam.ViewportToWorldPoint(new Vector3(0, 0.5f, 0)).x;
+        float rightEdge = cam.ViewportToWorldPoint(new Vector3(1, 0.5f, 0)).x;
 
         Vector3 target = Vector3.zero;
         bool isFacingLeft = _brid.sr.flipX;

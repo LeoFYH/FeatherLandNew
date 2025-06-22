@@ -44,8 +44,8 @@ public class BirdEatState : StateBase
             0
         );
         
-        // 如果距离小于0.5，锁定当前食物目标，不再改变朝向
-        if (distanceToFood < 0.5f)
+        // 如果距离小于1.0，锁定当前朝向，防止突然改变方向
+        if (distanceToFood < 1.0f)
         {
             // 锁定朝向，不再改变
             // 继续向精确的吃食物位置移动
@@ -65,8 +65,22 @@ public class BirdEatState : StateBase
         }
         else
         {
-            // 距离较远时，可以调整朝向
-            _brid.sr.flipX = _brid.currFood.transform.position.x > _brid.transform.position.x;
+            // 距离较远时，可以调整朝向，但要检查是否会导致倒着走
+            bool shouldFlip = _brid.currFood.transform.position.x > _brid.transform.position.x;
+            
+            // 只有当朝向改变合理时才改变朝向（避免突然倒着走）
+            if (_brid.sr.flipX != shouldFlip)
+            {
+                // 检查改变朝向是否合理（避免180度转向）
+                float currentDirection = _brid.sr.flipX ? -1f : 1f;
+                float targetDirection = shouldFlip ? 1f : -1f;
+                
+                // 如果食物在合理范围内，才允许改变朝向
+                if (Mathf.Abs(_brid.currFood.transform.position.x - _brid.transform.position.x) > 0.5f)
+                {
+                    _brid.sr.flipX = shouldFlip;
+                }
+            }
             
             // 重新计算精确的吃食物位置（因为朝向可能改变了）
             eatPosition = _brid.currFood.transform.position + new Vector3(
