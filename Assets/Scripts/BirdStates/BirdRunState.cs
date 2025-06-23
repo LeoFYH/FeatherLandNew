@@ -67,8 +67,7 @@ public class BirdRunState : StateBase
 
                 if (closestDistance < currentDistance)
                 {
-                    if (1==2)  // 10个数中随机到1时去吃食物
-                    {
+                    
                         if (_brid.currFood != null)
                         {
                             _brid.currFood.isTargeted = false;
@@ -77,7 +76,7 @@ public class BirdRunState : StateBase
                         _brid.currFood.isTargeted = true;
                         currMachine.ChangeState<BirdEatState>();
                         return;
-                    }
+                    
                 }
             }
         }
