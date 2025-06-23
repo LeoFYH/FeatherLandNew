@@ -6,6 +6,7 @@ public class BirdIdleState : StateBase
 {
     private Brid _brid;
     private Coroutine coroutine;
+    private int random;
     
     public BirdIdleState(StateMachine machine) : base(machine)
     {
@@ -15,7 +16,7 @@ public class BirdIdleState : StateBase
     public override void OnEnter()
     {
         float time = Random.Range(1f, 2f);
-        
+        random = Random.Range(1, 10);
         coroutine = _brid.StartCoroutine(WaitForNext(time));
     }
 
@@ -28,7 +29,7 @@ public class BirdIdleState : StateBase
                 Food food;
                 if (GameManager.Instance.TryGetUntargetedFood(_brid.transform.position, out food))
                 {
-                    if(Random.Range(1, 10) == 1) // 10个数中随机到1时去吃食物
+                    if(random == 1) // 10个数中随机到1时去吃食物
                     {
                         _brid.currFood = food;
                         currMachine.ChangeState<BirdEatState>();

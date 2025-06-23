@@ -14,7 +14,6 @@ public class BirdEatState : StateBase
 
     public override void OnEnter()
     {
-        _brid.isAte = true;
         if (!_brid.isSmall)
         {
             DONext();
@@ -25,6 +24,8 @@ public class BirdEatState : StateBase
         {
             _brid.currFood.isTargeted = true;
         }
+        
+        _brid.isAte = true;
     }
 
     public override void OnUpdate()
