@@ -48,7 +48,8 @@ public class PauseManager : PopupPanelBase
     }
     public void closeTab()
     {
-        PauseMenu.SetActive(false);
+        //PauseMenu.SetActive(false);
+        OnHidePanel();
         isPause = false;
     }
 

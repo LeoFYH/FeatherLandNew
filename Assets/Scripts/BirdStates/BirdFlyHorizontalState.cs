@@ -18,7 +18,7 @@ public class BirdFlyHorizontalState : StateBase
     public override void OnEnter()
     {
         // 随机误差后的飞行高度
-        float flyY = Random.Range(3f, 5.5f);
+        float flyY = _brid.flyInAirStartPosition.y + Random.Range(-2f, 2f);
         // 检查是否已经到达目标高度
         float distanceToTargetY = Mathf.Abs(_brid.transform.position.y - flyY);
         if (distanceToTargetY <= REACH_DISTANCE)
@@ -65,6 +65,10 @@ public class BirdFlyHorizontalState : StateBase
                     _brid.sr.flipX = false; // 先朝右
                     StartHorizontalFlight();
                 });
+            DOTween.Sequence().AppendCallback(() =>
+            {
+                _brid.sr.sortingOrder = -15;
+            }).SetDelay(flyTime * 0.5f);
         }
     }
 
@@ -72,7 +76,6 @@ public class BirdFlyHorizontalState : StateBase
     {
         // 保存原始sortingOrder，并设置为-15
         originalSortingOrder = _brid.sr.sortingOrder;
-        _brid.sr.sortingOrder = -15;
         _brid.anim.Play("FlyInAir");
         _brid.anim.SetBool("Fly", false);
         Fly();
@@ -80,7 +83,7 @@ public class BirdFlyHorizontalState : StateBase
 
     private void Fly()
     {
-        float outScreenOffset = -0.5f; // 飞出屏幕的距离
+        float outScreenOffset = 1.0f; // 飞出屏幕的距离
         float y = _brid.transform.position.y;
         Camera cam = Camera.main;
 

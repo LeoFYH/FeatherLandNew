@@ -59,6 +59,10 @@ public class Brid : MonoBehaviour
     public float eatFoodTime = 1;
 
     bool isEnter;
+    /// <summary>
+    /// 是否已经吃过米粒
+    /// </summary>
+    public bool isAte = false;
 
     public Food currFood;
 

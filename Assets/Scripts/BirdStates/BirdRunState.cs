@@ -13,6 +13,7 @@ public class BirdRunState : StateBase
 
     public override void OnEnter()
     {
+        _brid.isAte = false;
         // Release any existing food target when entering run state
         if (_brid.currFood != null)
         {

@@ -40,9 +40,9 @@ public class BirdFlyDownState : StateBase
             anim.Append(_brid.transform.DOMove(target, time).SetEase(Ease.Linear));
             anim.AppendCallback(() =>
             {
-                _brid.anim.SetBool("IstakeOff", true);
+                _brid.anim.SetBool("IsTakeOff", true);
                 _brid.anim.SetBool("Fly", false);
-                _brid.anim.Play("Landing");
+                //_brid.anim.Play("Landing");
             });
             anim.AppendInterval(2f);
             anim.OnComplete(() =>

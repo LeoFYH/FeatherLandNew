@@ -21,7 +21,7 @@ public class BirdIdleState : StateBase
 
     public override void OnUpdate()
     {
-        if (_brid.isSmall)
+        if (_brid.isSmall && !_brid.isAte)
         {
             if (_brid.currFood == null)
             {
