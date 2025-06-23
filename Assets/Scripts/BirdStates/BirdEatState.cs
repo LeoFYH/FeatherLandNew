@@ -35,16 +35,58 @@ public class BirdEatState : StateBase
             return;
         }
         
-        Vector3 target = _brid.currFood.transform.position + new Vector3(_brid.sr.flipX ? -_brid.BirdEatDistance * _brid.BabyBirdSize : _brid.BirdEatDistance * _brid.BabyBirdSize, 0f, 0);
-        if (Vector3.Distance(_brid.transform.position, target) > 0.01f)
+        // 计算精确的吃食物位置（鸟嘴对齐食物的位置）
+        Vector3 eatPosition = _brid.currFood.transform.position + new Vector3(
+            _brid.sr.flipX ? -_brid.BirdEatDistance * _brid.BabyBirdSize : _brid.BirdEatDistance * _brid.BabyBirdSize, 
+            0f, 
+            0
+        );
+        
+        // 调整朝向
+        bool shouldFlip = _brid.currFood.transform.position.x > _brid.transform.position.x;
+        
+        // 只有当朝向改变合理时才改变朝向（避免突然倒着走）
+        if (_brid.sr.flipX != shouldFlip)
         {
-            _brid.sr.flipX = _brid.currFood.transform.position.x > _brid.transform.position.x;
-            _brid.transform.position =
-                Vector3.MoveTowards(_brid.transform.position, target, _brid.moveSpeed * Time.deltaTime);
+            // 检查改变朝向是否合理（避免180度转向）
+            float currentDirection = _brid.sr.flipX ? -1f : 1f;
+            float targetDirection = shouldFlip ? 1f : -1f;
+            
+            // 如果食物在合理范围内，才允许改变朝向
+            if (Mathf.Abs(_brid.currFood.transform.position.x - _brid.transform.position.x) > 0.5f)
+            {
+                _brid.sr.flipX = shouldFlip;
+            }
+        }
+        
+        // 重新计算精确的吃食物位置（因为朝向可能改变了）
+        eatPosition = _brid.currFood.transform.position + new Vector3(
+            _brid.sr.flipX ? -_brid.BirdEatDistance * _brid.BabyBirdSize : _brid.BirdEatDistance * _brid.BabyBirdSize, 
+            0f, 
+            0
+        );
+        
+        // 向精确的吃食物位置移动
+        if (Vector3.Distance(_brid.transform.position, eatPosition) > 0.01f)
+        {
+            _brid.transform.position = Vector3.MoveTowards(_brid.transform.position, eatPosition, _brid.moveSpeed * Time.deltaTime);
             _brid.anim.SetFloat("MoveSpeed", 1f);
         }
         else
         {
+            // 到达计算位置后，检查鸟嘴是否真的对齐食物
+            float beakToFoodDistance = Vector3.Distance(_brid.transform.position, _brid.currFood.transform.position);
+            
+            // 如果鸟嘴距离食物太远，说明计算有误，取消吃食物
+            if (beakToFoodDistance > _brid.BirdEatDistance * _brid.BabyBirdSize + 0.2f)
+            {
+                _brid.anim.SetFloat("MoveSpeed", 0);
+                _brid.anim.SetBool("Eat", false);
+                DONext();
+                return;
+            }
+            
+            // 只有到达精确位置且鸟嘴对齐才开始吃食物
             _brid.anim.SetFloat("MoveSpeed", 0);
             _brid.anim.SetBool("Eat", true);
             EatFood();
