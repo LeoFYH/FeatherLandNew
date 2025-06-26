@@ -17,6 +17,7 @@ public class BirdFlyHorizontalState : StateBase
 
     public override void OnEnter()
     {
+        _brid.agent.enabled = false;
         // 随机误差后的飞行高度
         float flyY = _brid.flyInAirStartPosition.y + Random.Range(-2f, 2f);
         // 检查是否已经到达目标高度

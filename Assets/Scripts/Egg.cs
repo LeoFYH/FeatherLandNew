@@ -46,7 +46,7 @@ public class Egg : MonoBehaviour
         GameObject go = Instantiate(bridPre[val]);
 
         // 查找WalkableArea
-        WalkableArea walkableArea = FindObjectOfType<WalkableArea>();
+        WalkableArea walkableArea = NavigationManager.Instance.GetWalkableArea(3);
         
         if (walkableArea != null)
         {

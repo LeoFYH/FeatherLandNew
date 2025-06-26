@@ -1,13 +1,16 @@
 using FSM;
 using UnityEngine;
+using UnityEngine.AI;
 
 
 /// Controls bird behavior including movement, growth stages, and interactions
 public class Brid : MonoBehaviour
 {
-    [Header("Activity Area Settings")]
-    public WalkableArea walkableArea;    // Area for limiting activity range
+    // [Header("Activity Area Settings")]
+    // public WalkableArea walkableArea;    // Area for limiting activity range
 
+    public int walkArea = 3;
+    
     [Header("Baby Bird Size")]
     public float BabyBirdSize = 0.01f;
 
@@ -55,7 +58,7 @@ public class Brid : MonoBehaviour
     public int incomeForBig;
     
     public float distance;
-    public float eatFoodCount;
+    public int eatFoodCount;
     public float eatFoodTime = 1;
 
     bool isEnter;
@@ -71,6 +74,7 @@ public class Brid : MonoBehaviour
     private float petTime = 0;
     private float lastClickTime = 0;  // 添加最后点击时间记录
     private float clickInterval = 0.2f;  // 点击间隔时间
+    public NavMeshAgent agent;
 
     public Vector3 originalScale;
     public float lastPerspectiveScale = 1f;
@@ -78,16 +82,24 @@ public class Brid : MonoBehaviour
     void Start()
     {
         // Initialize walkable area and basic components
-        if (walkableArea == null)
-        {
-            walkableArea = FindObjectOfType<WalkableArea>();
-            if (walkableArea == null)
-            {
-                Debug.LogWarning("No WalkableArea found, bird will not be restricted!");
-            }
-        }
-
         
+        agent = GetComponent<NavMeshAgent>();
+        agent.speed = moveSpeed;
+        agent.updateUpAxis = false;
+        agent.updateRotation = false;
+        // 关键参数设置
+        agent.acceleration = 1000f;       // 极大加速度（瞬间达到最大速度）
+        agent.autoBraking = false;         // 禁用自动减速
+        agent.stoppingDistance = 0f;       // 零停止距离
+        
+        // if (walkableArea == null)
+        // {
+        //     walkableArea = FindObjectOfType<WalkableArea>();
+        //     if (walkableArea == null)
+        //     {
+        //         Debug.LogWarning("No WalkableArea found, bird will not be restricted!");
+        //     }
+        // }
         originalPos = transform.position;
         anim = GetComponentInChildren<Animator>();
         sr = GetComponentInChildren<SpriteRenderer>();
@@ -104,7 +116,6 @@ public class Brid : MonoBehaviour
         startTimer = Time.time;
 
         transform.localScale = Vector3.one * BabyBirdSize;
-        originalScale = transform.localScale;
     }
     
     /// Handles bird interaction when clicked
@@ -190,7 +201,8 @@ public class Brid : MonoBehaviour
         
         _stateMachine.OnUpdate();
 
-        // 检查是否在WalkableArea中并做透视缩放
+        //检查是否在WalkableArea中并做透视缩放
+        var walkableArea = NavigationManager.Instance.GetWalkableArea(walkArea);
         if (walkableArea != null)
         {
             Vector2 currentPos = new Vector2(transform.position.x, transform.position.y);
@@ -200,15 +212,13 @@ public class Brid : MonoBehaviour
                 var bounds = walkableArea.GetComponent<PolygonCollider2D>().bounds;
                 float minY = bounds.min.y;
                 float maxY = bounds.max.y;
-
+        
                 // 归一化当前Y位置（0=最上，1=最下）
                 float t = Mathf.InverseLerp(maxY, minY, transform.position.y);
-
+        
                 // 计算scale（最上0.8，中间递增，最下1.1）
                 float scaleFactor = Mathf.Lerp(0.8f, 1.2f, t);
-
-                // 用originalScale（建议在Start里存一份）做缩放
-                if (originalScale == Vector3.zero) originalScale = transform.localScale; // 只初始化一次
+                
                 if (isSmall)
                 {
                     transform.localScale = Vector3.one * BabyBirdSize * scaleFactor;

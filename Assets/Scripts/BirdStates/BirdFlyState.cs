@@ -15,7 +15,7 @@ public class BirdFlyState : StateBase
     {
         _brid.anim.SetBool("IsTakeOff", true);
         _brid.anim.SetBool("Fly", true);
-        
+        _brid.agent.enabled = false;
         if (GameManager.Instance.flyPositions.Count > 0)
         {
             int random = Random.Range(0, GameManager.Instance.flyPositions.Count);

@@ -25,9 +25,10 @@ public class BirdRunState : StateBase
         Vector2 currentPos = _brid.transform.position;
         Vector2 newTarget;
 
-        if (_brid.walkableArea != null)
+        var walkableArea = NavigationManager.Instance.GetWalkableArea(_brid.walkArea);
+        if (walkableArea != null)
         {
-            newTarget = _brid.walkableArea.GetRandomPoint(currentPos, _brid.radiusX);
+            newTarget = walkableArea.GetRandomPoint(currentPos, _brid.radiusX);
         }
         else
         {
@@ -37,6 +38,8 @@ public class BirdRunState : StateBase
         }
 
         target = new Vector3(newTarget.x, newTarget.y, _brid.transform.position.z);
+        _brid.agent.SetDestination(target);
+        _brid.agent.isStopped = false;
 
         float distance = Vector3.Distance(_brid.transform.position, target);
         float time = distance / _brid.moveSpeed;
@@ -103,34 +106,41 @@ public class BirdRunState : StateBase
         //}
         
         // If no food to chase, continue random movement
-        Vector3 nextPosition = Vector3.MoveTowards(
-            _brid.transform.position, 
-            target, 
-            _brid.moveSpeed * Time.deltaTime
-        );
-    
-        if (_brid.walkableArea != null)
+        // Vector3 nextPosition = Vector3.MoveTowards(
+        //     _brid.transform.position, 
+        //     target, 
+        //     _brid.moveSpeed * Time.deltaTime
+        // );
+        //
+        // if (_brid.walkableArea != null)
+        // {
+        //     Vector2 nextPos2D = new Vector2(nextPosition.x, nextPosition.y);
+        //     if (!_brid.walkableArea.IsPointInside(nextPos2D))
+        //     {
+        //         nextPos2D = _brid.walkableArea.GetClosestValidPoint(nextPos2D);
+        //         nextPosition = new Vector3(nextPos2D.x, nextPos2D.y, nextPosition.z);
+        //     }
+        // }
+        //
+        // _brid.transform.position = nextPosition;
+        if (!_brid.agent.pathPending && _brid.agent.remainingDistance <= 0.05f)
         {
-            Vector2 nextPos2D = new Vector2(nextPosition.x, nextPosition.y);
-            if (!_brid.walkableArea.IsPointInside(nextPos2D))
-            {
-                nextPos2D = _brid.walkableArea.GetClosestValidPoint(nextPos2D);
-                nextPosition = new Vector3(nextPos2D.x, nextPos2D.y, nextPosition.z);
-            }
-        }
-    
-        _brid.transform.position = nextPosition;
-        _brid.sr.flipX = target.x > _brid.transform.position.x;
-        _brid.anim.SetFloat("MoveSpeed", 1);
-        if (Vector3.Distance(_brid.transform.position, target) <= 0.1f)
-        {
+            _brid.agent.isStopped = true;
+            _brid.agent.velocity = Vector3.zero;
             DONext();
+        }
+        else
+        {
+            _brid.sr.flipX = target.x > _brid.transform.position.x;
+            _brid.anim.SetFloat("MoveSpeed", 1);
         }
     }
 
     public override void OnExit()
     {
         _brid.anim.SetFloat("MoveSpeed", 0f);
+        _brid.agent.isStopped = true;
+        _brid.agent.velocity = Vector3.zero;
         // // Release any food target when leaving run state
         // if (_brid.currFood != null)
         // {
