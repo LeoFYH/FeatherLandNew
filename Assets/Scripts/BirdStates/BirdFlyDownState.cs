@@ -18,7 +18,7 @@ public class BirdFlyDownState : StateBase
         _brid.anim.Play("FlyFromBranch");
 
         // 获取降落点
-        int area = Random.Range(3, 7);
+        int area = Random.Range(3, 8);
         _brid.walkArea = area;
         Vector2 landingPoint = NavigationManager.Instance.GetRandomTarget(area);//GetLandingPoint();
         var target = new Vector3(landingPoint.x, landingPoint.y, 0);

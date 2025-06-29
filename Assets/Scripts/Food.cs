@@ -6,11 +6,12 @@ using DG.Tweening;
 public class Food : MonoBehaviour
 {
     public bool isTargeted = false;
+    public bool isDisabling = false;
     public int hp = 1;
     float y;
     private SpriteRenderer spriteRenderer;
     private float fadeDuration = 4f;  // 总淡出时间
-    private float fadeTimer = 0f;     // 淡出计时器
+    private float timer = 0f;     // 淡出计时器
 
     void Start()
     {
@@ -18,6 +19,16 @@ public class Food : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         StartCoroutine(DelayedStart());
         StartCoroutine(nameof(DestroyDelay));
+    }
+
+    public void UntargetFood()
+    {
+        if (isTargeted)
+        {
+            isTargeted = false;
+            isDisabling = false;
+            StartCoroutine(nameof(DestroyDelay));
+        }
     }
 
     private IEnumerator DelayedStart()
@@ -29,9 +40,19 @@ public class Food : MonoBehaviour
     private IEnumerator DestroyDelay()
     {
         var frame = new WaitForFixedUpdate();
-        fadeTimer = 0f;
+        timer = 0f;
 
-        while (fadeTimer < fadeDuration)
+        while (timer < 5)
+        {
+            if(isTargeted)
+                yield break;
+            timer += Time.deltaTime;
+            yield return frame;
+        }
+
+        isDisabling = true;
+        timer = 0;
+        while (timer < fadeDuration)
         {
             if (isTargeted)
             {
@@ -43,9 +64,9 @@ public class Food : MonoBehaviour
                 yield break;
             }
 
-            fadeTimer += Time.deltaTime;
+            timer += Time.deltaTime;
             // 计算当前透明度（从1逐渐变为0）
-            float alpha = 1f - (fadeTimer / fadeDuration);
+            float alpha = 1f - (timer / fadeDuration);
             if (spriteRenderer != null)
             {
                 spriteRenderer.color = new Color(1f, 1f, 1f, alpha);

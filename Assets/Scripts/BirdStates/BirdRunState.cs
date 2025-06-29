@@ -1,6 +1,7 @@
 using DG.Tweening;
 using FSM;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class BirdRunState : StateBase
 {
@@ -14,6 +15,8 @@ public class BirdRunState : StateBase
 
     public override void OnEnter()
     {
+        _brid.onNearOtherBird = OnNearOtherBird;
+        
         _brid.isAte = false;
         // Release any existing food target when entering run state
         if (_brid.currFood != null)
@@ -38,8 +41,14 @@ public class BirdRunState : StateBase
         }
 
         target = new Vector3(newTarget.x, newTarget.y, _brid.transform.position.z);
-        _brid.agent.SetDestination(target);
-        _brid.agent.isStopped = false;
+        if (_brid.agent.SetDestination(target))
+        {
+            _brid.agent.isStopped = false;
+        }
+        else
+        {
+            Debug.LogError("目标超出渲染地面范围！");
+        }
 
         float distance = Vector3.Distance(_brid.transform.position, target);
         float time = distance / _brid.moveSpeed;
@@ -131,13 +140,14 @@ public class BirdRunState : StateBase
         }
         else
         {
-            _brid.sr.flipX = target.x > _brid.transform.position.x;
+            _brid.sr.flipX = _brid.agent.velocity.x >= 0;
             _brid.anim.SetFloat("MoveSpeed", 1);
         }
     }
 
     public override void OnExit()
     {
+        _brid.onNearOtherBird = null;
         _brid.anim.SetFloat("MoveSpeed", 0f);
         _brid.agent.isStopped = true;
         _brid.agent.velocity = Vector3.zero;
@@ -147,6 +157,11 @@ public class BirdRunState : StateBase
         //     _brid.currFood.isTargeted = false;
         //     _brid.currFood = null;
         // }
+    }
+
+    private void OnNearOtherBird()
+    {
+        currMachine.ChangeState<BirdIdleState>();
     }
 
     private void DONext()

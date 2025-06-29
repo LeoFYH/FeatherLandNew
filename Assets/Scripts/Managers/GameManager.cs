@@ -133,7 +133,7 @@ public class GameManager : MonoBehaviour
 
         foreach (var temp in foods)
         {
-            if (!temp.isTargeted)
+            if (!temp.isTargeted && !temp.isDisabling)
             {
                 float distance = Vector3.Distance(position, temp.transform.position);
                 if (distance < closestDistance)

@@ -1,3 +1,4 @@
+using System;
 using FSM;
 using UnityEngine;
 using UnityEngine.AI;
@@ -75,6 +76,7 @@ public class Brid : MonoBehaviour
     private float lastClickTime = 0;  // 添加最后点击时间记录
     private float clickInterval = 0.2f;  // 点击间隔时间
     public NavMeshAgent agent;
+    public Action onNearOtherBird;
 
     public Vector3 originalScale;
     public float lastPerspectiveScale = 1f;
@@ -82,7 +84,7 @@ public class Brid : MonoBehaviour
     void Start()
     {
         // Initialize walkable area and basic components
-        
+        transform.localRotation = Quaternion.identity;
         agent = GetComponent<NavMeshAgent>();
         agent.speed = moveSpeed;
         agent.updateUpAxis = false;
@@ -238,7 +240,6 @@ public class Brid : MonoBehaviour
         }
     }
 
-
     /// Generates income based on bird's size
     private void AddCoins()
     {
@@ -247,6 +248,14 @@ public class Brid : MonoBehaviour
         {
             GameManager.Instance.coin += incomeForBig;
             UIManager.Instance.RefreshCoin();
+        }
+    }
+    
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Bird"))
+        {
+            onNearOtherBird?.Invoke();
         }
     }
 }

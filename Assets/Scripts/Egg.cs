@@ -1,7 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using NavMeshPlus.Components;
 using UnityEngine;
+using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 public class Egg : MonoBehaviour
 {
@@ -39,30 +43,25 @@ public class Egg : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        DOTween.KillAll();
+    }
+
     private void SpawnBird()
     {
         // 随机选择鸟的预制体
         int val = Random.Range(0, bridPre.Length);
         GameObject go = Instantiate(bridPre[val]);
+        var agent = go.GetComponent<NavMeshAgent>();
+        agent.enabled = false;
 
-        // 查找WalkableArea
-        WalkableArea walkableArea = NavigationManager.Instance.GetWalkableArea(3);
-        
-        if (walkableArea != null)
-        {
-            // 在可行走区域内获取随机点
-            Vector2 randomPoint = walkableArea.GetRandomPointInArea();
-            go.transform.position = new Vector3(randomPoint.x, randomPoint.y, 0);
-        }
-        else
-        {
-            // 如果没有找到WalkableArea，使用原来的位置逻辑
-            go.transform.position = new Vector3(transform.position.x, -4, transform.position.z);
-        }
-
+        var point = NavigationManager.Instance.GetRandomTarget(3);
+        go.transform.position = new Vector3(point.x, point.y, 0);
         // 更新 GameManager 的未开启蛋数量
         GameManager.Instance.noOpenEggs--;
 
+        agent.enabled = true;
         // 销毁当前蛋对象
         Destroy(gameObject);
     }
