@@ -13,6 +13,9 @@ public class WeatherManager : MonoBehaviour
     public SpriteRenderer backgroundGrass;
     public SpriteRenderer light;
     public SpriteRenderer foregroundTree;
+    public SpriteRenderer ground;
+    public SpriteRenderer groundCover1;
+    public SpriteRenderer groundCover2;
     public SpriteRenderer foregroundGrass;
     public Material birdMaterial;
     public Weather[] weathers;
@@ -129,6 +132,33 @@ public class WeatherManager : MonoBehaviour
         anim7.Append(uiGroup.DOFade(0, 0.5f));
         anim7.Append(uiGroup.DOFade(1, 0.5f));
 
+        var anim8 = DOTween.Sequence();
+        anim8.Append(ground.DOColor(Color.black, 0.5f));
+        anim8.AppendCallback(() =>
+        {
+            ground.sprite = weather.ground.sprite;
+            ground.transform.localScale = Vector3.one * weather.ground.scale;
+        });
+        anim8.Append(ground.DOColor(Color.white, 0.5f));
+        
+        var anim9 = DOTween.Sequence();
+        anim9.Append(groundCover1.DOColor(Color.black, 0.5f));
+        anim9.AppendCallback(() =>
+        {
+            groundCover1.sprite = weather.foreCover1.sprite;
+            groundCover1.transform.localScale = Vector3.one * weather.foreCover1.scale;
+        });
+        anim9.Append(groundCover1.DOColor(Color.white, 0.5f));
+        
+        var anim10 = DOTween.Sequence();
+        anim10.Append(groundCover2.DOColor(Color.black, 0.5f));
+        anim10.AppendCallback(() =>
+        {
+            groundCover2.sprite = weather.foreCover2.sprite;
+            groundCover2.transform.localScale = Vector3.one * weather.foreCover2.scale;
+        });
+        anim10.Append(groundCover2.DOColor(Color.white, 0.5f));
+
         for (int i = 0; i < others.Length; i++)
         {
             var anim = DOTween.Sequence();
@@ -146,6 +176,9 @@ public class Weather
     public SpriteItem backgroundGrass;
     public SpriteItem light;
     public SpriteItem foregroundTree;
+    public SpriteItem ground;
+    public SpriteItem foreCover1;
+    public SpriteItem foreCover2;
     public SpriteItem foregroundGrass;
     public Color32 birdColor;
 

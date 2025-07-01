@@ -113,25 +113,27 @@ public class NavigationManager : MonoBehaviour
             return Vector3.zero;
         }
 
-        var walkableArea = colliderDic[area];
-        // 尝试最多10次获取有效点
-        for (int i = 0; i < 10; i++)
-        {
-            // 获取WalkableArea的边界
-            Bounds bounds = walkableArea.GetComponent<PolygonCollider2D>().bounds;
-            
-            // 在边界范围内随机取点
-            float x = Random.Range(bounds.min.x, bounds.max.x);
-            float y = Random.Range(bounds.min.y, bounds.max.y);
-            Vector2 point = new Vector2(x, y);
-
-            // 检查点是否在WalkableArea内
-            if (walkableArea)
-            {
-                return point;
-            }
-        }
-        // 如果10次都没找到合适的点，返回WalkableArea的中心点
-        return (Vector2)walkableArea.transform.position;
+        var point = colliderDic[area].GetComponent<PolygonCollider2D>().GetRandomPoint();
+        return new Vector3(point.x, point.y, 0);
+        // var walkableArea = colliderDic[area];
+        // // 尝试最多10次获取有效点
+        // for (int i = 0; i < 10; i++)
+        // {
+        //     // 获取WalkableArea的边界
+        //     Bounds bounds = walkableArea.GetComponent<PolygonCollider2D>().bounds;
+        //     
+        //     // 在边界范围内随机取点
+        //     float x = Random.Range(bounds.min.x, bounds.max.x);
+        //     float y = Random.Range(bounds.min.y, bounds.max.y);
+        //     Vector2 point = new Vector2(x, y);
+        //
+        //     // 检查点是否在WalkableArea内
+        //     if (walkableArea)
+        //     {
+        //         return point;
+        //     }
+        // }
+        // // 如果10次都没找到合适的点，返回WalkableArea的中心点
+        // return (Vector2)walkableArea.transform.position;
     }
 }
