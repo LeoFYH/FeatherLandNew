@@ -15,7 +15,7 @@ public class BirdEatState : StateBase
 
     public override void OnEnter()
     {
-        _brid.onNearOtherBird = OnNearOtherBird;
+        //_brid.onNearOtherBird = OnNearOtherBird;
         if (!_brid.isSmall)
         {
             DONext();
@@ -72,7 +72,8 @@ public class BirdEatState : StateBase
                 0
             );
             _brid.agent.SetDestination(eatPosition);
-            _brid.sr.flipX = _brid.agent.velocity.x >= 0;
+            if (Mathf.Abs(_brid.transform.position.x - eatPosition.x) > 0.4f)
+                _brid.sr.flipX = _brid.agent.velocity.x >= 0;
             if (isOtherBirdEnter)
             {
                 if (_brid.currFood != null)
@@ -160,10 +161,5 @@ public class BirdEatState : StateBase
         {
             currMachine.ChangeState<BirdIdleState>();
         }
-    }
-
-    private void OnNearOtherBird()
-    {
-        isOtherBirdEnter = true;
     }
 }

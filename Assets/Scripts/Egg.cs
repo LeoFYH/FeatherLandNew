@@ -13,6 +13,7 @@ public class Egg : MonoBehaviour
     public Sprite[] eggSprites; // 蛋动画的每一帧图片
     public SpriteRenderer spriteRenderer;
     private int currentFrame = 0; // 当前显示的帧索引
+    private Tweener anim;
 
     private void Start()
     {
@@ -24,7 +25,8 @@ public class Egg : MonoBehaviour
 
     private void OnMouseDown()
     {
-        spriteRenderer.transform.DOShakeScale(0.2f, 0.5f, 50, 180f);
+        anim?.Kill();
+        anim = spriteRenderer.transform.DOShakeScale(0.2f, 0.5f, 50, 180f);
         //spriteRenderer.transform.DOShakePosition(0.2f, 0.5f);
         PlayNextFrame();
         
@@ -45,7 +47,7 @@ public class Egg : MonoBehaviour
 
     private void OnDestroy()
     {
-        DOTween.KillAll();
+        anim?.Kill();
     }
 
     private void SpawnBird()

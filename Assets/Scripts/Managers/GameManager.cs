@@ -65,9 +65,8 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-
-        WalkableArea walkableArea = NavigationManager.Instance.GetWalkableArea(3);
-        if (walkableArea != null && walkableArea.IsPointInside(new Vector2(mouseWorldPos.x, mouseWorldPos.y)))
+        
+        if (NavigationManager.Instance.IsPointInNavMeshArea(3, mousePosition))
         {
             Food food = Instantiate(foodPrefab).GetComponent<Food>();
             food.isTargeted = false;

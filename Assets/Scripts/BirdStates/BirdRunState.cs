@@ -25,22 +25,22 @@ public class BirdRunState : StateBase
             _brid.currFood = null;
         }
 
-        Vector2 currentPos = _brid.transform.position;
-        Vector2 newTarget;
+        //Vector2 currentPos = _brid.transform.position;
+        // Vector2 newTarget;
+        //
+        // var walkableArea = NavigationManager.Instance.GetWalkableArea(_brid.walkArea);
+        // if (walkableArea != null)
+        // {
+        //     newTarget = walkableArea.GetRandomPoint(currentPos, _brid.radiusX);
+        // }
+        // else
+        // {
+        //     float x = Random.Range(-_brid.radiusX, _brid.radiusX);
+        //     float y = Random.Range(-_brid.radiusY, _brid.radiusY);
+        //     newTarget = new Vector2(currentPos.x + x, currentPos.y + y);
+        // }
 
-        var walkableArea = NavigationManager.Instance.GetWalkableArea(_brid.walkArea);
-        if (walkableArea != null)
-        {
-            newTarget = walkableArea.GetRandomPoint(currentPos, _brid.radiusX);
-        }
-        else
-        {
-            float x = Random.Range(-_brid.radiusX, _brid.radiusX);
-            float y = Random.Range(-_brid.radiusY, _brid.radiusY);
-            newTarget = new Vector2(currentPos.x + x, currentPos.y + y);
-        }
-
-        target = new Vector3(newTarget.x, newTarget.y, _brid.transform.position.z);
+        target = NavigationManager.Instance.GetRandomTarget(_brid.walkArea);
         if (_brid.agent.SetDestination(target))
         {
             _brid.agent.isStopped = false;
@@ -72,66 +72,6 @@ public class BirdRunState : StateBase
 
     public override void OnUpdate()
     {
-        // if (_brid.isSmall)
-        // {
-            // Find closest untargeted food
-            // Food closestFood = null;
-            // float closestDistance = float.MaxValue;
-            //
-            // foreach (var food in GameManager.Instance.foods)
-            // {
-            //     if (!food.isTargeted)
-            //     {
-            //         float distance = Vector3.Distance(_brid.transform.position, food.transform.position);
-            //         if (distance < closestDistance)
-            //         {
-            //             closestDistance = distance;
-            //             closestFood = food;
-            //         }
-            //     }
-            // }
-            //
-            // // If we found food, either switch to it or keep current target if it's closer
-            // if (closestFood != null)
-            // {
-            //     float currentDistance = _brid.currFood != null ? 
-            //         Vector3.Distance(_brid.transform.position, _brid.currFood.transform.position) : 
-            //         float.MaxValue;
-            //
-            //     if (closestDistance < currentDistance)
-            //     {
-            //         
-            //             if (_brid.currFood != null)
-            //             {
-            //                 _brid.currFood.isTargeted = false;
-            //             }
-            //             _brid.currFood = closestFood;
-            //             _brid.currFood.isTargeted = true;
-            //             currMachine.ChangeState<BirdEatState>();
-            //             return;
-            //         
-            //     }
-            // }
-        //}
-        
-        // If no food to chase, continue random movement
-        // Vector3 nextPosition = Vector3.MoveTowards(
-        //     _brid.transform.position, 
-        //     target, 
-        //     _brid.moveSpeed * Time.deltaTime
-        // );
-        //
-        // if (_brid.walkableArea != null)
-        // {
-        //     Vector2 nextPos2D = new Vector2(nextPosition.x, nextPosition.y);
-        //     if (!_brid.walkableArea.IsPointInside(nextPos2D))
-        //     {
-        //         nextPos2D = _brid.walkableArea.GetClosestValidPoint(nextPos2D);
-        //         nextPosition = new Vector3(nextPos2D.x, nextPos2D.y, nextPosition.z);
-        //     }
-        // }
-        //
-        // _brid.transform.position = nextPosition;
         if (!_brid.agent.pathPending && _brid.agent.remainingDistance <= 0.05f)
         {
             _brid.agent.isStopped = true;
@@ -151,12 +91,6 @@ public class BirdRunState : StateBase
         _brid.anim.SetFloat("MoveSpeed", 0f);
         _brid.agent.isStopped = true;
         _brid.agent.velocity = Vector3.zero;
-        // // Release any food target when leaving run state
-        // if (_brid.currFood != null)
-        // {
-        //     _brid.currFood.isTargeted = false;
-        //     _brid.currFood = null;
-        // }
     }
 
     private void OnNearOtherBird()

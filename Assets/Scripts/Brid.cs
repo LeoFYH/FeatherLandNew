@@ -205,7 +205,7 @@ public class Brid : MonoBehaviour
 
         //检查是否在WalkableArea中并做透视缩放
         var walkableArea = NavigationManager.Instance.GetWalkableArea(walkArea);
-        if (walkableArea != null)
+        if (walkableArea != null && walkArea == 3)
         {
             Vector2 currentPos = new Vector2(transform.position.x, transform.position.y);
             if (walkableArea.IsPointInside(currentPos))
