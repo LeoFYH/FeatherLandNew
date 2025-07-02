@@ -41,6 +41,10 @@ public class BirdRunState : StateBase
         // }
 
         target = NavigationManager.Instance.GetRandomTarget(_brid.walkArea);
+        while (target == Vector3.zero)
+        {
+            target = NavigationManager.Instance.GetRandomTarget(_brid.walkArea);
+        }
         if (_brid.agent.SetDestination(target))
         {
             _brid.agent.isStopped = false;
