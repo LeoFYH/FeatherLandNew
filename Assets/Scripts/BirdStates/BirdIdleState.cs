@@ -15,7 +15,7 @@ public class BirdIdleState : StateBase
 
     public override void OnEnter()
     {
-        float time = Random.Range(1f, 2f);
+        float time = Random.Range(5f, 10f);
         random = Random.Range(1, 10);
         coroutine = _brid.StartCoroutine(WaitForNext(time));
     }
