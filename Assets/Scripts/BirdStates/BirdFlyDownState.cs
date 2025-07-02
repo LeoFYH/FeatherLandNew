@@ -20,9 +20,16 @@ public class BirdFlyDownState : StateBase
         // 获取降落点
         int area = Random.Range(3, 8);
         _brid.walkArea = area;
-        Vector2 landingPoint = NavigationManager.Instance.GetRandomTarget(area);//GetLandingPoint();
-        var target = new Vector3(landingPoint.x, landingPoint.y, 0);
-
+        //Vector2 landingPoint = //GetLandingPoint();
+        var target = NavigationManager.Instance.GetRandomTarget(area);
+        while (target == Vector3.zero)
+        {
+            area = Random.Range(3, 8);
+            _brid.walkArea = area;
+            //Vector2 landingPoint = //GetLandingPoint();
+            target = NavigationManager.Instance.GetRandomTarget(area);
+        }
+        
         // 如果之前在巢穴中，释放巢穴位置
         if (_brid.nestTrans != null)
         {
