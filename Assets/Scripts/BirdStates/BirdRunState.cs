@@ -50,7 +50,7 @@ public class BirdRunState : StateBase
             Debug.LogError("目标超出渲染地面范围！");
         }
 
-        float distance = Vector3.Distance(_brid.transform.position, target);
+        float distance = _brid.agent.remainingDistance;
         float time = distance / _brid.moveSpeed;
         DOTween.Sequence().AppendCallback(() =>
         {
