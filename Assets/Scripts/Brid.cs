@@ -183,7 +183,7 @@ public class Brid : MonoBehaviour
                         petTime += 0.1f;
                         GameManager.Instance.coin += 1;
                         UIManager.Instance.RefreshCoin();
-                        if (currentFavorability < totalFavorability)
+                        if (currentFavorability < totalFavorability&&!isSmall)
                         {
                             currentFavorability++;
                         }
