@@ -11,6 +11,14 @@ namespace FSM
         private Dictionary<Type, StateBase> stateDic = new Dictionary<Type, StateBase>();
         private StateBase currentState;
 
+        public Type CurrentState
+        {
+            get
+            {
+                return currentState.GetType();
+            }
+        }
+
         public GameObject currObj;
 
         public StateMachine(GameObject obj)

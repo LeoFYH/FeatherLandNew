@@ -1,4 +1,5 @@
 using System.Collections;
+using DG.Tweening;
 using FSM;
 using UnityEngine;
 
@@ -17,7 +18,13 @@ public class BirdIdleState : StateBase
     {
         float time = Random.Range(5f, 10f);
         random = Random.Range(1, 10);
+        float lickingTime = Random.Range(2f, time - 0.5f);
+        
         coroutine = _brid.StartCoroutine(WaitForNext(time));
+        DOTween.Sequence().AppendCallback(() =>
+        {
+            _brid.anim.SetTrigger("Licking");
+        }).SetDelay(lickingTime);
     }
 
     public override void OnUpdate()

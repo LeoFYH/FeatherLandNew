@@ -123,18 +123,15 @@ public class Brid : MonoBehaviour
     /// Handles bird interaction when clicked
     private void OnMouseDown()
     {
-        if (!isSmall)
-        {
-            level++;
-            GameObject go = Instantiate(heartPre);
-            go.transform.SetParent(transform);
-            go.transform.position = heartPos.position;
-            go.transform.localScale = Vector3.one * BabyBirdSize;
-            if (currentFavorability < totalFavorability)
-            {
-                currentFavorability++;
-            }
-        }
+        // if (!isSmall)
+        // {
+        //     level++;
+        //     GameObject go = Instantiate(heartPre);
+        //     go.transform.SetParent(transform);
+        //     go.transform.position = heartPos.position;
+        //     go.transform.localScale = Vector3.one * BabyBirdSize;
+        //     
+        // }
     }
 
     private void OnMouseEnter()
@@ -173,7 +170,7 @@ public class Brid : MonoBehaviour
 
             if (Input.GetMouseButtonDown(0))
             {
-                if (!isSmall)
+                if (!isSmall && _stateMachine.CurrentState == typeof(BirdIdleState))
                 {
                     // 检查是否达到点击间隔时间
                     if (Time.time - lastClickTime >= clickInterval)
@@ -186,7 +183,11 @@ public class Brid : MonoBehaviour
                         petTime += 0.1f;
                         GameManager.Instance.coin += 1;
                         UIManager.Instance.RefreshCoin();
-                        
+                        if (currentFavorability < totalFavorability)
+                        {
+                            currentFavorability++;
+                        }
+                        anim.SetTrigger("Stroke");
                         if(petTime > 0.5)
                         {
                             Feather feather = go.GetComponent<Feather>();
