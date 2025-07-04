@@ -36,14 +36,10 @@ public class GameManager : MonoBehaviour
     {
         if (EventSystem.current.IsPointerOverGameObject()) return;
         
-        // 检查是否达到点击间隔时间
-        if (Time.time - lastClickTime >= clickInterval)
+        // 取消撒食物冷却，每次点击都能撒
+        if (Input.GetMouseButtonDown(0))
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                CreateFood();
-                lastClickTime = Time.time;  // 更新最后点击时间
-            }
+            CreateFood();
         }
     }
 
@@ -84,6 +80,14 @@ public class GameManager : MonoBehaviour
             }
             
             foods.Add(food);
+
+            if (foods.Count > 8)
+            {
+                // 删除最早的食物
+                var foodToRemove = foods[0];
+                foods.RemoveAt(0);
+                Destroy(foodToRemove.gameObject);
+            }
         }
     }
 

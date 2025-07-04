@@ -36,11 +36,11 @@ public class BirdIdleState : StateBase
                 Food food;
                 if (GameManager.Instance.TryGetUntargetedFood(_brid.transform.position, out food))
                 {
-                    if(random == 1) // 10个数中随机到1时去吃食物
-                    {
+                    // if(random == 1) // 10个数中随机到1时去吃食物
+                    // {
                         _brid.currFood = food;
                         currMachine.ChangeState<BirdEatState>();
-                    }
+                    //}
                 }
             }
         }

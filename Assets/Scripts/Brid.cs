@@ -170,16 +170,16 @@ public class Brid : MonoBehaviour
 
             if (Input.GetMouseButtonDown(0))
             {
-                if (!isSmall && _stateMachine.CurrentState == typeof(BirdIdleState))
+                if ( _stateMachine.CurrentState == typeof(BirdIdleState))
                 {
                     // 检查是否达到点击间隔时间
                     if (Time.time - lastClickTime >= clickInterval)
                     {
                         lastClickTime = Time.time;  // 更新最后点击时间
                         Debug.Log("Feather!");
-                        GameObject go = Instantiate(heartPre); 
-                        Vector2 newPosition = new Vector2(transform.position.x - 0.2f, transform.position.y + 0.2f);
-                        go.transform.position = newPosition;
+                        // GameObject go = Instantiate(heartPre); 
+                        // Vector2 newPosition = new Vector2(transform.position.x - 0.2f, transform.position.y + 0.2f);
+                        // go.transform.position = newPosition;
                         petTime += 0.1f;
                         GameManager.Instance.coin += 1;
                         UIManager.Instance.RefreshCoin();
@@ -190,12 +190,12 @@ public class Brid : MonoBehaviour
                         anim.SetTrigger("Stroke");
                         if(petTime > 0.5)
                         {
-                            Feather feather = go.GetComponent<Feather>();
-                            if (feather != null)
-                            {
+                            //Feather feather = go.GetComponent<Feather>();
+                            //if (feather != null)
+                            //{
                                 GameManager.Instance.coin += 3;
                                 UIManager.Instance.RefreshCoin();
-                            }
+                            //}
                         }
                     }
                 }

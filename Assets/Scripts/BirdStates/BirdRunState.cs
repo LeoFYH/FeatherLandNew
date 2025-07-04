@@ -63,12 +63,12 @@ public class BirdRunState : StateBase
                 Food food;
                 if (GameManager.Instance.TryGetUntargetedFood(_brid.transform.position, out food))
                 {
-                    int random = Random.Range(1, 10);
-                    if(random == 1) // 10个数中随机到1时去吃食物
-                    {
+                    // int random = Random.Range(1, 10);
+                    // if(random == 1) // 10个数中随机到1时去吃食物
+                    // {
                         _brid.currFood = food;
                         currMachine.ChangeState<BirdEatState>();
-                    }
+                    //}
                 }
             }
         }).SetDelay(time * 0.5f);
