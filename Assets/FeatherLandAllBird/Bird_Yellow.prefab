@@ -169,7 +169,7 @@ MonoBehaviour:
   moveSpeed: 0.8
   flySpeed: 3
   waitTime: 3
-  isSmall: 1
+  isSmall: 0
   anim: {fileID: 0}
   sr: {fileID: 0}
   flyIndex: -1
@@ -184,11 +184,17 @@ MonoBehaviour:
   heartPos: {fileID: 7580150105710783560}
   flyInAirStartPosition: {x: -0.35718587, y: 5.72, z: -9.973669}
   clickCount: 1
+<<<<<<< Updated upstream
   eatCountForBig: 1
+=======
+  totalFavorability: 10
+  currentFavorability: 0
+  eatCountForBig: 2
+>>>>>>> Stashed changes
   incomeForBig: 30
   scaleX: 0
   distance: 0
-  eatFoodCount: 0
+  eatFoodCount: 2
   eatFoodTime: 1
   currFood: {fileID: 0}
   originalScale: {x: 0, y: 0, z: 0}

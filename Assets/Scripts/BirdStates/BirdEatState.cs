@@ -108,6 +108,9 @@ public class BirdEatState : StateBase
 
     private void DONext()
     {
+        // 重置吃食标志，让鸟可以继续吃食
+        _brid.isAte = false;
+        
         if (_brid.isSmall)
         {
             int random = Random.Range(0, 2);
