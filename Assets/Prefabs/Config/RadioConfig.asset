@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5538057c912442f3a08104428b69fd96, type: 3}
+  m_Name: RadioConfig
+  m_EditorClassIdentifier: 
+  audios:
+  - songName: Forest
+    songFile: {fileID: 8300000, guid: 312c63cfd6ed4d4438c99a28653c5faf, type: 3}
+  - songName: Campfire
+    songFile: {fileID: 8300000, guid: 10de7ba5ed87e8247961de466789e137, type: 3}

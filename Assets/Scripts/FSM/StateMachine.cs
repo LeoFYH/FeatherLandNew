@@ -4,7 +4,7 @@ using UnityEngine;
 
 // State Machine Manager
 
-namespace FSM
+namespace BirdGame
 {
     public class StateMachine
     {

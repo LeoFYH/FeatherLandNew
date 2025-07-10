@@ -36,8 +36,8 @@ public class InfoPanel : PopupPanelBase
 
     public void Sell()
     {
-        GameManager.Instance.coin += price;
-        UIManager.Instance.coinTxt.text = GameManager.Instance.coin.ToString();
+        // GameManager.Instance.coin += price;
+        // UIManager.Instance.coinTxt.text = GameManager.Instance.coin.ToString();
         Close();
         Destroy(go);
     }

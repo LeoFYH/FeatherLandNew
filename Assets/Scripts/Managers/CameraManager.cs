@@ -38,10 +38,5 @@ public class CameraManager : MonoBehaviour
         
         // Use the smaller of the two sizes
         mainCamera.orthographicSize = Mathf.Min(calculatedSize, maxAllowedSize);
-        
-        if (debugMessage != null)
-        {
-            debugTest.text = debugMessage;
-        }
     }
 }

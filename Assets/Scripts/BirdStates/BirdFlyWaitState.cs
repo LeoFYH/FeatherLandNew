@@ -1,48 +1,49 @@
 using DG.Tweening;
-using FSM;
 using UnityEngine;
 
-public class BirdFlyWaitState : StateBase
+namespace BirdGame
 {
-    private Brid _brid;
-    
-    public BirdFlyWaitState(StateMachine machine) : base(machine)
+    public class BirdFlyWaitState : StateBase
     {
-        _brid = machine.currObj.GetComponent<Brid>();
-    }
+        private Brid _brid;
 
-    public override void OnEnter()
-    {
-        _brid.anim.SetBool("IsTakeOff", false);
-        _brid.anim.SetBool("Fly", false);
-        //_brid.anim.Play("FlyWait");
-
-        if (_brid.nestTrans != null)
+        public BirdFlyWaitState(StateMachine machine) : base(machine)
         {
-            // 完全使用 target 的位置
-            Vector3 alignedPosition = new Vector3(
-                _brid.nestTrans.position.x,  // 使用 target 的 X
-                _brid.nestTrans.position.y,  // 使用 target 的 Y
-                _brid.transform.position.z
-            );
-            
-            _brid.transform.position = alignedPosition;
+            _brid = machine.currObj.GetComponent<Brid>();
         }
 
-        float waitTime = Random.Range(3f, 8f);
-        DOTween.Sequence().AppendCallback(() =>
+        public override void OnEnter()
         {
-            currMachine.ChangeState<BirdFlyDownState>();
-        }).SetDelay(waitTime);
-    }
+            _brid.anim.SetBool("IsTakeOff", false);
+            _brid.anim.SetBool("Fly", false);
+            //_brid.anim.Play("FlyWait");
 
-    public override void OnUpdate()
-    {
-        
-    }
+            if (_brid.nestTrans != null)
+            {
+                // 完全使用 target 的位置
+                Vector3 alignedPosition = new Vector3(
+                    _brid.nestTrans.position.x, // 使用 target 的 X
+                    _brid.nestTrans.position.y, // 使用 target 的 Y
+                    _brid.transform.position.z
+                );
 
-    public override void OnExit()
-    {
-        
+                _brid.transform.position = alignedPosition;
+            }
+
+            float waitTime = Random.Range(3f, 8f);
+            DOTween.Sequence().AppendCallback(() => { currMachine.ChangeState<BirdFlyDownState>(); })
+                .SetDelay(waitTime);
+        }
+
+        public override void OnUpdate()
+        {
+
+        }
+
+        public override void OnExit()
+        {
+
+        }
+
     }
 }

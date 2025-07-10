@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c998ea8945749ad829e2434e82655c0, type: 3}
+  m_Name: BirdConfig
+  m_EditorClassIdentifier: 
+  birds:
+  - preview: {fileID: -348178456, guid: 0f90b4c0d6720e54aae2b8d8f3098979, type: 3}
+    prefab: {fileID: 1885250170276666100, guid: 7abd69cfb9b3a454f9fc535dbc6ab6e0, type: 3}
+  - preview: {fileID: 0}
+    prefab: {fileID: 1885250170276666100, guid: d66cf0c37fe633f4db099bff4bbf10d8, type: 3}
+  - preview: {fileID: 3693468076901898147, guid: 25ee645869ee63c4c8d8e2a97724471f, type: 3}
+    prefab: {fileID: 7194070394800242606, guid: 82048ffcdabdb8e4cb022bb742db8570, type: 3}
+  - preview: {fileID: -8321102221490951993, guid: 8822fd5ba7f30fb4f95e740861ba1e0f, type: 3}
+    prefab: {fileID: 4594323129400064310, guid: c6c7d9c576c41344fadd6519160df9b5, type: 3}
+  - preview: {fileID: 8330824845277220213, guid: 7868c1de16d8be04598d654c53519f30, type: 3}
+    prefab: {fileID: 900128412874830559, guid: fdddc65926a71014e8158e768618d607, type: 3}
