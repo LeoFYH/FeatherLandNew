@@ -102,9 +102,9 @@ namespace BirdGame
             else
             {
                 eatFoodTimer = 0;
-                _brid.eatFoodCount++;
+                _brid.eatFoodCount.Value++;
 
-                if (_brid.eatFoodCount == _brid.eatCountForBig)
+                if (_brid.eatFoodCount.Value == _brid.eatCountForBig)
                 {
                     //_brid.transform.localScale = Vector3.one * _brid.AdultBirdSize;
                     _brid.transform.DOScale(_brid.AdultBirdSize, 0.2f);

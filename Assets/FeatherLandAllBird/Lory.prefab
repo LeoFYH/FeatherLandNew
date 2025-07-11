@@ -28,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.12, y: 0.12, z: 0.12}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 8176066513742844238}
@@ -159,6 +159,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8396582a19ee404db14cb7468039943, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  birdIndex: 0
   walkArea: 3
   BabyBirdSize: 0.8
   AdultBirdSize: 1
@@ -188,11 +189,9 @@ MonoBehaviour:
   flyInAirStartPosition: {x: -0.35718587, y: 5.72, z: -9.973669}
   clickCount: 1
   totalFavorability: 10
-  currentFavorability: 0
   eatCountForBig: 4
   incomeForBig: 30
   distance: 0
-  eatFoodCount: 0
   eatFoodTime: 1
   isAte: 0
   currFood: {fileID: 0}

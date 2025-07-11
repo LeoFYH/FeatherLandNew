@@ -14,6 +14,7 @@ namespace BirdGame
         List<Transform> FlyPositions { get; set; }
         List<BirdData> BirdList { get; }
         void AddBird(int type, Brid bird);
+        void RemoveBird(int index);
     }
 
     public class BirdModel : AbstractModel, IBirdModel
@@ -35,7 +36,22 @@ namespace BirdGame
                 birdType = type,
                 bird = bird
             };
+            bird.birdIndex = BirdList.Count;
             BirdList.Add(data);
+        }
+
+        public void RemoveBird(int index)
+        {
+            if(index >= BirdList.Count)
+                return;
+            var data = BirdList[index];
+            BirdList.RemoveAt(index);
+            GameObject.Destroy(data.bird.gameObject);
+            data = null;
+            for (int i = index; i < BirdList.Count; i++)
+            {
+                BirdList[i].bird.birdIndex = i;
+            }
         }
     }
 

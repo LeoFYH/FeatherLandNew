@@ -13,6 +13,7 @@ namespace BirdGame
     {
         // [Header("Activity Area Settings")]
         // public WalkableArea walkableArea;    // Area for limiting activity range
+        public int birdIndex;
 
         public int walkArea = 3;
 
@@ -50,7 +51,7 @@ namespace BirdGame
         public int clickCount = 5;
 
         [Header("好感度")] public int totalFavorability = 10;
-        public int currentFavorability = 0;
+        public BindableProperty<int> currentFavorability = new BindableProperty<int>(0);
 
         [Header("Food count needed for large size")]
         public int eatCountForBig = 2;
@@ -58,7 +59,7 @@ namespace BirdGame
         [Header("Income for large size")] public int incomeForBig;
 
         public float distance;
-        public int eatFoodCount;
+        public BindableProperty<int> eatFoodCount = new BindableProperty<int>();
         public float eatFoodTime = 1;
 
         bool isEnter;
@@ -156,20 +157,22 @@ namespace BirdGame
                         desc = "It's an adult bird";
                     }
 
-                    if (isSmall)
-                    {
-                        // UIManager.Instance.ShowInfoPanel(gameObject, smallPrice, title, desc, 0,
-                        //     eatFoodCount * 1f / eatCountForBig, currentFavorability * 1f / totalFavorability, false);
-                        this.SendCommand(new ShowBirdInfoCommand(smallPrice, title, desc, 0, eatFoodCount * 1f / eatCountForBig, currentFavorability * 1f / totalFavorability, false));
-                    }
-                    else
-                    {
-                        //UIManager.Instance.infoPanel.IntimacyFill.gameObject.SetActive(true);
-                        // UIManager.Instance.ShowInfoPanel(gameObject, bigPrice, title, desc, incomeForBig,
-                        //     1, currentFavorability * 1f / totalFavorability, true);
-                        this.SendCommand(new ShowBirdInfoCommand(bigPrice, title, desc, incomeForBig,
-                            1, currentFavorability * 1f / totalFavorability, true));
-                    }
+                    this.GetModel<IGameModel>().CurrentSelectedBirdIndex = birdIndex;
+                    this.GetSystem<IUISystem>().ShowPopup(UIPopup.InfoPopup);
+                    // if (isSmall)
+                    // {
+                    //     // UIManager.Instance.ShowInfoPanel(gameObject, smallPrice, title, desc, 0,
+                    //     //     eatFoodCount * 1f / eatCountForBig, currentFavorability * 1f / totalFavorability, false);
+                    //     //this.SendCommand(new ShowBirdInfoCommand(smallPrice, title, desc, 0, eatFoodCount.Value * 1f / eatCountForBig, currentFavorability * 1f / totalFavorability, false));
+                    // }
+                    // else
+                    // {
+                    //     //UIManager.Instance.infoPanel.IntimacyFill.gameObject.SetActive(true);
+                    //     // UIManager.Instance.ShowInfoPanel(gameObject, bigPrice, title, desc, incomeForBig,
+                    //     //     1, currentFavorability * 1f / totalFavorability, true);
+                    //     //this.SendCommand(new ShowBirdInfoCommand(bigPrice, title, desc, incomeForBig,
+                    //         //1, currentFavorability * 1f / totalFavorability, true));
+                    // }
                 }
 
                 if (Input.GetMouseButtonDown(0))
@@ -187,9 +190,9 @@ namespace BirdGame
                             petTime += 0.1f;
                             //GameManager.Instance.coin += 1;
                             this.GetModel<IAccountModel>().Coins.Value += 1;
-                            if (currentFavorability < totalFavorability && !isSmall)
+                            if (currentFavorability.Value < totalFavorability && !isSmall)
                             {
-                                currentFavorability++;
+                                currentFavorability.Value++;
                             }
 
                             anim.SetTrigger("Stroke");

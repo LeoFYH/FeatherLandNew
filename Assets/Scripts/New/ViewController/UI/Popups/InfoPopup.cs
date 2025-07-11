@@ -1,6 +1,7 @@
 ﻿using System;
 using DG.Tweening;
 using QFramework;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,18 +9,19 @@ namespace BirdGame
 {
     public class InfoPopup : UIBase
     {
-        public Image favorabilityFill;
-        public Image eatCountForBigFill;
-        public Text title;
-        public Text description;
-        public Text levelText;
-        public Text priceText;
         public Button saleButton;
-        public Button CloseButton;
+        public Button closeButton;
+        public Image icon;
+        public Text birdName;
+        public Image progressIcon;
+        public Image progressFill;
+        public Sprite iconForBig;
+        public Sprite iconForFavi;
+        public TextMeshProUGUI incomeText;
+        public TextMeshProUGUI priceText;
 
         private int price;
-        private int level;
-
+        
         public override void OnShowPanel()
         {
             var rect = transform as RectTransform;
@@ -35,28 +37,46 @@ namespace BirdGame
                 Destroy(gameObject);
             });
         }
-
-        public void Init(int price, string s1, string s2, int level, float progress,float progress2,bool cursorOn)
-        {
-            this.level = level;
-            this.price = price;
-            title.text = s1;
-            description.text = s2;
-            levelText.text = $"<color=yellow>{level}</color>/min";
-            eatCountForBigFill.fillAmount = progress;
-            favorabilityFill.fillAmount= progress2;
-            priceText.text = $"Sale x{price}";
-            //cursor.gameObject.SetActive(cursorOn);
-        }
+        
         
         private void Start()
         {
+            int index = this.GetModel<IGameModel>().CurrentSelectedBirdIndex;
+            var data = this.GetModel<IBirdModel>().BirdList[index];
+            var birdConf = this.GetModel<IConfigModel>().BirdConfig.birds[data.birdType];
+            icon.sprite = birdConf.preview;
+            birdName.text = birdConf.birdName;
+            if (data.bird.isSmall)
+            {
+                progressIcon.sprite = iconForBig;
+                progressFill.fillAmount = data.bird.eatFoodCount.Value * 1f / data.bird.eatCountForBig;
+                data.bird.eatFoodCount.Register(v =>
+                {
+                    progressFill.fillAmount = v * 1f / data.bird.eatCountForBig;
+                }).UnRegisterWhenGameObjectDestroyed(gameObject);
+                price = data.bird.smallPrice;
+            }
+            else
+            {
+                progressIcon.sprite = iconForFavi;
+                progressFill.fillAmount = data.bird.currentFavorability.Value * 1f / data.bird.totalFavorability;
+                data.bird.currentFavorability.Register(v =>
+                {
+                    progressFill.fillAmount = v * 1f / data.bird.totalFavorability;
+                }).UnRegisterWhenGameObjectDestroyed(gameObject);
+                price = data.bird.bigPrice;
+            }
+
+            incomeText.text = data.bird.incomeForBig.ToString();
+            priceText.text = price.ToString();
+            
             saleButton.onClick.AddListener(() =>
             {
                 this.GetModel<IAccountModel>().Coins.Value += price;
+                this.GetModel<IBirdModel>().RemoveBird(index);
                 this.GetSystem<IUISystem>().HidePopup(UIPopup.InfoPopup);
             });
-            CloseButton.onClick.AddListener(() =>
+            closeButton.onClick.AddListener(() =>
             {
                 this.GetSystem<IUISystem>().HidePopup(UIPopup.InfoPopup);
             });

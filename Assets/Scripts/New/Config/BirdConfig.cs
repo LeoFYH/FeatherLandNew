@@ -15,6 +15,7 @@ namespace BirdGame
     {
         [PreviewField(ObjectFieldAlignment.Left)]
         public Sprite preview;
+        public string birdName;
         public GameObject prefab;
     }
 }

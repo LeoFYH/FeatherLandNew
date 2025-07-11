@@ -12,4 +12,58 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3af29a6e86b04fca88f7fd9ffc287542, type: 3}
   m_Name: ShopConfig
   m_EditorClassIdentifier: 
-  eggPackage: 100
+  eggs:
+  - eggSp: {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
+    price: 100
+  - eggSp: {fileID: 710238443548197888, guid: 1170092e8fa8e1142a7e347132e8ea45, type: 3}
+    price: 100
+  - eggSp: {fileID: 2219571566158466069, guid: 066d2d923c5b99944aa6d9ca568d816f, type: 3}
+    price: 100
+  - eggSp: {fileID: -8002347335681798773, guid: 3983a1dbff14cd040915f5a365b4942e, type: 3}
+    price: 100
+  decorations:
+  - icon: {fileID: -2860457792642330479, guid: 1cbef57f4ce5aa540b29700fe0df85b3, type: 3}
+    name: "\u5C0F\u718A"
+    description: 
+    price: 50
+  - icon: {fileID: -566489096171355207, guid: 320aa3d191e0d7d47a5322ceecf1cbdd, type: 3}
+    name: "\u80CC\u5305"
+    description: 
+    price: 0
+  tools:
+  - name: Food
+    selections:
+    - icon: {fileID: 0}
+      selectionName: Foo1
+      description: 
+      price: 0
+    - icon: {fileID: 0}
+      selectionName: Food2
+      description: 
+      price: 0
+    - icon: {fileID: 0}
+      selectionName: Food3
+      description: 
+      price: 0
+    - icon: {fileID: 0}
+      selectionName: Food4
+      description: 
+      price: 0
+  - name: Cursor
+    selections:
+    - icon: {fileID: 0}
+      selectionName: Cursor1
+      description: 
+      price: 0
+    - icon: {fileID: 0}
+      selectionName: Cursor2
+      description: 
+      price: 0
+    - icon: {fileID: 0}
+      selectionName: Cursor3
+      description: 
+      price: 0
+    - icon: {fileID: 0}
+      selectionName: Cursor4
+      description: 
+      price: 0
