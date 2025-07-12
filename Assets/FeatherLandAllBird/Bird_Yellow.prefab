@@ -28,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 1}
+  m_LocalScale: {x: 0.11096, y: 0.11096, z: 1.1096}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1885250170276666101}
@@ -161,8 +161,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   birdIndex: 0
   walkArea: 3
-  BabyBirdSize: 0.8
-  AdultBirdSize: 1
+  BabyBirdSize: 0.6
+  AdultBirdSize: 0.8
   BirdEatDistance: 0.2
   BackgroundBirdSize: 0
   nestTrans: {fileID: 0}
