@@ -660,7 +660,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: -202900907
   m_SortingOrder: 0
@@ -675,6 +675,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1838307212}
   - component: {fileID: 1838307213}
+  - component: {fileID: 1838307214}
   m_Layer: 0
   m_Name: UIRoot
   m_TagString: Untagged
@@ -712,6 +713,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7199f905658e41c9896133c76ced678b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!225 &1838307214
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1838307211}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

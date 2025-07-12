@@ -21,6 +21,7 @@ namespace BirdGame
         ClockPopup,
         InfoPopup,
         PromptPopup,
+        IllustratedPopup
     }
 
     public interface IUISystem : ISystem
