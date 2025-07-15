@@ -11,6 +11,7 @@ namespace BirdGame
         private Brid _brid;
         private Coroutine coroutine;
         private int random;
+        private bool isLicking = false; // 标记是否正在舔毛
 
         public BirdIdleState(StateMachine machine) : base(machine)
         {
@@ -24,11 +25,20 @@ namespace BirdGame
             float lickingTime = Random.Range(1f, 4f);
 
             coroutine = _brid.StartCoroutine(WaitForNext(time));
-            DOTween.Sequence().AppendCallback(() => { _brid.anim.SetTrigger("Licking"); }).SetDelay(lickingTime);
+            DOTween.Sequence().AppendCallback(() => { 
+                isLicking = true; // 标记开始舔毛
+                _brid.anim.SetTrigger("Licking"); 
+            }).SetDelay(lickingTime);
         }
 
         public override void OnUpdate()
         {
+            // 如果正在舔毛，不检测食物，保持idle状态
+            if (isLicking)
+            {
+                return;
+            }
+
             if (_brid.isSmall && !_brid.isAte)
             {
                 if (_brid.currFood == null)
@@ -55,6 +65,12 @@ namespace BirdGame
 
         private void DONext()
         {
+            // 如果正在舔毛，不切换状态
+            if (isLicking)
+            {
+                return;
+            }
+
             if (_brid.isSmall)
             {
                 currMachine.ChangeState<BirdRunState>();
@@ -93,6 +109,14 @@ namespace BirdGame
         private IEnumerator WaitForNext(float waitTime)
         {
             yield return new WaitForSeconds(waitTime);
+            
+            // 等待舔毛动画完成（大约0.7秒）
+            if (isLicking)
+            {
+                yield return new WaitForSeconds(0.7f);
+                isLicking = false; // 标记舔毛完成
+            }
+            
             DONext();
         }
     }
