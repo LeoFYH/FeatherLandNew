@@ -142,6 +142,9 @@ namespace BirdGame
                 }
 
                 _brid.anim.SetBool("Eat", false);
+                
+                // 吃完后直接切换到Idle状态，防止动画和行为混乱
+                currMachine.ChangeState<BirdIdleState>();
             }
         }
 
