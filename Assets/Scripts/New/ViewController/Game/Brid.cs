@@ -207,6 +207,19 @@ namespace BirdGame
 
             _stateMachine.OnUpdate();
 
+            // 统一处理走路动画 - 只要在移动就播放走路动画
+            if (agent != null && agent.enabled)
+            {
+                if (agent.velocity.magnitude > 0.01f)
+                {
+                    anim.SetFloat("MoveSpeed", 1f);
+                }
+                else
+                {
+                    anim.SetFloat("MoveSpeed", 0f);
+                }
+            }
+
             //检查是否在WalkableArea中并做透视缩放
             var walkableArea = NavigationManager.Instance.GetWalkableArea(walkArea);
             if (walkableArea != null && walkArea == 3)

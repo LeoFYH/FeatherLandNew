@@ -77,8 +77,19 @@ namespace BirdGame
                     0
                 );
                 _brid.agent.SetDestination(eatPosition);
-                if (Mathf.Abs(_brid.transform.position.x - eatPosition.x) > 0.4f)
-                    _brid.sr.flipX = _brid.agent.velocity.x >= 0;
+                
+                // 只要在移动就播放走路动画
+                if (_brid.agent.velocity.magnitude > 0.01f)
+                {
+                    _brid.anim.SetFloat("MoveSpeed", 1f);
+                    if (Mathf.Abs(_brid.transform.position.x - eatPosition.x) > 0.4f)
+                        _brid.sr.flipX = _brid.agent.velocity.x >= 0;
+                }
+                else
+                {
+                    _brid.anim.SetFloat("MoveSpeed", 0f);
+                }
+                
                 if (isOtherBirdEnter)
                 {
                     if (_brid.currFood != null)
