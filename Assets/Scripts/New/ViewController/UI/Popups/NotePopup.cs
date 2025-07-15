@@ -7,7 +7,6 @@ namespace BirdGame
 {
     public class NotePopup : UIBase
     {
-        public TMP_InputField inputField;
         public Button closeButton;
         public Toggle scheduleToggle;
         public Toggle diaryToggle;
@@ -16,11 +15,6 @@ namespace BirdGame
 
         private void Start()
         {
-            inputField.onValueChanged.AddListener(content =>
-            {
-                
-            });
-            
             closeButton.onClick.AddListener(() =>
             {
                 this.GetSystem<IUISystem>().HidePopup(UIPopup.NotePopup);
@@ -28,12 +22,18 @@ namespace BirdGame
             
             scheduleToggle.onValueChanged.AddListener(isOn =>
             {
-                
+                scheduleBar.SetActive(isOn);
+                diaryBar.SetActive(!isOn);
             });
             diaryToggle.onValueChanged.AddListener(isOn =>
             {
-                
+                scheduleBar.SetActive(!isOn);
+                diaryBar.SetActive(isOn);
             });
+
+            diaryToggle.isOn = true;
+            diaryBar.SetActive(true);
+            scheduleBar.SetActive(false);
         }
     }
 }
