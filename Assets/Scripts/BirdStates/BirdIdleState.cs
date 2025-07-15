@@ -19,9 +19,9 @@ namespace BirdGame
 
         public override void OnEnter()
         {
-            float time = Random.Range(5f, 10f);
+            float time = Random.Range(6f, 10f);
             random = Random.Range(1, 10);
-            float lickingTime = Random.Range(2f, time - 0.5f);
+            float lickingTime = Random.Range(1f, 4f);
 
             coroutine = _brid.StartCoroutine(WaitForNext(time));
             DOTween.Sequence().AppendCallback(() => { _brid.anim.SetTrigger("Licking"); }).SetDelay(lickingTime);
