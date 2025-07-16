@@ -15,6 +15,7 @@ namespace BirdGame
             this.RegisterModel<IConfigModel>(new ConfigModel());
             this.RegisterModel<IGameModel>(new GameModel());
             
+            this.RegisterSystem<IAssetSystem>(new AssetSystem());
             this.RegisterSystem<IUISystem>(new UISystem());
             this.RegisterSystem<ISaveSystem>(new SaveSystem());
             this.RegisterSystem<IAudioSystem>(new AudioSystem());

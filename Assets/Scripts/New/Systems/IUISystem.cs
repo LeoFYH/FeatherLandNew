@@ -82,12 +82,11 @@ namespace BirdGame
             }
 
             currentPanel = panel;
-            Addressables.LoadAssetAsync<GameObject>("MenuPanel").Completed += handle =>
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>(panel.ToString(), obj =>
             {
-                currentPanelObject = GameObject.Instantiate(handle.Result, panelLayer).GetComponent<UIBase>();
+                currentPanelObject = GameObject.Instantiate(obj, panelLayer).GetComponent<UIBase>();
                 currentPanelObject.OnShowPanel();
-                handle.Release();
-            };
+            });
         }
 
         public void HidePanel(UIPanel panel)
@@ -104,14 +103,13 @@ namespace BirdGame
                 HidePopup(popup);
             }
 
-            Addressables.LoadAssetAsync<GameObject>(popup.ToString()).Completed += handle =>
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>(popup.ToString(), obj =>
             {
-                var obj = GameObject.Instantiate(handle.Result, popupLayer).GetComponent<UIBase>();
-                obj.OnShowPanel();
-                popupDic.Add(popup, obj);
-                handle.Release();
+                var pop = GameObject.Instantiate(obj, popupLayer).GetComponent<UIBase>();
+                pop.OnShowPanel();
+                popupDic.Add(popup, pop);
                 onComplete?.Invoke();
-            };
+            });
         }
 
         public void HidePopup(UIPopup popup)

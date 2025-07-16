@@ -1,7 +1,6 @@
 ﻿using System;
 using QFramework;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 
 namespace BirdGame
 {
@@ -28,17 +27,16 @@ namespace BirdGame
 
         public void LoadScene(int index, Action<float> onProgress = null, Action onComplete = null)
         {
-            Addressables.LoadAssetAsync<GameObject>($"Scene{index}").Completed += handle =>
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>($"Scene{index}", obj =>
             {
                 if (currentScene != null)
                 {
                     GameObject.Destroy(currentScene);
                 }
 
-                currentScene = GameObject.Instantiate(handle.Result);
-                handle.Release();
+                currentScene = GameObject.Instantiate(obj);
                 onComplete?.Invoke();
-            };
+            });
         }
     }
 }

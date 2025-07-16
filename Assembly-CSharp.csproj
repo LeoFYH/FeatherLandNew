@@ -107,6 +107,7 @@
     <Compile Include="Assets\Scripts\AnimationTest\AddPanel.cs" />
     <Compile Include="Assets\Scripts\New\Models\ISettingModel.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\Brid.cs" />
+    <Compile Include="Assets\Scripts\New\Systems\IAssetSystem.cs" />
     <Compile Include="Assets\Scripts\FSM\StateMachine.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\GameEntry.cs" />
     <Compile Include="Assets\Scripts\UI\NumPanel.cs" />
@@ -151,6 +152,7 @@
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Mobile.shader" />
     <None Include="Assets\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile.shader" />
+    <None Include="Assets\AddressableAssetsData\link.xml" />
     <None Include="Assets\TextMesh Pro\Sprites\EmojiOne.json" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Sprite.shader" />
     <Reference Include="UnityEngine">

@@ -1,6 +1,5 @@
 ﻿using QFramework;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 
 namespace BirdGame
 {
@@ -12,16 +11,14 @@ namespace BirdGame
         protected override void OnExecute()
         {
             this.GetModel<IBirdModel>().UnopenEggs = 3;
-            Addressables.LoadAssetAsync<GameObject>("Egg").Completed += handle =>
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("Egg", obj =>
             {
-                var eggPrefab = handle.Result;
                 for (int i = 0; i < 3; i++)
                 {
-                    GameObject go = GameObject.Instantiate(eggPrefab);
+                    GameObject go = GameObject.Instantiate(obj);
                     go.transform.position = new Vector3((i - 1) * 2, 0, 0);
                 }
-                handle.Release();
-            };
+            });
         }
     }
 }

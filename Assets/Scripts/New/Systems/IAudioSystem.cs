@@ -43,13 +43,6 @@ namespace BirdGame
             {
                 radioAudio.volume = v;
             });
-            //加载音乐列表配置
-            Addressables.LoadAssetAsync<RadioConfig>("RadioConfig").Completed += handle =>
-            {
-                radioConfig = handle.Result;
-                radioModel.SongName.Value = radioConfig.audios[radioModel.SongIndex].songName;
-                handle.Release();
-            };
         }
 
         public void PlaySong()

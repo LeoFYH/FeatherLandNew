@@ -22,16 +22,14 @@ namespace BirdGame
         protected override void OnInit()
         {
             birdModel = this.GetModel<IBirdModel>();
-            Addressables.LoadAssetAsync<GameObject>("Food").Completed += handle =>
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("Food", obj =>
             {
-                foodPrefab = handle.Result;
-                handle.Release();
-            };
-            Addressables.LoadAssetAsync<GameObject>("Num").Completed += handle =>
+                foodPrefab = obj;
+            });
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("Num", obj =>
             {
-                numPrefab = handle.Result;
-                handle.Release();
-            };
+                numPrefab = obj;
+            });
         }
 
         public void CreateNum(string s, Vector3 pos)
