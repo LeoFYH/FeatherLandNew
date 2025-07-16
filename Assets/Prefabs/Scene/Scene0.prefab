@@ -1644,7 +1644,8 @@ MonoBehaviour:
   foregroundGrass: {fileID: 8665284266660803308}
   birdMaterial: {fileID: 2100000, guid: fce2b27855dd4954ea748470f0239b12, type: 2}
   weathers:
-  - background:
+  - weatherName: "\u767D\u5929"
+    background:
       sprite: {fileID: 21300000, guid: 659a3c3ae8dea014bb3d28fbbf0c3621, type: 3}
       scale: 0.5
     backgroundTree:
@@ -1680,7 +1681,8 @@ MonoBehaviour:
     onWeatherExit:
       m_PersistentCalls:
         m_Calls: []
-  - background:
+  - weatherName: "\u4E0B\u96E8"
+    background:
       sprite: {fileID: 21300000, guid: d1d6e7e976a31154c8469c57620a0de7, type: 3}
       scale: 0.5
     backgroundTree:
@@ -1740,7 +1742,8 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-  - background:
+  - weatherName: "\u591C\u665A"
+    background:
       sprite: {fileID: 21300000, guid: 6b83f286ac46025449afcc14a7712a60, type: 3}
       scale: 0.5
     backgroundTree:
@@ -1776,7 +1779,8 @@ MonoBehaviour:
     onWeatherExit:
       m_PersistentCalls:
         m_Calls: []
-  - background:
+  - weatherName: "\u843D\u65E5"
+    background:
       sprite: {fileID: 21300000, guid: 6838d39b67411a74fad4909d6e9d1809, type: 3}
       scale: 0.5
     backgroundTree:
@@ -1812,7 +1816,8 @@ MonoBehaviour:
     onWeatherExit:
       m_PersistentCalls:
         m_Calls: []
-  - background:
+  - weatherName: "\u96FE\u5929"
+    background:
       sprite: {fileID: 21300000, guid: 0e78b0d0e0d2ddd4399aa395a720457c, type: 3}
       scale: 0.5
     backgroundTree:

@@ -2,6 +2,7 @@ using System;
 using BirdGame;
 using DG.Tweening;
 using QFramework;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -72,7 +73,7 @@ namespace BirdGame
                 var lastWeather = weathers[currentIndex];
                 lastWeather.onWeatherExit?.Invoke();
             }
-
+            
             this.GetModel<IGameModel>().WeatherIndex.Value = index;
             currentIndex = index;
             var weather = weathers[index];
@@ -181,6 +182,7 @@ namespace BirdGame
     [Serializable]
     public class Weather
     {
+        public string weatherName;
         public SpriteItem background;
         public SpriteItem backgroundTree;
         public SpriteItem backgroundGrass;
@@ -204,6 +206,7 @@ namespace BirdGame
     [Serializable]
     public class SpriteItem
     {
+        [PreviewField]
         public Sprite sprite;
         public float scale = 1f;
     }

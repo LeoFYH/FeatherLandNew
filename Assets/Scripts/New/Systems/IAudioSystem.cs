@@ -1,9 +1,16 @@
-﻿using QFramework;
+﻿using System.Collections.Generic;
+using QFramework;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 
 namespace BirdGame
 {
+    public enum EffectType
+    {
+        Click,
+        DropFood,
+        Stroke
+    }
+
     public interface IAudioSystem : ISystem
     {
         /// <summary>
@@ -22,13 +29,15 @@ namespace BirdGame
         /// 下一首歌
         /// </summary>
         void NextSong();
+
+        void PlayEffect(EffectType type);
     }
 
     public class AudioSystem : AbstractSystem, IAudioSystem
     {
         private IRadioModel radioModel;
         private AudioSource radioAudio;
-        private RadioConfig radioConfig;
+        private List<AudioSource> effectList = new List<AudioSource>();
         
         protected override void OnInit()
         {
@@ -52,7 +61,7 @@ namespace BirdGame
                 Debug.Log("正在播放，无法重复播放！");
                 return;
             }
-            var item = radioConfig.audios[radioModel.SongIndex];
+            var item = this.GetModel<IConfigModel>().RadioConfig.audios[radioModel.SongIndex];
             radioAudio.clip = item.songFile;
             radioAudio.Play();
             radioModel.PlayingSong.Value = true;
@@ -73,7 +82,7 @@ namespace BirdGame
         {
             if (radioModel.SongIndex == 0)
             {
-                radioModel.SongIndex = radioConfig.audios.Length - 1;
+                radioModel.SongIndex = this.GetModel<IConfigModel>().RadioConfig.audios.Length - 1;
             }
             else
             {
@@ -85,7 +94,7 @@ namespace BirdGame
 
         public void NextSong()
         {
-            if (radioModel.SongIndex == radioConfig.audios.Length - 1)
+            if (radioModel.SongIndex == this.GetModel<IConfigModel>().RadioConfig.audios.Length - 1)
             {
                 radioModel.SongIndex = 0;
             }
@@ -97,10 +106,44 @@ namespace BirdGame
             RefreshSong();
         }
 
+        public void PlayEffect(EffectType type)
+        {
+            AudioClip clip = null;
+            switch (type)
+            {
+                case EffectType.Click: 
+                    clip = this.GetModel<IConfigModel>().RadioConfig.click;
+                    break;
+                case EffectType.DropFood:
+                    clip = this.GetModel<IConfigModel>().RadioConfig.dropFood;
+                    break;
+                case EffectType.Stroke:
+                    clip = this.GetModel<IConfigModel>().RadioConfig.stroke;
+                    break;
+            }
+            int count = effectList.Count;
+            for (int i = 0; i < count; i++)
+            {
+                if (!effectList[i].isPlaying)
+                {
+                    effectList[i].clip = clip;
+                    effectList[i].loop = false;
+                    effectList[i].Play();
+                    return;
+                }
+            }
+
+            var audio = radioAudio.gameObject.AddComponent<AudioSource>();
+            effectList.Add(audio);
+            audio.loop = false;
+            audio.clip = clip;
+            audio.Play();
+        }
+
         private void RefreshSong()
         {
-            radioAudio.clip = radioConfig.audios[radioModel.SongIndex].songFile;
-            radioModel.SongName.Value = radioConfig.audios[radioModel.SongIndex].songName;
+            radioAudio.clip = this.GetModel<IConfigModel>().RadioConfig.audios[radioModel.SongIndex].songFile;
+            radioModel.SongName.Value = this.GetModel<IConfigModel>().RadioConfig.audios[radioModel.SongIndex].songName;
             if (radioModel.PlayingSong.Value)
             {
                 radioAudio.Play();

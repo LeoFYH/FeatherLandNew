@@ -195,6 +195,7 @@ namespace BirdGame
                                 currentFavorability.Value++;
                             }
 
+                            this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Stroke);
                             anim.SetTrigger("Stroke");
                             if (petTime > 0.5)
                             {

@@ -60,6 +60,7 @@ namespace BirdGame
         
             if (NavigationManager.Instance.IsPointInNavMeshArea(3, mousePosition))
             {
+                this.GetSystem<IAudioSystem>().PlayEffect(EffectType.DropFood);
                 Food food = GameObject.Instantiate(foodPrefab).GetComponent<Food>();
                 food.isTargeted = false;
             

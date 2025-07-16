@@ -6,8 +6,13 @@ namespace BirdGame
 {
     public class RadioConfig : ScriptableObject
     {
-        [TableList(ShowIndexLabels = true)]
+        [Title("音乐播放器库"),TableList(ShowIndexLabels = true)]
         public AudioItem[] audios;
+        
+        [Title("音效")]
+        public AudioClip click;
+        public AudioClip dropFood;
+        public AudioClip stroke;
     }
 
     [Serializable]
