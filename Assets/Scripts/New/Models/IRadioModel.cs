@@ -9,6 +9,7 @@ namespace BirdGame
         BindableProperty<bool> PlayingSong { get; }
         BindableProperty<float> SongProgress { get; }
         BindableProperty<float> SongVolume { get; }
+        MusicType Type { get; set; }
     }
 
     public class RadioModel : AbstractModel, IRadioModel
@@ -22,5 +23,6 @@ namespace BirdGame
         public BindableProperty<bool> PlayingSong { get; } = new BindableProperty<bool>(false);
         public BindableProperty<float> SongProgress { get; } = new BindableProperty<float>(0f);
         public BindableProperty<float> SongVolume { get; } = new BindableProperty<float>(0.5f);
+        public MusicType Type { get; set; } = MusicType.Music;
     }
 }

@@ -7,7 +7,9 @@ namespace BirdGame
     public class RadioConfig : ScriptableObject
     {
         [Title("音乐播放器库"),TableList(ShowIndexLabels = true)]
-        public AudioItem[] audios;
+        public AudioItem[] musics;
+        [TableList(ShowIndexLabels = true)]
+        public AudioItem[] environments;
         
         [Title("音效")]
         public AudioClip click;

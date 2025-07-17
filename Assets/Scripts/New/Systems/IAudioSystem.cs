@@ -31,6 +31,7 @@ namespace BirdGame
         void NextSong();
 
         void PlayEffect(EffectType type);
+        void SwitchSong(MusicType type, int index);
     }
 
     public class AudioSystem : AbstractSystem, IAudioSystem
@@ -56,15 +57,20 @@ namespace BirdGame
 
         public void PlaySong()
         {
-            if (radioModel.PlayingSong.Value)
+            if (radioModel.Type == MusicType.Music)
             {
-                Debug.Log("正在播放，无法重复播放！");
-                return;
+                var item = this.GetModel<IConfigModel>().RadioConfig.musics[radioModel.SongIndex];
+                radioAudio.clip = item.songFile;
+                radioAudio.Play();
+                radioModel.PlayingSong.Value = true;
             }
-            var item = this.GetModel<IConfigModel>().RadioConfig.audios[radioModel.SongIndex];
-            radioAudio.clip = item.songFile;
-            radioAudio.Play();
-            radioModel.PlayingSong.Value = true;
+            else
+            {
+                var item = this.GetModel<IConfigModel>().RadioConfig.environments[radioModel.SongIndex];
+                radioAudio.clip = item.songFile;
+                radioAudio.Play();
+                radioModel.PlayingSong.Value = true;
+            }
         }
 
         public void PauseSong()
@@ -82,7 +88,9 @@ namespace BirdGame
         {
             if (radioModel.SongIndex == 0)
             {
-                radioModel.SongIndex = this.GetModel<IConfigModel>().RadioConfig.audios.Length - 1;
+                radioModel.SongIndex = radioModel.Type == MusicType.Music ?
+                    this.GetModel<IConfigModel>().RadioConfig.musics.Length - 1 : 
+                    this.GetModel<IConfigModel>().RadioConfig.environments.Length - 1;
             }
             else
             {
@@ -94,7 +102,10 @@ namespace BirdGame
 
         public void NextSong()
         {
-            if (radioModel.SongIndex == this.GetModel<IConfigModel>().RadioConfig.audios.Length - 1)
+            int max = radioModel.Type == MusicType.Music
+                ? this.GetModel<IConfigModel>().RadioConfig.musics.Length - 1
+                : this.GetModel<IConfigModel>().RadioConfig.environments.Length - 1;
+            if (radioModel.SongIndex >= max)
             {
                 radioModel.SongIndex = 0;
             }
@@ -140,10 +151,25 @@ namespace BirdGame
             audio.Play();
         }
 
+        public void SwitchSong(MusicType type, int index)
+        {
+            radioModel.SongIndex = index;
+            radioModel.Type = type;
+            PlaySong();
+        }
+
         private void RefreshSong()
         {
-            radioAudio.clip = this.GetModel<IConfigModel>().RadioConfig.audios[radioModel.SongIndex].songFile;
-            radioModel.SongName.Value = this.GetModel<IConfigModel>().RadioConfig.audios[radioModel.SongIndex].songName;
+            radioAudio.clip = radioModel.Type == MusicType.Music ? 
+                this.GetModel<IConfigModel>().RadioConfig.musics[radioModel.SongIndex].songFile :
+                this.GetModel<IConfigModel>().RadioConfig.environments[radioModel.SongIndex].songFile;
+            radioModel.SongName.Value = radioModel.Type == MusicType.Music ? 
+                this.GetModel<IConfigModel>().RadioConfig.musics[radioModel.SongIndex].songName :
+                this.GetModel<IConfigModel>().RadioConfig.environments[radioModel.SongIndex].songName;
+            
+            if(radioModel.Type == MusicType.Environment)
+                this.SendEvent<RefreshSongEvent>();
+            
             if (radioModel.PlayingSong.Value)
             {
                 radioAudio.Play();

@@ -60,6 +60,7 @@
     <Compile Include="Assets\Scripts\New\ViewController\Game\Food.cs" />
     <Compile Include="Assets\Scripts\New\Utility\FullScreenUtility.cs" />
     <Compile Include="Assets\Scripts\Notebook\NotebookUI.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\Game\MusicPlayItem.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\SettingPopup.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\ClockPopup.cs" />
     <Compile Include="Assets\Scripts\New\Systems\IUISystem.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\EggContentViewController.cs" />
     <Compile Include="Assets\Scripts\Feather.cs" />
     <Compile Include="Assets\Scripts\New\Systems\ISaveSystem.cs" />
+    <Compile Include="Assets\Scripts\New\Events\RefreshSongEvent.cs" />
     <Compile Include="Assets\Scripts\Radio\RadioUI.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\ShopToolItem.cs" />
     <Compile Include="Assets\Scripts\WalkableArea.cs" />
@@ -89,6 +91,7 @@
     <Compile Include="Assets\Scripts\HouseToggle.cs" />
     <Compile Include="Assets\Scripts\Managers\PauseManager.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\UIBase.cs" />
+    <Compile Include="Assets\Scripts\New\Events\PlayEnvironmentEvent.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\ViewControllerBase.cs" />
     <Compile Include="Assets\Scripts\BirdStates\BirdFlyWaitState.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\DecorationContentViewController.cs" />
@@ -100,6 +103,7 @@
     <Compile Include="Assets\Scripts\New\Systems\ISceneSystem.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\ToolsContentViewController.cs" />
     <Compile Include="Assets\Scripts\New\Systems\IAudioSystem.cs" />
+    <Compile Include="Assets\Scripts\New\Events\PlayMusicEvent.cs" />
     <Compile Include="Assets\Scripts\AnimationTest\AddItem.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\ShopDecorationItem.cs" />
     <Compile Include="Assets\Scripts\New\Models\IRadioModel.cs" />
