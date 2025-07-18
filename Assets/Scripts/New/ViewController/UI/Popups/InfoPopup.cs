@@ -19,6 +19,8 @@ namespace BirdGame
         public Sprite iconForFavi;
         public TextMeshProUGUI incomeText;
         public TextMeshProUGUI priceText;
+        public TMP_InputField cutomName;
+
 
         private int price;
         
@@ -46,6 +48,32 @@ namespace BirdGame
             var birdConf = this.GetModel<IConfigModel>().BirdConfig.birds[data.birdType];
             icon.sprite = birdConf.preview;
             birdName.text = birdConf.birdName;
+            // 显示自定义名称，如果没有则显示默认名称
+            string displayName = string.IsNullOrEmpty(data.customName) ? birdConf.birdName : data.customName;
+            cutomName.text = displayName;
+            
+            // 添加输入框事件监听
+            if (cutomName != null)
+            {
+                cutomName.onEndEdit.AddListener(OnNameEditComplete);
+                
+                // 确保Text Component和Placeholder的Raycast Target正确
+                var textComponent = cutomName.textComponent;
+                if (textComponent != null)
+                {
+                    textComponent.raycastTarget = true;
+                }
+                
+                var placeholder = cutomName.placeholder;
+                if (placeholder != null)
+                {
+                    placeholder.raycastTarget = true;
+                }
+                
+                // 确保InputField可以交互
+                cutomName.interactable = true;
+                cutomName.readOnly = false;
+            }
             if (data.bird.isSmall)
             {
                 progressIcon.sprite = iconForBig;
@@ -80,6 +108,22 @@ namespace BirdGame
             {
                 this.GetSystem<IUISystem>().HidePopup(UIPopup.InfoPopup);
             });
+        }
+        
+        private void OnNameEditComplete(string newName)
+        {
+            int index = this.GetModel<IGameModel>().CurrentSelectedBirdIndex;
+            var data = this.GetModel<IBirdModel>().BirdList[index];
+            
+            // 保存新名称
+            data.customName = string.IsNullOrEmpty(newName) ? null : newName;
+            
+            // 如果输入为空，显示默认名称
+            if (string.IsNullOrEmpty(data.customName))
+            {
+                var birdConf = this.GetModel<IConfigModel>().BirdConfig.birds[data.birdType];
+                cutomName.text = birdConf.birdName;
+            }
         }
     }
 }

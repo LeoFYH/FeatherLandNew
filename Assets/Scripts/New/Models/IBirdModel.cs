@@ -59,5 +59,6 @@ namespace BirdGame
     {
         public int birdType;
         public Brid bird;
+        public string customName; // 自定义名称
     }
 }
