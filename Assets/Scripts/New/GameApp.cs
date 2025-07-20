@@ -8,6 +8,7 @@ namespace BirdGame
         {
             this.RegisterUtility<IFullScreenUtility>(new FullScreenUtility());
             
+            this.RegisterModel<ISaveModel>(new SaveModel());
             this.RegisterModel<ISettingModel>(new SettingModel());
             this.RegisterModel<IAccountModel>(new AccountModel());
             this.RegisterModel<IRadioModel>(new RadioModel());
@@ -15,9 +16,10 @@ namespace BirdGame
             this.RegisterModel<IConfigModel>(new ConfigModel());
             this.RegisterModel<IGameModel>(new GameModel());
             
+            this.RegisterSystem<IMonoSystem>(new MonoSystem());
             this.RegisterSystem<IAssetSystem>(new AssetSystem());
-            this.RegisterSystem<IUISystem>(new UISystem());
             this.RegisterSystem<ISaveSystem>(new SaveSystem());
+            this.RegisterSystem<IUISystem>(new UISystem());
             this.RegisterSystem<IAudioSystem>(new AudioSystem());
             this.RegisterSystem<IGameSystem>(new GameSystem());
             this.RegisterSystem<ISceneSystem>(new SceneSystem());

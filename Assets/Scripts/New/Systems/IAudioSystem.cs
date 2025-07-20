@@ -31,13 +31,23 @@ namespace BirdGame
         void NextSong();
 
         void PlayEffect(EffectType type);
-        void SwitchSong(MusicType type, int index);
+        /// <summary>
+        /// 通过Index播放音乐
+        /// </summary>
+        /// <param name="index"></param>
+        void PlaySong(int index);
+        /// <summary>
+        /// 播放环境音
+        /// </summary>
+        /// <param name="index"></param>
+        void PlayEnvironment(int index);
     }
 
     public class AudioSystem : AbstractSystem, IAudioSystem
     {
         private IRadioModel radioModel;
         private AudioSource radioAudio;
+        private Dictionary<int, AudioSource> environmentAudios = new Dictionary<int, AudioSource>();
         private List<AudioSource> effectList = new List<AudioSource>();
         
         protected override void OnInit()
@@ -57,64 +67,128 @@ namespace BirdGame
 
         public void PlaySong()
         {
-            if (radioModel.Type == MusicType.Music)
+            if (radioModel.CurrentMusicType == MusicType.Music)
             {
                 var item = this.GetModel<IConfigModel>().RadioConfig.musics[radioModel.SongIndex];
                 radioAudio.clip = item.songFile;
                 radioAudio.Play();
-                radioModel.PlayingSong.Value = true;
             }
             else
             {
                 var item = this.GetModel<IConfigModel>().RadioConfig.environments[radioModel.SongIndex];
-                radioAudio.clip = item.songFile;
-                radioAudio.Play();
-                radioModel.PlayingSong.Value = true;
+                environmentAudios[radioModel.SongIndex].clip = item.songFile;
+                environmentAudios[radioModel.SongIndex].Play();
             }
+            radioModel.PlayingSong.Value = true;
         }
 
         public void PauseSong()
         {
-            if (!radioModel.PlayingSong.Value)
+            if (radioModel.CurrentMusicType == MusicType.Music)
             {
-                Debug.Log("已经停止播放，无法重复停止！");
-                return;
+                if (!radioModel.PlayingSong.Value)
+                {
+                    Debug.Log("已经停止播放，无法重复停止！");
+                    return;
+                }
+
+                radioAudio.Pause();
+                radioModel.PlayingSong.Value = false;
             }
-            radioAudio.Pause();
-            radioModel.PlayingSong.Value = false;
+            else
+            {
+                int index = radioModel.SongIndex;
+                if (!environmentAudios[index].isPlaying)
+                {
+                    Debug.Log("已经停止播放，无法重复停止！");
+                    return;
+                }
+                environmentAudios[index].Pause();
+                radioModel.PlayingSong.Value = false;
+            }
         }
 
         public void PreviousSong()
         {
-            if (radioModel.SongIndex == 0)
+            var configModel = this.GetModel<IConfigModel>();
+            if (radioModel.CurrentMusicType == MusicType.Music)
             {
-                radioModel.SongIndex = radioModel.Type == MusicType.Music ?
-                    this.GetModel<IConfigModel>().RadioConfig.musics.Length - 1 : 
-                    this.GetModel<IConfigModel>().RadioConfig.environments.Length - 1;
+                if (radioModel.SongIndex == 0)
+                {
+                    radioModel.SongIndex = configModel.RadioConfig.musics.Length - 1;
+                }
+                else
+                {
+                    radioModel.SongIndex--;
+                }
+
+                radioAudio.clip = configModel.RadioConfig.musics[radioModel.SongIndex].songFile;
+                radioModel.SongName.Value = configModel.RadioConfig.musics[radioModel.SongIndex].songName;
+                if (radioModel.PlayingSong.Value)
+                {
+                    radioAudio.Play();
+                }
             }
             else
             {
-                radioModel.SongIndex--;
+                if (radioModel.SongIndex == 0)
+                {
+                    radioModel.SongIndex = configModel.RadioConfig.environments.Length - 1;
+                }
+                else
+                {
+                    radioModel.SongIndex--;
+                    if (radioModel.SongIndex >= configModel.RadioConfig.environments.Length)
+                    {
+                        radioModel.SongIndex = configModel.RadioConfig.environments.Length - 1;
+                    }
+                }
+                this.SendEvent(new PlayEnvironmentEvent()
+                {
+                    index = radioModel.SongIndex
+                });
             }
-
-            RefreshSong();
+            
         }
 
         public void NextSong()
         {
-            int max = radioModel.Type == MusicType.Music
-                ? this.GetModel<IConfigModel>().RadioConfig.musics.Length - 1
-                : this.GetModel<IConfigModel>().RadioConfig.environments.Length - 1;
-            if (radioModel.SongIndex >= max)
+            var configModel = this.GetModel<IConfigModel>();
+            if (radioModel.CurrentMusicType == MusicType.Music)
             {
-                radioModel.SongIndex = 0;
+                int max = configModel.RadioConfig.musics.Length - 1;
+                if (radioModel.SongIndex >= max)
+                {
+                    radioModel.SongIndex = 0;
+                }
+                else
+                {
+                    radioModel.SongIndex++;
+                }
+
+                radioAudio.clip = configModel.RadioConfig.musics[radioModel.SongIndex].songFile;
+                radioModel.SongName.Value = configModel.RadioConfig.musics[radioModel.SongIndex].songName;
+                if (radioModel.PlayingSong.Value)
+                {
+                    radioAudio.Play();
+                }
             }
             else
             {
-                radioModel.SongIndex++;
+                int max = configModel.RadioConfig.environments.Length - 1;
+                if (radioModel.SongIndex >= max)
+                {
+                    radioModel.SongIndex = 0;
+                }
+                else
+                {
+                    radioModel.SongIndex++;
+                }
+                this.SendEvent(new PlayEnvironmentEvent()
+                {
+                    index = radioModel.SongIndex
+                });
             }
-
-            RefreshSong();
         }
 
         public void PlayEffect(EffectType type)
@@ -151,29 +225,29 @@ namespace BirdGame
             audio.Play();
         }
 
-        public void SwitchSong(MusicType type, int index)
+        public void PlaySong(int index)
         {
+            radioModel.CurrentMusicType = MusicType.Music;
             radioModel.SongIndex = index;
-            radioModel.Type = type;
             PlaySong();
         }
 
-        private void RefreshSong()
+        public void PlayEnvironment(int index)
         {
-            radioAudio.clip = radioModel.Type == MusicType.Music ? 
-                this.GetModel<IConfigModel>().RadioConfig.musics[radioModel.SongIndex].songFile :
-                this.GetModel<IConfigModel>().RadioConfig.environments[radioModel.SongIndex].songFile;
-            radioModel.SongName.Value = radioModel.Type == MusicType.Music ? 
-                this.GetModel<IConfigModel>().RadioConfig.musics[radioModel.SongIndex].songName :
-                this.GetModel<IConfigModel>().RadioConfig.environments[radioModel.SongIndex].songName;
-            
-            if(radioModel.Type == MusicType.Environment)
-                this.SendEvent<RefreshSongEvent>();
-            
-            if (radioModel.PlayingSong.Value)
+            radioModel.CurrentMusicType = MusicType.Environment;
+            radioModel.SongIndex = index;
+            if (!environmentAudios.ContainsKey(index))
             {
-                radioAudio.Play();
+                environmentAudios.Add(index, radioAudio.gameObject.AddComponent<AudioSource>());
+                environmentAudios[index].loop = true;
+                environmentAudios[index].volume = radioModel.EnvironmentVolumes[index].Value;
+                radioModel.EnvironmentVolumes[index].Register(v =>
+                {
+                    environmentAudios[index].volume = v;
+                });
             }
+
+            radioModel.PlayingSong.Value = environmentAudios[index].isPlaying;
         }
     }
 }

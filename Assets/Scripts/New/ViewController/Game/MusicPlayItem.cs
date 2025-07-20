@@ -1,5 +1,4 @@
 ﻿using QFramework;
-using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -29,8 +28,7 @@ namespace BirdGame
             {
                 this.GetSystem<IAudioSystem>().SendEvent(new PlayEnvironmentEvent()
                 {
-                    index = Index,
-                    sp = GetComponent<Image>().sprite,
+                    index = Index
                 });
             }
         }

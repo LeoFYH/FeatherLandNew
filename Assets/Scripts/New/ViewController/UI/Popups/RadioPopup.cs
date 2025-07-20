@@ -1,4 +1,6 @@
-﻿using DG.Tweening;
+﻿using System;
+using System.Collections.Generic;
+using DG.Tweening;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -40,6 +42,7 @@ namespace BirdGame
         {
             var audioSystem = this.GetSystem<IAudioSystem>();
             var radioModel = this.GetModel<IRadioModel>();
+            var saveModel = this.GetModel<ISaveModel>();
             previousButton.onClick.AddListener(() =>
             {
                 audioSystem.PreviousSong();
@@ -69,12 +72,17 @@ namespace BirdGame
                 ShowContent(environmentContent);
             });
             
-            volumeSlider.value = radioModel.SongVolume.Value;
-            volumeFill.fillAmount = radioModel.SongVolume.Value;
             volumeSlider.onValueChanged.AddListener(volume =>
             {
-                volumeFill.fillAmount = volume;
-                this.GetModel<IRadioModel>().SongVolume.Value = volume;
+                if (radioModel.CurrentMusicType == MusicType.Music)
+                {
+                    radioModel.SongVolume.Value = volume;
+                }
+                else
+                {
+                    int index = radioModel.SongIndex;
+                    radioModel.EnvironmentVolumes[index].Value = volume;
+                }
             });
             
             play.gameObject.SetActive(!radioModel.PlayingSong.Value);
@@ -95,42 +103,28 @@ namespace BirdGame
 
             this.RegisterEvent<PlayMusicEvent>(evt =>
             {
-                view.SetActive(false);
-                this.GetSystem<IAudioSystem>().SwitchSong(MusicType.Music, evt.index);
+                this.GetSystem<IAudioSystem>().PlaySong(evt.index);
+                view.gameObject.SetActive(false);
+                RefreshVolumeRegister();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             this.RegisterEvent<PlayEnvironmentEvent>(evt =>
             {
-                view.SetActive(true);
-                icon.sprite = evt.sp;
-                var size = evt.sp.rect.size * 0.5f;
-                icon.GetComponent<RectTransform>().sizeDelta = size;
-                this.GetSystem<IAudioSystem>().SwitchSong(MusicType.Environment, evt.index);
-            }).UnRegisterWhenGameObjectDestroyed(gameObject);
-
-            this.RegisterEvent<RefreshSongEvent>(evt =>
-            {
-                var sp = environmentItems[radioModel.SongIndex].GetComponent<Image>().sprite;
+                this.GetSystem<IAudioSystem>().PlayEnvironment(evt.index);
+                view.gameObject.SetActive(true);
+                var sp = environmentItems[evt.index].GetComponent<Image>().sprite;
                 icon.sprite = sp;
                 icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.5f;
+                RefreshVolumeRegister();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
             InitItems();
-            
-            musicContent.gameObject.SetActive(false);
-            environmentContent.gameObject.SetActive(false);
-            if (this.GetModel<IRadioModel>().Type == MusicType.Music)
-            {
-                ShowContent(musicContent);
-                view.SetActive(false);
-            }
-            else
-            {
-                ShowContent(environmentContent);
-                view.SetActive(true);
-                var sp = environmentItems[radioModel.SongIndex].GetComponent<Image>().sprite;
-                icon.sprite = sp;
-                icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.5f;
-            }
+            ShowContent(musicContent);
+            RefreshVolumeRegister();
+        }
+
+        private void OnDestroy()
+        {
+            this.GetSystem<ISaveSystem>().SaveData();
         }
 
         private void InitItems()
@@ -148,11 +142,28 @@ namespace BirdGame
                 }
             }
 
+            var radioModel = this.GetModel<IRadioModel>();
+            var saveModel = this.GetModel<ISaveModel>();
+            radioModel.SongVolume.Value = saveModel.MusicSettingData.bgmVolume;
             for (int i = 0; i < environmentItems.Length; i++)
             {
                 if (i < config.environments.Length)
                 {
                     environmentItems[i].Init(i, MusicType.Environment);
+                    if (radioModel.EnvironmentVolumes.Count >= i)
+                    {
+                        radioModel.EnvironmentVolumes.Add(new BindableProperty<float>());
+                    }
+
+                    if (saveModel.MusicSettingData.environmentVolumes == null)
+                        saveModel.MusicSettingData.environmentVolumes = new List<float>();
+
+                    if (saveModel.MusicSettingData.environmentVolumes.Count <= i)
+                    {
+                        saveModel.MusicSettingData.environmentVolumes.Add(0.5f);
+                    }
+
+                    radioModel.EnvironmentVolumes[i].Value = saveModel.MusicSettingData.environmentVolumes[i];
                 }
                 else
                 {
@@ -192,6 +203,53 @@ namespace BirdGame
             content.anchoredPosition = Vector2.zero;
             content.gameObject.SetActive(true);
             content.DOAnchorPosY(content.sizeDelta.y, 0.5f).SetEase(Ease.Linear);
+        }
+
+        private void RefreshVolumeRegister()
+        {
+            UnregisterAllVolumes();
+            var radioModel = this.GetModel<IRadioModel>();
+            var saveModel = this.GetModel<ISaveModel>();
+            if (radioModel.CurrentMusicType == MusicType.Music)
+            {
+                radioModel.SongVolume.Value = saveModel.MusicSettingData.bgmVolume;
+                volumeSlider.value = radioModel.SongVolume.Value;
+                volumeFill.fillAmount = radioModel.SongVolume.Value;
+                radioModel.SongVolume.Register(OnVolumeChanged).UnRegisterWhenGameObjectDestroyed(gameObject);
+            }
+            else if (radioModel.CurrentMusicType == MusicType.Environment)
+            {
+                int index = radioModel.SongIndex;
+                radioModel.EnvironmentVolumes[index].Value = saveModel.MusicSettingData.environmentVolumes[index];
+                volumeSlider.value = radioModel.EnvironmentVolumes[index].Value;
+                volumeFill.fillAmount = radioModel.EnvironmentVolumes[index].Value;
+                radioModel.EnvironmentVolumes[index].Register(OnVolumeChanged)
+                    .UnRegisterWhenGameObjectDestroyed(gameObject);
+            }
+        }
+
+        private void UnregisterAllVolumes()
+        {
+            var radioModel = this.GetModel<IRadioModel>();
+            radioModel.SongVolume.UnRegister(OnVolumeChanged);
+            foreach (var volume in radioModel.EnvironmentVolumes)
+            {
+                volume.UnRegister(OnVolumeChanged);
+            }
+        }
+
+        private void OnVolumeChanged(float volume)
+        {
+            var saveModel = this.GetModel<ISaveModel>();
+            var radioModel = this.GetModel<IRadioModel>();
+            if (radioModel.CurrentMusicType == MusicType.Music)
+            {
+                saveModel.MusicSettingData.bgmVolume = volume;
+            }
+            else if (radioModel.CurrentMusicType == MusicType.Environment)
+            {
+                saveModel.MusicSettingData.environmentVolumes[radioModel.SongIndex] = volume;
+            }
         }
     }
 }

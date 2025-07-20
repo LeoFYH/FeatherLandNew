@@ -1,10 +1,7 @@
-﻿using UnityEngine;
-
-namespace BirdGame
+﻿namespace BirdGame
 {
     public struct PlayEnvironmentEvent
     {
         public int index;
-        public Sprite sp;
     }
 }

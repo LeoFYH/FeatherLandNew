@@ -1,4 +1,5 @@
-﻿using QFramework;
+﻿using System.Collections.Generic;
+using QFramework;
 
 namespace BirdGame
 {
@@ -9,7 +10,8 @@ namespace BirdGame
         BindableProperty<bool> PlayingSong { get; }
         BindableProperty<float> SongProgress { get; }
         BindableProperty<float> SongVolume { get; }
-        MusicType Type { get; set; }
+        List<BindableProperty<float>> EnvironmentVolumes { get; }
+        MusicType CurrentMusicType { get; set; }
     }
 
     public class RadioModel : AbstractModel, IRadioModel
@@ -23,6 +25,7 @@ namespace BirdGame
         public BindableProperty<bool> PlayingSong { get; } = new BindableProperty<bool>(false);
         public BindableProperty<float> SongProgress { get; } = new BindableProperty<float>(0f);
         public BindableProperty<float> SongVolume { get; } = new BindableProperty<float>(0.5f);
-        public MusicType Type { get; set; } = MusicType.Music;
+        public List<BindableProperty<float>> EnvironmentVolumes { get; } = new List<BindableProperty<float>>();
+        public MusicType CurrentMusicType { get; set; } = MusicType.Music;
     }
 }
