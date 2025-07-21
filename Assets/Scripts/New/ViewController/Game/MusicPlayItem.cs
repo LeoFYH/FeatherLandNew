@@ -13,6 +13,10 @@ namespace BirdGame
         {
             Index = id;
             Type = type;
+            if (type == MusicType.Music)
+            {
+                GetComponent<Image>().sprite = this.GetModel<IConfigModel>().RadioConfig.recordItems[Index].icon;
+            }
         }
 
         public void OnPointerClick(PointerEventData eventData)

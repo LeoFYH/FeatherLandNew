@@ -25,7 +25,7 @@ namespace BirdGame
             {
                 this.GetModel<IConfigModel>().RadioConfig = config;
                 var radioModel = this.GetModel<IRadioModel>();
-                radioModel.SongName.Value = config.musics[radioModel.SongIndex].songName;
+                radioModel.SongName.Value = config.recordItems[radioModel.RecordIndex].musics[radioModel.SongIndex].songName;
             });
             LoadAssetAsync<ShopConfig>("ShopConfig", config =>
             {

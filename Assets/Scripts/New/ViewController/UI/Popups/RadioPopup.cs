@@ -32,7 +32,6 @@ namespace BirdGame
         public RectTransform environmentContent;
         public MusicPlayItem[] musicItems;
         public MusicPlayItem[] environmentItems;
-        public GameObject view;
         public Image icon;
 
         private Tweener rollTweener;
@@ -104,13 +103,14 @@ namespace BirdGame
             this.RegisterEvent<PlayMusicEvent>(evt =>
             {
                 this.GetSystem<IAudioSystem>().PlaySong(evt.index);
-                view.gameObject.SetActive(false);
+                var sp = this.GetModel<IConfigModel>().RadioConfig.recordItems[evt.index].icon;
+                icon.sprite = sp;
+                icon.GetComponent<RectTransform>().sizeDelta = new Vector2(268f, 276f);
                 RefreshVolumeRegister();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             this.RegisterEvent<PlayEnvironmentEvent>(evt =>
             {
                 this.GetSystem<IAudioSystem>().PlayEnvironment(evt.index);
-                view.gameObject.SetActive(true);
                 var sp = environmentItems[evt.index].GetComponent<Image>().sprite;
                 icon.sprite = sp;
                 icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.5f;
@@ -118,6 +118,9 @@ namespace BirdGame
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
             InitItems();
+            var sp = this.GetModel<IConfigModel>().RadioConfig.recordItems[radioModel.RecordIndex].icon;
+            icon.sprite = sp;
+            icon.GetComponent<RectTransform>().sizeDelta = new Vector2(268f, 276f);
             ShowContent(musicContent);
             RefreshVolumeRegister();
         }
@@ -132,7 +135,7 @@ namespace BirdGame
             var config = this.GetModel<IConfigModel>().RadioConfig;
             for (int i = 0; i < musicItems.Length; i++)
             {
-                if (i < config.musics.Length)
+                if (i < config.recordItems.Length)
                 {
                     musicItems[i].Init(i, MusicType.Music);
                 }

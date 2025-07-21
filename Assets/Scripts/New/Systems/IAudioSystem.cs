@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using QFramework;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace BirdGame
@@ -41,6 +42,15 @@ namespace BirdGame
         /// </summary>
         /// <param name="index"></param>
         void PlayEnvironment(int index);
+
+        /// <summary>
+        /// 播放提醒
+        /// </summary>
+        void PlayAlert();
+        /// <summary>
+        /// 停止提醒
+        /// </summary>
+        void StopAlert();
     }
 
     public class AudioSystem : AbstractSystem, IAudioSystem
@@ -48,15 +58,17 @@ namespace BirdGame
         private IRadioModel radioModel;
         private AudioSource radioAudio;
         private Dictionary<int, AudioSource> environmentAudios = new Dictionary<int, AudioSource>();
-        private List<AudioSource> effectList = new List<AudioSource>();
+        private AudioSource effectAudio;
+        private AudioSource alertAudio;
         
         protected override void OnInit()
         {
             var obj = new GameObject("AudioManager");
-            GameObject.DontDestroyOnLoad(obj);
             radioAudio = obj.AddComponent<AudioSource>();
             radioAudio.playOnAwake = false;
             radioAudio.loop = true;
+            effectAudio = obj.AddComponent<AudioSource>();
+            effectAudio.loop = false;
             radioModel = this.GetModel<IRadioModel>();
             radioAudio.volume = radioModel.SongVolume.Value;
             radioModel.SongVolume.Register(v =>
@@ -69,8 +81,9 @@ namespace BirdGame
         {
             if (radioModel.CurrentMusicType == MusicType.Music)
             {
-                var item = this.GetModel<IConfigModel>().RadioConfig.musics[radioModel.SongIndex];
+                var item = this.GetModel<IConfigModel>().RadioConfig.recordItems[radioModel.RecordIndex].musics[radioModel.SongIndex];
                 radioAudio.clip = item.songFile;
+                radioModel.SongName.Value = this.GetModel<IConfigModel>().RadioConfig.recordItems[radioModel.RecordIndex].musics[radioModel.SongIndex].songName;
                 radioAudio.Play();
             }
             else
@@ -115,15 +128,15 @@ namespace BirdGame
             {
                 if (radioModel.SongIndex == 0)
                 {
-                    radioModel.SongIndex = configModel.RadioConfig.musics.Length - 1;
+                    radioModel.SongIndex = configModel.RadioConfig.recordItems[radioModel.RecordIndex].musics.Length - 1;
                 }
                 else
                 {
                     radioModel.SongIndex--;
                 }
 
-                radioAudio.clip = configModel.RadioConfig.musics[radioModel.SongIndex].songFile;
-                radioModel.SongName.Value = configModel.RadioConfig.musics[radioModel.SongIndex].songName;
+                radioAudio.clip = configModel.RadioConfig.recordItems[radioModel.RecordIndex].musics[radioModel.SongIndex].songFile;
+                radioModel.SongName.Value = configModel.RadioConfig.recordItems[radioModel.RecordIndex].musics[radioModel.SongIndex].songName;
                 if (radioModel.PlayingSong.Value)
                 {
                     radioAudio.Play();
@@ -156,7 +169,7 @@ namespace BirdGame
             var configModel = this.GetModel<IConfigModel>();
             if (radioModel.CurrentMusicType == MusicType.Music)
             {
-                int max = configModel.RadioConfig.musics.Length - 1;
+                int max = configModel.RadioConfig.recordItems[radioModel.RecordIndex].musics.Length - 1;
                 if (radioModel.SongIndex >= max)
                 {
                     radioModel.SongIndex = 0;
@@ -166,8 +179,8 @@ namespace BirdGame
                     radioModel.SongIndex++;
                 }
 
-                radioAudio.clip = configModel.RadioConfig.musics[radioModel.SongIndex].songFile;
-                radioModel.SongName.Value = configModel.RadioConfig.musics[radioModel.SongIndex].songName;
+                radioAudio.clip = configModel.RadioConfig.recordItems[radioModel.RecordIndex].musics[radioModel.SongIndex].songFile;
+                radioModel.SongName.Value = configModel.RadioConfig.recordItems[radioModel.RecordIndex].musics[radioModel.SongIndex].songName;
                 if (radioModel.PlayingSong.Value)
                 {
                     radioAudio.Play();
@@ -206,29 +219,16 @@ namespace BirdGame
                     clip = this.GetModel<IConfigModel>().RadioConfig.stroke;
                     break;
             }
-            int count = effectList.Count;
-            for (int i = 0; i < count; i++)
-            {
-                if (!effectList[i].isPlaying)
-                {
-                    effectList[i].clip = clip;
-                    effectList[i].loop = false;
-                    effectList[i].Play();
-                    return;
-                }
-            }
-
-            var audio = radioAudio.gameObject.AddComponent<AudioSource>();
-            effectList.Add(audio);
-            audio.loop = false;
-            audio.clip = clip;
-            audio.Play();
+            
+            effectAudio.clip = clip;
+            effectAudio.Play();
         }
 
         public void PlaySong(int index)
         {
             radioModel.CurrentMusicType = MusicType.Music;
-            radioModel.SongIndex = index;
+            radioModel.RecordIndex = index;
+            radioModel.SongIndex = 0;
             PlaySong();
         }
 
@@ -248,6 +248,37 @@ namespace BirdGame
             }
 
             radioModel.PlayingSong.Value = environmentAudios[index].isPlaying;
+        }
+
+        public void PlayAlert()
+        {
+            if (alertAudio == null)
+            {
+                alertAudio = radioAudio.gameObject.AddComponent<AudioSource>();
+                alertAudio.loop = false;
+            }
+
+            var clockModel = this.GetModel<IClockModel>();
+            if (clockModel.AlertType == AlertType.TimeUpForTimer)
+            {
+                alertAudio.clip = this.GetModel<IConfigModel>().RadioConfig
+                    .alertClips[clockModel.TimerItem.AudioSelected.Value].songFile;
+                alertAudio.volume = clockModel.TimerItem.AudioVolume.Value;
+            }
+            else
+            {
+                alertAudio.clip = this.GetModel<IConfigModel>().RadioConfig
+                    .alertClips[clockModel.TomatoItem.AudioSelected.Value].songFile;
+                alertAudio.volume = clockModel.TomatoItem.AudioVolume.Value;
+            }
+            if(alertAudio.clip != null)
+                alertAudio.Play();
+        }
+
+        public void StopAlert()
+        {
+            if(alertAudio.isPlaying)
+                alertAudio.Stop();
         }
     }
 }

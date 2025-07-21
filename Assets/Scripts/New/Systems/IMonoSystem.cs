@@ -25,6 +25,7 @@ namespace BirdGame
         protected override void OnInit()
         {
             gameEntry = GameObject.Find("GameEntry").GetComponent<GameEntry>();
+            GameObject.DontDestroyOnLoad(gameEntry.gameObject);
         }
 
         public Coroutine StartCoroutine(string methodName)

@@ -20,6 +20,8 @@ namespace BirdGame
         public RectTransform branch;
         public CanvasGroup group1;
         public CanvasGroup group2;
+        public GameObject timeItem;
+        public TextMeshProUGUI timeText;
 
         private Sequence anim;
         private bool isShowBranch;
@@ -92,6 +94,16 @@ namespace BirdGame
                 }
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             ShowBranch();
+
+            this.RegisterEvent<ChangeTimeViewEvent>(evt =>
+            {
+                timeItem.SetActive(evt.show);
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            this.GetModel<IClockModel>().TomatoItem.TimeString.Register(v =>
+            {
+                timeText.text = v;
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            timeItem.SetActive(false);
         }
 
         private void ShowBranch()
