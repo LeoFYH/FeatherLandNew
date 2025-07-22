@@ -103,7 +103,7 @@ namespace BirdGame
             this.RegisterEvent<PlayMusicEvent>(evt =>
             {
                 this.GetSystem<IAudioSystem>().PlaySong(evt.index);
-                var sp = this.GetModel<IConfigModel>().RadioConfig.recordItems[evt.index].icon;
+                var sp = this.GetModel<IConfigModel>().RadioConfig.recordItems[evt.index].recordImage;
                 icon.sprite = sp;
                 icon.GetComponent<RectTransform>().sizeDelta = new Vector2(268f, 276f);
                 RefreshVolumeRegister();
@@ -118,7 +118,7 @@ namespace BirdGame
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
             InitItems();
-            var sp = this.GetModel<IConfigModel>().RadioConfig.recordItems[radioModel.RecordIndex].icon;
+            var sp = this.GetModel<IConfigModel>().RadioConfig.recordItems[radioModel.RecordIndex].recordImage;
             icon.sprite = sp;
             icon.GetComponent<RectTransform>().sizeDelta = new Vector2(268f, 276f);
             ShowContent(musicContent);

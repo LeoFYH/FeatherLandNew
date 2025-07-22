@@ -15,7 +15,7 @@ F:/WorkSpace/Unity_Projects/Outsourcing1/FeatherLandNew
 -logFile
 Logs/AssetImportWorker1.log
 -srvPort
-63908
+64902
 -job-worker-count
 9
 -background-job-worker-count
@@ -59,12 +59,14 @@ F:/WorkSpace/Unity_Projects/Outsourcing1/FeatherLandNew
     "memorysetup-temp-allocator-size-gi-baking-worker=262144"
     "memorysetup-temp-allocator-size-gi-baking-worker=262144"
     "memorysetup-temp-allocator-size-gfx=262144"
-Player connection [39672]  Target information:
+Player connection [71692]  Target information:
 
-Player connection [39672]  * "[IP] 192.168.2.76 [Port] 0 [Flags] 2 [Guid] 3851692766 [EditorId] 3851692766 [Version] 1048832 [Id] WindowsEditor(7,wkk) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+Player connection [71692]  * "[IP] 192.168.2.76 [Port] 0 [Flags] 2 [Guid] 2769988764 [EditorId] 2769988764 [Version] 1048832 [Id] WindowsEditor(7,wkk) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
 
-Player connection [39672] Host joined multi-casting on [225.0.0.222:54997]...
-Player connection [39672] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Player connection [71692]  * "[IP] 172.18.0.1 [Port] 0 [Flags] 2 [Guid] 2769988764 [EditorId] 2769988764 [Version] 1048832 [Id] WindowsEditor(7,wkk) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+
+Player connection [71692] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [71692] Host joined alternative multi-casting on [225.0.0.222:34997]...
 JobSystem: Creating JobQueue using job-worker-count value 9
 Input System module state changed to: Initialized.
 [Physics::Module] Initialized fallback backend.
@@ -76,7 +78,7 @@ Library Redirect Path: Library/
 [Physics::Module] SDK Version: 4.1.2
 [Physics::Module] Integration Version: 1.0.0
 [Physics::Module] Threading Mode: Multi-Threaded
-Refreshing native plugins compatible for Editor in 4.06 ms, found 4 plugins.
+Refreshing native plugins compatible for Editor in 2.71 ms, found 4 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Initialize engine version: 6000.0.35f1 (9a3bc604008a)
 [Subsystems] Discovering subsystems at path E:/WorkSoftwares/Unity/6000.0.35f1/Editor/Data/Resources/UnitySubsystems
@@ -92,47 +94,47 @@ Initialize mono
 Mono path[0] = 'E:/WorkSoftwares/Unity/6000.0.35f1/Editor/Data/Managed'
 Mono path[1] = 'E:/WorkSoftwares/Unity/6000.0.35f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
 Mono config path = 'E:/WorkSoftwares/Unity/6000.0.35f1/Editor/Data/MonoBleedingEdge/etc'
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56972
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56992
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: E:/WorkSoftwares/Unity/6000.0.35f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
 Register platform support module: E:/WorkSoftwares/Unity/6000.0.35f1/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.dll
-Registered in 0.004639 seconds.
-- Loaded All Assemblies, in  0.448 seconds
+Registered in 0.004414 seconds.
+- Loaded All Assemblies, in  0.463 seconds
 [usbmuxd] Start listen thread
 [usbmuxd] Listen thread started
 Native extension for iOS target not found
 Native extension for WindowsStandalone target not found
 Mono: successfully reloaded assembly
-- Finished resetting the current domain, in  0.452 seconds
-Domain Reload Profiling: 898ms
-	BeginReloadAssembly (147ms)
+- Finished resetting the current domain, in  0.421 seconds
+Domain Reload Profiling: 882ms
+	BeginReloadAssembly (154ms)
 		ExecutionOrderSort (0ms)
 		DisableScriptedObjects (0ms)
 		BackupInstance (0ms)
 		ReleaseScriptingObjects (0ms)
 		CreateAndSetChildDomain (1ms)
-	RebuildCommonClasses (46ms)
-	RebuildNativeTypeToScriptingClass (15ms)
-	initialDomainReloadingComplete (58ms)
-	LoadAllAssembliesAndSetupDomain (179ms)
-		LoadAssemblies (146ms)
+	RebuildCommonClasses (40ms)
+	RebuildNativeTypeToScriptingClass (14ms)
+	initialDomainReloadingComplete (55ms)
+	LoadAllAssembliesAndSetupDomain (196ms)
+		LoadAssemblies (152ms)
 		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (176ms)
-			TypeCache.Refresh (174ms)
-				TypeCache.ScanAssembly (157ms)
+		AnalyzeDomain (193ms)
+			TypeCache.Refresh (190ms)
+				TypeCache.ScanAssembly (175ms)
 			BuildScriptInfoCaches (0ms)
-			ResolveRequiredComponents (0ms)
-	FinalizeReload (453ms)
+			ResolveRequiredComponents (1ms)
+	FinalizeReload (422ms)
 		ReleaseScriptCaches (0ms)
 		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (391ms)
+		SetupLoadedEditorAssemblies (361ms)
 			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (75ms)
+			InitializePlatformSupportModulesInManaged (78ms)
 			SetLoadedEditorAssemblies (5ms)
-			BeforeProcessingInitializeOnLoad (66ms)
-			ProcessInitializeOnLoadAttributes (156ms)
-			ProcessInitializeOnLoadMethodAttributes (88ms)
+			BeforeProcessingInitializeOnLoad (73ms)
+			ProcessInitializeOnLoadAttributes (139ms)
+			ProcessInitializeOnLoadMethodAttributes (65ms)
 			AfterProcessingInitializeOnLoad (0ms)
 			EditorAssembliesLoaded (0ms)
 		ExecutionOrderSort2 (0ms)
@@ -141,66 +143,234 @@ Domain Reload Profiling: 898ms
 Worker process is ready to serve import requests
 Import Worker Mode flag is 0x00
 Begin MonoManager ReloadAssembly
-- Loaded All Assemblies, in  1.197 seconds
-Refreshing native plugins compatible for Editor in 2.07 ms, found 4 plugins.
+- Loaded All Assemblies, in  1.503 seconds
+Refreshing native plugins compatible for Editor in 2.66 ms, found 4 plugins.
 Native extension for iOS target not found
 Native extension for WindowsStandalone target not found
 Mono: successfully reloaded assembly
-- Finished resetting the current domain, in  1.604 seconds
-Domain Reload Profiling: 2796ms
-	BeginReloadAssembly (222ms)
+- Finished resetting the current domain, in  1.914 seconds
+Domain Reload Profiling: 3412ms
+	BeginReloadAssembly (302ms)
 		ExecutionOrderSort (0ms)
-		DisableScriptedObjects (9ms)
+		DisableScriptedObjects (10ms)
 		BackupInstance (0ms)
 		ReleaseScriptingObjects (0ms)
-		CreateAndSetChildDomain (43ms)
-	RebuildCommonClasses (41ms)
-	RebuildNativeTypeToScriptingClass (15ms)
-	initialDomainReloadingComplete (50ms)
-	LoadAllAssembliesAndSetupDomain (864ms)
-		LoadAssemblies (632ms)
+		CreateAndSetChildDomain (48ms)
+	RebuildCommonClasses (74ms)
+	RebuildNativeTypeToScriptingClass (16ms)
+	initialDomainReloadingComplete (61ms)
+	LoadAllAssembliesAndSetupDomain (1044ms)
+		LoadAssemblies (827ms)
 		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (358ms)
-			TypeCache.Refresh (274ms)
-				TypeCache.ScanAssembly (247ms)
-			BuildScriptInfoCaches (69ms)
-			ResolveRequiredComponents (9ms)
-	FinalizeReload (1605ms)
+		AnalyzeDomain (417ms)
+			TypeCache.Refresh (286ms)
+				TypeCache.ScanAssembly (261ms)
+			BuildScriptInfoCaches (111ms)
+			ResolveRequiredComponents (16ms)
+	FinalizeReload (1916ms)
 		ReleaseScriptCaches (0ms)
 		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (1449ms)
+		SetupLoadedEditorAssemblies (1686ms)
 			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (15ms)
-			SetLoadedEditorAssemblies (9ms)
-			BeforeProcessingInitializeOnLoad (202ms)
-			ProcessInitializeOnLoadAttributes (1139ms)
-			ProcessInitializeOnLoadMethodAttributes (79ms)
-			AfterProcessingInitializeOnLoad (4ms)
+			InitializePlatformSupportModulesInManaged (16ms)
+			SetLoadedEditorAssemblies (6ms)
+			BeforeProcessingInitializeOnLoad (233ms)
+			ProcessInitializeOnLoadAttributes (1170ms)
+			ProcessInitializeOnLoadMethodAttributes (253ms)
+			AfterProcessingInitializeOnLoad (7ms)
 			EditorAssembliesLoaded (0ms)
 		ExecutionOrderSort2 (0ms)
-		AwakeInstancesAfterBackupRestoration (8ms)
+		AwakeInstancesAfterBackupRestoration (11ms)
 Launched and connected shader compiler UnityShaderCompiler.exe after 0.03 seconds
-Refreshing native plugins compatible for Editor in 0.99 ms, found 4 plugins.
+Refreshing native plugins compatible for Editor in 2.41 ms, found 4 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 48 Unused Serialized files (Serialized files now loaded: 0)
-Unloading 5552 unused Assets / (1.2 MB). Loaded Objects now: 6133.
-Memory consumption went from 116.9 MB to 115.7 MB.
-Total: 16.654200 ms (FindLiveObjects: 0.452000 ms CreateObjectMapping: 0.211900 ms MarkObjects: 14.954500 ms  DeleteObjects: 1.034200 ms)
+Unloading 239 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 7383 unused Assets / (5.5 MB). Loaded Objects now: 8172.
+Memory consumption went from 191.9 MB to 186.4 MB.
+Total: 37.527300 ms (FindLiveObjects: 1.449300 ms CreateObjectMapping: 1.183500 ms MarkObjects: 29.535800 ms  DeleteObjects: 5.350700 ms)
 
 ========================================================================
 Received Import Request.
-  Time since last request: 1171127.595746 seconds.
-  path: Assets/Arts/场景3切图/2后树-后.png
-  artifactKey: Guid(35d9058c8b0f89046b9d4982881ab266) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Arts/场景3切图/2后树-后.png using Guid(35d9058c8b0f89046b9d4982881ab266) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '8b93c4946e506953ae97b0d0fa2de477') in 0.6426059 seconds
+  Time since last request: 1172136.683268 seconds.
+  path: Assets/Arts/鼠标/喂食2.png
+  artifactKey: Guid(3e5b2863eb7253c4d995f56f3b912f1e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Arts/鼠标/喂食2.png using Guid(3e5b2863eb7253c4d995f56f3b912f1e) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '3a80e9c5bbc731607e503f6fca29f5cd') in 0.0918442 seconds
 Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
 
 ========================================================================
 Received Import Request.
-  Time since last request: 0.000040 seconds.
-  path: Assets/Arts/场景3切图/3后草.png
-  artifactKey: Guid(183302f40f4913e4eb6a53d4e0aa374a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Arts/场景3切图/3后草.png using Guid(183302f40f4913e4eb6a53d4e0aa374a) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '8ba47e531b96c3aa9ea810b4a64139ee') in 0.4955812 seconds
+  Time since last request: 0.000023 seconds.
+  path: Assets/Arts/图鉴/图鉴-邮票.png
+  artifactKey: Guid(22a88f228ea74f8429d58c2a3a907a8c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Arts/图鉴/图鉴-邮票.png using Guid(22a88f228ea74f8429d58c2a3a907a8c) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'f53e6dc2cd9985c161cce373c1c571a4') in 0.0476623 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000019 seconds.
+  path: Assets/Arts/商店(新)/商店- 工具-放大显示框.png
+  artifactKey: Guid(32de6594674577043acb048e4b1fd737) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Arts/商店(新)/商店- 工具-放大显示框.png using Guid(32de6594674577043acb048e4b1fd737) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '3ffba5b2b720d4379d3b17d80456e266') in 0.0157825 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000026 seconds.
+  path: Assets/Arts/商店(新)/商店- 工具-价格签.png
+  artifactKey: Guid(8b06dc2f1ad5e1f47a5c78aceb512127) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Arts/商店(新)/商店- 工具-价格签.png using Guid(8b06dc2f1ad5e1f47a5c78aceb512127) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '200b606a908e4f9711add05896928f8e') in 0.0166367 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000017 seconds.
+  path: Assets/Arts/鼠标/抚摸2.png
+  artifactKey: Guid(9c49d58ad6ed1c547896e3e8b663c97e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Arts/鼠标/抚摸2.png using Guid(9c49d58ad6ed1c547896e3e8b663c97e) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '43d22af77db1d3d91501a7342873f990') in 0.010618 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000015 seconds.
+  path: Assets/Arts/商店(新)/商店- 图标-鸡蛋(选中).png
+  artifactKey: Guid(04becf4ebca2d1045aa446991e8b2c25) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Arts/商店(新)/商店- 图标-鸡蛋(选中).png using Guid(04becf4ebca2d1045aa446991e8b2c25) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '3b57662d48c91d552092cc81f7564520') in 0.0087946 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000015 seconds.
+  path: Assets/Arts/鼠标/抚摸1.png
+  artifactKey: Guid(d8e3d7107b7bf174e9d599e6edcdf8fd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Arts/鼠标/抚摸1.png using Guid(d8e3d7107b7bf174e9d599e6edcdf8fd) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'cd462cd8a9ae19c184febf65982f030d') in 0.0112753 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000029 seconds.
+  path: Assets/Arts/图鉴/图鉴-效果图.png
+  artifactKey: Guid(c0596b60b5bff3c4f9ab9e9b3d9c7065) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Arts/图鉴/图鉴-效果图.png using Guid(c0596b60b5bff3c4f9ab9e9b3d9c7065) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '46c0aaee7e89c864d936676aec5fc941') in 0.0502423 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000021 seconds.
+  path: Assets/Arts/鼠标/喂食1.png
+  artifactKey: Guid(98a9f264341e96e4c90d1b901e2d0982) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Arts/鼠标/喂食1.png using Guid(98a9f264341e96e4c90d1b901e2d0982) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '084236263f3a1d9d68526480de17a159') in 0.0115885 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000035 seconds.
+  path: Assets/Arts/商店(新)/商店- 图标-装饰品(选中).png
+  artifactKey: Guid(387e9ee3ea3f1cc4e95c4289809bab0d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Arts/商店(新)/商店- 图标-装饰品(选中).png using Guid(387e9ee3ea3f1cc4e95c4289809bab0d) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '6afc483dc1af0bf08e5ff0677ead308d') in 0.0111227 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000017 seconds.
+  path: Assets/Arts/商店(新)/商店- 图标-工具(未选中).png
+  artifactKey: Guid(54140b2d505efb643960a931834f7c42) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Arts/商店(新)/商店- 图标-工具(未选中).png using Guid(54140b2d505efb643960a931834f7c42) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '2d26c38ff2bff0eb4c8560d26fd6e240') in 0.0129837 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000022 seconds.
+  path: Assets/Arts/鼠标/点击.png
+  artifactKey: Guid(0c5bc721b8af9e14abf050c76bc72485) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Arts/鼠标/点击.png using Guid(0c5bc721b8af9e14abf050c76bc72485) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '124d2e31843376ebce1b4e4480d0b2b7') in 0.1525981 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.019508 seconds.
+  path: Assets/Arts/图鉴/图鉴入口.png
+  artifactKey: Guid(9d6405cbe0842a04a99c5467a2b0cbd4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Arts/图鉴/图鉴入口.png using Guid(9d6405cbe0842a04a99c5467a2b0cbd4) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '715a3ee210904abfd0f12e2f422e1a99') in 0.0375587 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000015 seconds.
+  path: Assets/Arts/商店(新)/商店- 图标-鸡蛋(未选中).png
+  artifactKey: Guid(99ee76f605cb6b04e9aab85686eb67bd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Arts/商店(新)/商店- 图标-鸡蛋(未选中).png using Guid(99ee76f605cb6b04e9aab85686eb67bd) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '98c500b59bdc8c4e5cd77066d2ccee40') in 0.0190447 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000057 seconds.
+  path: Assets/Arts/鼠标/移动.png
+  artifactKey: Guid(0ef1d9b80e5587e4c9b1e4170a7fb61c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Arts/鼠标/移动.png using Guid(0ef1d9b80e5587e4c9b1e4170a7fb61c) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '0a9035e9ef7cd7e2fa6ed33074c7e206') in 0.0686725 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.007733 seconds.
+  path: Assets/Arts/商店(新)/商店- 图标-工具(选中).png
+  artifactKey: Guid(871918d0022e61a4989711e5c2636111) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Arts/商店(新)/商店- 图标-工具(选中).png using Guid(871918d0022e61a4989711e5c2636111) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '3ed59b87a752c642642c4050aad6af9b') in 0.0877288 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000057 seconds.
+  path: Assets/Arts/商店(新)/商店- 图标-装饰品(未选中).png
+  artifactKey: Guid(9e59f392073cf60438258d695f8d25da) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Arts/商店(新)/商店- 图标-装饰品(未选中).png using Guid(9e59f392073cf60438258d695f8d25da) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'd8ff4d7af7530bbffd009c81bbc9d940') in 0.0641983 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.005214 seconds.
+  path: Assets/Arts/商店(新)/商店- 工具-描述框.png
+  artifactKey: Guid(a309a64a6c107344384abdd411c4d762) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Arts/商店(新)/商店- 工具-描述框.png using Guid(a309a64a6c107344384abdd411c4d762) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '986f0eef817a07fe38269403c4b7c14b') in 0.0775127 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 12.273509 seconds.
+  path: Assets/Arts/鼠标/抚摸1.png
+  artifactKey: Guid(d8e3d7107b7bf174e9d599e6edcdf8fd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Arts/鼠标/抚摸1.png using Guid(d8e3d7107b7bf174e9d599e6edcdf8fd) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'e70d953c6c9c34a4081d6185159e3ca2') in 0.0202668 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000019 seconds.
+  path: Assets/Arts/鼠标/移动.png
+  artifactKey: Guid(0ef1d9b80e5587e4c9b1e4170a7fb61c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Arts/鼠标/移动.png using Guid(0ef1d9b80e5587e4c9b1e4170a7fb61c) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'c7a1775cfafd0f4341d47894828f2bbb') in 0.0074399 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
+
+========================================================================
+Received Import Request.
+  Time since last request: 4.379407 seconds.
+  path: Assets/Arts/鼠标/抚摸2.png
+  artifactKey: Guid(9c49d58ad6ed1c547896e3e8b663c97e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Arts/鼠标/抚摸2.png using Guid(9c49d58ad6ed1c547896e3e8b663c97e) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'c033ec0a9b2d05f902ad37c4becbd2b1') in 0.0087855 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
+
+========================================================================
+Received Import Request.
+  Time since last request: 24.310883 seconds.
+  path: Assets/Arts/番茄钟(新)/UI固定时间(选中).png
+  artifactKey: Guid(514363f5e968ed3478833f49a6411a5d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Arts/番茄钟(新)/UI固定时间(选中).png using Guid(514363f5e968ed3478833f49a6411a5d) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'd78635eb05e535ad9dce56a1a10a45ba') in 0.0138248 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000023 seconds.
+  path: Assets/Arts/番茄钟(新)/UI圆形重置按钮(未选中).png
+  artifactKey: Guid(fc9725ee0bdb2934bb190e31368f4013) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Arts/番茄钟(新)/UI圆形重置按钮(未选中).png using Guid(fc9725ee0bdb2934bb190e31368f4013) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '1a0e1ee0b6febbefb5ab183ba1985227') in 0.0190859 seconds
 Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
 
 Editor requested this worker to shutdown with reason: Scaling down because of idle timeout

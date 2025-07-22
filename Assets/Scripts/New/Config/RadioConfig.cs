@@ -23,8 +23,10 @@ namespace BirdGame
     [Serializable]
     public class RecordItem
     {
-        [PreviewField(50, ObjectFieldAlignment.Left), HorizontalGroup("content", Width = 50), HideLabel]
+        [PreviewField(50, ObjectFieldAlignment.Left), HorizontalGroup("content", Width = 70), VerticalGroup("content/preview"), HideLabel]
         public Sprite icon;
+        [PreviewField(70, ObjectFieldAlignment.Left), VerticalGroup("content/preview"), HideLabel]
+        public Sprite recordImage;
         [TableList(ShowIndexLabels = true, ScrollViewHeight = 100), HorizontalGroup("content")]
         public AudioItem[] musics;
     }
