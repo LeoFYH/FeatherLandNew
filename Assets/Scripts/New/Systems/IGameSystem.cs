@@ -21,7 +21,7 @@ namespace BirdGame
         
         [Header("食物位置偏移")]
         [Tooltip("食物落下位置相对于鼠标的偏移量")]
-        public Vector3 foodDropOffset = Vector3.zero;
+        public Vector3 foodDropOffset = new Vector3(0.5f, -1f, 0f); // 往右边偏移0.5单位
 
         protected override void OnInit()
         {
