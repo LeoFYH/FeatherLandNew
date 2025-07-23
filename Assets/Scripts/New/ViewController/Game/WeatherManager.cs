@@ -35,33 +35,41 @@ namespace BirdGame
         {
             if (uiGroup == null)
                 uiGroup = GameObject.Find("UIRoot").GetComponent<CanvasGroup>();
+            this.RegisterEvent<SwitchWeatherEvent>(evt =>
+            {
+                int index = currentIndex;
+                index++;
+                if (index >= weathers.Length)
+                    index = 0;
+                SwitchWeather(index);
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
             SwitchWeather(0);
         }
 
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.Alpha0))
-            {
-                
-                SwitchWeather(0);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                SwitchWeather(1);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                SwitchWeather(2);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                SwitchWeather(3);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha4))
-            {
-                SwitchWeather(4);
-            }
-        }
+        // private void Update()
+        // {
+        //     // if (Input.GetKeyDown(KeyCode.Alpha0))
+        //     // {
+        //     //     
+        //     //     SwitchWeather(0);
+        //     // }
+        //     // else if (Input.GetKeyDown(KeyCode.Alpha1))
+        //     // {
+        //     //     SwitchWeather(1);
+        //     // }
+        //     // else if (Input.GetKeyDown(KeyCode.Alpha2))
+        //     // {
+        //     //     SwitchWeather(2);
+        //     // }
+        //     // else if (Input.GetKeyDown(KeyCode.Alpha3))
+        //     // {
+        //     //     SwitchWeather(3);
+        //     // }
+        //     // else if (Input.GetKeyDown(KeyCode.Alpha4))
+        //     // {
+        //     //     SwitchWeather(4);
+        //     // }
+        // }
 
         private void SwitchWeather(int index)
         {

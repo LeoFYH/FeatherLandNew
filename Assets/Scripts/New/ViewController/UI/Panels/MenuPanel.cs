@@ -9,6 +9,7 @@ namespace BirdGame
     public class MenuPanel : UIBase
     {
         public Image weatherIcon;
+        public Button weatherButton;
         public Sprite[] weatherSps;
         public Button toDoButton;
         public Button radioButton;
@@ -67,6 +68,11 @@ namespace BirdGame
             illustratedButton.onClick.AddListener(() =>
             {
                 uiSystem.ShowPopup(UIPopup.IllustratedPopup);
+            });
+            
+            weatherButton.onClick.AddListener(() =>
+            {
+                this.GetSystem<IGameSystem>().SendEvent<SwitchWeatherEvent>();
             });
 
             var accountModel = this.GetModel<IAccountModel>();
