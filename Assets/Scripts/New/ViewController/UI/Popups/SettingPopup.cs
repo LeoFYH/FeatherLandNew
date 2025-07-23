@@ -1,5 +1,6 @@
 ﻿using QFramework;
 using TMPro;
+using UnityEngine;
 using UnityEngine.Device;
 using UnityEngine.UI;
 
@@ -19,7 +20,7 @@ namespace BirdGame
             });
             quitButton.onClick.AddListener(() =>
             {
-                Application.Quit();
+                UnityEngine.Application.Quit();
             });
             
             screenDropdown.onValueChanged.AddListener(id =>
@@ -27,14 +28,17 @@ namespace BirdGame
                 if (id == 0)
                 {
                     this.GetUtility<IFullScreenUtility>().WindowedMode();
+                    Debug.Log("WindowedMode");
                 }
                 else if (id == 1)
                 {
                     this.GetUtility<IFullScreenUtility>().WallpaperMode();
+                    Debug.Log("WallpaperMode");
                 }
                 else if (id == 2)
                 {
                     this.GetUtility<IFullScreenUtility>().FullscreenMode();
+                    Debug.Log("FullscreenMode");
                 }
             });
         }

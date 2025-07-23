@@ -52,6 +52,12 @@ namespace BirdGame
         private int workAreaHeight;
         private IntPtr windowHandle;
 
+        public FullScreenUtility()
+        {
+            // 初始化窗口句柄
+            windowHandle = GetActiveWindow();
+        }
+
         public void WallpaperMode()
         {
             // Remove title bar/border
