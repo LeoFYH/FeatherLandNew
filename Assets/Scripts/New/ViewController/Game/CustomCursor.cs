@@ -9,15 +9,15 @@ namespace BirdGame
         [Header("默认鼠标设置")]
         [Tooltip("支持Texture2D或Sprite")]
         public Texture2D customCursorTexture;
-        [Tooltip("或者使用Sprite")]
-        public Sprite customCursorSprite;
+        [Tooltip("或者使用Texture2D")]
+        public Texture2D customCursorTexture2;
         public Vector2 hotSpot = Vector2.zero;
         
         [Header("点击状态鼠标")]
         [Tooltip("点击状态的第一帧")]
-        public Sprite clickCursorSprite1;
+        public Texture2D clickCursorTexture1;
         [Tooltip("点击状态的第二帧")]
-        public Sprite clickCursorSprite2;
+        public Texture2D clickCursorTexture2;
         [Tooltip("点击状态鼠标的点击点")]
         public Vector2 clickHotSpot = Vector2.zero;
         [Tooltip("点击动画切换间隔（秒）")]
@@ -25,15 +25,15 @@ namespace BirdGame
         
         [Header("撒食物状态鼠标")]
         [Tooltip("撒食物状态的第一帧")]
-        public Sprite foodCursorSprite3;
+        public Texture2D foodCursorTexture3;
         [Tooltip("撒食物状态的第二帧")]
-        public Sprite foodCursorSprite4;
+        public Texture2D foodCursorTexture4;
         [Tooltip("撒食物状态鼠标的点击点")]
         public Vector2 foodHotSpot = Vector2.zero;
         
         [Header("UI Hover状态鼠标")]
         [Tooltip("UI Hover状态的鼠标")]
-        public Sprite uiHoverCursorSprite6;
+        public Texture2D uiHoverCursorTexture6;
         [Tooltip("UI Hover状态鼠标的点击点")]
         public Vector2 uiHoverHotSpot = Vector2.zero;
         
@@ -52,7 +52,7 @@ namespace BirdGame
         
         private void Start()
         {
-            if (setOnStart && (customCursorTexture != null || customCursorSprite != null))
+            if (setOnStart && (customCursorTexture != null || customCursorTexture2 != null))
             {
                 SetCustomCursor();
             }
@@ -169,27 +169,27 @@ namespace BirdGame
         
         private void SetClickCursor(bool useFrame1)
         {
-            Sprite targetSprite = useFrame1 ? clickCursorSprite1 : clickCursorSprite2;
-            if (targetSprite != null)
+            Texture2D targetTexture = useFrame1 ? clickCursorTexture1 : clickCursorTexture2;
+            if (targetTexture != null)
             {
-                this.GetSystem<ICursorSystem>().SetCustomCursor(targetSprite, clickHotSpot);
+                this.GetSystem<ICursorSystem>().SetCustomCursor(targetTexture, clickHotSpot);
             }
         }
         
         private void SetFoodCursor(bool useFrame3)
         {
-            Sprite targetSprite = useFrame3 ? foodCursorSprite3 : foodCursorSprite4;
-            if (targetSprite != null)
+            Texture2D targetTexture = useFrame3 ? foodCursorTexture3 : foodCursorTexture4;
+            if (targetTexture != null)
             {
-                this.GetSystem<ICursorSystem>().SetCustomCursor(targetSprite, foodHotSpot);
+                this.GetSystem<ICursorSystem>().SetCustomCursor(targetTexture, foodHotSpot);
             }
         }
         
         private void SetUIHoverCursor()
         {
-            if (uiHoverCursorSprite6 != null)
+            if (uiHoverCursorTexture6 != null)
             {
-                this.GetSystem<ICursorSystem>().SetCustomCursor(uiHoverCursorSprite6, uiHoverHotSpot);
+                this.GetSystem<ICursorSystem>().SetCustomCursor(uiHoverCursorTexture6, uiHoverHotSpot);
             }
         }
         
@@ -247,9 +247,9 @@ namespace BirdGame
         
         public void SetCustomCursor()
         {
-            if (customCursorSprite != null)
+            if (customCursorTexture2 != null)
             {
-                this.GetSystem<ICursorSystem>().SetCustomCursor(customCursorSprite, hotSpot);
+                this.GetSystem<ICursorSystem>().SetCustomCursor(customCursorTexture2, hotSpot);
             }
             else if (customCursorTexture != null)
             {
