@@ -122,6 +122,7 @@
     <Compile Include="Assets\Scripts\New\Events\PlayEnvironmentEvent.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\ViewControllerBase.cs" />
     <Compile Include="Assets\Scripts\BirdStates\BirdFlyWaitState.cs" />
+    <Compile Include="Assets\Scripts\New\Systems\ICursorSystem.cs" />
     <Compile Include="Assets\Scripts\New\GameApp.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Panels\MenuPanel.cs" />
     <Compile Include="Assets\Scripts\New\Systems\IMonoSystem.cs" />
@@ -147,6 +148,7 @@
     <Compile Include="Assets\Scripts\New\Commands\SpawnBirdCommand.cs" />
     <Compile Include="Assets\Scripts\Managers\WindowModeController.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\PromptPopup.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\Game\CustomCursor.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\WeatherManager.cs" />
     <Compile Include="Assets\Scripts\UIButtonHoverScale.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Clock\TomatoViewController.cs" />
@@ -182,7 +184,6 @@
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
-    <None Include="Assets\AddressableAssetsData\link.xml" />
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF Overlay.shader" />

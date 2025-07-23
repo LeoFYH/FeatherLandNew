@@ -18,6 +18,10 @@ namespace BirdGame
         private GameObject foodPrefab;
         private GameObject numPrefab;
         private IBirdModel birdModel;
+        
+        [Header("食物位置偏移")]
+        [Tooltip("食物落下位置相对于鼠标的偏移量")]
+        public Vector3 foodDropOffset = Vector3.zero;
 
         protected override void OnInit()
         {
@@ -64,8 +68,8 @@ namespace BirdGame
                 Food food = GameObject.Instantiate(foodPrefab).GetComponent<Food>();
                 food.isTargeted = false;
             
-                // 设置位置
-                food.transform.position = mouseWorldPos;
+                // 设置位置（添加偏移量）
+                food.transform.position = mouseWorldPos + foodDropOffset;
             
                 // 如果有Rigidbody2D，确保它不会移动
                 Rigidbody2D rb = food.GetComponent<Rigidbody2D>();
