@@ -221,6 +221,25 @@ namespace BirdGame
             }
             
             effectAudio.clip = clip;
+            //撒食物音效调整
+            effectAudio.volume = 0.22f; //降低音量0.22
+            
+            // 为撒食物音效设置特殊参数
+            if (type == EffectType.DropFood)
+            {
+                // 设置播放时间为原音频的一半
+                effectAudio.pitch = 2.0f; // 2倍速播放，时间缩短一半
+                effectAudio.reverbZoneMix = 0f; // 去除混响效果
+                effectAudio.spatialBlend = 0f; // 设置为2D音效，避免空间回声
+            }
+            else
+            {
+                // 其他音效保持默认设置
+                effectAudio.pitch = 1.0f;
+                effectAudio.reverbZoneMix = 1f;
+                effectAudio.spatialBlend = 0f;
+            }
+            
             effectAudio.Play();
         }
 

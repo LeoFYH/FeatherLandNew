@@ -14,15 +14,15 @@ namespace BirdGame
             var type = this.GetModel<IClockModel>().AlertType;
             if (type == AlertType.TimeUpForBreak)
             {
-                alertText.text = "Time Up!";
+                alertText.text = "Time's Up!";
             }
             else if (type == AlertType.TimeUpForSession)
             {
-                alertText.text = "Is time to rest!";
+                alertText.text = "Time to have a break!";
             }
             else
             {
-                alertText.text = "Is Time to work!";
+                alertText.text = "Time to work!";
             }
             
             closeButton.onClick.AddListener(() =>
