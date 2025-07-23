@@ -14,6 +14,9 @@ namespace BirdGame
 
         private void Update()
         {
+            
+            CheckCursor();
+            
             if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
             {
                 // 检查是否点击到UI元素
@@ -65,6 +68,28 @@ namespace BirdGame
                 {
                     this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Click);
                 }
+            }
+        }
+
+        private void CheckCursor()
+        {
+            if(this.GetSystem<ICursorSystem>().IsPlayingAnim())
+                return;
+            if (this.GetSystem<IGameSystem>().IsCoverUI())
+            {
+                this.GetSystem<ICursorSystem>().SetCursorState(CursorState.Click);
+            }
+            else if (this.GetSystem<IGameSystem>().IsCoverBird())
+            {
+                this.GetSystem<ICursorSystem>().SetCursorState(CursorState.Stroke1);
+            }
+            else if (this.GetSystem<IGameSystem>().IsCoverGround())
+            {
+                this.GetSystem<ICursorSystem>().SetCursorState(CursorState.Feed1);
+            }
+            else
+            {
+                this.GetSystem<ICursorSystem>().SetCursorState(CursorState.Default);
             }
         }
     }

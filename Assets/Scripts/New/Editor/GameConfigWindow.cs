@@ -60,7 +60,20 @@ namespace BirdGame.Editor
             AssetDatabase.Refresh();
             OnBirdInit();
         }
-        
+
+        [ReadOnly, LabelText("鼠标配置"), OnInspectorInit("OnCursorInit"), HorizontalGroup("鼠标配置")]
+        public CursorConfig cursorConfig;
+
+        [ShowIf("@cursorConfig==null"), Button("新建"), HorizontalGroup("鼠标配置")]
+        private void OnCreateCursorConfig()
+        {
+            var config = ScriptableObject.CreateInstance<CursorConfig>();
+            AssetDatabase.CreateAsset(config, "Assets/Prefabs/Config/CursorConfig.asset");
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            OnCursorInit();
+        }
+
         protected override OdinMenuTree BuildMenuTree()
         {
             tree = new OdinMenuTree(supportsMultiSelect: true)
@@ -68,7 +81,8 @@ namespace BirdGame.Editor
                 {"首页", this, SdfIconType.House},
                 {"音乐列表配置", radioConfig, SdfIconType.MusicNoteList },
                 {"商店配置", shopConfig, SdfIconType.Shop},
-                {"鸟的配置", birdConfig, SdfIconType.Egg}
+                {"鸟的配置", birdConfig, SdfIconType.Egg},
+                {"鼠标配置", cursorConfig, SdfIconType.Mouse},
             };
             
             return tree;
@@ -98,6 +112,12 @@ namespace BirdGame.Editor
         {
             birdConfig = AssetDatabase.LoadAssetAtPath<BirdConfig>("Assets/Prefabs/Config/BirdConfig.asset");
             tree.MenuItems[3].Value = birdConfig;
+        }
+
+        private void OnCursorInit()
+        {
+            cursorConfig = AssetDatabase.LoadAssetAtPath<CursorConfig>("Assets/Prefabs/Config/CursorConfig.asset");
+            tree.MenuItems[4].Value = cursorConfig;
         }
     }
 }

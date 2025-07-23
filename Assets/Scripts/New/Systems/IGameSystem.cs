@@ -6,11 +6,16 @@ namespace BirdGame
 {
     public interface IGameSystem : ISystem
     {
+        Vector3 FoodDropOffset { get; }
+
         void CreateNum(string s, Vector3 pos);
         void CreateFood();
         void ReduceFood(Food food);
         void RecycleFood(Food food);
         bool TryGetUntargetedFood(Vector3 position, out Food food);
+        bool IsCoverGround();
+        bool IsCoverBird();
+        bool IsCoverUI();
     }
 
     public class GameSystem : AbstractSystem, IGameSystem
@@ -21,7 +26,7 @@ namespace BirdGame
         
         [Header("食物位置偏移")]
         [Tooltip("食物落下位置相对于鼠标的偏移量")]
-        public Vector3 foodDropOffset = new Vector3(0.5f, -1f, 0f); // 往右边偏移0.5单位
+        private Vector3 foodDropOffset = new Vector3(0.3f, 0, 0f); // 往右边偏移0.5单位
 
         protected override void OnInit()
         {
@@ -36,6 +41,13 @@ namespace BirdGame
             });
         }
 
+        public Vector3 FoodDropOffset {
+            get
+            {
+                return foodDropOffset;
+            }
+        }
+
         public void CreateNum(string s, Vector3 pos)
         {
             GameObject go = GameObject.Instantiate(numPrefab);
@@ -45,29 +57,15 @@ namespace BirdGame
 
         public void CreateFood()
         {
-            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mouseWorldPos.z = 0; // 确保Z轴位置正确
-        
-            //检测是否点击到鸟，如果点击到鸟，则不生成食物
-            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D[] hits = Physics2D.RaycastAll(mousePosition, Vector2.zero);
-            if (hits.Length > 0)
+            if (IsCoverGround())
             {
-                foreach (var hit in hits)
-                {
-                    if (hit.collider.CompareTag("Bird"))
-                    {
-                        return;
-                    }
-                }
-            }
-        
-            if (NavigationManager.Instance.IsPointInNavMeshArea(3, mousePosition))
-            {
+                this.GetSystem<ICursorSystem>().Feed();
                 this.GetSystem<IAudioSystem>().PlayEffect(EffectType.DropFood);
                 Food food = GameObject.Instantiate(foodPrefab).GetComponent<Food>();
                 food.isTargeted = false;
-            
+
+                Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                mouseWorldPos.z = 0; // 确保Z轴位置正确
                 // 设置位置（添加偏移量）
                 food.transform.position = mouseWorldPos + foodDropOffset;
             
@@ -128,6 +126,63 @@ namespace BirdGame
             }
 
             return food != null;
+        }
+
+        public bool IsCoverGround()
+        {
+            if (NavigationManager.Instance == numPrefab)
+                return false;
+            
+            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mouseWorldPos.z = 0; // 确保Z轴位置正确
+        
+            //检测是否点击到鸟，如果点击到鸟，则不生成食物
+            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            RaycastHit2D[] hits = Physics2D.RaycastAll(mousePosition, Vector2.zero);
+            if (hits.Length > 0)
+            {
+                foreach (var hit in hits)
+                {
+                    if (hit.collider.CompareTag("Bird"))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            if (NavigationManager.Instance.IsPointInNavMeshArea(3, mousePosition + (Vector2)foodDropOffset))
+                return true;
+
+            return false;
+        }
+
+        public bool IsCoverBird()
+        {
+            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mouseWorldPos.z = 0; // 确保Z轴位置正确
+        
+            //检测是否点击到鸟，如果点击到鸟，则不生成食物
+            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            RaycastHit2D[] hits = Physics2D.RaycastAll(mousePosition, Vector2.zero);
+            if (hits.Length > 0)
+            {
+                foreach (var hit in hits)
+                {
+                    if (hit.collider.CompareTag("Bird"))
+                    {
+                        var bird = hit.collider.gameObject.GetComponent<Brid>();
+                        if (!bird.isSmall)
+                            return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public bool IsCoverUI()
+        {
+            return UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject();
         }
     }
 }

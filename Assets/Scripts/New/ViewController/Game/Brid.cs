@@ -197,6 +197,7 @@ namespace BirdGame
 
                             this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Stroke);
                             anim.SetTrigger("Stroke");
+                            this.GetSystem<ICursorSystem>().Stroke();
                             if (petTime > 0.5)
                             {
                                 this.GetModel<IAccountModel>().Coins.Value += 3;
