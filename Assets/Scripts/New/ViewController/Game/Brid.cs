@@ -149,7 +149,7 @@ namespace BirdGame
         {
             if (isEnter)
             {
-                if (Input.GetMouseButtonDown(1))
+                if (Input.GetMouseButtonDown(0))
                 {
                     if (!isSmall)
                     {
@@ -175,7 +175,7 @@ namespace BirdGame
                     // }
                 }
 
-                if (Input.GetMouseButtonDown(0))
+                if (Input.GetMouseButtonDown(1))
                 {
                     if (_stateMachine.CurrentState == typeof(BirdIdleState))
                     {
