@@ -11,6 +11,8 @@ namespace BirdGame
         SettingData SettingData { get; set; }
         MusicSettingData MusicSettingData { get; set; }
         BirdInfoData BirdInfoData { get; set; }
+        NoteData NoteData { get; set; }
+        ScheduleData ScheduleData { get; set; }
     }
 
     public class SaveModel : AbstractModel, ISaveModel
@@ -24,6 +26,8 @@ namespace BirdGame
         public SettingData SettingData { get; set; }
         public MusicSettingData MusicSettingData { get; set; }
         public BirdInfoData BirdInfoData { get; set; }
+        public NoteData NoteData { get; set; }
+        public ScheduleData ScheduleData { get; set; }
     }
     
     [Serializable]
@@ -31,18 +35,27 @@ namespace BirdGame
     {
     }
 
+    /// <summary>
+    /// 账户存档数据
+    /// </summary>
     [Serializable]
     public class AccountData : SavableData
     {
         public int coins = 100;
     }
 
+    /// <summary>
+    /// 设置存档数据
+    /// </summary>
     [Serializable]
     public class SettingData : SavableData
     {
         
     }
 
+    /// <summary>
+    /// 音频设置存档数据
+    /// </summary>
     [Serializable]
     public class MusicSettingData : SavableData
     {
@@ -50,9 +63,49 @@ namespace BirdGame
         public List<float> environmentVolumes;
     }
 
+    /// <summary>
+    /// 鸟的存档数据
+    /// </summary>
     [Serializable]
     public class BirdInfoData : SavableData
     {
         
+    }
+
+    /// <summary>
+    /// 日记存档数据
+    /// </summary>
+    [Serializable]
+    public class NoteData : SavableData
+    {
+        public List<BookData> bookList = new List<BookData>();
+    }
+
+    /// <summary>
+    /// 日记数据
+    /// </summary>
+    [Serializable]
+    public class BookData
+    {
+        public string noteText;
+    }
+
+    /// <summary>
+    /// 日程存档数据
+    /// </summary>
+    [Serializable]
+    public class ScheduleData : SavableData
+    {
+        public List<ScheduleItemData> scheduleList = new List<ScheduleItemData>();
+    }
+
+    /// <summary>
+    /// 日程数据
+    /// </summary>
+    [Serializable]
+    public class ScheduleItemData
+    {
+        public string scheduleText;
+        public bool isCompleted;
     }
 }

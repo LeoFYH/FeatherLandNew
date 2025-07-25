@@ -17,14 +17,17 @@ namespace BirdGame
         public Button shopButton;
         public Button tomatoButton;
         public Button illustratedButton;
+        public Button illustratedButton1;
+        public Button mapButton;
         public TextMeshProUGUI coinsNum;
         public RectTransform branch;
         public CanvasGroup group1;
         public CanvasGroup group2;
-        public GameObject timeItem;
+        public RectTransform timeItem;
         public TextMeshProUGUI timeText;
 
         private Sequence anim;
+        private Tweener timeAnim;
         private bool isShowBranch;
         
         public override void OnShowPanel()
@@ -69,6 +72,14 @@ namespace BirdGame
             {
                 uiSystem.ShowPopup(UIPopup.IllustratedPopup);
             });
+            illustratedButton1.onClick.AddListener(() =>
+            {
+                uiSystem.ShowPopup(UIPopup.IllustratedPopup);
+            });
+            mapButton.onClick.AddListener(() =>
+            {
+                
+            });
             
             weatherButton.onClick.AddListener(() =>
             {
@@ -103,13 +114,22 @@ namespace BirdGame
 
             this.RegisterEvent<ChangeTimeViewEvent>(evt =>
             {
-                timeItem.SetActive(evt.show);
+                timeAnim?.Kill();
+                if (evt.show)
+                {
+                    timeAnim = timeItem.DOAnchorPosY(0f, 0.2f).SetEase(Ease.InSine);
+                }
+                else
+                {
+                    timeAnim = timeItem.DOAnchorPosY(254f, 0.2f).SetEase(Ease.OutSine);
+                }
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             this.GetModel<IClockModel>().TomatoItem.TimeString.Register(v =>
             {
                 timeText.text = v;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
-            timeItem.SetActive(false);
+
+            timeItem.anchoredPosition = new Vector2(0f, 254f);
         }
 
         private void ShowBranch()
@@ -120,11 +140,11 @@ namespace BirdGame
             group2.alpha = 0;
             var rect1 = group1.transform as RectTransform;
             var rect2 = group2.transform as RectTransform;
-            branch.anchoredPosition = new Vector2(1432f, -166.61f);
+            branch.anchoredPosition = new Vector2(403.8f, -166.61f);
             rect1.anchoredPosition = new Vector2(50f, -2f);
             rect2.anchoredPosition = new Vector2(50f, -115f);
             anim = DOTween.Sequence();
-            anim.Append(branch.DOAnchorPosX(1028f, 0.5f).SetEase(Ease.InSine));
+            anim.Append(branch.DOAnchorPosX(0, 0.5f).SetEase(Ease.InSine));
             anim.Append(rect1.DOAnchorPosY(-22f, 0.3f).SetEase(Ease.Linear));
             anim.Join(group1.DOFade(1f, 0.3f).SetEase(Ease.Linear));
             anim.Append(rect2.DOAnchorPosY(-135f, 0.3f).SetEase(Ease.Linear));
@@ -136,7 +156,7 @@ namespace BirdGame
             isShowBranch = false;
             anim?.Kill();
             anim = DOTween.Sequence();
-            anim.Append(branch.DOAnchorPosX(1432f, 0.5f).SetEase(Ease.OutSine));
+            anim.Append(branch.DOAnchorPosX(403.8f, 0.5f).SetEase(Ease.OutSine));
         }
     }
 }

@@ -69,14 +69,14 @@ namespace BirdGame
             Cursor.SetCursor(item.cursorTexture, item.hotspot, CursorMode.Auto);
             currentState = CursorState.Feed1;
             feedAnim = DOTween.Sequence();
-            feedAnim.AppendInterval(0.1f);
+            feedAnim.AppendInterval(0.2f);
             feedAnim.AppendCallback(() =>
             {
                 item = cursorItems[CursorState.Feed2];
                 currentState = CursorState.Feed2;
                 Cursor.SetCursor(item.cursorTexture, item.hotspot, CursorMode.Auto);
             });
-            feedAnim.AppendInterval(0.1f);
+            feedAnim.AppendInterval(0.2f);
             feedAnim.AppendCallback(() =>
             {
                 item = cursorItems[CursorState.Feed1];
@@ -99,14 +99,14 @@ namespace BirdGame
             Cursor.SetCursor(item.cursorTexture, item.hotspot, CursorMode.Auto);
             currentState = CursorState.Stroke1;
             strokeAnim = DOTween.Sequence();
-            strokeAnim.AppendInterval(0.1f);
+            strokeAnim.AppendInterval(0.2f);
             strokeAnim.AppendCallback(() =>
             {
                 item = cursorItems[CursorState.Stroke2];
                 Cursor.SetCursor(item.cursorTexture, item.hotspot, CursorMode.Auto);
                 currentState = CursorState.Stroke2;
             });
-            strokeAnim.AppendInterval(0.1f);
+            strokeAnim.AppendInterval(0.2f);
             strokeAnim.AppendCallback(() =>
             {
                 item = cursorItems[CursorState.Stroke1];
@@ -114,6 +114,7 @@ namespace BirdGame
                 currentState = CursorState.Stroke1;
                 strokeAnim = null;
             });
+            strokeAnim.AppendInterval(1f);
             strokeAnim.OnComplete(() =>
             {
                 isPlayingStroke = false;

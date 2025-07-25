@@ -15,8 +15,8 @@ namespace BirdGame
     public class SaveSystem : AbstractSystem, ISaveSystem
     {
         private string saveDir = Application.persistentDataPath + "/GameData/";
-        private string tempDir = Application.persistentDataPath + "TempData";
-        private string backupDir = Application.persistentDataPath + "BackupData";
+        private string tempDir = Application.persistentDataPath + "/TempData/";
+        private string backupDir = Application.persistentDataPath + "/BackupData/";
 
         private ISaveModel _saveModel;
 
@@ -261,6 +261,8 @@ namespace BirdGame
             _saveModel.SettingData = GetData<SettingData>("SettingData");
             _saveModel.MusicSettingData = GetData<MusicSettingData>("MusicSettingData");
             _saveModel.BirdInfoData = GetData<BirdInfoData>("BirdInfoData");
+            _saveModel.NoteData = GetData<NoteData>("NoteData");
+            _saveModel.ScheduleData = GetData<ScheduleData>("ScheduleData");
         }
 
         public void SaveData()
@@ -269,6 +271,8 @@ namespace BirdGame
             SaveData("SettingData", _saveModel.SettingData);
             SaveData("MusicSettingData", _saveModel.MusicSettingData);
             SaveData("BirdInfoData", _saveModel.BirdInfoData);
+            SaveData("NoteData", _saveModel.NoteData);
+            SaveData("ScheduleData", _saveModel.ScheduleData);
         }
     }
 }
