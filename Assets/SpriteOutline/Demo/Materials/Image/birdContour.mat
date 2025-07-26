@@ -16,7 +16,7 @@ Material:
   - ETC1_EXTERNAL_ALPHA
   - _FRAMEMODE_GENERAL
   - _OUTLINEENABLED_ON
-  - _OUTLINEMODE_IMAGE
+  - _OUTLINEMODE_SOLID
   - _OUTLINEPOSITION_OUTSIDE
   - _OUTLINESHAPE_CONTOUR
   - _TILEMODE_STRETCH
@@ -87,7 +87,7 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _OutlineEnabled: 1
-    - _OutlineMode: 2
+    - _OutlineMode: 0
     - _OutlinePosition: 2
     - _OutlineShape: 0
     - _Parallax: 0.02
@@ -95,7 +95,7 @@ Material:
     - _SpecularHighlights: 1
     - _SpriteOverlay: 0
     - _SrcBlend: 1
-    - _Thickness: 16.34
+    - _Thickness: 30
     - _TileMode: 0
     - _UVSec: 0
     - _Weight: 0.5
