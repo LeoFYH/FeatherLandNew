@@ -65,6 +65,7 @@ namespace BirdGame
                     return;
                 item.TimerCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(StartTimer());
                 Refresh(true);
+                this.GetModel<IClockModel>().TimerType = TimerType.Tomato;
             });
             stopButton.onClick.AddListener(() =>
             {
@@ -103,10 +104,10 @@ namespace BirdGame
             startButton.interactable = !isTiming;
             stopButton.interactable = isTiming;
             refreshButton.interactable = !isTiming;
-            this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
-            {
-                show = isTiming
-            });
+            // this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
+            // {
+            //     show = isTiming
+            // });
         }
 
         private void OnUpClick(int index)
@@ -186,10 +187,18 @@ namespace BirdGame
             }
             
             this.GetSystem<IMonoSystem>().SendEvent<TomatoOverEvent>();
-            this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
+            if (this.GetModel<IClockModel>().TimerItem.TimerCoroutine != null)
             {
-                show = false
-            });
+                this.GetModel<IClockModel>().TimerType = TimerType.Timer;
+            }
+            else
+            {
+                this.GetModel<IClockModel>().TimerType = TimerType.None;
+                this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
+                {
+                    show = false
+                });
+            }
         }
 
         private void OnToggleValueChanged(int index, bool isOn)

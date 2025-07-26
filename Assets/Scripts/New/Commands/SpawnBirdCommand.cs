@@ -9,12 +9,18 @@ namespace BirdGame
     /// </summary>
     public class SpawnBirdCommand : AbstractCommand
     {
+        private int eggIndex;
+        
+        public SpawnBirdCommand(int index)
+        {
+            eggIndex = index;
+        }
+        
         protected override void OnExecute()
         {
             var config = this.GetModel<IConfigModel>().BirdConfig;
-            
-            // 随机选择鸟的预制体
-            int val = Random.Range(0, config.birds.Length);
+
+            int val = RandomGetBirdIndex();
             GameObject go = GameObject.Instantiate(config.birds[val].prefab);
             this.GetModel<IBirdModel>().AddBird(val, go.GetComponent<Brid>());
             var agent = go.GetComponent<NavMeshAgent>();
@@ -25,6 +31,29 @@ namespace BirdGame
             // 更新 GameManager 的未开启蛋数量
             this.GetModel<IBirdModel>().UnopenEggs--;
             agent.enabled = true;
+        }
+
+        private int RandomGetBirdIndex()
+        {
+            var egg = this.GetModel<IConfigModel>().ShopConfig.eggs[eggIndex];
+            float total = egg.GetTotalProbability();
+            float pro = Random.Range(0f, total);
+            float currentPro = egg.birds[0].probability;
+            if (pro < currentPro)
+            {
+                return egg.birds[0].birdType;
+            }
+            for (int i = 1; i < egg.birds.Length; i++)
+            {
+                if (pro >= currentPro && pro < currentPro + egg.birds[i].probability)
+                {
+                    return egg.birds[i].birdType;
+                }
+
+                currentPro += egg.birds[i].probability;
+            }
+
+            return egg.birds[egg.birds.Length - 1].birdType;
         }
     }
 }

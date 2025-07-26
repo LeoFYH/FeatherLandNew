@@ -15,12 +15,36 @@ MonoBehaviour:
   eggs:
   - eggSp: {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
     price: 10
+    birdCount: 5
+    birds:
+    - birdType: 0
+      probability: 0.4
+    - birdType: 2
+      probability: 0.516
   - eggSp: {fileID: 710238443548197888, guid: 1170092e8fa8e1142a7e347132e8ea45, type: 3}
     price: 50
+    birdCount: 3
+    birds:
+    - birdType: 1
+      probability: 0.5
+    - birdType: 2
+      probability: 0.5
   - eggSp: {fileID: 2219571566158466069, guid: 066d2d923c5b99944aa6d9ca568d816f, type: 3}
     price: 70
+    birdCount: 3
+    birds:
+    - birdType: 4
+      probability: 0.5
+    - birdType: 3
+      probability: 0.5
   - eggSp: {fileID: -8002347335681798773, guid: 3983a1dbff14cd040915f5a365b4942e, type: 3}
     price: 100
+    birdCount: 3
+    birds:
+    - birdType: 0
+      probability: 0.5
+    - birdType: 2
+      probability: 0.5
   decorations:
   - icon: {fileID: -2860457792642330479, guid: 1cbef57f4ce5aa540b29700fe0df85b3, type: 3}
     name: "\u5C0F\u718A"

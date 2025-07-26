@@ -1,15 +1,24 @@
 using DG.Tweening;
 using QFramework;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace BirdGame
 {
     public class Egg : ViewControllerBase
     {
+        [ShowInInspector, ReadOnly]
+        public int EggItemIndex { get; private set; }
+
         public Sprite[] eggSprites; // 蛋动画的每一帧图片
         public SpriteRenderer spriteRenderer;
         private int currentFrame = 0; // 当前显示的帧索引
         private Tweener anim;
+
+        public void SetEggIndex(int index)
+        {
+            EggItemIndex = index;
+        }
 
         private void Start()
         {
@@ -48,7 +57,7 @@ namespace BirdGame
 
         private void SpawnBird()
         {
-            this.SendCommand<SpawnBirdCommand>();
+            this.SendCommand(new SpawnBirdCommand(EggItemIndex));
             // 销毁当前蛋对象
             Destroy(gameObject);
         }

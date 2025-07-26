@@ -181,10 +181,8 @@ namespace BirdGame
             {
                 foreach (var hit in hits)
                 {
-                    if (hit.collider.CompareTag("Bird"))
+                    if (hit.collider.CompareTag("Bird") || hit.collider.CompareTag("Egg"))
                     {
-                        var bird = hit.collider.gameObject.GetComponent<Brid>();
-                        if (!bird.isSmall)
                             return true;
                     }
                 }

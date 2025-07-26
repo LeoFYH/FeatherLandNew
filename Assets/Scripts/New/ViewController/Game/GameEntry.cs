@@ -81,7 +81,7 @@ namespace BirdGame
             }
             else if (this.GetSystem<IGameSystem>().IsCoverBird())
             {
-                this.GetSystem<ICursorSystem>().SetCursorState(CursorState.Stroke1);
+                this.GetSystem<ICursorSystem>().SetCursorState(CursorState.Click);
             }
             else if (this.GetSystem<IGameSystem>().IsCoverGround())
             {

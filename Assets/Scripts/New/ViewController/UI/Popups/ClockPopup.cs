@@ -40,5 +40,16 @@ namespace BirdGame
             timer.SetActive(false);
             tomato.SetActive(false);
         }
+
+        private void OnDestroy()
+        {
+            if (this.GetModel<IClockModel>().TimerType != TimerType.None)
+            {
+                this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
+                {
+                    show = true
+                });
+            }
+        }
     }
 }

@@ -11,7 +11,7 @@ namespace BirdGame
         bool IsPlayingAnim();
         void SetCursorState(CursorState state);
         void Feed();
-        void Stroke();
+        //void Stroke();
     }
 
     public class CursorSystem : AbstractSystem, ICursorSystem
@@ -20,7 +20,6 @@ namespace BirdGame
         private Sequence feedAnim;
         private Sequence strokeAnim;
         private bool isPlayingFeed;
-        private bool isPlayingStroke;
 
         private CursorState currentState;
         
@@ -41,7 +40,7 @@ namespace BirdGame
 
         public bool IsPlayingAnim()
         {
-            return isPlayingFeed || isPlayingStroke;
+            return isPlayingFeed;
         }
 
         public void SetCursorState(CursorState state)
@@ -90,35 +89,35 @@ namespace BirdGame
             });
         }
 
-        public void Stroke()
-        {
-            feedAnim?.Kill(true);
-            strokeAnim?.Kill(true);
-            isPlayingStroke = true;
-            var item = cursorItems[CursorState.Stroke1];
-            Cursor.SetCursor(item.cursorTexture, item.hotspot, CursorMode.Auto);
-            currentState = CursorState.Stroke1;
-            strokeAnim = DOTween.Sequence();
-            strokeAnim.AppendInterval(0.2f);
-            strokeAnim.AppendCallback(() =>
-            {
-                item = cursorItems[CursorState.Stroke2];
-                Cursor.SetCursor(item.cursorTexture, item.hotspot, CursorMode.Auto);
-                currentState = CursorState.Stroke2;
-            });
-            strokeAnim.AppendInterval(0.2f);
-            strokeAnim.AppendCallback(() =>
-            {
-                item = cursorItems[CursorState.Stroke1];
-                Cursor.SetCursor(item.cursorTexture, item.hotspot, CursorMode.Auto);
-                currentState = CursorState.Stroke1;
-                strokeAnim = null;
-            });
-            strokeAnim.AppendInterval(1f);
-            strokeAnim.OnComplete(() =>
-            {
-                isPlayingStroke = false;
-            });
-        }
+        // public void Stroke()
+        // {
+        //     feedAnim?.Kill(true);
+        //     strokeAnim?.Kill(true);
+        //     isPlayingStroke = true;
+        //     var item = cursorItems[CursorState.Stroke1];
+        //     Cursor.SetCursor(item.cursorTexture, item.hotspot, CursorMode.Auto);
+        //     currentState = CursorState.Stroke1;
+        //     strokeAnim = DOTween.Sequence();
+        //     strokeAnim.AppendInterval(0.2f);
+        //     strokeAnim.AppendCallback(() =>
+        //     {
+        //         item = cursorItems[CursorState.Stroke2];
+        //         Cursor.SetCursor(item.cursorTexture, item.hotspot, CursorMode.Auto);
+        //         currentState = CursorState.Stroke2;
+        //     });
+        //     strokeAnim.AppendInterval(0.2f);
+        //     strokeAnim.AppendCallback(() =>
+        //     {
+        //         item = cursorItems[CursorState.Stroke1];
+        //         Cursor.SetCursor(item.cursorTexture, item.hotspot, CursorMode.Auto);
+        //         currentState = CursorState.Stroke1;
+        //         strokeAnim = null;
+        //     });
+        //     strokeAnim.AppendInterval(1f);
+        //     strokeAnim.OnComplete(() =>
+        //     {
+        //         isPlayingStroke = false;
+        //     });
+        // }
     }
 } 

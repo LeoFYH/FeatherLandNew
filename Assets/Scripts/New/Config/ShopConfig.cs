@@ -1,5 +1,6 @@
 ﻿using System;
 using Sirenix.OdinInspector;
+using UnityEditor;
 using UnityEngine;
 
 namespace BirdGame
@@ -24,8 +25,65 @@ namespace BirdGame
     {
         [PreviewField(50, ObjectFieldAlignment.Left), HorizontalGroup("content", Width = 50), HideLabel]
         public Sprite eggSp;
-        [LabelText("价格"), LabelWidth(50), HorizontalGroup("content")]
+        [LabelText("价格"), LabelWidth(50), HorizontalGroup("content"), VerticalGroup("content/birds")]
         public int price;
+        [LabelText("开出鸟的数量"), VerticalGroup("content/birds"), InfoBox("开出鸟的数量不能小于或等于0！", InfoMessageType.Error, VisibleIf = "@birdCount<=0")]
+        public int birdCount = 3;
+        [TableList(ShowIndexLabels = true), VerticalGroup("content/birds"), InfoBox("鸟蛋包含的鸟的列表不能为空！", InfoMessageType.Warning, VisibleIf = "@birds==null||birds.Length==0")]
+        public EggBirdItem[] birds;
+
+        public float GetTotalProbability()
+        {
+            if (birds == null || birds.Length == 0)
+                return 0;
+            
+            float total = 0;
+            
+            foreach (var item in birds)
+            {
+                total += item.probability;
+            }
+
+            return total;
+        }
+    }
+
+    [Serializable]
+    public class EggBirdItem
+    {
+        [ShowInInspector, ReadOnly, PreviewField(ObjectFieldAlignment.Left), HorizontalGroup("info", Width = 30), HideLabel]
+        private Texture2D preview;
+        [ValueDropdown("GetBirdList"), HorizontalGroup("info", PaddingLeft = 30), VerticalGroup("info/content"), HideLabel, OnValueChanged("RefreshBirdTexture"), OnInspectorGUI("OnDrawTexture")]
+        public int birdType;
+        [Range(0, 1f), VerticalGroup("info/content"), LabelText("概率"), InfoBox("概率不能为0！", InfoMessageType.Error, VisibleIf = "@probability==0f")]
+        public float probability = 0.5f;
+
+
+        private void OnDrawTexture()
+        {
+            if(preview == null)
+                return;
+            RefreshBirdTexture();
+        }
+
+        private void RefreshBirdTexture()
+        {
+            var config = AssetDatabase.LoadAssetAtPath<BirdConfig>("Assets/Prefabs/Config/BirdConfig.asset");
+            preview = config.birds[birdType].preview.texture;
+        }
+
+        private ValueDropdownList<int> GetBirdList()
+        {
+            var config = AssetDatabase.LoadAssetAtPath<BirdConfig>("Assets/Prefabs/Config/BirdConfig.asset");
+
+            var list = new ValueDropdownList<int>();
+            for (int i = 0; i < config.birds.Length; i++)
+            {
+                list.Add(config.birds[i].birdName, i);
+            }
+
+            return list;
+        }
     }
 
     [Serializable]
