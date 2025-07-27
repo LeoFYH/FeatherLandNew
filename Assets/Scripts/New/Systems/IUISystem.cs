@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using QFramework;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.UI;
 
 namespace BirdGame
 {
@@ -59,6 +60,10 @@ namespace BirdGame
         /// </summary>
         /// <param name="prompt"></param>
         void ShowPrompt(string prompt);
+
+        void ShowMask();
+
+        void HideMask();
     }
 
     public class UISystem : AbstractSystem, IUISystem
@@ -68,6 +73,7 @@ namespace BirdGame
         private Dictionary<UIPopup, UIBase> popupDic = new Dictionary<UIPopup, UIBase>();
         private Transform panelLayer;
         private Transform popupLayer;
+        private GameObject mask;
         
         protected override void OnInit()
         {
@@ -142,6 +148,28 @@ namespace BirdGame
             {
                 GetPopup<PromptPopup>(UIPopup.PromptPopup).Init(prompt);
             });
+        }
+
+        public void ShowMask()
+        {
+            mask = new GameObject("Mask");
+            mask.transform.SetParent(popupLayer);
+            var image = mask.AddComponent<Image>();
+            image.color = Color.clear;
+            var rect = mask.GetComponent<RectTransform>();
+            rect.anchorMax = Vector2.one;
+            rect.anchorMin = Vector2.zero;
+            rect.anchoredPosition = Vector2.zero;
+            rect.sizeDelta = Vector2.zero;
+        }
+
+        public void HideMask()
+        {
+            if (mask != null)
+            {
+                GameObject.Destroy(mask);
+                mask = null;
+            }
         }
     }
 }

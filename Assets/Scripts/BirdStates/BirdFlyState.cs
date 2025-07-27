@@ -51,43 +51,43 @@ namespace BirdGame
                 float flightAngle = Mathf.Atan2(verticalDistance, horizontalDistance) * Mathf.Rad2Deg;
 
                 // 如果角度太陡（接近垂直），调整目标位置让飞行更自然
-                if (flightAngle > 60f)
-                {
-                    // 计算一个更平缓的飞行路径
-                    float maxHeight = horizontalDistance * 0.5f; // 最大高度为水平距离的一半
-                    float adjustedY = _brid.transform.position.y + Mathf.Min(direction.y, maxHeight);
-
-                    // 创建中间点，让小鸟先飞到合适的高度
-                    Vector3 intermediateTarget = new Vector3(
-                        _brid.transform.position.x + direction.x * 0.3f, // 先飞30%的水平距离
-                        adjustedY,
-                        _brid.transform.position.z
-                    );
-
-                    // 设置朝向
-                    _brid.sr.flipX = intermediateTarget.x > _brid.transform.position.x;
-
-                    // 第一阶段：斜着飞到中间点
-                    float firstDistance = Vector3.Distance(_brid.transform.position, intermediateTarget);
-                    float firstFlyTime = firstDistance / _brid.flySpeed;
-
-                    // 飞向中间点时逐渐缩小
-                    Vector3 targetScale = Vector3.one * _brid.AdultBirdSize * 0.8f;
-                    _brid.transform.DOScale(targetScale, firstFlyTime).SetEase(Ease.Linear);
-
-                    _brid.transform.DOMove(intermediateTarget, firstFlyTime).SetEase(Ease.Linear).OnComplete(() =>
-                    {
-                        // 第二阶段：从中间点飞到最终目标
-                        float secondDistance = Vector3.Distance(intermediateTarget, target);
-                        float secondFlyTime = secondDistance / _brid.flySpeed;
-
-                        _brid.transform.DOMove(target, secondFlyTime).SetEase(Ease.Linear).OnComplete(() =>
-                        {
-                            currMachine.ChangeState<BirdFlyWaitState>();
-                        });
-                    });
-                }
-                else
+                // if (flightAngle > 60f)
+                // {
+                //     // 计算一个更平缓的飞行路径
+                //     float maxHeight = horizontalDistance * 0.5f; // 最大高度为水平距离的一半
+                //     float adjustedY = _brid.transform.position.y + Mathf.Min(direction.y, maxHeight);
+                //
+                //     // 创建中间点，让小鸟先飞到合适的高度
+                //     Vector3 intermediateTarget = new Vector3(
+                //         _brid.transform.position.x + direction.x * 0.3f, // 先飞30%的水平距离
+                //         adjustedY,
+                //         _brid.transform.position.z
+                //     );
+                //
+                //     // 设置朝向
+                //     _brid.sr.flipX = intermediateTarget.x > _brid.transform.position.x;
+                //
+                //     // 第一阶段：斜着飞到中间点
+                //     float firstDistance = Vector3.Distance(_brid.transform.position, intermediateTarget);
+                //     float firstFlyTime = firstDistance / _brid.flySpeed;
+                //
+                //     // 飞向中间点时逐渐缩小
+                //     Vector3 targetScale = Vector3.one * _brid.AdultBirdSize * 0.8f;
+                //     _brid.transform.DOScale(targetScale, firstFlyTime).SetEase(Ease.Linear);
+                //
+                //     _brid.transform.DOMove(intermediateTarget, firstFlyTime).SetEase(Ease.Linear).OnComplete(() =>
+                //     {
+                //         // 第二阶段：从中间点飞到最终目标
+                //         float secondDistance = Vector3.Distance(intermediateTarget, target);
+                //         float secondFlyTime = secondDistance / _brid.flySpeed;
+                //
+                //         _brid.transform.DOMove(target, secondFlyTime).SetEase(Ease.Linear).OnComplete(() =>
+                //         {
+                //             currMachine.ChangeState<BirdFlyWaitState>();
+                //         });
+                //     });
+                // }
+                if(flightAngle <= 60)
                 {
                     // 角度合适，直接斜着飞向目标
                     _brid.sr.flipX = target.x > _brid.transform.position.x;
@@ -102,6 +102,10 @@ namespace BirdGame
                     {
                         currMachine.ChangeState<BirdFlyWaitState>();
                     });
+                }
+                else
+                {
+                    currMachine.ChangeState<BirdIdleState>();
                 }
             }
             else

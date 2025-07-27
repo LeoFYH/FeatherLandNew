@@ -31,6 +31,10 @@ namespace BirdGame
             // 更新 GameManager 的未开启蛋数量
             this.GetModel<IBirdModel>().UnopenEggs--;
             agent.enabled = true;
+            if (this.GetModel<IBirdModel>().UnopenEggs <= 0)
+            {
+                this.GetSystem<IUISystem>().HideMask();
+            }
         }
 
         private int RandomGetBirdIndex()
