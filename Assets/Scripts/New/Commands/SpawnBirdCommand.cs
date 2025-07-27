@@ -42,6 +42,7 @@ namespace BirdGame
             var egg = this.GetModel<IConfigModel>().ShopConfig.eggs[eggIndex];
             float total = egg.GetTotalProbability();
             float pro = Random.Range(0f, total);
+            Debug.Log($"随机数: {pro}");
             float currentPro = egg.birds[0].probability;
             if (pro < currentPro)
             {

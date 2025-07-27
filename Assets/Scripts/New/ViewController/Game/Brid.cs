@@ -46,6 +46,7 @@ namespace BirdGame
         public string desc = "It's a bird";
         public Transform heartPos;
         public Vector3 flyInAirStartPosition; // 横向飞行的起始位置
+        public LineRenderer lineRenderer;
 
         [Header("Click count for following mouse movement")]
         public int clickCount = 5;
@@ -84,6 +85,8 @@ namespace BirdGame
 
         void Start()
         {
+            lineRenderer.startColor = Color.green;
+            lineRenderer.endColor = Color.green;
             // Initialize walkable area and basic components
             transform.localRotation = Quaternion.identity;
             agent = GetComponent<NavMeshAgent>();

@@ -6,7 +6,9 @@ namespace BirdGame
 {
     public class BirdConfig : ScriptableObject
     {
-        [Title("鸟的配置"), Space(10)]
+        [Title("鸟的配置"), Space(10)] 
+        [LabelText("显示鸟走路的路线")]
+        public bool isDrawPathLine;
         [TableList(ShowIndexLabels = true)]
         public BirdItem[] birds;
     }

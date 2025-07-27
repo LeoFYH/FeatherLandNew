@@ -17,9 +17,6 @@ namespace BirdGame
 
         public override void OnEnter()
         {
-            _brid.anim.SetBool("IsTakeOff", true);
-            _brid.anim.SetBool("Fly", true);
-            _brid.agent.enabled = false;
             if (this.GetModel<IBirdModel>().FlyPositions.Count > 0)
             {
                 int random = Random.Range(0, this.GetModel<IBirdModel>().FlyPositions.Count);
@@ -89,6 +86,9 @@ namespace BirdGame
                 // }
                 if(flightAngle <= 60)
                 {
+                    _brid.anim.SetBool("IsTakeOff", true);
+                    _brid.anim.SetBool("Fly", true);
+                    _brid.agent.enabled = false;
                     // 角度合适，直接斜着飞向目标
                     _brid.sr.flipX = target.x > _brid.transform.position.x;
 
@@ -111,7 +111,7 @@ namespace BirdGame
             else
             {
                 // 如果没有可用的飞行位置，直接回到 Idle 状态
-                currMachine.ChangeState<BirdIdleState>();
+                currMachine.ChangeState<BirdIdleState>(); ;
             }
         }
 

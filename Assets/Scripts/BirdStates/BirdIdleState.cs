@@ -23,6 +23,8 @@ namespace BirdGame
             float time = Random.Range(6f, 10f);
             random = Random.Range(1, 10);
             float lickingTime = Random.Range(1f, 4f);
+            if (!_brid.agent.enabled)
+                _brid.agent.enabled = true;
 
             coroutine = _brid.StartCoroutine(WaitForNext(time));
             DOTween.Sequence().AppendCallback(() => { 

@@ -1,6 +1,7 @@
 using DG.Tweening;
 using QFramework;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace BirdGame
 {
@@ -10,6 +11,9 @@ namespace BirdGame
         private Brid _brid;
         private float eatFoodTimer;
         private bool isOtherBirdEnter = false;
+        private NavMeshPath currentPath = new NavMeshPath();
+        private Vector3 eatPosition;
+        private float dirX;
 
         public BirdEatState(StateMachine machine) : base(machine)
         {
@@ -32,6 +36,27 @@ namespace BirdGame
 
             _brid.isAte = true;
             _brid.agent.SetDestination(_brid.currFood.transform.position);
+            var endPath = _brid.transform.position;
+            if (_brid.agent.path.corners.Length > 1)
+            {
+                endPath = _brid.agent.path.corners[^1];
+            }
+            dirX = _brid.currFood.transform.position.x - endPath.x;
+            if (dirX == 0)
+            {
+                dirX = _brid.currFood.transform.position.x - _brid.transform.position.x;
+            }
+
+            Debug.Log($"Direction: {dirX}");
+            // 计算精确的吃食物位置（鸟嘴对齐食物的位置）
+            eatPosition = _brid.currFood.transform.position + new Vector3(
+                dirX >= 0
+                    ? -_brid.BirdEatDistance * _brid.BabyBirdSize
+                    : _brid.BirdEatDistance * _brid.BabyBirdSize,
+                0f,
+                0
+            );
+            _brid.agent.SetDestination(eatPosition);
             _brid.agent.isStopped = false;
             _brid.anim.SetFloat("MoveSpeed", 1f);
         }
@@ -44,22 +69,11 @@ namespace BirdGame
                 return;
             }
 
-            if (!_brid.agent.pathPending && _brid.agent.remainingDistance <= 0.05f)
+            if (!_brid.agent.pathPending && _brid.agent.remainingDistance <= 0.01f)
             {
-                // // 到达计算位置后，检查鸟嘴是否真的对齐食物
-                // float beakToFoodDistance = Vector3.Distance(_brid.transform.position, _brid.currFood.transform.position);
-                //
-                // // 如果鸟嘴距离食物太远，说明计算有误，取消吃食物
-                // if (beakToFoodDistance > _brid.BirdEatDistance * _brid.BabyBirdSize + 0.2f)
-                // {
-                //     _brid.anim.SetFloat("MoveSpeed", 0);
-                //     _brid.anim.SetBool("Eat", false);
-                //     _brid.agent.isStopped = true;
-                //     _brid.agent.velocity = Vector3.zero;
-                //     DONext();
-                //     return;
-                // }
-
+                if (this.GetModel<IConfigModel>().BirdConfig.isDrawPathLine)
+                    _brid.lineRenderer.positionCount = 0;
+                
                 _brid.anim.SetFloat("MoveSpeed", 0);
                 _brid.anim.SetBool("Eat", true);
                 _brid.agent.isStopped = true;
@@ -68,33 +82,44 @@ namespace BirdGame
             }
             else
             {
-                // 计算精确的吃食物位置（鸟嘴对齐食物的位置）
-                Vector3 eatPosition = _brid.currFood.transform.position + new Vector3(
-                    _brid.sr.flipX
+                var endPath = _brid.transform.position;
+                if (_brid.agent.path.corners.Length > 1)
+                {
+                    endPath = _brid.agent.path.corners[^1];
+                }
+                dirX = _brid.currFood.transform.position.x - endPath.x;
+                if (dirX == 0)
+                {
+                    dirX = _brid.currFood.transform.position.x - _brid.transform.position.x;
+                }
+                eatPosition = _brid.currFood.transform.position + new Vector3(
+                    dirX >= 0
                         ? -_brid.BirdEatDistance * _brid.BabyBirdSize
                         : _brid.BirdEatDistance * _brid.BabyBirdSize,
                     0f,
                     0
                 );
                 _brid.agent.SetDestination(eatPosition);
+                if (this.GetModel<IConfigModel>().BirdConfig.isDrawPathLine)
+                    DrawPath();
+                if (Mathf.Abs(_brid.agent.velocity.x) > 0.001f)
+                    _brid.sr.flipX = _brid.agent.velocity.x >= 0;
                 
                 // 只要在移动就播放走路动画
-                if (_brid.agent.velocity.magnitude > 0.01f)
-                {
-                    _brid.anim.SetFloat("MoveSpeed", 1f);
-                    if (Mathf.Abs(_brid.transform.position.x - eatPosition.x) > 0.4f)
-                        _brid.sr.flipX = _brid.agent.velocity.x >= 0;
-                }
-                else
-                {
-                    _brid.anim.SetFloat("MoveSpeed", 0f);
-                }
+                // if (_brid.agent.velocity.magnitude > 0.001f)
+                // {
+                //     //_brid.anim.SetFloat("MoveSpeed", 1f);
+                //     _brid.sr.flipX = _brid.agent.velocity.x >= 0;
+                // }
+                // else
+                // {
+                //     //_brid.anim.SetFloat("MoveSpeed", 0f);
+                // }
                 
                 if (isOtherBirdEnter)
                 {
                     if (_brid.currFood != null)
                     {
-                        //GameManager.Instance.ReduceFood(_brid.currFood);
                         _brid.currFood.UntargetFood();
                         _brid.currFood = null;
                     }
@@ -106,6 +131,8 @@ namespace BirdGame
 
         private void EatFood()
         {
+            dirX = _brid.currFood.transform.position.x - _brid.transform.position.x;
+            _brid.sr.flipX = dirX >= 0;
             if (eatFoodTimer < _brid.eatFoodTime)
             {
                 eatFoodTimer += Time.deltaTime;
@@ -117,22 +144,8 @@ namespace BirdGame
 
                 if (_brid.eatFoodCount.Value == _brid.eatCountForBig)
                 {
-                    //_brid.transform.localScale = Vector3.one * _brid.AdultBirdSize;
                     _brid.transform.DOScale(_brid.AdultBirdSize, 0.2f);
                     _brid.isSmall = false;
-
-                    // if (GameManager.Instance.nests.Count > 0)
-                    // {
-                    //     int index = Random.Range(0, GameManager.Instance.nests.Count);
-                    //     _brid.nest = GameManager.Instance.nests[index];
-                    //     if (_brid.nest != null)
-                    //     {
-                    //         _brid.nest.Init(_brid);
-                    //         _brid.nestPos = _brid.nest.transform.position;
-                    //         _brid.isSmall = false;
-                    //         _brid.distance = Vector3.Distance(_brid.transform.position, _brid.nestPos);
-                    //     }
-                    // }
                 }
 
                 if (_brid.currFood != null)
@@ -180,6 +193,27 @@ namespace BirdGame
             else
             {
                 currMachine.ChangeState<BirdIdleState>();
+            }
+        }
+
+        private void DrawPath()
+        {
+            _brid.agent.CalculatePath(eatPosition, currentPath);
+            int pathLength = currentPath.corners.Length;
+            if (pathLength < 2)
+            {
+                _brid.lineRenderer.positionCount = 2;
+                _brid.lineRenderer.SetPosition(0, _brid.transform.position);
+                _brid.lineRenderer.SetPosition(1, eatPosition);
+            }
+            else
+            {
+                _brid.lineRenderer.positionCount = pathLength + 1;
+                for (int i = 0; i < pathLength; i++)
+                {
+                    _brid.lineRenderer.SetPosition(i, currentPath.corners[i]);
+                }
+                _brid.lineRenderer.SetPosition(pathLength, eatPosition);
             }
         }
     }

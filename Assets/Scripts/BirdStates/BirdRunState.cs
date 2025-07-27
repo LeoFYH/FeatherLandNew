@@ -1,6 +1,7 @@
 using DG.Tweening;
 using QFramework;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace BirdGame
 {
@@ -9,6 +10,7 @@ namespace BirdGame
     {
         private Brid _brid;
         private Vector3 target;
+        private NavMeshPath currentPath = new NavMeshPath();
 
         public BirdRunState(StateMachine machine) : base(machine)
         {
@@ -18,7 +20,8 @@ namespace BirdGame
         public override void OnEnter()
         {
             _brid.onNearOtherBird = OnNearOtherBird;
-
+            if (!_brid.agent.enabled)
+                _brid.agent.enabled = true;
             _brid.isAte = false;
             // Release any existing food target when entering run state
             if (_brid.currFood != null)
@@ -79,22 +82,47 @@ namespace BirdGame
 
         public override void OnUpdate()
         {
-            if (!_brid.agent.pathPending && _brid.agent.remainingDistance <= 0.05f)
+            if (!_brid.agent.pathPending && _brid.agent.remainingDistance <= 0.01f)
             {
                 _brid.agent.isStopped = true;
                 _brid.agent.velocity = Vector3.zero;
+                _brid.lineRenderer.positionCount = 0;
                 DONext();
             }
             else
             {
+                if(this.GetModel<IConfigModel>().BirdConfig.isDrawPathLine)
+                    DrawPath();
                 _brid.sr.flipX = _brid.agent.velocity.x >= 0;
                 _brid.anim.SetFloat("MoveSpeed", 1);
+            }
+        }
+        
+        private void DrawPath()
+        {
+            _brid.agent.CalculatePath(target, currentPath);
+            int pathLength = currentPath.corners.Length;
+            if (pathLength < 2)
+            {
+                _brid.lineRenderer.positionCount = 2;
+                _brid.lineRenderer.SetPosition(0, _brid.transform.position);
+                _brid.lineRenderer.SetPosition(1, target);
+            }
+            else
+            {
+                _brid.lineRenderer.positionCount = pathLength + 1;
+                for (int i = 0; i < pathLength; i++)
+                {
+                    _brid.lineRenderer.SetPosition(i, currentPath.corners[i]);
+                }
+                _brid.lineRenderer.SetPosition(pathLength, target);
             }
         }
 
         public override void OnExit()
         {
             _brid.onNearOtherBird = null;
+            _brid.lineRenderer.positionCount = 0;
             _brid.anim.SetFloat("MoveSpeed", 0f);
             _brid.agent.isStopped = true;
             _brid.agent.velocity = Vector3.zero;
