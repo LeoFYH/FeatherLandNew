@@ -349,7 +349,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6057693141265324842
 RectTransform:
   m_ObjectHideFlags: 0
@@ -445,8 +445,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -200, y: -333.8}
-  m_SizeDelta: {x: 160, y: 55.1}
+  m_AnchoredPosition: {x: 0, y: -333.8}
+  m_SizeDelta: {x: 160, y: 55}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5258274859123848713
 CanvasRenderer:
@@ -517,7 +517,7 @@ MonoBehaviour:
   m_SpriteState:
     m_HighlightedSprite: {fileID: 145080911073647272, guid: 121cb0cd41ed538438ba74459ac0555e, type: 3}
     m_PressedSprite: {fileID: 2644868322264041771, guid: 1c83f24dabbe4c44a97737bf60fee894, type: 3}
-    m_SelectedSprite: {fileID: 2644868322264041771, guid: 1c83f24dabbe4c44a97737bf60fee894, type: 3}
+    m_SelectedSprite: {fileID: 145080911073647272, guid: 121cb0cd41ed538438ba74459ac0555e, type: 3}
     m_DisabledSprite: {fileID: 2644868322264041771, guid: 1c83f24dabbe4c44a97737bf60fee894, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
@@ -1599,8 +1599,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 200, y: -333.8}
-  m_SizeDelta: {x: 147, y: 62}
+  m_AnchoredPosition: {x: 0, y: -333.8}
+  m_SizeDelta: {x: 160, y: 55}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6999983466353585383
 CanvasRenderer:
@@ -1671,7 +1671,7 @@ MonoBehaviour:
   m_SpriteState:
     m_HighlightedSprite: {fileID: 145080911073647272, guid: 121cb0cd41ed538438ba74459ac0555e, type: 3}
     m_PressedSprite: {fileID: 2644868322264041771, guid: 1c83f24dabbe4c44a97737bf60fee894, type: 3}
-    m_SelectedSprite: {fileID: 2644868322264041771, guid: 1c83f24dabbe4c44a97737bf60fee894, type: 3}
+    m_SelectedSprite: {fileID: 145080911073647272, guid: 121cb0cd41ed538438ba74459ac0555e, type: 3}
     m_DisabledSprite: {fileID: 2644868322264041771, guid: 1c83f24dabbe4c44a97737bf60fee894, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
@@ -2940,10 +2940,10 @@ RectTransform:
   - {fileID: 602026891140100722}
   m_Father: {fileID: 2674050840382295966}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 250.1, y: -20.425}
+  m_SizeDelta: {x: 40, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1719957568889168154
 CanvasRenderer:
@@ -3064,7 +3064,7 @@ RectTransform:
   m_Father: {fileID: 556976836150979460}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -3277,10 +3277,10 @@ RectTransform:
   - {fileID: 450754440378023002}
   m_Father: {fileID: 2674050840382295966}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 99.7, y: -20.425}
+  m_SizeDelta: {x: 40, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5475971417493019635
 CanvasRenderer:
@@ -6918,10 +6918,10 @@ RectTransform:
   - {fileID: 5315455216315771811}
   m_Father: {fileID: 2674050840382295966}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 325.3, y: -20.425}
+  m_SizeDelta: {x: 40, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4314155052840155799
 CanvasRenderer:
@@ -7493,8 +7493,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 200, y: -333.8}
-  m_SizeDelta: {x: 147, y: 62}
+  m_AnchoredPosition: {x: 0, y: -333.8}
+  m_SizeDelta: {x: 160, y: 55}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1789723207449708522
 CanvasRenderer:
@@ -7565,7 +7565,7 @@ MonoBehaviour:
   m_SpriteState:
     m_HighlightedSprite: {fileID: 145080911073647272, guid: 121cb0cd41ed538438ba74459ac0555e, type: 3}
     m_PressedSprite: {fileID: 2644868322264041771, guid: 1c83f24dabbe4c44a97737bf60fee894, type: 3}
-    m_SelectedSprite: {fileID: 2644868322264041771, guid: 1c83f24dabbe4c44a97737bf60fee894, type: 3}
+    m_SelectedSprite: {fileID: 145080911073647272, guid: 121cb0cd41ed538438ba74459ac0555e, type: 3}
     m_DisabledSprite: {fileID: 2644868322264041771, guid: 1c83f24dabbe4c44a97737bf60fee894, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
@@ -7614,8 +7614,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 200, y: -333.8}
-  m_SizeDelta: {x: 147, y: 62}
+  m_AnchoredPosition: {x: 0, y: -333.8}
+  m_SizeDelta: {x: 160, y: 55}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3801743199229117703
 CanvasRenderer:
@@ -7686,7 +7686,7 @@ MonoBehaviour:
   m_SpriteState:
     m_HighlightedSprite: {fileID: 145080911073647272, guid: 121cb0cd41ed538438ba74459ac0555e, type: 3}
     m_PressedSprite: {fileID: 2644868322264041771, guid: 1c83f24dabbe4c44a97737bf60fee894, type: 3}
-    m_SelectedSprite: {fileID: 2644868322264041771, guid: 1c83f24dabbe4c44a97737bf60fee894, type: 3}
+    m_SelectedSprite: {fileID: 145080911073647272, guid: 121cb0cd41ed538438ba74459ac0555e, type: 3}
     m_DisabledSprite: {fileID: 2644868322264041771, guid: 1c83f24dabbe4c44a97737bf60fee894, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
@@ -8139,10 +8139,10 @@ RectTransform:
   - {fileID: 2338779626758290442}
   m_Father: {fileID: 2674050840382295966}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 400.5, y: -20.425}
+  m_SizeDelta: {x: 40, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6997330412453660521
 CanvasRenderer:
@@ -8763,7 +8763,7 @@ RectTransform:
   m_Father: {fileID: 1313275834640258460}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 18, y: 27}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -10757,10 +10757,10 @@ RectTransform:
   - {fileID: 2126805497283824858}
   m_Father: {fileID: 2674050840382295966}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 174.9, y: -20.425}
+  m_SizeDelta: {x: 40, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8703528367849423348
 CanvasRenderer:
@@ -11504,8 +11504,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -200, y: -333.8}
-  m_SizeDelta: {x: 160, y: 55.1}
+  m_AnchoredPosition: {x: 0, y: -333.8}
+  m_SizeDelta: {x: 160, y: 55}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8690647783841150654
 CanvasRenderer:
@@ -11576,7 +11576,7 @@ MonoBehaviour:
   m_SpriteState:
     m_HighlightedSprite: {fileID: 145080911073647272, guid: 121cb0cd41ed538438ba74459ac0555e, type: 3}
     m_PressedSprite: {fileID: 2644868322264041771, guid: 1c83f24dabbe4c44a97737bf60fee894, type: 3}
-    m_SelectedSprite: {fileID: 2644868322264041771, guid: 1c83f24dabbe4c44a97737bf60fee894, type: 3}
+    m_SelectedSprite: {fileID: 145080911073647272, guid: 121cb0cd41ed538438ba74459ac0555e, type: 3}
     m_DisabledSprite: {fileID: 2644868322264041771, guid: 1c83f24dabbe4c44a97737bf60fee894, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
@@ -12165,10 +12165,10 @@ RectTransform:
   - {fileID: 7470488785551004513}
   m_Father: {fileID: 2674050840382295966}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 24.5, y: -20.425}
+  m_SizeDelta: {x: 40, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4302694462511116397
 CanvasRenderer:
@@ -12292,8 +12292,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -200, y: -333.8}
-  m_SizeDelta: {x: 160, y: 55.1}
+  m_AnchoredPosition: {x: 0, y: -333.8}
+  m_SizeDelta: {x: 160, y: 55}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2787293102230190050
 CanvasRenderer:
@@ -12364,7 +12364,7 @@ MonoBehaviour:
   m_SpriteState:
     m_HighlightedSprite: {fileID: 145080911073647272, guid: 121cb0cd41ed538438ba74459ac0555e, type: 3}
     m_PressedSprite: {fileID: 2644868322264041771, guid: 1c83f24dabbe4c44a97737bf60fee894, type: 3}
-    m_SelectedSprite: {fileID: 2644868322264041771, guid: 1c83f24dabbe4c44a97737bf60fee894, type: 3}
+    m_SelectedSprite: {fileID: 145080911073647272, guid: 121cb0cd41ed538438ba74459ac0555e, type: 3}
     m_DisabledSprite: {fileID: 2644868322264041771, guid: 1c83f24dabbe4c44a97737bf60fee894, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
@@ -12665,7 +12665,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1766317382828646522
 RectTransform:
   m_ObjectHideFlags: 0

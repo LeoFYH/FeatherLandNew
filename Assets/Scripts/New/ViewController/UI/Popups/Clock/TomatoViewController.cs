@@ -71,6 +71,18 @@ namespace BirdGame
             {
                 this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
                 item.TimerCoroutine = null;
+                if (this.GetModel<IClockModel>().TimerItem.TimerCoroutine != null)
+                {
+                    this.GetModel<IClockModel>().TimerType = TimerType.Timer;
+                }
+                else
+                {
+                    this.GetModel<IClockModel>().TimerType = TimerType.None;
+                    this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
+                    {
+                        show = false
+                    });
+                }
                 Refresh(false);
             });
             for (int i = 0; i < audioToggles.Length; i++)
@@ -101,13 +113,20 @@ namespace BirdGame
                 downButtons[i].interactable = !isTiming;
             }
 
-            startButton.interactable = !isTiming;
-            stopButton.interactable = isTiming;
+            startButton.gameObject.SetActive(!isTiming);
+            stopButton.gameObject.SetActive(isTiming);
             refreshButton.interactable = !isTiming;
-            // this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
-            // {
-            //     show = isTiming
-            // });
+            if (isTiming)
+            {
+                var stopWatch = this.GetModel<IClockModel>().StopWatchItem;
+                if (stopWatch.TimerCoroutine != null)
+                    this.GetSystem<IMonoSystem>().StopCoroutine(stopWatch.TimerCoroutine);
+                stopWatch.TimerCoroutine = null;
+                stopWatch.Hours.Value = 0;
+                stopWatch.Minutes.Value = 0;
+                stopWatch.Seconds.Value = 0;
+                stopWatch.Timer = 0;
+            }
         }
 
         private void OnUpClick(int index)
@@ -150,6 +169,7 @@ namespace BirdGame
         private IEnumerator StartTimer()
         {
             var item = this.GetModel<IClockModel>().TomatoItem;
+            item.TotalNumber = item.Number.Value;
             var frame = new WaitForFixedUpdate();
             item.TimerType.Value = TomatoTimerType.Session;
             item.Timer = item.TimerType.Value == TomatoTimerType.Session
@@ -161,7 +181,8 @@ namespace BirdGame
                 int hour = totalSeconds / 3600;
                 int minute = totalSeconds / 60 % 60;
                 int second = totalSeconds % 60;
-                item.TimeString.Value = string.Format("{0:00}:{1:00}:{2:00}", hour, minute, second);
+                int currentCount = item.TotalNumber - item.Number.Value;
+                item.TimeString.Value = string.Format("{0:00}:{1:00}:{2:00}  {3}/{4}", hour, minute, second, currentCount, item.TotalNumber);
                 yield return frame;
                 item.Timer -= Time.fixedDeltaTime;
                 if (item.Timer <= 0)

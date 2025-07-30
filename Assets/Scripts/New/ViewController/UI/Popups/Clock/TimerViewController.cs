@@ -73,6 +73,18 @@ namespace BirdGame
                 this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
                 item.TimerCoroutine = null;
                 Refresh(false);
+                if (this.GetModel<IClockModel>().TomatoItem.TimerCoroutine != null)
+                {
+                    this.GetModel<IClockModel>().TimerType = TimerType.Tomato;
+                }
+                else
+                {
+                    this.GetModel<IClockModel>().TimerType = TimerType.None;
+                    this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
+                    {
+                        show = false
+                    });
+                }
             });
             for (int i = 0; i < audioToggles.Length; i++)
             {
@@ -102,8 +114,8 @@ namespace BirdGame
                 downButtons[i].interactable = !isTiming;
             }
 
-            startButton.interactable = !isTiming;
-            stopButton.interactable = isTiming;
+            startButton.gameObject.SetActive(!isTiming);
+            stopButton.gameObject.SetActive(isTiming);
             refreshButton.interactable = !isTiming;
         }
 

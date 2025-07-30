@@ -29,15 +29,15 @@ namespace BirdGame
             startButton.onClick.AddListener(() =>
             {
                 item.TimerCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(StartTimer());
-                startButton.interactable = false;
-                stopButton.interactable = true;
+                startButton.gameObject.SetActive(false);
+                stopButton.gameObject.SetActive(true);
             });
             stopButton.onClick.AddListener(() =>
             {
                 this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
                 item.TimerCoroutine = null;
-                startButton.interactable = true;
-                stopButton.interactable = false;
+                startButton.gameObject.SetActive(true);
+                stopButton.gameObject.SetActive(false);
             });
             item.Hours.Register(v =>
             {
@@ -56,8 +56,8 @@ namespace BirdGame
             minuteText.text = string.Format("{0:00}", item.Minutes.Value);
             secondText.text = string.Format("{0:00}", item.Seconds.Value);
             
-            startButton.interactable = item.TimerCoroutine == null;
-            stopButton.interactable = item.TimerCoroutine != null;
+            startButton.gameObject.SetActive(item.TimerCoroutine == null);
+            stopButton.gameObject.SetActive(item.TimerCoroutine != null);
         }
 
         private IEnumerator StartTimer()
