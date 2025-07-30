@@ -15,12 +15,18 @@ MonoBehaviour:
   eggs:
   - eggSp: {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
     price: 10
-    birdCount: 1
+    birdCount: 3
     birds:
+    - birdType: 1
+      probability: 0.5
     - birdType: 0
-      probability: 0.4
+      probability: 0.5
     - birdType: 2
-      probability: 0.516
+      probability: 0.5
+    - birdType: 3
+      probability: 0.5
+    - birdType: 4
+      probability: 0.5
   - eggSp: {fileID: 710238443548197888, guid: 1170092e8fa8e1142a7e347132e8ea45, type: 3}
     price: 50
     birdCount: 3

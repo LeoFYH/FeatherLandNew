@@ -1,5 +1,6 @@
 using DG.Tweening;
 using UnityEngine;
+using System.Collections;
 
 namespace BirdGame
 {
@@ -18,6 +19,9 @@ namespace BirdGame
             _brid.anim.SetBool("Fly", false);
             //_brid.anim.Play("FlyWait");
 
+            // 确保初始状态为呼吸（不张望）
+            // 不需要设置Trigger的初始值
+
             if (_brid.nestTrans != null)
             {
                 // 完全使用 target 的位置
@@ -31,7 +35,12 @@ namespace BirdGame
             }
 
             float waitTime = Random.Range(3f, 8f);
-            DOTween.Sequence().AppendCallback(() => { currMachine.ChangeState<BirdFlyDownState>(); })
+            
+            // 立即播放张望动画，然后等待
+            DOTween.Sequence()
+                .AppendCallback(() => { PlayLookAroundAnimation(); }) 
+                .SetDelay(0.1f) 
+                .AppendCallback(() => { currMachine.ChangeState<BirdFlyDownState>(); })
                 .SetDelay(waitTime);
         }
 
@@ -43,6 +52,25 @@ namespace BirdGame
         public override void OnExit()
         {
 
+        }
+
+        /// <summary>
+        /// 播放张望动画
+        /// </summary>
+        private void PlayLookAroundAnimation()
+        {
+          
+            Debug.Log("开始张望动画");
+            _brid.anim.SetTrigger("LookAround");
+            
+           
+            DOTween.Sequence()
+                .SetDelay(1f)
+                .AppendCallback(() => {
+                   
+                    Debug.Log("切换回呼吸状态");
+                    
+                });
         }
 
     }
