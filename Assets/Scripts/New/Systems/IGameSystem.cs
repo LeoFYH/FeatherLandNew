@@ -199,6 +199,17 @@ namespace BirdGame
         {
             return UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject();
         }
+        
+        public bool IsOnGround()
+        {
+            if (NavigationManager.Instance == null)
+                return false;
+                
+            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            
+            // 检查鼠标位置是否在可导航区域（地面）
+            return NavigationManager.Instance.IsPointInNavMeshArea(3, mousePosition);
+        }
 
         /// <summary>
         /// 获取有效的食物位置，确保与其他食物有足够间距
@@ -256,15 +267,15 @@ namespace BirdGame
         {
             var decorationItem = this.GetModel<IConfigModel>().ShopConfig.decorations[decorationId];
             
-            // 直接使用配置中的 Sprite
-            if (decorationItem.decorationSprite != null)
+            // 直接使用配置中的 icon
+            if (decorationItem.icon != null)
             {
                 // 创建一个 GameObject 来承载 Sprite
                 GameObject decoration = new GameObject("Decoration");
                 
                 // 添加 SpriteRenderer 组件
                 SpriteRenderer spriteRenderer = decoration.AddComponent<SpriteRenderer>();
-                spriteRenderer.sprite = decorationItem.decorationSprite;  // 设置 Sprite
+                spriteRenderer.sprite = decorationItem.icon;  // 设置 Sprite
                 
                 // 设置大小
                 decoration.transform.localScale = Vector3.one * decorationItem.scale;
@@ -284,7 +295,7 @@ namespace BirdGame
             }
             else
             {
-                Debug.LogWarning($"Decoration {decorationId} 的 Sprite 为空！");
+                Debug.LogWarning($"Decoration {decorationId} 的 icon 为空！");
             }
         }
 
