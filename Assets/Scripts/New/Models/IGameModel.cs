@@ -11,6 +11,8 @@ namespace BirdGame
         Dictionary<int, BindableProperty<int>> SelectedToolDic { get; }
         Coroutine StopWatchCoroutine { get; set; }
         int CurrentSelectedBirdIndex { get; set; }
+        List<GameObject> PurchasedDecorations { get; }
+        List<int> PurchasedDecorationIds { get; }
     }
 
     public class GameModel : AbstractModel, IGameModel
@@ -28,5 +30,7 @@ namespace BirdGame
 
         public Coroutine StopWatchCoroutine { get; set; }
         public int CurrentSelectedBirdIndex { get; set; }
+        public List<GameObject> PurchasedDecorations { get; } = new List<GameObject>();
+        public List<int> PurchasedDecorationIds { get; } = new List<int>();
     }
 }

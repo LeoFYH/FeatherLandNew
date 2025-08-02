@@ -16,6 +16,8 @@ namespace BirdGame
         bool IsCoverGround();
         bool IsCoverBird();
         bool IsCoverUI();
+        void CreateDecoration(int decorationId);
+        void PlaceDecoration();
     }
 
     public class GameSystem : AbstractSystem, IGameSystem
@@ -23,6 +25,8 @@ namespace BirdGame
         private GameObject foodPrefab;
         private GameObject numPrefab;
         private IBirdModel birdModel;
+        private GameObject currentPlacingDecoration; // 当前正在放置的装饰品
+        private int currentPlacingDecorationId; // 当前正在放置的装饰品ID
         
         [Header("食物位置偏移")]
         [Tooltip("食物落下位置相对于鼠标的偏移量")]
@@ -246,6 +250,74 @@ namespace BirdGame
                 0f
             );
             return basePosition + forcedOffset;
+        }
+
+        public void CreateDecoration(int decorationId)
+        {
+            var decorationItem = this.GetModel<IConfigModel>().ShopConfig.decorations[decorationId];
+            
+            // 直接使用配置中的 Sprite
+            if (decorationItem.decorationSprite != null)
+            {
+                // 创建一个 GameObject 来承载 Sprite
+                GameObject decoration = new GameObject("Decoration");
+                
+                // 添加 SpriteRenderer 组件
+                SpriteRenderer spriteRenderer = decoration.AddComponent<SpriteRenderer>();
+                spriteRenderer.sprite = decorationItem.decorationSprite;  // 设置 Sprite
+                
+                // 设置大小
+                decoration.transform.localScale = Vector3.one * decorationItem.scale;
+                
+                // 添加跟随鼠标组件
+                DecorationFollowMouse followMouse = decoration.AddComponent<DecorationFollowMouse>();
+                followMouse.Initialize(this);
+                
+                // 设置为当前正在放置的装饰品
+                currentPlacingDecoration = decoration;
+                currentPlacingDecorationId = decorationId;
+                
+                // 设置初始位置为鼠标位置
+                Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                mouseWorldPos.z = 0;
+                decoration.transform.position = mouseWorldPos;
+            }
+            else
+            {
+                Debug.LogWarning($"Decoration {decorationId} 的 Sprite 为空！");
+            }
+        }
+
+        public void PlaceDecoration()
+        {
+            if (currentPlacingDecoration != null)
+            {
+                // 移除跟随鼠标组件
+                DecorationFollowMouse followMouse = currentPlacingDecoration.GetComponent<DecorationFollowMouse>();
+                if (followMouse != null)
+                {
+                    UnityEngine.Object.DestroyImmediate(followMouse);
+                }
+                
+                // 添加拖拽组件
+                currentPlacingDecoration.AddComponent<DecorationDrag>();
+                
+                // 添加到已购买列表
+                this.GetModel<IGameModel>().PurchasedDecorations.Add(currentPlacingDecoration);
+                
+                // 记录已购买的装饰品ID
+                this.GetModel<IGameModel>().PurchasedDecorationIds.Add(currentPlacingDecorationId);
+                
+                // 清空当前放置的装饰品
+                currentPlacingDecoration = null;
+                currentPlacingDecorationId = -1;
+            }
+        }
+
+        private Vector3 GetDefaultDecorationPosition()
+        {
+            // 设置默认位置，可以根据需要调整
+            return new Vector3(0, 0, 0);
         }
 
     }

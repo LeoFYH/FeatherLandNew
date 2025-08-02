@@ -64,6 +64,7 @@
     <Analyzer Include="D:\unity\6000.0.35f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\New\ViewController\Game\DecorationDrag.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\InfoPopup.cs" />
     <Compile Include="Assets\Scripts\New\Config\RadioConfig.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\IllustratedPopup.cs" />
@@ -145,6 +146,7 @@
     <Compile Include="Assets\Scripts\AnimationTest\AddPanel.cs" />
     <Compile Include="Assets\Scripts\New\Models\ISettingModel.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\ToggleImage.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\Game\DecorationFollowMouse.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\Brid.cs" />
     <Compile Include="Assets\Scripts\New\Systems\IAssetSystem.cs" />
     <Compile Include="Assets\Scripts\FSM\StateMachine.cs" />

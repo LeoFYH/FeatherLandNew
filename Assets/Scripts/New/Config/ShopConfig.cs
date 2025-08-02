@@ -97,6 +97,10 @@ namespace BirdGame
         public string description;
         [LabelText("价格"), VerticalGroup("Icon/Info")]
         public int price;
+        [LabelText("装饰品Sprite"), VerticalGroup("Icon/Info")]
+        public Sprite decorationSprite;
+        [LabelText("大小"), VerticalGroup("Icon/Info"), Range(0.1f, 2f)]
+        public float scale = 1f;
     }
 
     [Serializable]
