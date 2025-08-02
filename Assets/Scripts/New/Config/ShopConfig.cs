@@ -99,6 +99,8 @@ namespace BirdGame
         public int price;
         [LabelText("大小"), VerticalGroup("Icon/Info"), Range(0.1f, 2f)]
         public float scale = 1f;
+        [LabelText("最大购买数量"), VerticalGroup("Icon/Info"), InfoBox("设置为0表示无限制", InfoMessageType.Info)]
+        public int maxQuantity = 0;
     }
 
     [Serializable]

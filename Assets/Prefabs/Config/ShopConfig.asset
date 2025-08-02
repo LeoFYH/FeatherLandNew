@@ -56,14 +56,26 @@ MonoBehaviour:
     name: "\u5C0F\u718A"
     description: 
     price: 50
-    decorationSprite: {fileID: -2860457792642330479, guid: 1cbef57f4ce5aa540b29700fe0df85b3, type: 3}
     scale: 0.42
+    maxQuantity: 0
   - icon: {fileID: -566489096171355207, guid: 320aa3d191e0d7d47a5322ceecf1cbdd, type: 3}
     name: "\u80CC\u5305"
     description: 
     price: 0
-    decorationSprite: {fileID: -566489096171355207, guid: 320aa3d191e0d7d47a5322ceecf1cbdd, type: 3}
     scale: 0.43
+    maxQuantity: 1
+  - icon: {fileID: -8328758023752688951, guid: e44b0340a8158624caacb68dbb128e93, type: 3}
+    name: "\u5706\u706F"
+    description: 
+    price: 10
+    scale: 0.63
+    maxQuantity: 1
+  - icon: {fileID: 5086530857159821634, guid: 3486d1e0b6dd38c498ae82054c612426, type: 3}
+    name: "\u82B1"
+    description: 
+    price: 3
+    scale: 0.1
+    maxQuantity: 3
   tools:
   - name: Food
     selections:

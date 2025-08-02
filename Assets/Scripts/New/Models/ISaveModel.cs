@@ -13,6 +13,7 @@ namespace BirdGame
         BirdInfoData BirdInfoData { get; set; }
         NoteData NoteData { get; set; }
         ScheduleData ScheduleData { get; set; }
+        DecorationData DecorationData { get; set; }
     }
 
     public class SaveModel : AbstractModel, ISaveModel
@@ -28,6 +29,7 @@ namespace BirdGame
         public BirdInfoData BirdInfoData { get; set; }
         public NoteData NoteData { get; set; }
         public ScheduleData ScheduleData { get; set; }
+        public DecorationData DecorationData { get; set; }
     }
     
     [Serializable]
@@ -70,6 +72,15 @@ namespace BirdGame
     public class BirdInfoData : SavableData
     {
         
+    }
+
+    /// <summary>
+    /// 装饰品存档数据
+    /// </summary>
+    [Serializable]
+    public class DecorationData : SavableData
+    {
+        public Dictionary<int, int> purchasedQuantities = new Dictionary<int, int>();
     }
 
     /// <summary>

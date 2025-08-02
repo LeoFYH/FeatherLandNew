@@ -316,8 +316,16 @@ namespace BirdGame
                 // 添加到已购买列表
                 this.GetModel<IGameModel>().PurchasedDecorations.Add(currentPlacingDecoration);
                 
-                // 记录已购买的装饰品ID
-                this.GetModel<IGameModel>().PurchasedDecorationIds.Add(currentPlacingDecorationId);
+                // 更新已购买的装饰品数量
+                var quantities = this.GetModel<IGameModel>().PurchasedDecorationQuantities;
+                if (quantities.ContainsKey(currentPlacingDecorationId))
+                {
+                    quantities[currentPlacingDecorationId]++;
+                }
+                else
+                {
+                    quantities[currentPlacingDecorationId] = 1;
+                }
                 
                 // 清空当前放置的装饰品
                 currentPlacingDecoration = null;

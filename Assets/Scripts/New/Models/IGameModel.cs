@@ -12,7 +12,7 @@ namespace BirdGame
         Coroutine StopWatchCoroutine { get; set; }
         int CurrentSelectedBirdIndex { get; set; }
         List<GameObject> PurchasedDecorations { get; }
-        List<int> PurchasedDecorationIds { get; }
+        Dictionary<int, int> PurchasedDecorationQuantities { get; }
     }
 
     public class GameModel : AbstractModel, IGameModel
@@ -31,6 +31,6 @@ namespace BirdGame
         public Coroutine StopWatchCoroutine { get; set; }
         public int CurrentSelectedBirdIndex { get; set; }
         public List<GameObject> PurchasedDecorations { get; } = new List<GameObject>();
-        public List<int> PurchasedDecorationIds { get; } = new List<int>();
+        public Dictionary<int, int> PurchasedDecorationQuantities { get; } = new Dictionary<int, int>();
     }
 }

@@ -22,49 +22,26 @@ namespace BirdGame
             nameText.text = item.name;
             descriptionText.text = item.description;
             priceText.text = item.price.ToString();
-            
-            // 检查是否已购买
-            UpdatePurchaseStatus();
-        }
-        
-        private void UpdatePurchaseStatus()
-        {
-            bool isPurchased = this.GetModel<IGameModel>().PurchasedDecorationIds.Contains(id);
-            
-            if (isPurchased)
-            {
-                // 已购买状态
-                buyButton.interactable = false;
-                buyButton.GetComponentInChildren<TextMeshProUGUI>().text = "Purchased";
-                priceText.text = "";
-            }
-            else
-            {
-                // 未购买状态
-                buyButton.interactable = true;
-                buyButton.GetComponentInChildren<TextMeshProUGUI>().text = "购买";
-                priceText.text = this.GetModel<IConfigModel>().ShopConfig.decorations[id].price.ToString();
-            }
-        }
-        
-        // 供外部调用的刷新方法
-        public void RefreshPurchaseStatus()
-        {
-            UpdatePurchaseStatus();
         }
 
         private void Start()
         {
             buyButton.onClick.AddListener(() =>
             {
-                // 检查是否已购买
-                if (this.GetModel<IGameModel>().PurchasedDecorationIds.Contains(id))
+                var item = this.GetModel<IConfigModel>().ShopConfig.decorations[id];
+                var quantities = this.GetModel<IGameModel>().PurchasedDecorationQuantities;
+                
+                // 获取当前已购买的数量
+                int currentQuantity = quantities.ContainsKey(id) ? quantities[id] : 0;
+                
+                // 检查是否达到数量限制
+                if (item.maxQuantity > 0 && currentQuantity >= item.maxQuantity)
                 {
-                    this.GetSystem<IUISystem>().ShowPrompt("已经购买过这个装饰品了！");
+                    this.GetSystem<IUISystem>().ShowPrompt($"已达到最大购买数量限制！({currentQuantity}/{item.maxQuantity})");
                     return;
                 }
                 
-                int price = this.GetModel<IConfigModel>().ShopConfig.decorations[id].price;
+                int price = item.price;
                 if (price <= this.GetModel<IAccountModel>().Coins.Value)
                 {
                     // 扣除金币
