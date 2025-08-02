@@ -18,6 +18,7 @@ namespace BirdGame
         bool IsCoverUI();
         void CreateDecoration(int decorationId);
         void CreateFixedDecoration(int decorationId);
+        void DestroyDecoration(int decorationId, GameObject decorationObject);
         void PlaceDecoration();
     }
 
@@ -283,6 +284,10 @@ namespace BirdGame
                 // 设置大小
                 decoration.transform.localScale = Vector3.one * decorationItem.scale;
                 
+                // 添加碰撞器用于点击检测
+                BoxCollider2D collider = decoration.AddComponent<BoxCollider2D>();
+                collider.size = spriteRenderer.sprite.bounds.size;
+                
                 // 添加跟随鼠标组件
                 DecorationFollowMouse followMouse = decoration.AddComponent<DecorationFollowMouse>();
                 followMouse.Initialize(this);
@@ -321,8 +326,16 @@ namespace BirdGame
                 // 设置大小
                 decoration.transform.localScale = Vector3.one * decorationItem.scale;
                 
+                // 添加碰撞器用于点击检测
+                BoxCollider2D collider = decoration.AddComponent<BoxCollider2D>();
+                collider.size = spriteRenderer.sprite.bounds.size;
+                
                 // 设置固定位置
                 decoration.transform.position = decorationItem.fixedPosition;
+                
+                // 添加点击检测组件
+                DecorationClickHandler clickHandler = decoration.AddComponent<DecorationClickHandler>();
+                clickHandler.Initialize(decorationId, this);
                 
                 // 添加到已购买列表
                 this.GetModel<IGameModel>().PurchasedDecorations.Add(decoration);
@@ -344,6 +357,29 @@ namespace BirdGame
             }
         }
 
+        public void DestroyDecoration(int decorationId, GameObject decorationObject)
+        {
+            // 从已购买列表中移除
+            this.GetModel<IGameModel>().PurchasedDecorations.Remove(decorationObject);
+            
+            // 更新已购买的装饰品数量
+            var quantities = this.GetModel<IGameModel>().PurchasedDecorationQuantities;
+            if (quantities.ContainsKey(decorationId))
+            {
+                quantities[decorationId]--;
+                if (quantities[decorationId] <= 0)
+                {
+                    quantities.Remove(decorationId);
+                }
+            }
+            
+            // 销毁装饰品对象
+            GameObject.Destroy(decorationObject);
+            
+            int remainingCount = quantities.ContainsKey(decorationId) ? quantities[decorationId] : 0;
+            Debug.Log($"销毁装饰品 {decorationId}，剩余数量: {remainingCount}");
+        }
+
         public void PlaceDecoration()
         {
             if (currentPlacingDecoration != null)
@@ -357,6 +393,10 @@ namespace BirdGame
                 
                 // 添加拖拽组件
                 currentPlacingDecoration.AddComponent<DecorationDrag>();
+                
+                // 添加点击检测组件
+                DecorationClickHandler clickHandler = currentPlacingDecoration.AddComponent<DecorationClickHandler>();
+                clickHandler.Initialize(currentPlacingDecorationId, this);
                 
                 // 添加到已购买列表
                 this.GetModel<IGameModel>().PurchasedDecorations.Add(currentPlacingDecoration);
