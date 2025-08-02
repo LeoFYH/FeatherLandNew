@@ -59,6 +59,8 @@ MonoBehaviour:
     scale: 0.42
     maxQuantity: 0
     sceneSprite: {fileID: -2860457792642330479, guid: 1cbef57f4ce5aa540b29700fe0df85b3, type: 3}
+    decorationType: 0
+    fixedPosition: {x: 0, y: 0, z: 0}
   - icon: {fileID: -566489096171355207, guid: 320aa3d191e0d7d47a5322ceecf1cbdd, type: 3}
     name: Backpack
     description: 
@@ -66,13 +68,17 @@ MonoBehaviour:
     scale: 0.43
     maxQuantity: 1
     sceneSprite: {fileID: -566489096171355207, guid: 320aa3d191e0d7d47a5322ceecf1cbdd, type: 3}
+    decorationType: 0
+    fixedPosition: {x: 0, y: 0, z: 0}
   - icon: {fileID: 21300000, guid: c30d7e01960540d40958a11be49f44f7, type: 3}
     name: Light
     description: 
     price: 20
-    scale: 0.63
+    scale: 1.6187
     maxQuantity: 1
-    sceneSprite: {fileID: 21300000, guid: e44b0340a8158624caacb68dbb128e93, type: 3}
+    sceneSprite: {fileID: 21300000, guid: face9388e73132941888a41c78500e40, type: 3}
+    decorationType: 1
+    fixedPosition: {x: -1.55, y: 0.47, z: 0}
   - icon: {fileID: 5086530857159821634, guid: 3486d1e0b6dd38c498ae82054c612426, type: 3}
     name: Flower
     description: 
@@ -80,6 +86,17 @@ MonoBehaviour:
     scale: 0.1
     maxQuantity: 3
     sceneSprite: {fileID: 5086530857159821634, guid: 3486d1e0b6dd38c498ae82054c612426, type: 3}
+    decorationType: 0
+    fixedPosition: {x: 0, y: 0, z: 0}
+  - icon: {fileID: 21300000, guid: d4178e50df3badf4cb18536dd7d902fe, type: 3}
+    name: Mushrrom
+    description: 
+    price: 100
+    scale: 1.64
+    maxQuantity: 1
+    sceneSprite: {fileID: 21300000, guid: d9eaf485268722e4c9eade13baa81e78, type: 3}
+    decorationType: 1
+    fixedPosition: {x: -0.14, y: -0.68, z: 0}
   tools:
   - name: Food
     selections:
