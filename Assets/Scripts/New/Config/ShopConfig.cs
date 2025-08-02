@@ -101,6 +101,9 @@ namespace BirdGame
         public float scale = 1f;
         [LabelText("最大购买数量"), VerticalGroup("Icon/Info"), InfoBox("设置为0表示无限制", InfoMessageType.Info)]
         public int maxQuantity = 0;
+        [PreviewField(50, ObjectFieldAlignment.Left), HorizontalGroup("Scene", Width = 50), HideLabel]
+        [LabelText("场景Sprite"), HorizontalGroup("Scene"), VerticalGroup("Scene/Info")]
+        public Sprite sceneSprite;
     }
 
     [Serializable]
