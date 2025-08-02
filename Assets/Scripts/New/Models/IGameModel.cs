@@ -9,6 +9,8 @@ namespace BirdGame
         public BindableProperty<int> WeatherIndex { get; }
         BindableProperty<int> ShopEggSelectIndex { get; }
         Dictionary<int, BindableProperty<int>> SelectedToolDic { get; }
+        string CurrentFoodType { get; set; }
+        HashSet<string> PurchasedFoods { get; }
         Coroutine StopWatchCoroutine { get; set; }
         int CurrentSelectedBirdIndex { get; set; }
         List<GameObject> PurchasedDecorations { get; }
@@ -27,6 +29,9 @@ namespace BirdGame
 
         public Dictionary<int, BindableProperty<int>> SelectedToolDic { get; } =
             new Dictionary<int, BindableProperty<int>>();
+
+        public string CurrentFoodType { get; set; } = "default";
+        public HashSet<string> PurchasedFoods { get; } = new HashSet<string>();
 
         public Coroutine StopWatchCoroutine { get; set; }
         public int CurrentSelectedBirdIndex { get; set; }

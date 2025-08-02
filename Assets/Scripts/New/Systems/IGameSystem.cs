@@ -16,6 +16,7 @@ namespace BirdGame
         bool IsCoverGround();
         bool IsCoverBird();
         bool IsCoverUI();
+        bool IsOnGround();
         void CreateDecoration(int decorationId);
         void CreateFixedDecoration(int decorationId);
         void DestroyDecoration(int decorationId, GameObject decorationObject);
@@ -77,6 +78,35 @@ namespace BirdGame
                 this.GetSystem<IAudioSystem>().PlayEffect(EffectType.DropFood);
                 Food food = GameObject.Instantiate(foodPrefab).GetComponent<Food>();
                 food.isTargeted = false;
+
+                // 根据当前选择的食物类型更换sprite
+                var gameModel = this.GetModel<IGameModel>();
+                var configModel = this.GetModel<IConfigModel>();
+                
+                // 查找食物工具配置
+                for (int i = 0; i < configModel.ShopConfig.tools.Length; i++)
+                {
+                    var toolItem = configModel.ShopConfig.tools[i];
+                    if (toolItem.name.ToLower() == "food")
+                    {
+                        // 查找匹配的食物类型
+                        for (int j = 0; j < toolItem.selections.Length; j++)
+                        {
+                            var selection = toolItem.selections[j];
+                            if (selection.selectionName == gameModel.CurrentFoodType)
+                            {
+                                // 更换食物的sprite
+                                SpriteRenderer spriteRenderer = food.GetComponent<SpriteRenderer>();
+                                if (spriteRenderer != null && selection.icon != null)
+                                {
+                                    spriteRenderer.sprite = selection.icon;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
 
                 Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 mouseWorldPos.z = 0; // 确保Z轴位置正确
