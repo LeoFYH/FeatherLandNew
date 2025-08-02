@@ -101,9 +101,23 @@ namespace BirdGame
         public float scale = 1f;
         [LabelText("最大购买数量"), VerticalGroup("Icon/Info"), InfoBox("设置为0表示无限制", InfoMessageType.Info)]
         public int maxQuantity = 0;
-        [PreviewField(50, ObjectFieldAlignment.Left), HorizontalGroup("Scene", Width = 50), HideLabel]
-        [LabelText("场景Sprite"), HorizontalGroup("Scene"), VerticalGroup("Scene/Info")]
+        [LabelText("场景Sprite"), VerticalGroup("Icon/Info")]
+        [PreviewField(50, ObjectFieldAlignment.Left)]
         public Sprite sceneSprite;
+        [LabelText("装饰品类型"), VerticalGroup("Icon/Info")]
+        [InfoBox("可拖拽：购买后跟随鼠标放置\n固定类：直接放置在指定位置")]
+        public DecorationType decorationType = DecorationType.Draggable;
+        [LabelText("固定位置"), VerticalGroup("Icon/Info")]
+        [ShowIf("@decorationType == DecorationType.Fixed")]
+        public Vector3 fixedPosition = Vector3.zero;
+    }
+
+    public enum DecorationType
+    {
+        [LabelText("可拖拽")]
+        Draggable,
+        [LabelText("固定类")]
+        Fixed
     }
 
     [Serializable]

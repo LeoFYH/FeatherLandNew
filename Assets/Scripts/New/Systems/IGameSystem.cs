@@ -17,6 +17,7 @@ namespace BirdGame
         bool IsCoverBird();
         bool IsCoverUI();
         void CreateDecoration(int decorationId);
+        void CreateFixedDecoration(int decorationId);
         void PlaceDecoration();
     }
 
@@ -294,6 +295,48 @@ namespace BirdGame
                 Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 mouseWorldPos.z = 0;
                 decoration.transform.position = mouseWorldPos;
+            }
+            else
+            {
+                Debug.LogWarning($"Decoration {decorationId} 的 icon 和 sceneSprite 都为空！");
+            }
+        }
+
+        public void CreateFixedDecoration(int decorationId)
+        {
+            var decorationItem = this.GetModel<IConfigModel>().ShopConfig.decorations[decorationId];
+            
+            // 优先使用场景Sprite，如果没有则使用icon
+            Sprite spriteToUse = decorationItem.sceneSprite != null ? decorationItem.sceneSprite : decorationItem.icon;
+            
+            if (spriteToUse != null)
+            {
+                // 创建一个 GameObject 来承载 Sprite
+                GameObject decoration = new GameObject("FixedDecoration");
+                
+                // 添加 SpriteRenderer 组件
+                SpriteRenderer spriteRenderer = decoration.AddComponent<SpriteRenderer>();
+                spriteRenderer.sprite = spriteToUse;  // 设置 Sprite
+                
+                // 设置大小
+                decoration.transform.localScale = Vector3.one * decorationItem.scale;
+                
+                // 设置固定位置
+                decoration.transform.position = decorationItem.fixedPosition;
+                
+                // 添加到已购买列表
+                this.GetModel<IGameModel>().PurchasedDecorations.Add(decoration);
+                
+                // 更新已购买的装饰品数量
+                var quantities = this.GetModel<IGameModel>().PurchasedDecorationQuantities;
+                if (quantities.ContainsKey(decorationId))
+                {
+                    quantities[decorationId]++;
+                }
+                else
+                {
+                    quantities[decorationId] = 1;
+                }
             }
             else
             {
