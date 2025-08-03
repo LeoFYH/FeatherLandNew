@@ -136,9 +136,11 @@ namespace BirdGame
         public Sprite icon;
         [LabelText("名称"), HorizontalGroup("Content"), VerticalGroup("Content/Info")]
         public string selectionName;
-        [LabelText("描述"), VerticalGroup("Content/Info")]
+        [LabelText("描述"), HorizontalGroup("Content"), VerticalGroup("Content/Info")]
         public string description;
-        [LabelText("价格"), VerticalGroup("Content/Info")]
+        [LabelText("价格"), HorizontalGroup("Content"), VerticalGroup("Content/Info")]
         public int price;
+        [LabelText("食物大小"), HorizontalGroup("Content"), VerticalGroup("Content/Info"), Range(0.01f, 5f)]
+        public float foodScale = 1f;
     }
 }

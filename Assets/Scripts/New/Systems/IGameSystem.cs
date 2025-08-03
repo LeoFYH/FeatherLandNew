@@ -101,6 +101,9 @@ namespace BirdGame
                                 {
                                     spriteRenderer.sprite = selection.icon;
                                 }
+                                
+                                // 设置食物大小
+                                food.transform.localScale = Vector3.one * selection.foodScale;
                                 break;
                             }
                         }
