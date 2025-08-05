@@ -93,7 +93,16 @@ namespace BirdGame
             if (!File.Exists(savePath))
             {
                 Debug.Log("无存档文件，创建新存档");
-                return new T();
+                T newData = new T();
+                
+                // 特殊处理 SettingData，确保默认值正确
+                if (newData is SettingData settingData)
+                {
+                    settingData.screenMode = 2; // 确保默认全屏
+                    Debug.Log($"创建新的 SettingData，设置默认屏幕模式: {settingData.screenMode}");
+                }
+                
+                return newData;
             }
 
             try
@@ -113,6 +122,17 @@ namespace BirdGame
             
                 string jsonData = System.Text.Encoding.UTF8.GetString(jsonBytes);
                 T data = JsonUtility.FromJson<T>(jsonData);
+                
+                // 特殊处理 SettingData，确保默认值正确
+                if (data is SettingData settingData)
+                {
+                    // 如果从JSON加载的数据没有screenMode字段（旧版本存档），设置默认值
+                    if (settingData.screenMode == 0) // 如果是从旧版本加载的，默认值可能是0
+                    {
+                        settingData.screenMode = 2; // 设置为全屏模式
+                        Debug.Log($"从旧版本存档加载，设置默认屏幕模式: {settingData.screenMode}");
+                    }
+                }
             
                 return data;
             }
@@ -190,6 +210,14 @@ namespace BirdGame
 
             // 创建新存档
             T data = new T();
+            
+            // 特殊处理 SettingData，确保默认值正确
+            if (data is SettingData settingData)
+            {
+                settingData.screenMode = 2; // 确保默认全屏
+                Debug.Log($"HandleLoadError: 设置默认屏幕模式: {settingData.screenMode}");
+            }
+            
             SaveData(fileName, data);
             return data;
         }

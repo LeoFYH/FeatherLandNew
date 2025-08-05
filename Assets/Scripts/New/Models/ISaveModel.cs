@@ -54,7 +54,7 @@ namespace BirdGame
     [Serializable]
     public class SettingData : SavableData
     {
-        
+        public int screenMode = 2; // 0: 窗口模式, 1: 壁纸模式, 2: 全屏模式 (默认全屏)
     }
 
     /// <summary>
