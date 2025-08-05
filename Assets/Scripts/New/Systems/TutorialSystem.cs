@@ -250,7 +250,7 @@ namespace BirdGame
             }
         }
         
-        private TutorialConfig.TutorialStep GetCurrentStep()
+        private TutorialStep GetCurrentStep()
         {
             if (currentConfig != null && currentStepIndex < currentConfig.steps.Count)
             {
@@ -296,35 +296,101 @@ namespace BirdGame
             }
         }
         
-        private void CreateTutorialIcon(TutorialConfig.TutorialStep step)
+        private void CreateTutorialIcon(TutorialStep step)
         {
+            Debug.Log($"创建教学图标，目标按钮: {step.targetButtonName}");
+            
             // 创建图标GameObject
             tutorialIcon = new GameObject("TutorialIcon");
             
-            // 添加SpriteRenderer
-            SpriteRenderer spriteRenderer = tutorialIcon.AddComponent<SpriteRenderer>();
-            spriteRenderer.sprite = step.iconSprite;
-            spriteRenderer.sortingOrder = 1000; // 确保在最前面
+            // 添加Canvas组件（UI渲染）
+            Canvas canvas = tutorialIcon.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 1000; // 确保在最前面
+            
+            // 添加CanvasScaler
+            CanvasScaler scaler = tutorialIcon.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920, 1080);
+            
+            // 创建Image组件
+            GameObject imageObj = new GameObject("TutorialImage");
+            imageObj.transform.SetParent(tutorialIcon.transform);
+            
+            Image image = imageObj.AddComponent<Image>();
+            image.sprite = step.iconSprite;
+            image.raycastTarget = false; // 不阻挡点击
+            
+            Debug.Log($"图标Sprite: {step.iconSprite}");
             
             // 设置位置
             GameObject targetObject = GameObject.Find(step.targetButtonName);
             if (targetObject != null)
             {
-                Vector3 targetPosition = targetObject.transform.position + step.iconOffset;
-                tutorialIcon.transform.position = targetPosition;
+                // 获取目标按钮的RectTransform
+                RectTransform targetRect = targetObject.GetComponent<RectTransform>();
+                if (targetRect != null)
+                {
+                    // 获取目标按钮的四个角点
+                    Vector3[] corners = new Vector3[4];
+                    targetRect.GetWorldCorners(corners);
+                    
+                    // 计算中心位置
+                    Vector3 center = (corners[0] + corners[1] + corners[2] + corners[3]) / 4f;
+                    
+                    // 将世界坐标转换为屏幕坐标
+                    Camera camera = Camera.main;
+                    
+                    
+                    Vector3 screenPos = camera != null ? camera.WorldToScreenPoint(center) : center;
+                    
+                    // 将屏幕坐标转换为Canvas本地坐标
+                    Canvas targetCanvas = targetObject.GetComponentInParent<Canvas>();
+                    if (targetCanvas != null)
+                    {
+                        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                            targetCanvas.GetComponent<RectTransform>(),
+                            screenPos,
+                            targetCanvas.worldCamera,
+                            out Vector2 localPoint
+                        );
+                        
+                        // 应用偏移
+                        localPoint += new Vector2(step.iconOffset.x, step.iconOffset.y);
+                        
+                        imageObj.GetComponent<RectTransform>().anchoredPosition = localPoint;
+                        Debug.Log($"找到目标按钮，角点: {corners[0]}, {corners[1]}, {corners[2]}, {corners[3]}");
+                        Debug.Log($"计算的中心位置: {center}, 屏幕位置: {screenPos}, 本地位置: {localPoint}");
+                    }
+                    else
+                    {
+                        Debug.LogError("找不到目标Canvas");
+                        imageObj.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+                    }
+                }
             }
+            else
+            {
+                Debug.LogError($"找不到目标按钮: {step.targetButtonName}");
+                // 设置一个默认位置 - 屏幕中央
+                imageObj.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+                Debug.Log("使用默认位置 (0,0)");
+            }
+           
             
             // 设置缩放
-            tutorialIcon.transform.localScale = step.iconScale;
+            imageObj.GetComponent<RectTransform>().sizeDelta = new Vector2(100, 100) * step.iconScale.x;
+            Debug.Log($"图标缩放: {step.iconScale}");
             
             // 添加闪烁效果
             if (step.iconPulsing)
             {
                 iconAnimationCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(IconPulsingAnimation());
+                Debug.Log("启动闪烁动画");
             }
         }
         
-        private void CreateTutorialTip(TutorialConfig.TutorialStep step)
+        private void CreateTutorialTip(TutorialStep step)
         {
             if (string.IsNullOrEmpty(step.tipText)) return;
             
@@ -362,13 +428,16 @@ namespace BirdGame
         {
             if (tutorialIcon == null) yield break;
             
-            Vector3 originalScale = tutorialIcon.transform.localScale;
+            Image image = tutorialIcon.GetComponentInChildren<Image>();
+            if (image == null) yield break;
+            
+            Vector2 originalSize = image.GetComponent<RectTransform>().sizeDelta;
             float pulseSpeed = currentConfig.iconAnimationSpeed;
             
             while (tutorialIcon != null)
             {
                 float scale = 1f + 0.2f * Mathf.Sin(Time.time * pulseSpeed * 2f);
-                tutorialIcon.transform.localScale = originalScale * scale;
+                image.GetComponent<RectTransform>().sizeDelta = originalSize * scale;
                 yield return null;
             }
         }

@@ -12,9 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60ad12e390593324cb5eacae6e9f3020, type: 3}
   m_Name: TutorialConfig
   m_EditorClassIdentifier: 
-  tutorialId: 
-  tutorialName: 
-  steps: []
-  autoStart: 0
+  tutorialId: 000
+  tutorialName: Base
+  steps:
+  - stepId: 0
+    stepName: Shop
+    stepOrder: 0
+    targetButtonName: ShopButton
+    iconOffset: {x: -984, y: -431, z: 0}
+    iconSprite: {fileID: 722616309748141115, guid: 8b482f007d39dd944958bbfca2d5f6f7, type: 3}
+    iconScale: {x: 1, y: 1, z: 1}
+    iconPulsing: 1
+    isRequired: 1
+    clickEventName: 
+    tipText: 
+    tipTextPosition: {x: 0, y: 0, z: 0}
+  autoStart: 1
   canSkip: 0
   iconAnimationSpeed: 1
