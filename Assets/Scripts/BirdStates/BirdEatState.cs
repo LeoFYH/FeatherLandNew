@@ -141,7 +141,8 @@ namespace BirdGame
             {
                 eatFoodTimer = 0;
                 _brid.eatFoodCount.Value++;
-                int eatForBig = this.GetModel<IConfigModel>().BirdConfig.birds[_brid.birdIndex].eatForBig;
+                int birdIndex = this.GetModel<IBirdModel>().BirdList[_brid.birdIndex].birdType;
+                int eatForBig = this.GetModel<IConfigModel>().BirdConfig.birds[birdIndex].eatForBig;
                 if (_brid.eatFoodCount.Value == eatForBig)
                 {
                     _brid.transform.DOScale(_brid.AdultBirdSize, 0.2f);

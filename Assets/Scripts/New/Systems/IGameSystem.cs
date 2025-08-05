@@ -201,6 +201,9 @@ namespace BirdGame
                 }
             }
 
+            if (NavigationManager.Instance == null)
+                return false;
+
             // 检查基础偏移位置是否在可导航区域
             if (NavigationManager.Instance.IsPointInNavMeshArea(3, mousePosition + (Vector2)foodDropOffset))
                 return true;
