@@ -21,14 +21,34 @@ namespace BirdGame
             });
         }
 
-        public void Init(int birdIndex, Action<int> onSelected)
+        public void Init(int classIndex, Action<int> onSelected)
         {
-            index = birdIndex;
+            index = classIndex;
             onItemSelected = onSelected;
-            var sp = this.GetModel<IConfigModel>().BirdConfig.birds[index].preview;
+            var classInfo = this.GetModel<IConfigModel>().IllustratedConfig.birdClasses[classIndex];
+            for (int i = 0; i < classInfo.birdSkins.Length; i++)
+            {
+                int id = classInfo.birdSkins[i].birdIndex;
+                if (this.GetModel<ISaveModel>().IllustratedData.unlockedBirds.Contains(id))
+                {
+                    var sp = this.GetModel<IConfigModel>().BirdConfig.birds[id].preview;
+                    icon.sprite = sp;
+                    var size = sp.rect.size * 0.1f;
+                    icon.GetComponent<RectTransform>().sizeDelta = size;
+                    return;
+                }
+            }
+            
+            ShowLocked(classInfo.birdSkins[0].birdIndex);
+        }
+
+        private void ShowLocked(int birdIndex)
+        {
+            var sp = this.GetModel<IConfigModel>().BirdConfig.birds[birdIndex].preview;
             icon.sprite = sp;
             var size = sp.rect.size * 0.1f;
             icon.GetComponent<RectTransform>().sizeDelta = size;
+            icon.color = Color.black;
         }
     }
 }

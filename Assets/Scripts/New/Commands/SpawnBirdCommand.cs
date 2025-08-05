@@ -21,6 +21,7 @@ namespace BirdGame
             var config = this.GetModel<IConfigModel>().BirdConfig;
 
             int val = RandomGetBirdIndex();
+            CheckIllustratedUpdate(val);
             GameObject go = GameObject.Instantiate(config.birds[val].prefab);
             this.GetModel<IBirdModel>().AddBird(val, go.GetComponent<Brid>());
             var agent = go.GetComponent<NavMeshAgent>();
@@ -34,6 +35,17 @@ namespace BirdGame
             if (this.GetModel<IBirdModel>().UnopenEggs <= 0)
             {
                 this.GetSystem<IUISystem>().HideMask();
+            }
+        }
+
+        private void CheckIllustratedUpdate(int birdIndex)
+        {
+            var saveModel = this.GetModel<ISaveModel>();
+            if (!saveModel.IllustratedData.unlockedBirds.Contains(birdIndex))
+            {
+                saveModel.IllustratedData.unlockedBirds.Add(birdIndex);
+                this.GetSystem<ISaveSystem>().SaveData();
+                this.GetModel<IGameModel>().HasNewBirdIllustrated.Value = true;
             }
         }
 

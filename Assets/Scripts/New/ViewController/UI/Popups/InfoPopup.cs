@@ -77,10 +77,10 @@ namespace BirdGame
             if (data.bird.isSmall)
             {
                 progressIcon.sprite = iconForBig;
-                progressFill.fillAmount = data.bird.eatFoodCount.Value * 1f / data.bird.eatCountForBig;
+                progressFill.fillAmount = data.bird.eatFoodCount.Value * 1f / birdConf.eatForBig;
                 data.bird.eatFoodCount.Register(v =>
                 {
-                    progressFill.fillAmount = v * 1f / data.bird.eatCountForBig;
+                    progressFill.fillAmount = v * 1f / birdConf.eatForBig;
                 }).UnRegisterWhenGameObjectDestroyed(gameObject);
                 price = birdConf.priceForSmall;
             }

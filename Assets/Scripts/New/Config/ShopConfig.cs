@@ -61,19 +61,23 @@ namespace BirdGame
 
         private void OnDrawTexture()
         {
-            if(preview == null)
+            if(preview != null)
                 return;
             RefreshBirdTexture();
         }
 
         private void RefreshBirdTexture()
         {
+#if UNITY_EDITOR
             var config = AssetDatabase.LoadAssetAtPath<BirdConfig>("Assets/Prefabs/Config/BirdConfig.asset");
             preview = config.birds[birdType].preview.texture;
+#endif
         }
 
         private ValueDropdownList<int> GetBirdList()
         {
+#if UNITY_EDITOR
+            
             var config = AssetDatabase.LoadAssetAtPath<BirdConfig>("Assets/Prefabs/Config/BirdConfig.asset");
 
             var list = new ValueDropdownList<int>();
@@ -83,6 +87,9 @@ namespace BirdGame
             }
 
             return list;
+#else
+            return null;
+#endif
         }
     }
 

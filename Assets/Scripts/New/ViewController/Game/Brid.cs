@@ -51,10 +51,7 @@ namespace BirdGame
 
         [Header("好感度")] public int totalFavorability = 10;
         public BindableProperty<int> currentFavorability = new BindableProperty<int>(0);
-
-        [Header("Food count needed for large size")]
-        public int eatCountForBig = 2;
-
+        
         public float distance;
         public BindableProperty<int> eatFoodCount = new BindableProperty<int>();
         public float eatFoodTime = 1;

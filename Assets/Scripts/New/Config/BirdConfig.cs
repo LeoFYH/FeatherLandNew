@@ -32,8 +32,6 @@ namespace BirdGame
         public int priceForBig;
         [BoxGroup("content/Info/信息"), LabelText("成长所需食物数量")]
         public int eatForBig;
-        [BoxGroup("content/Info/信息"), LabelText("皮肤"), TableList(ShowIndexLabels = true)]
-        public BirdSkinItem[] birdSkinItems;
         [BoxGroup("content/Info/信息"), LabelText("描述"), TextArea]
         public string description;
         [VerticalGroup("content/Info"), BoxGroup("content/Info/习性"), LabelText("习性"), TextArea]
@@ -47,5 +45,6 @@ namespace BirdGame
     {
         [PreviewField, HideLabel]
         public Sprite skinView;
+        public GameObject prefab;
     }
 }
