@@ -1,5 +1,6 @@
 ﻿using System;
 using QFramework;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace BirdGame
@@ -11,12 +12,18 @@ namespace BirdGame
         private int index;
         private Action<int> onSelected;
 
-        public void Init(int birdIndex, int skinIndex, Action<int> onSkinSelected)
+        public void Init(int birdIndex, Action<int> onSkinSelected)
         {
-            index = skinIndex;
+            index = birdIndex;
             onSelected = onSkinSelected;
-            var sp = this.GetModel<IConfigModel>().BirdConfig.birds[birdIndex].birdSkinItems[skinIndex].skinView;
+            var sp = this.GetModel<IConfigModel>().BirdConfig.birds[birdIndex].preview;
             icon.sprite = sp;
+            if (!this.GetModel<ISaveModel>().IllustratedData.unlockedBirds.Contains(birdIndex))
+            {
+                icon.color = Color.black;
+            }
+
+            icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.08f;
         }
 
         private void Start()

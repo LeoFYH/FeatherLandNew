@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -23,7 +24,6 @@ namespace BirdGame
         public GameObject skinPrefab;
 
         private List<GameObject> skinItems = new List<GameObject>();
-        private int currentSelectedBird;
 
         private void Start()
         {
@@ -31,8 +31,9 @@ namespace BirdGame
             {
                 this.GetSystem<IUISystem>().HidePopup(UIPopup.IllustratedPopup);
             });
-            var config = this.GetModel<IConfigModel>().BirdConfig;
-            for (int i = 0; i < config.birds.Length; i++)
+            //var config = this.GetModel<IConfigModel>().BirdConfig;
+            var config = this.GetModel<IConfigModel>().IllustratedConfig;
+            for (int i = 0; i < config.birdClasses.Length; i++)
             {
                 int itemIndex = i % illustratedItemPrefabs.Length;
                 var item = GameObject.Instantiate(illustratedItemPrefabs[itemIndex], illustratedContent).GetComponent<IllustratedItem>();
@@ -40,32 +41,32 @@ namespace BirdGame
             }
 
             OnSelectedItem(0);
+
+            this.GetModel<IGameModel>().HasNewBirdIllustrated.Value = false;
         }
 
         private void OnSelectedItem(int index)
         {
-            currentSelectedBird = index;
-            var birdInfo = this.GetModel<IConfigModel>().BirdConfig.birds[index];
-            birdNameText.text = birdInfo.birdName;
-            for (int i = 0; i < realityToggles.Length; i++)
-            {
-                realityToggles[i].isOn = i < birdInfo.reality;
-            }
-
-            earningText.text = birdInfo.eraning.ToString();
-            priceText.text = birdInfo.priceForBig.ToString();
-            descriptionText.text = birdInfo.description.ToString();
-            habitatText.text = birdInfo.habitat;
-            sceneView.sprite = birdInfo.scenePreview;
+            var classInfo = this.GetModel<IConfigModel>().IllustratedConfig.birdClasses[index];
+            birdNameText.text = classInfo.birdName;
             ClearSkinItems();
-            for (int i = 0; i < birdInfo.birdSkinItems.Length; i++)
+            int unlockedIndex = -1;
+            for (int i = 0; i < classInfo.birdSkins.Length; i++)
             {
                 var item = GameObject.Instantiate(skinPrefab, skinContent).GetComponent<BirdSkin>();
-                item.Init(index, i, OnSkinSelected);
+                item.Init(classInfo.birdSkins[i].birdIndex, OnSkinSelected);
                 skinItems.Add(item.gameObject);
+                int birdIndex = classInfo.birdSkins[i].birdIndex;
+                if (unlockedIndex == -1 && this.GetModel<ISaveModel>().IllustratedData.unlockedBirds.Contains(birdIndex))
+                {
+                    unlockedIndex = i;
+                }
             }
-            
-            OnSkinSelected(0);
+
+            if (unlockedIndex == -1)
+                OnSkinSelected(classInfo.birdSkins[0].birdIndex);
+            else 
+                OnSkinSelected(classInfo.birdSkins[unlockedIndex].birdIndex);
         }
 
         private void ClearSkinItems()
@@ -80,8 +81,27 @@ namespace BirdGame
         
         private void OnSkinSelected(int index)
         {
-            var birdInfo = this.GetModel<IConfigModel>().BirdConfig.birds[currentSelectedBird];
-            birdPreview.sprite = birdInfo.birdSkinItems[index].skinView;
+            var birdInfo = this.GetModel<IConfigModel>().BirdConfig.birds[index];
+            birdPreview.sprite = birdInfo.preview;
+            birdPreview.GetComponent<RectTransform>().sizeDelta = birdInfo.preview.rect.size * 0.2f;
+            if (!this.GetModel<ISaveModel>().IllustratedData.unlockedBirds.Contains(index))
+            {
+                birdPreview.color = Color.black;
+            }
+            else
+            {
+                birdPreview.color = Color.white;
+            }
+            for (int i = 0; i < realityToggles.Length; i++)
+            {
+                realityToggles[i].isOn = i < birdInfo.reality;
+            }
+
+            earningText.text = birdInfo.eraning.ToString();
+            priceText.text = birdInfo.priceForBig.ToString();
+            descriptionText.text = birdInfo.description;
+            habitatText.text = birdInfo.habitat;
+            sceneView.sprite = birdInfo.scenePreview;
         }
     }
 }

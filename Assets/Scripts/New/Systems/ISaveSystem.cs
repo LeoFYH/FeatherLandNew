@@ -292,6 +292,7 @@ namespace BirdGame
             _saveModel.NoteData = GetData<NoteData>("NoteData");
             _saveModel.ScheduleData = GetData<ScheduleData>("ScheduleData");
             _saveModel.DecorationData = GetData<DecorationData>("DecorationData");
+            _saveModel.IllustratedData = GetData<IllustratedData>("IllustratedData");
         }
 
         public void SaveData()
@@ -303,6 +304,7 @@ namespace BirdGame
             SaveData("NoteData", _saveModel.NoteData);
             SaveData("ScheduleData", _saveModel.ScheduleData);
             SaveData("DecorationData", _saveModel.DecorationData);
+            SaveData("IllustratedData", _saveModel.IllustratedData);
         }
     }
 }

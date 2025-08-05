@@ -14,6 +14,7 @@ namespace BirdGame
         NoteData NoteData { get; set; }
         ScheduleData ScheduleData { get; set; }
         DecorationData DecorationData { get; set; }
+        IllustratedData IllustratedData { get; set; }
     }
 
     public class SaveModel : AbstractModel, ISaveModel
@@ -30,6 +31,7 @@ namespace BirdGame
         public NoteData NoteData { get; set; }
         public ScheduleData ScheduleData { get; set; }
         public DecorationData DecorationData { get; set; }
+        public IllustratedData IllustratedData { get; set; }
     }
     
     [Serializable]
@@ -118,5 +120,14 @@ namespace BirdGame
     {
         public string scheduleText;
         public bool isCompleted;
+    }
+
+    /// <summary>
+    /// 图鉴存档
+    /// </summary>
+    [Serializable]
+    public class IllustratedData : SavableData
+    {
+        public List<int> unlockedBirds = new List<int>();
     }
 }
