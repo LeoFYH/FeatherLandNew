@@ -1,7 +1,9 @@
 ﻿using System;
 using Sirenix.OdinInspector;
-using UnityEditor;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace BirdGame
 {
@@ -66,6 +68,7 @@ namespace BirdGame
             RefreshBirdTexture();
         }
 
+#if UNITY_EDITOR
         private void RefreshBirdTexture()
         {
             var config = AssetDatabase.LoadAssetAtPath<BirdConfig>("Assets/Prefabs/Config/BirdConfig.asset");
@@ -84,6 +87,18 @@ namespace BirdGame
 
             return list;
         }
+#else
+        private void RefreshBirdTexture()
+        {
+            // 在构建版本中，这个方法不会被调用
+        }
+
+        private ValueDropdownList<int> GetBirdList()
+        {
+            // 在构建版本中，这个方法不会被调用
+            return new ValueDropdownList<int>();
+        }
+#endif
     }
 
     [Serializable]
