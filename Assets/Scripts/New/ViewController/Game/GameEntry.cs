@@ -7,7 +7,42 @@ namespace BirdGame
     {
         private void Start()
         {
+            // 延迟一帧来确保所有系统都已初始化
+            StartCoroutine(InitializeAfterSystems());
+        }
+
+        private System.Collections.IEnumerator InitializeAfterSystems()
+        {
+            // 等待一帧，确保所有系统都已初始化
+            yield return null;
+            
+            // 根据保存的设置设置屏幕模式
+            int savedScreenMode = this.GetModel<ISaveModel>().SettingData.screenMode;
+            Debug.Log($"从存档加载的屏幕模式: {savedScreenMode}");
+            SetScreenMode(savedScreenMode);
+            
             this.GetSystem<ISceneSystem>().LoadScene(0);
+        }
+
+        private void SetScreenMode(int mode)
+        {
+            Debug.Log($"SetScreenMode 被调用，模式: {mode}");
+            switch (mode)
+            {
+                case 0:
+                    this.GetUtility<IFullScreenUtility>().WindowedMode();
+                    Debug.Log("启动时设置为窗口模式");
+                    break;
+                case 1:
+                    this.GetUtility<IFullScreenUtility>().WallpaperMode();
+                    Debug.Log("启动时设置为壁纸模式");
+                    break;
+                case 2:
+                default:
+                    this.GetUtility<IFullScreenUtility>().FullscreenMode();
+                    Debug.Log("启动时设置为全屏模式");
+                    break;
+            }
         }
 
         private void Update()

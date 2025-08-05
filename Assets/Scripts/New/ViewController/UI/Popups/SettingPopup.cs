@@ -23,8 +23,15 @@ namespace BirdGame
                 UnityEngine.Application.Quit();
             });
             
+            // 初始化下拉菜单的默认值
+            InitializeScreenDropdown();
+            
             screenDropdown.onValueChanged.AddListener(id =>
             {
+                // 保存设置
+                this.GetModel<ISaveModel>().SettingData.screenMode = id;
+                this.GetSystem<ISaveSystem>().SaveData();
+                
                 if (id == 0)
                 {
                     this.GetUtility<IFullScreenUtility>().WindowedMode();
@@ -41,6 +48,22 @@ namespace BirdGame
                     Debug.Log("FullscreenMode");
                 }
             });
+        }
+
+        private void InitializeScreenDropdown()
+        {
+            // 确保下拉菜单选项正确
+            if (screenDropdown.options.Count == 0)
+            {
+                screenDropdown.options.Clear();
+                screenDropdown.options.Add(new TMPro.TMP_Dropdown.OptionData("窗口模式"));
+                screenDropdown.options.Add(new TMPro.TMP_Dropdown.OptionData("壁纸模式"));
+                screenDropdown.options.Add(new TMPro.TMP_Dropdown.OptionData("全屏模式"));
+            }
+            
+            // 从保存的设置中加载屏幕模式，如果没有保存过则默认为全屏模式
+            int savedScreenMode = this.GetModel<ISaveModel>().SettingData.screenMode;
+            screenDropdown.value = savedScreenMode;
         }
     }
 }
