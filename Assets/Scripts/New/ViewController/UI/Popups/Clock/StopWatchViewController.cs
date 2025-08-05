@@ -31,13 +31,31 @@ namespace BirdGame
                 item.TimerCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(StartTimer());
                 startButton.gameObject.SetActive(false);
                 stopButton.gameObject.SetActive(true);
+                this.GetModel<IClockModel>().TimerType = TimerType.StopWatch;
             });
             stopButton.onClick.AddListener(() =>
             {
-                this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
+                if(item.TimerCoroutine != null)
+                    this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
                 item.TimerCoroutine = null;
                 startButton.gameObject.SetActive(true);
                 stopButton.gameObject.SetActive(false);
+                if (this.GetModel<IClockModel>().TomatoItem.TimerCoroutine != null)
+                {
+                    this.GetModel<IClockModel>().TimerType = TimerType.Tomato;
+                }
+                else if (this.GetModel<IClockModel>().TimerItem.TimerCoroutine != null)
+                {
+                    this.GetModel<IClockModel>().TimerType = TimerType.Timer;
+                }
+                else
+                {
+                    this.GetModel<IClockModel>().TimerType = TimerType.None;
+                    this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
+                    {
+                        show = false
+                    });
+                }
             });
             item.Hours.Register(v =>
             {
@@ -70,6 +88,7 @@ namespace BirdGame
                 item.Hours.Value = totalSeconds / 3600;
                 item.Minutes.Value = totalSeconds / 60 % 60;
                 item.Seconds.Value = totalSeconds % 60;
+                item.TimerString.Value = string.Format("{0:00}:{1:00}:{2:00}", item.Hours.Value, item.Minutes.Value, item.Seconds.Value);
                 yield return frame;
                 item.Timer += Time.fixedDeltaTime;
             }

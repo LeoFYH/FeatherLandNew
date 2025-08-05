@@ -368,7 +368,7 @@ namespace BirdGame
                 
                 // 添加点击检测组件
                 DecorationClickHandler clickHandler = decoration.AddComponent<DecorationClickHandler>();
-                clickHandler.Initialize(decorationId, this);
+                clickHandler.Initialize(decorationId);
                 
                 // 添加到已购买列表
                 this.GetModel<IGameModel>().PurchasedDecorations.Add(decoration);
@@ -429,7 +429,7 @@ namespace BirdGame
                 
                 // 添加点击检测组件
                 DecorationClickHandler clickHandler = currentPlacingDecoration.AddComponent<DecorationClickHandler>();
-                clickHandler.Initialize(currentPlacingDecorationId, this);
+                clickHandler.Initialize(currentPlacingDecorationId);
                 
                 // 添加到已购买列表
                 this.GetModel<IGameModel>().PurchasedDecorations.Add(currentPlacingDecoration);

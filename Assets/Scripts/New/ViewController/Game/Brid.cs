@@ -39,8 +39,6 @@ namespace BirdGame
         public bool isInNest;
         float eatTimer;
         public GameObject heartPre;
-        public int smallPrice = 20;
-        public int bigPrice = 30;
         public int level = 1;
         public string title = "Bird";
         public string desc = "It's a bird";
@@ -56,8 +54,6 @@ namespace BirdGame
 
         [Header("Food count needed for large size")]
         public int eatCountForBig = 2;
-
-        [Header("Income for large size")] public int incomeForBig;
 
         public float distance;
         public BindableProperty<int> eatFoodCount = new BindableProperty<int>();
@@ -268,6 +264,7 @@ namespace BirdGame
             Debug.Log("Adding coins");
             if (!isSmall)
             {
+                int incomeForBig = this.GetModel<IConfigModel>().BirdConfig.birds[birdIndex].eraning;
                 this.GetModel<IAccountModel>().Coins.Value += incomeForBig;
             }
         }

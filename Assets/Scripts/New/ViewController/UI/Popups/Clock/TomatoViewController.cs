@@ -31,14 +31,17 @@ namespace BirdGame
             {
                 sessionText.text = string.Format("{0:00}", v);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            sessionText.text = string.Format("{0:00}", item.SessionMinutes.Value);
             item.BreakMinutes.Register(v =>
             {
                 breakText.text = string.Format("{0:00}", v);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            breakText.text = string.Format("{0:00}", item.BreakMinutes.Value);
             item.Number.Register(v =>
             {
                 numberText.text = v.ToString();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            numberText.text = item.Number.Value.ToString();
             for (int i = 0; i < 3; i++)
             {
                 int index = i;
@@ -74,6 +77,10 @@ namespace BirdGame
                 if (this.GetModel<IClockModel>().TimerItem.TimerCoroutine != null)
                 {
                     this.GetModel<IClockModel>().TimerType = TimerType.Timer;
+                }
+                else if (this.GetModel<IClockModel>().StopWatchItem.TimerCoroutine != null)
+                {
+                    this.GetModel<IClockModel>().TimerType = TimerType.StopWatch;
                 }
                 else
                 {
@@ -175,7 +182,7 @@ namespace BirdGame
             item.Timer = item.TimerType.Value == TomatoTimerType.Session
                 ? item.SessionMinutes.Value * 60
                 : item.BreakMinutes.Value * 60;
-            while (item.Number.Value > 0)
+            while (item.Number.Value > 0 || item.TimerType.Value == TomatoTimerType.Break)
             {
                 int totalSeconds = (int)item.Timer;
                 int hour = totalSeconds / 3600;
@@ -193,16 +200,21 @@ namespace BirdGame
                         item.Timer = item.BreakMinutes.Value * 60;
                         //触发Session结束提醒
                         this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForSession;
+                        item.Number.Value--;
                         this.SendCommand<AlertCommand>();
                     }
                     else if(item.TimerType.Value == TomatoTimerType.Break)
                     {
                         item.TimerType.Value = TomatoTimerType.Session;
                         item.Timer = item.SessionMinutes.Value * 60;
-                        item.Number.Value--;
                         //触发Break结束提醒
                         this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForBreak;
                         this.SendCommand<AlertCommand>();
+
+                        if (item.Number.Value <= 0)
+                        {
+                            break;
+                        }
                     }
                 }
             }
@@ -211,6 +223,10 @@ namespace BirdGame
             if (this.GetModel<IClockModel>().TimerItem.TimerCoroutine != null)
             {
                 this.GetModel<IClockModel>().TimerType = TimerType.Timer;
+            }
+            else if (this.GetModel<IClockModel>().StopWatchItem.TimerCoroutine != null)
+            {
+                this.GetModel<IClockModel>().TimerType = TimerType.StopWatch;
             }
             else
             {

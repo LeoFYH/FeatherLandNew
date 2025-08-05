@@ -33,6 +33,7 @@ namespace BirdGame
         public BindableProperty<int> Seconds { get; } = new BindableProperty<int>();
         public BindableProperty<int> Minutes { get; } = new BindableProperty<int>();
         public BindableProperty<int> Hours { get; } = new BindableProperty<int>();
+        public BindableProperty<string> TimerString { get; } = new BindableProperty<string>();
     }
 
     public class TimerItem
@@ -101,6 +102,10 @@ namespace BirdGame
         /// <summary>
         /// 番茄钟
         /// </summary>
-        Tomato
+        Tomato,
+        /// <summary>
+        /// 秒表
+        /// </summary>
+        StopWatch,
     }
 }

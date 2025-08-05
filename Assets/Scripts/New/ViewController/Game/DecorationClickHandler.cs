@@ -3,15 +3,13 @@ using UnityEngine;
 
 namespace BirdGame
 {
-    public class DecorationClickHandler : MonoBehaviour
+    public class DecorationClickHandler : ViewControllerBase
     {
         private int decorationId;
-        private IGameSystem gameSystem;
 
-        public void Initialize(int id, IGameSystem system)
+        public void Initialize(int id)
         {
             decorationId = id;
-            gameSystem = system;
         }
 
         private void OnMouseOver()
@@ -32,7 +30,8 @@ namespace BirdGame
         private void DestroyDecoration()
         {
             // 调用游戏系统的销毁方法
-            gameSystem.DestroyDecoration(decorationId, gameObject);
+            //this.GetSystem<IGameSystem>().DestroyDecoration(decorationId, gameObject);
+            this.GetSystem<IUISystem>().ShowMouseMenu(decorationId, gameObject);
         }
     }
 } 

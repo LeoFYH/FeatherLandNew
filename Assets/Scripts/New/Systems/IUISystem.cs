@@ -23,7 +23,8 @@ namespace BirdGame
         InfoPopup,
         PromptPopup,
         IllustratedPopup,
-        AlertPopup
+        AlertPopup,
+        MouseMenu
     }
 
     public interface IUISystem : ISystem
@@ -64,6 +65,12 @@ namespace BirdGame
         void ShowMask();
 
         void HideMask();
+        /// <summary>
+        /// 显示鼠标右键菜单
+        /// </summary>
+        void ShowMouseMenu(int decorationId, GameObject gameObject);
+
+        void HideMouseMenu();
     }
 
     public class UISystem : AbstractSystem, IUISystem
@@ -170,6 +177,20 @@ namespace BirdGame
                 GameObject.Destroy(mask);
                 mask = null;
             }
+        }
+
+        public void ShowMouseMenu(int decorationId, GameObject gameObject)
+        {
+            ShowPopup(UIPopup.MouseMenu, () =>
+            {
+                var menu = popupDic[UIPopup.MouseMenu] as MouseMenu;
+                menu.Init(decorationId, gameObject);
+            });
+        }
+
+        public void HideMouseMenu()
+        {
+            HidePopup(UIPopup.MouseMenu);
         }
     }
 }

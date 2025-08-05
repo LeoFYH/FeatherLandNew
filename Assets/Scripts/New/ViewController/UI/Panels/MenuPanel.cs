@@ -135,6 +135,12 @@ namespace BirdGame
                 if (this.GetModel<IClockModel>().TimerType == TimerType.Timer)
                     timeText.text = v;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            this.GetModel<IClockModel>().StopWatchItem.TimerString.Register(v =>
+            {
+                if (this.GetModel<IClockModel>().TimerType == TimerType.StopWatch)
+                    timeText.text = v;
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
             timeItem.anchoredPosition = new Vector2(0f, 254f);
         }

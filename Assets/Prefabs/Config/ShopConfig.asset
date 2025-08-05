@@ -27,6 +27,10 @@ MonoBehaviour:
       probability: 0.5
     - birdType: 4
       probability: 0.5
+    - birdType: 5
+      probability: 0.5
+    - birdType: 6
+      probability: 0.5
   - eggSp: {fileID: 710238443548197888, guid: 1170092e8fa8e1142a7e347132e8ea45, type: 3}
     price: 50
     birdCount: 3
@@ -104,33 +108,41 @@ MonoBehaviour:
       selectionName: Foo1
       description: 
       price: 0
+      foodScale: 1
     - icon: {fileID: 0}
       selectionName: Food2
       description: 
       price: 0
+      foodScale: 1
     - icon: {fileID: 0}
       selectionName: Food3
       description: 
       price: 0
+      foodScale: 1
     - icon: {fileID: 0}
       selectionName: Food4
       description: 
       price: 0
+      foodScale: 1
   - name: Cursor
     selections:
     - icon: {fileID: 0}
       selectionName: Cursor1
       description: 
       price: 0
+      foodScale: 1
     - icon: {fileID: 0}
       selectionName: Cursor2
       description: 
       price: 0
+      foodScale: 1
     - icon: {fileID: 0}
       selectionName: Cursor3
       description: 
       price: 0
+      foodScale: 1
     - icon: {fileID: 0}
       selectionName: Cursor4
       description: 
       price: 0
+      foodScale: 1

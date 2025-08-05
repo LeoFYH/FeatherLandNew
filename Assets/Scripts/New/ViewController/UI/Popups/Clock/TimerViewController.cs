@@ -32,14 +32,18 @@ namespace BirdGame
             {
                 hourText.text = string.Format("{0:00}", v);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            hourText.text = string.Format("{0:00}", item.Hours.Value);
             item.Minutes.Register(v =>
             {
                 minuteText.text = string.Format("{0:00}", v);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            minuteText.text = string.Format("{0:00}", item.Minutes.Value);
             item.Seconds.Register(v =>
             {
                 secondText.text = string.Format("{0:00}", v);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            secondText.text = string.Format("{0:00}", item.Seconds.Value);
+            
             for (int i = 0; i < 3; i++)
             {
                 int index = i;
@@ -76,6 +80,10 @@ namespace BirdGame
                 if (this.GetModel<IClockModel>().TomatoItem.TimerCoroutine != null)
                 {
                     this.GetModel<IClockModel>().TimerType = TimerType.Tomato;
+                }
+                else if (this.GetModel<IClockModel>().StopWatchItem.TimerCoroutine != null)
+                {
+                    this.GetModel<IClockModel>().TimerType = TimerType.StopWatch;
                 }
                 else
                 {
@@ -196,6 +204,10 @@ namespace BirdGame
             if (this.GetModel<IClockModel>().TomatoItem.TimerCoroutine != null)
             {
                 this.GetModel<IClockModel>().TimerType = TimerType.Tomato;
+            }
+            else if (this.GetModel<IClockModel>().StopWatchItem.TimerCoroutine != null)
+            {
+                this.GetModel<IClockModel>().TimerType = TimerType.StopWatch;
             }
             else
             {
