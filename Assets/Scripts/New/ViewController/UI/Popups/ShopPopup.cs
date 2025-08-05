@@ -69,5 +69,21 @@ namespace BirdGame
             toolsContent.SetActive(false);
             barImage.sprite = eggBar;
         }
+        
+        // 教学系统调用方法
+        public void OnShopButtonClick()
+        {
+            // 通知教学系统按钮被点击
+            this.GetSystem<ITutorialSystem>().OnTargetClicked("ShopButton");
+            
+            // 正常的商店逻辑
+            OpenShop();
+        }
+        
+        private void OpenShop()
+        {
+            // 商店打开逻辑
+            Debug.Log("商店已打开");
+        }
     }
 }

@@ -35,6 +35,10 @@ namespace BirdGame
             {
                 this.GetModel<IConfigModel>().BirdConfig = config;
             });
+            LoadAssetAsync<TutorialConfig>("TutorialConfig", config =>
+            {
+                this.GetModel<IConfigModel>().TutorialConfig = config;
+            });
         }
 
         public void LoadAssetAsync<T>(string assetName, Action<T> onComplete) where T : Object

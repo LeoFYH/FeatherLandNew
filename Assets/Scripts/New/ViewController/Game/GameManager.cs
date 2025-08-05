@@ -16,6 +16,9 @@ namespace BirdGame
         private void Start()
         {
             this.GetModel<IBirdModel>().FlyPositions = flyPositions;
+            
+            // 检查并启动教学
+            CheckAndStartTutorial();
         }
 
         private void Update()
@@ -26,6 +29,15 @@ namespace BirdGame
             if (Input.GetMouseButtonDown(0))
             {
                 this.GetSystem<IGameSystem>().CreateFood();
+            }
+        }
+        
+        private void CheckAndStartTutorial()
+        {
+            // 检查是否是第一次玩游戏
+            if (!PlayerPrefs.HasKey("HasPlayedBefore"))
+            {
+                this.GetSystem<ITutorialSystem>().StartTutorial("000");
             }
         }
     }

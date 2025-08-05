@@ -8,6 +8,7 @@ namespace BirdGame
         RadioConfig RadioConfig { get; set; }
         ShopConfig ShopConfig { get; set; }
         BirdConfig BirdConfig { get; set; }
+        TutorialConfig TutorialConfig { get; set; }
     }
 
     public class ConfigModel : AbstractModel, IConfigModel
@@ -20,5 +21,6 @@ namespace BirdGame
         public RadioConfig RadioConfig { get; set; }
         public ShopConfig ShopConfig { get; set; }
         public BirdConfig BirdConfig { get; set; }
+        public TutorialConfig TutorialConfig { get; set; }
     }
 }

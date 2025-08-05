@@ -146,6 +146,7 @@
     <Compile Include="Assets\Scripts\New\Config\BirdConfig.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Note\DailyViewController.cs" />
     <Compile Include="Assets\Scripts\AnimationTest\AddPanel.cs" />
+    <Compile Include="Assets\Scripts\New\Systems\ITutorialSystem.cs" />
     <Compile Include="Assets\Scripts\New\Models\ISettingModel.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\ToggleImage.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\DecorationFollowMouse.cs" />
@@ -154,6 +155,7 @@
     <Compile Include="Assets\Scripts\FSM\StateMachine.cs" />
     <Compile Include="Assets\Scripts\New\Events\ChangeTimeViewEvent.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\GameEntry.cs" />
+    <Compile Include="Assets\Scripts\New\Systems\TutorialSystem.cs" />
     <Compile Include="Assets\Scripts\UI\NumPanel.cs" />
     <Compile Include="Assets\Scripts\New\Models\IAccountModel.cs" />
     <Compile Include="Assets\Scripts\New\Commands\SpawnBirdCommand.cs" />
@@ -178,6 +180,7 @@
     <Compile Include="Assets\Scripts\New\Events\ShowBranchEvent.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\Egg.cs" />
     <Compile Include="Assets\Scripts\New\Models\IConfigModel.cs" />
+    <Compile Include="Assets\Scripts\New\Config\TutorialConfig.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Note\NoteItem.cs" />
   </ItemGroup>
   <ItemGroup>

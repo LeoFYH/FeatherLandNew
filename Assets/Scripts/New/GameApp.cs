@@ -25,6 +25,7 @@ namespace BirdGame
             this.RegisterSystem<IGameSystem>(new GameSystem());
             this.RegisterSystem<ISceneSystem>(new SceneSystem());
             this.RegisterSystem<ICursorSystem>(new CursorSystem());
+            this.RegisterSystem<ITutorialSystem>(new TutorialSystem());
         }
     }
 }
