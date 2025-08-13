@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 7958371027468637086}
   - component: {fileID: 7140866687203067416}
   - component: {fileID: 7438720788374061567}
+  - component: {fileID: 4199313366146470189}
+  - component: {fileID: 1994536570819524787}
   m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -136,6 +138,31 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &4199313366146470189
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1276243915091620859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e984ebdff2b4348b2d29ab8ce8e9038, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1994536570819524787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1276243915091620859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Key: Close
 --- !u!1 &3227714734260297722
 GameObject:
   m_ObjectHideFlags: 0
@@ -147,6 +174,8 @@ GameObject:
   - component: {fileID: 3708319437294531951}
   - component: {fileID: 38463195547264822}
   - component: {fileID: 1491628499174157635}
+  - component: {fileID: 3547472438388179587}
+  - component: {fileID: 9154463047300577059}
   m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -272,6 +301,31 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3547472438388179587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3227714734260297722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Key: Time's up!
+--- !u!114 &9154463047300577059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3227714734260297722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e984ebdff2b4348b2d29ab8ce8e9038, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4744794493307493324
 GameObject:
   m_ObjectHideFlags: 0
@@ -635,5 +689,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 407b464f734d465c91060bebeeac7d11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  alertText: {fileID: 1491628499174157635}
+  alertText: {fileID: 3547472438388179587}
   closeButton: {fileID: 1731771560709143885}

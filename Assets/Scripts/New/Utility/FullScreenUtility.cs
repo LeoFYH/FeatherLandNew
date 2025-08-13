@@ -18,12 +18,6 @@ namespace BirdGame
         private static extern IntPtr GetActiveWindow();
 
         [DllImport("user32.dll")]
-        private static extern bool SetWindowLong(IntPtr hWnd, int nIndex, uint dwNewLong);
-
-        [DllImport("user32.dll")]
-        private static extern uint GetWindowLong(IntPtr hWnd, int nIndex);
-
-        [DllImport("user32.dll")]
         private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter,
             int X, int Y, int cx, int cy, uint uFlags);
 
@@ -33,9 +27,27 @@ namespace BirdGame
         [DllImport("user32.dll")]
         private static extern int GetSystemMetrics(int nIndex);
 
-        private const int GWL_STYLE = -16;
-        private const uint WS_POPUP = 0x80000000;
-        private const uint WS_VISIBLE = 0x10000000;
+        #region 桌面模式
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        [DllImport("user32.dll")]
+        static extern bool SetWindowLong(IntPtr hWnd, int nIndex, uint dwNewLong);
+        [DllImport("user32.dll")]
+        static extern uint GetWindowLong(IntPtr hWnd, int nIndex);
+
+        const int GWL_STYLE = -16;
+        const uint WS_POPUP = 0x80000000;
+        const uint WS_VISIBLE = 0x10000000;
+
+        #endregion
+        
         private const uint WS_OVERLAPPEDWINDOW = 0x00CF0000;
 
         private static readonly IntPtr HWND_TOP = IntPtr.Zero;
@@ -67,20 +79,55 @@ namespace BirdGame
         {
             // Remove title bar/border
             SetWindowLong(windowHandle, GWL_STYLE, WS_POPUP | WS_VISIBLE);
-
+            
             // Get work area (screen size excluding taskbar)
             RECT workArea = new RECT();
             SystemParametersInfo(SPI_GETWORKAREA, 0, ref workArea, 0);
-
+            
             // Ensure we're setting the window to the correct work area
             SetWindowPos(windowHandle, HWND_TOP,
                 workArea.Left, workArea.Top,
                 workArea.Right - workArea.Left,
                 workArea.Bottom - workArea.Top,
                 SWP_SHOWWINDOW);
-
+            
             workAreaWidth = workArea.Right - workArea.Left;
             workAreaHeight = workArea.Bottom - workArea.Top;
+            
+            // if (windowHandle == IntPtr.Zero)
+            // {
+            //     Debug.LogError("未找到 Unity 窗口句柄，嵌入失败");
+            //     return;
+            // }
+            //
+            // // 找到桌面 WorkerW 窗口
+            // IntPtr workerw = IntPtr.Zero;
+            // IntPtr temp = IntPtr.Zero;
+            // do
+            // {
+            //     workerw = FindWindowEx(IntPtr.Zero, workerw, "WorkerW", null);
+            //     IntPtr shellViewWin = FindWindowEx(workerw, IntPtr.Zero, "SHELLDLL_DefView", null);
+            //     if (shellViewWin != IntPtr.Zero)
+            //     {
+            //         temp = workerw;
+            //         break;
+            //     }
+            // } while (workerw != IntPtr.Zero);
+            //
+            // if (temp == IntPtr.Zero)
+            // {
+            //     Debug.LogError("未找到桌面 WorkerW 窗口");
+            //     return;
+            // }
+            //
+            // // 设置无边框 + 嵌入
+            // uint style = GetWindowLong(windowHandle, GWL_STYLE);
+            // SetWindowLong(windowHandle, GWL_STYLE, WS_POPUP | WS_VISIBLE);
+            //
+            // SetParent(windowHandle, temp);
+            // ShowWindow(windowHandle, 3);
+            //
+            // Debug.Log("Unity 窗口已成功嵌入桌面背景");
         }
 
         public void FullscreenMode()
@@ -114,8 +161,8 @@ namespace BirdGame
             SetWindowLong(windowHandle, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
 
             // Set window size to 1280x720
-            int windowWidth = 1280;
-            int windowHeight = 720;
+            int windowWidth = Screen.currentResolution.width;
+            int windowHeight = Screen.currentResolution.height;
 
             // Center the window
             int screenWidth = Screen.currentResolution.width;

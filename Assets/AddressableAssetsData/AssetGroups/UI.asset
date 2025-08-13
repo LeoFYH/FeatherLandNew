@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: UI
+  m_EditorClassIdentifier: 
+  m_GroupName: UI
+  m_GUID: 32d5c64e6de46aa419fd6f497e3d552c
+  m_SerializeEntries:
+  - m_GUID: 177b6e5d8f4bdbf49ac58e1aeb4e39c3
+    m_Address: PromptPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - popup
+    - preload
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 293464d557cb04745a873e7b9326b93f
+    m_Address: RadioPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - popup
+    - preload
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 490ae9ab7dbe0fa4b8f5adc11314d38a
+    m_Address: IllustratedPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - popup
+    - preload
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 552945126f96bf141866cd4857c0c601
+    m_Address: AlertPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - popup
+    - preload
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6133a2b43e0f65a43b23ff117f8e8aed
+    m_Address: MenuPanel
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Panel
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6b644d8317dea224bae9da18092f1429
+    m_Address: InfoPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - popup
+    - preload
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 776d659c56369a3418513439a7a0356e
+    m_Address: NotePopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - popup
+    - preload
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bba37be72f6bbeb4c9fa32cee52dc26d
+    m_Address: ShopPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - popup
+    - preload
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c77d0d07a90df6942a7b015764ca890e
+    m_Address: SettingPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - popup
+    - preload
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d028e9e819599d74cb86cfd2036dcc31
+    m_Address: MouseMenu
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - popup
+    - preload
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f71b9fb1424ec0940bb3b3b6f9989097
+    m_Address: ClockPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - popup
+    - preload
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 5a7a9994457a81944973db6c6dc3ffb7, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 23a3ba33d8f6599478ac6e6df52f4c65, type: 2}
+    - {fileID: 11400000, guid: 62d56d0fe25bc4144b068b75b7925fc9, type: 2}

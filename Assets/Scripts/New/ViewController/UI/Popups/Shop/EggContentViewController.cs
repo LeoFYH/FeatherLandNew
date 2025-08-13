@@ -39,7 +39,8 @@ namespace BirdGame
                 }
                 else
                 {
-                    this.GetSystem<IUISystem>().ShowPrompt("Insufficient coins");
+                    string text = this.GetSystem<ILocalizationSystem>().GetString("Insufficient coins");
+                    this.GetSystem<IUISystem>().ShowPrompt(text);
                 }
             });
 

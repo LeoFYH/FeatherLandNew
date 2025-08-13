@@ -193,6 +193,10 @@ namespace BirdGame
 
                             this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Stroke);
                             anim.SetTrigger("Stroke");
+                            this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("Heart", obj =>
+                            {
+                                GameObject.Instantiate(obj, heartPos);
+                            });
                             //this.GetSystem<ICursorSystem>().Stroke();
                             if (petTime > 0.5)
                             {

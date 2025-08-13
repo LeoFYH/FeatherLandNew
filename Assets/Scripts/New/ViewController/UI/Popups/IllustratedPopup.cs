@@ -17,8 +17,8 @@ namespace BirdGame
         public Toggle[] realityToggles;
         public TextMeshProUGUI earningText;
         public TextMeshProUGUI priceText;
-        public TextMeshProUGUI descriptionText;
-        public TextMeshProUGUI habitatText;
+        public LocalizationText descriptionText;
+        public LocalizationText habitatText;
         public Image sceneView;
         public Transform skinContent;
         public GameObject skinPrefab;
@@ -57,7 +57,7 @@ namespace BirdGame
                 item.Init(classInfo.birdSkins[i].birdIndex, OnSkinSelected);
                 skinItems.Add(item.gameObject);
                 int birdIndex = classInfo.birdSkins[i].birdIndex;
-                if (unlockedIndex == -1 && this.GetModel<ISaveModel>().IllustratedData.unlockedBirds.Contains(birdIndex))
+                if (unlockedIndex == -1 && this.GetModel<IGameModel>().UnlockedBirds.Contains(birdIndex))
                 {
                     unlockedIndex = i;
                 }
@@ -84,7 +84,7 @@ namespace BirdGame
             var birdInfo = this.GetModel<IConfigModel>().BirdConfig.birds[index];
             birdPreview.sprite = birdInfo.preview;
             birdPreview.GetComponent<RectTransform>().sizeDelta = birdInfo.preview.rect.size * 0.2f;
-            if (!this.GetModel<ISaveModel>().IllustratedData.unlockedBirds.Contains(index))
+            if (!this.GetModel<IGameModel>().UnlockedBirds.Contains(index))
             {
                 birdPreview.color = Color.black;
             }
@@ -99,8 +99,8 @@ namespace BirdGame
 
             earningText.text = birdInfo.eraning.ToString();
             priceText.text = birdInfo.priceForBig.ToString();
-            descriptionText.text = birdInfo.description;
-            habitatText.text = birdInfo.habitat;
+            descriptionText.SetKey(birdInfo.description);
+            habitatText.SetKey(birdInfo.habitat);
             sceneView.sprite = birdInfo.scenePreview;
         }
     }

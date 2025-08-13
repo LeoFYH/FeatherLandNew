@@ -19,6 +19,8 @@ namespace BirdGame
         /// 是否有新的图鉴更新
         /// </summary>
         BindableProperty<bool> HasNewBirdIllustrated { get; }
+
+        public List<int> UnlockedBirds { get; }
     }
 
     public class GameModel : AbstractModel, IGameModel
@@ -42,5 +44,6 @@ namespace BirdGame
         public List<GameObject> PurchasedDecorations { get; } = new List<GameObject>();
         public Dictionary<int, int> PurchasedDecorationQuantities { get; } = new Dictionary<int, int>();
         public BindableProperty<bool> HasNewBirdIllustrated { get; } = new BindableProperty<bool>();
+        public List<int> UnlockedBirds { get; } = new List<int>();
     }
 }

@@ -18,6 +18,8 @@ namespace BirdGame
     {
         [PreviewField(ObjectFieldAlignment.Left, Height = 50), HorizontalGroup("content", Width = 50), HideLabel]
         public Sprite preview;
+        [HorizontalGroup("content"), VerticalGroup("content/Info"), LabelText("ID")]
+        public string birdId;
         [HorizontalGroup("content"), VerticalGroup("content/Info"), LabelText("名称")]
         public string birdName;
         [VerticalGroup("content/Info"), LabelText("鸟的预制体")]

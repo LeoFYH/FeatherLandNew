@@ -2,12 +2,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using QFramework;
+using TMPro;
 
 namespace BirdGame
 {
     public class PromptPopup : UIBase
     {
-        public Text descTxt;
+        public TextMeshProUGUI descTxt;
         public CanvasGroup cg;
 
         public void Init(string s)

@@ -14,7 +14,6 @@ namespace BirdGame
         NoteData NoteData { get; set; }
         ScheduleData ScheduleData { get; set; }
         DecorationData DecorationData { get; set; }
-        IllustratedData IllustratedData { get; set; }
     }
 
     public class SaveModel : AbstractModel, ISaveModel
@@ -31,7 +30,7 @@ namespace BirdGame
         public NoteData NoteData { get; set; }
         public ScheduleData ScheduleData { get; set; }
         public DecorationData DecorationData { get; set; }
-        public IllustratedData IllustratedData { get; set; }
+        //public IllustratedData IllustratedData { get; set; }
     }
     
     [Serializable]
@@ -55,6 +54,13 @@ namespace BirdGame
     public class SettingData : SavableData
     {
         public int screenMode = 2; // 0: 窗口模式, 1: 壁纸模式, 2: 全屏模式 (默认全屏)
+        public SystemLanguage gameLanguage;
+
+        public SettingData()
+        {
+            screenMode = 2;
+            gameLanguage = Application.systemLanguage;
+        }
     }
 
     /// <summary>
@@ -120,14 +126,5 @@ namespace BirdGame
     {
         public string scheduleText;
         public bool isCompleted;
-    }
-
-    /// <summary>
-    /// 图鉴存档
-    /// </summary>
-    [Serializable]
-    public class IllustratedData : SavableData
-    {
-        public List<int> unlockedBirds = new List<int>();
     }
 }

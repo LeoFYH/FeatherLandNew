@@ -9,6 +9,7 @@ namespace BirdGame
         {
             // 延迟一帧来确保所有系统都已初始化
             StartCoroutine(InitializeAfterSystems());
+            this.SendCommand<LoadGameCommand>();
         }
 
         private System.Collections.IEnumerator InitializeAfterSystems()
@@ -21,7 +22,7 @@ namespace BirdGame
             Debug.Log($"从存档加载的屏幕模式: {savedScreenMode}");
             SetScreenMode(savedScreenMode);
             
-            this.GetSystem<ISceneSystem>().LoadScene(0);
+            //this.GetSystem<ISceneSystem>().LoadScene(0);
         }
 
         private void SetScreenMode(int mode)

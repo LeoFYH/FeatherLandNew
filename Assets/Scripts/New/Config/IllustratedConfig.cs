@@ -35,7 +35,7 @@ namespace BirdGame
             var list = new ValueDropdownList<int>();
             for (int i = 0; i < config.birds.Length; i++)
             {
-                list.Add(config.birds[i].birdName, i);
+                list.Add(config.birds[i].birdId, i);
             }
 
             return list;

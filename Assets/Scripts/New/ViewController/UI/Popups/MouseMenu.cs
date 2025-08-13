@@ -1,4 +1,5 @@
-﻿using QFramework;
+﻿using System;
+using QFramework;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,9 +18,10 @@ namespace BirdGame
         {
         }
 
-        public override void OnHidePanel()
+        public override void OnHidePanel(Action onComplete = null)
         {
             Destroy(gameObject);
+            onComplete?.Invoke();
         }
 
         private void Start()

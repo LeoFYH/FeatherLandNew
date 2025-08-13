@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using System;
+using DG.Tweening;
 using UnityEngine;
 
 namespace BirdGame
@@ -26,12 +27,13 @@ namespace BirdGame
             _group.DOFade(1f, 0.2f).SetEase(Ease.InSine);
         }
 
-        public virtual void OnHidePanel()
+        public virtual void OnHidePanel(Action onComplate = null)
         {
             transform.DOScale(new Vector3(0.3f * _originScale.x, 0.3f * _originScale.y, 1f * _originScale.z), 0.2f).SetEase(Ease.OutSine);
             _group.DOFade(0f, 0.2f).SetEase(Ease.OutSine).OnComplete(() =>
             {
                 Destroy(gameObject);
+                onComplate?.Invoke();
             });
         }
     }

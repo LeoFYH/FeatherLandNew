@@ -1,0 +1,3525 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9959ad10e22344ffac72eb5bdff42faf, type: 3}
+  m_Name: LocalizationConfig
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects:
+    - {fileID: 11400000, guid: f7ffd71761713684a94dc40f5e30b830, type: 2}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 11400000, guid: 79b8780868b374a42a71ad910eb504c7, type: 2}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 11400000, guid: 1f71990969b55954582578bee3fe5c57, type: 2}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: languageDic
+      Entry: 7
+      Data: 0|System.Collections.Generic.Dictionary`2[[UnityEngine.SystemLanguage,
+        UnityEngine.CoreModule],[BirdGame.LocalizationLanguage, Assembly-CSharp]],
+        mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 1|System.Collections.Generic.EnumEqualityComparer`1[[UnityEngine.SystemLanguage,
+        UnityEngine.CoreModule]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 10
+    - Name: $v
+      Entry: 7
+      Data: 2|BirdGame.LocalizationLanguage, Assembly-CSharp
+    - Name: fontAsset
+      Entry: 10
+      Data: 0
+    - Name: words
+      Entry: 7
+      Data: 3|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[BirdGame.Pattern,
+        Assembly-CSharp]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 4|System.Collections.Generic.GenericEqualityComparer`1[[System.String,
+        mscorlib]], mscorlib
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 51
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: English
+    - Name: $v
+      Entry: 7
+      Data: 5|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 1
+    - Name: text
+      Entry: 1
+      Data: English
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: ChineseSimplified
+    - Name: $v
+      Entry: 7
+      Data: 6|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 2
+    - Name: text
+      Entry: 1
+      Data: ChineseSimplified
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: ChineseTraditional
+    - Name: $v
+      Entry: 7
+      Data: 7|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 3
+    - Name: text
+      Entry: 1
+      Data: ChineseTraditional
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Windowed
+    - Name: $v
+      Entry: 7
+      Data: 8|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 4
+    - Name: text
+      Entry: 1
+      Data: Windowed
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Wallpaper
+    - Name: $v
+      Entry: 7
+      Data: 9|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 5
+    - Name: text
+      Entry: 1
+      Data: Wallpaper
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Full Screen
+    - Name: $v
+      Entry: 7
+      Data: 10|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 6
+    - Name: text
+      Entry: 1
+      Data: Full Screen
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Quit Game
+    - Name: $v
+      Entry: 7
+      Data: 11|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 7
+    - Name: text
+      Entry: 1
+      Data: Quit Game
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Times up!
+    - Name: $v
+      Entry: 7
+      Data: 12|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 8
+    - Name: text
+      Entry: 1
+      Data: Times up!
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Close
+    - Name: $v
+      Entry: 7
+      Data: 13|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 9
+    - Name: text
+      Entry: 1
+      Data: Close
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Hours
+    - Name: $v
+      Entry: 7
+      Data: 14|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 10
+    - Name: text
+      Entry: 1
+      Data: Hours
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Minutes
+    - Name: $v
+      Entry: 7
+      Data: 15|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 11
+    - Name: text
+      Entry: 1
+      Data: Minutes
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Seconds
+    - Name: $v
+      Entry: 7
+      Data: 16|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 12
+    - Name: text
+      Entry: 1
+      Data: Seconds
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Start
+    - Name: $v
+      Entry: 7
+      Data: 17|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 13
+    - Name: text
+      Entry: 1
+      Data: Start
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Stop
+    - Name: $v
+      Entry: 7
+      Data: 18|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 14
+    - Name: text
+      Entry: 1
+      Data: Stop
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Duration of Session
+    - Name: $v
+      Entry: 7
+      Data: 19|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 15
+    - Name: text
+      Entry: 1
+      Data: Duration of Session
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Duration of Breaks
+    - Name: $v
+      Entry: 7
+      Data: 20|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 16
+    - Name: text
+      Entry: 1
+      Data: Duration of Breaks
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Number of Sessions
+    - Name: $v
+      Entry: 7
+      Data: 21|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 17
+    - Name: text
+      Entry: 1
+      Data: Number of Sessions
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: "\xB7 Reality"
+    - Name: $v
+      Entry: 7
+      Data: 22|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 18
+    - Name: text
+      Entry: 1
+      Data: "\xB7 Reality"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: "\xB7 Minute-earning"
+    - Name: $v
+      Entry: 7
+      Data: 23|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 19
+    - Name: text
+      Entry: 1
+      Data: "\xB7 Minute-earning"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: "\xB7 Price for selling"
+    - Name: $v
+      Entry: 7
+      Data: 24|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 20
+    - Name: text
+      Entry: 1
+      Data: "\xB7 Price for selling"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Description
+    - Name: $v
+      Entry: 7
+      Data: 25|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 21
+    - Name: text
+      Entry: 1
+      Data: Description
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Habitat
+    - Name: $v
+      Entry: 7
+      Data: 26|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 22
+    - Name: text
+      Entry: 1
+      Data: Habitat
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Earnings/Minute
+    - Name: $v
+      Entry: 7
+      Data: 27|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 23
+    - Name: text
+      Entry: 1
+      Data: Earnings/Minute
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: 'Sale Price:'
+    - Name: $v
+      Entry: 7
+      Data: 28|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 24
+    - Name: text
+      Entry: 1
+      Data: 'Sale Price:'
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Delete
+    - Name: $v
+      Entry: 7
+      Data: 29|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 25
+    - Name: text
+      Entry: 1
+      Data: Delete
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Schedule
+    - Name: $v
+      Entry: 7
+      Data: 30|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 26
+    - Name: text
+      Entry: 1
+      Data: Schedule
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Diary
+    - Name: $v
+      Entry: 7
+      Data: 31|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 27
+    - Name: text
+      Entry: 1
+      Data: Diary
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Eggs
+    - Name: $v
+      Entry: 7
+      Data: 32|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 28
+    - Name: text
+      Entry: 1
+      Data: Eggs
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Decoration
+    - Name: $v
+      Entry: 7
+      Data: 33|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 29
+    - Name: text
+      Entry: 1
+      Data: Decoration
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Tools
+    - Name: $v
+      Entry: 7
+      Data: 34|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 30
+    - Name: text
+      Entry: 1
+      Data: Tools
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Buy
+    - Name: $v
+      Entry: 7
+      Data: 35|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 31
+    - Name: text
+      Entry: 1
+      Data: Buy
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: BOOK
+    - Name: $v
+      Entry: 7
+      Data: 36|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 32
+    - Name: text
+      Entry: 1
+      Data: BOOK
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Food
+    - Name: $v
+      Entry: 7
+      Data: 37|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 33
+    - Name: text
+      Entry: 1
+      Data: Food
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: TeddyBear
+    - Name: $v
+      Entry: 7
+      Data: 38|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 34
+    - Name: text
+      Entry: 1
+      Data: TeddyBear
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Backpack
+    - Name: $v
+      Entry: 7
+      Data: 39|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 35
+    - Name: text
+      Entry: 1
+      Data: Backpack
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Light
+    - Name: $v
+      Entry: 7
+      Data: 40|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 36
+    - Name: text
+      Entry: 1
+      Data: Light
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Flower
+    - Name: $v
+      Entry: 7
+      Data: 41|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 37
+    - Name: text
+      Entry: 1
+      Data: Flower
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Mushrrom
+    - Name: $v
+      Entry: 7
+      Data: 42|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 38
+    - Name: text
+      Entry: 1
+      Data: Mushrrom
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Cursor
+    - Name: $v
+      Entry: 7
+      Data: 43|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 39
+    - Name: text
+      Entry: 1
+      Data: Cursor
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Time to have a break!
+    - Name: $v
+      Entry: 7
+      Data: 44|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 40
+    - Name: text
+      Entry: 1
+      Data: Time to have a break!
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Time to work!
+    - Name: $v
+      Entry: 7
+      Data: 45|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 41
+    - Name: text
+      Entry: 1
+      Data: Time to work!
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Delete Save
+    - Name: $v
+      Entry: 7
+      Data: 46|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 42
+    - Name: text
+      Entry: 1
+      Data: Delete Save
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Decorations can only be placed on the ground!
+    - Name: $v
+      Entry: 7
+      Data: 47|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 43
+    - Name: text
+      Entry: 1
+      Data: Decorations can only be placed on the ground!
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Insufficient coins
+    - Name: $v
+      Entry: 7
+      Data: 48|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 44
+    - Name: text
+      Entry: 1
+      Data: Insufficient coins
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: The maximum purchase quantity limit has been reached!
+    - Name: $v
+      Entry: 7
+      Data: 49|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 45
+    - Name: text
+      Entry: 1
+      Data: The maximum purchase quantity limit has been reached!
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Purchase successful! Left-click to place the ornament
+    - Name: $v
+      Entry: 7
+      Data: 50|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 46
+    - Name: text
+      Entry: 1
+      Data: Purchase successful! Left-click to place the ornament
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Purchase successful! The ornament has been placed in the designated place
+    - Name: $v
+      Entry: 7
+      Data: 51|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 47
+    - Name: text
+      Entry: 1
+      Data: Purchase successful! The ornament has been placed in the designated place
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: 'Purchase successful! Food skins are equipped:'
+    - Name: $v
+      Entry: 7
+      Data: 52|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 48
+    - Name: text
+      Entry: 1
+      Data: 'Purchase successful! Food skins are equipped:'
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: 'Purchase successful! Cursor skins are equipped:'
+    - Name: $v
+      Entry: 7
+      Data: 53|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 49
+    - Name: text
+      Entry: 1
+      Data: 'Purchase successful! Cursor skins are equipped:'
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: 'Food skin equipped:'
+    - Name: $v
+      Entry: 7
+      Data: 54|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 50
+    - Name: text
+      Entry: 1
+      Data: 'Food skin equipped:'
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: 'Cursor skin equipped:'
+    - Name: $v
+      Entry: 7
+      Data: 55|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 51
+    - Name: text
+      Entry: 1
+      Data: 'Cursor skin equipped:'
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 40
+    - Name: $v
+      Entry: 7
+      Data: 56|BirdGame.LocalizationLanguage, Assembly-CSharp
+    - Name: fontAsset
+      Entry: 10
+      Data: 52
+    - Name: words
+      Entry: 7
+      Data: 57|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[BirdGame.Pattern,
+        Assembly-CSharp]], mscorlib
+    - Name: comparer
+      Entry: 9
+      Data: 4
+    - Name: 
+      Entry: 12
+      Data: 51
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: English
+    - Name: $v
+      Entry: 7
+      Data: 58|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 53
+    - Name: text
+      Entry: 1
+      Data: "\u82F1\u6587"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: ChineseSimplified
+    - Name: $v
+      Entry: 7
+      Data: 59|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 54
+    - Name: text
+      Entry: 1
+      Data: "\u7B80\u4F53\u4E2D\u6587"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: ChineseTraditional
+    - Name: $v
+      Entry: 7
+      Data: 60|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 55
+    - Name: text
+      Entry: 1
+      Data: "\u7E41\u4F53\u4E2D\u6587"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Windowed
+    - Name: $v
+      Entry: 7
+      Data: 61|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 56
+    - Name: text
+      Entry: 1
+      Data: "\u7A97\u53E3\u6A21\u5F0F"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Wallpaper
+    - Name: $v
+      Entry: 7
+      Data: 62|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 57
+    - Name: text
+      Entry: 1
+      Data: "\u58C1\u7EB8\u6A21\u5F0F"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Full Screen
+    - Name: $v
+      Entry: 7
+      Data: 63|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 58
+    - Name: text
+      Entry: 1
+      Data: "\u5168\u5C4F\u6A21\u5F0F"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Quit Game
+    - Name: $v
+      Entry: 7
+      Data: 64|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 59
+    - Name: text
+      Entry: 1
+      Data: "\u9000\u51FA\u6E38\u620F"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Times up!
+    - Name: $v
+      Entry: 7
+      Data: 65|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 60
+    - Name: text
+      Entry: 1
+      Data: "\u65F6\u95F4\u5230\u4E86\uFF01"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Close
+    - Name: $v
+      Entry: 7
+      Data: 66|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 61
+    - Name: text
+      Entry: 1
+      Data: "\u5173\u95ED"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Hours
+    - Name: $v
+      Entry: 7
+      Data: 67|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 62
+    - Name: text
+      Entry: 1
+      Data: "\u5C0F\u65F6"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Minutes
+    - Name: $v
+      Entry: 7
+      Data: 68|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 63
+    - Name: text
+      Entry: 1
+      Data: "\u5206\u949F"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Seconds
+    - Name: $v
+      Entry: 7
+      Data: 69|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 64
+    - Name: text
+      Entry: 1
+      Data: "\u79D2"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Start
+    - Name: $v
+      Entry: 7
+      Data: 70|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 65
+    - Name: text
+      Entry: 1
+      Data: "\u5F00\u59CB"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Stop
+    - Name: $v
+      Entry: 7
+      Data: 71|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 66
+    - Name: text
+      Entry: 1
+      Data: "\u505C\u6B62"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Duration of Session
+    - Name: $v
+      Entry: 7
+      Data: 72|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 67
+    - Name: text
+      Entry: 1
+      Data: "\u4F1A\u8BDD\u65F6\u95F4"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Duration of Breaks
+    - Name: $v
+      Entry: 7
+      Data: 73|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 68
+    - Name: text
+      Entry: 1
+      Data: "\u4F11\u606F\u65F6\u95F4"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Number of Sessions
+    - Name: $v
+      Entry: 7
+      Data: 74|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 69
+    - Name: text
+      Entry: 1
+      Data: "\u4F1A\u8BDD\u6B21\u6570"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: "\xB7 Reality"
+    - Name: $v
+      Entry: 7
+      Data: 75|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 70
+    - Name: text
+      Entry: 1
+      Data: "\u2022 \u7A00\u6709\u5EA6"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: "\xB7 Minute-earning"
+    - Name: $v
+      Entry: 7
+      Data: 76|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 71
+    - Name: text
+      Entry: 1
+      Data: "\u2022 \u5206\u949F\u6536\u5165"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: "\xB7 Price for selling"
+    - Name: $v
+      Entry: 7
+      Data: 77|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 72
+    - Name: text
+      Entry: 1
+      Data: "\u2022 \u552E\u4EF7"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Description
+    - Name: $v
+      Entry: 7
+      Data: 78|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 73
+    - Name: text
+      Entry: 1
+      Data: "\u63CF\u8FF0"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Habitat
+    - Name: $v
+      Entry: 7
+      Data: 79|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 74
+    - Name: text
+      Entry: 1
+      Data: "\u6816\u606F\u5730"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Earnings/Minute
+    - Name: $v
+      Entry: 7
+      Data: 80|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 75
+    - Name: text
+      Entry: 1
+      Data: "\u6536\u76CA/\u5206\u949F"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: 'Sale Price:'
+    - Name: $v
+      Entry: 7
+      Data: 81|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 76
+    - Name: text
+      Entry: 1
+      Data: "\u552E\u4EF7\uFF1A"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Delete
+    - Name: $v
+      Entry: 7
+      Data: 82|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 77
+    - Name: text
+      Entry: 1
+      Data: "\u5220\u9664"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Schedule
+    - Name: $v
+      Entry: 7
+      Data: 83|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 78
+    - Name: text
+      Entry: 1
+      Data: "\u65E5\u7A0B"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Diary
+    - Name: $v
+      Entry: 7
+      Data: 84|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 79
+    - Name: text
+      Entry: 1
+      Data: "\u65E5\u8BB0"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Eggs
+    - Name: $v
+      Entry: 7
+      Data: 85|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 80
+    - Name: text
+      Entry: 1
+      Data: "\u9E1F\u86CB"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Decoration
+    - Name: $v
+      Entry: 7
+      Data: 86|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 81
+    - Name: text
+      Entry: 1
+      Data: "\u88C5\u9970"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Tools
+    - Name: $v
+      Entry: 7
+      Data: 87|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 82
+    - Name: text
+      Entry: 1
+      Data: "\u5DE5\u5177"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Buy
+    - Name: $v
+      Entry: 7
+      Data: 88|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 83
+    - Name: text
+      Entry: 1
+      Data: "\u8D2D\u4E70"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: BOOK
+    - Name: $v
+      Entry: 7
+      Data: 89|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 84
+    - Name: text
+      Entry: 1
+      Data: "\u65E5\u8BB0"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Food
+    - Name: $v
+      Entry: 7
+      Data: 90|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 85
+    - Name: text
+      Entry: 1
+      Data: "\u98DF\u7269"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: TeddyBear
+    - Name: $v
+      Entry: 7
+      Data: 91|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 86
+    - Name: text
+      Entry: 1
+      Data: "\u6CF0\u8FEA\u718A"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Backpack
+    - Name: $v
+      Entry: 7
+      Data: 92|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 87
+    - Name: text
+      Entry: 1
+      Data: "\u80CC\u5305"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Light
+    - Name: $v
+      Entry: 7
+      Data: 93|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 88
+    - Name: text
+      Entry: 1
+      Data: "\u5149"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Flower
+    - Name: $v
+      Entry: 7
+      Data: 94|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 89
+    - Name: text
+      Entry: 1
+      Data: "\u82B1"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Mushrrom
+    - Name: $v
+      Entry: 7
+      Data: 95|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 90
+    - Name: text
+      Entry: 1
+      Data: "\u8611\u83C7"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Cursor
+    - Name: $v
+      Entry: 7
+      Data: 96|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 91
+    - Name: text
+      Entry: 1
+      Data: "\u9F20\u6807"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Time to have a break!
+    - Name: $v
+      Entry: 7
+      Data: 97|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 92
+    - Name: text
+      Entry: 1
+      Data: "\u4F11\u606F\u65F6\u95F4\u5230\u4E86\uFF01"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Time to work!
+    - Name: $v
+      Entry: 7
+      Data: 98|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 93
+    - Name: text
+      Entry: 1
+      Data: "\u65F6\u95F4\u5230\u4E86\uFF01"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Delete Save
+    - Name: $v
+      Entry: 7
+      Data: 99|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 94
+    - Name: text
+      Entry: 1
+      Data: "\u5220\u9664\u5B58\u6863"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Decorations can only be placed on the ground!
+    - Name: $v
+      Entry: 7
+      Data: 100|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 95
+    - Name: text
+      Entry: 1
+      Data: "\u88C5\u9970\u7269\u53EA\u80FD\u653E\u5728\u5730\u9762\u4E0A\uFF01"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Insufficient coins
+    - Name: $v
+      Entry: 7
+      Data: 101|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 96
+    - Name: text
+      Entry: 1
+      Data: "\u91D1\u5E01\u4E0D\u8DB3"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: The maximum purchase quantity limit has been reached!
+    - Name: $v
+      Entry: 7
+      Data: 102|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 97
+    - Name: text
+      Entry: 1
+      Data: "\u5DF2\u8FBE\u5230\u6700\u5927\u8D2D\u4E70\u6570\u91CF\u9650\u5236\uFF01"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Purchase successful! Left-click to place the ornament
+    - Name: $v
+      Entry: 7
+      Data: 103|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 98
+    - Name: text
+      Entry: 1
+      Data: "\u8D2D\u4E70\u6210\u529F\uFF01\u5355\u51FB\u4EE5\u653E\u7F6E\u88C5\u9970\u7269\u3002"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Purchase successful! The ornament has been placed in the designated place
+    - Name: $v
+      Entry: 7
+      Data: 104|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 99
+    - Name: text
+      Entry: 1
+      Data: "\u8D2D\u4E70\u6210\u529F\uFF01\u88C5\u9970\u7269\u5DF2\u7ECF\u88AB\u653E\u7F6E\u5728\u6307\u5B9A\u4F4D\u7F6E\u3002"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: 'Purchase successful! Food skins are equipped:'
+    - Name: $v
+      Entry: 7
+      Data: 105|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 100
+    - Name: text
+      Entry: 1
+      Data: "\u8D2D\u4E70\u6210\u529F\uFF01\u98DF\u54C1\u76AE\u80A4\u5DF2\u88C5\u5907\uFF1A"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: 'Purchase successful! Cursor skins are equipped:'
+    - Name: $v
+      Entry: 7
+      Data: 106|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 101
+    - Name: text
+      Entry: 1
+      Data: "\u8D2D\u4E70\u6210\u529F\uFF01\u9F20\u6807\u76AE\u80A4\u5DF2\u88C5\u5907\uFF1A"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: 'Food skin equipped:'
+    - Name: $v
+      Entry: 7
+      Data: 107|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 102
+    - Name: text
+      Entry: 1
+      Data: "\u5DF2\u88C5\u5907\u98DF\u7269\u76AE\u80A4\uFF1A"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: 'Cursor skin equipped:'
+    - Name: $v
+      Entry: 7
+      Data: 108|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 103
+    - Name: text
+      Entry: 1
+      Data: "\u5DF2\u88C5\u5907\u9F20\u6807\u76AE\u80A4\uFF1A"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 41
+    - Name: $v
+      Entry: 7
+      Data: 109|BirdGame.LocalizationLanguage, Assembly-CSharp
+    - Name: fontAsset
+      Entry: 10
+      Data: 104
+    - Name: words
+      Entry: 7
+      Data: 110|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[BirdGame.Pattern,
+        Assembly-CSharp]], mscorlib
+    - Name: comparer
+      Entry: 9
+      Data: 4
+    - Name: 
+      Entry: 12
+      Data: 51
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: English
+    - Name: $v
+      Entry: 7
+      Data: 111|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 105
+    - Name: text
+      Entry: 1
+      Data: "\u82F1\u6587"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: ChineseSimplified
+    - Name: $v
+      Entry: 7
+      Data: 112|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 106
+    - Name: text
+      Entry: 1
+      Data: "\u7C21\u9AD4\u4E2D\u6587"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: ChineseTraditional
+    - Name: $v
+      Entry: 7
+      Data: 113|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 107
+    - Name: text
+      Entry: 1
+      Data: "\u7E41\u9AD4\u4E2D\u6587"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Windowed
+    - Name: $v
+      Entry: 7
+      Data: 114|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 108
+    - Name: text
+      Entry: 1
+      Data: "\u7A97\u53E3\u6A21\u5F0F"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Wallpaper
+    - Name: $v
+      Entry: 7
+      Data: 115|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 109
+    - Name: text
+      Entry: 1
+      Data: "\u58C1\u7D19\u6A21\u5F0F"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Full Screen
+    - Name: $v
+      Entry: 7
+      Data: 116|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 110
+    - Name: text
+      Entry: 1
+      Data: "\u5168\u5C4F\u6A21\u5F0F"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Quit Game
+    - Name: $v
+      Entry: 7
+      Data: 117|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 111
+    - Name: text
+      Entry: 1
+      Data: "\u9000\u51FA\u904A\u6232"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Times up!
+    - Name: $v
+      Entry: 7
+      Data: 118|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 112
+    - Name: text
+      Entry: 1
+      Data: "\u6642\u9593\u5DF2\u7D93\u5230\u4E86\uFF01"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Close
+    - Name: $v
+      Entry: 7
+      Data: 119|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 113
+    - Name: text
+      Entry: 1
+      Data: "\u95DC\u9589"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Hours
+    - Name: $v
+      Entry: 7
+      Data: 120|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 114
+    - Name: text
+      Entry: 1
+      Data: "\u5C0F\u6642"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Minutes
+    - Name: $v
+      Entry: 7
+      Data: 121|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 115
+    - Name: text
+      Entry: 1
+      Data: "\u5206\u9418"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Seconds
+    - Name: $v
+      Entry: 7
+      Data: 122|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 116
+    - Name: text
+      Entry: 1
+      Data: "\u79D2"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Start
+    - Name: $v
+      Entry: 7
+      Data: 123|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 117
+    - Name: text
+      Entry: 1
+      Data: "\u555F\u52D5"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Stop
+    - Name: $v
+      Entry: 7
+      Data: 124|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 118
+    - Name: text
+      Entry: 1
+      Data: "\u505C\u6B62"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Duration of Session
+    - Name: $v
+      Entry: 7
+      Data: 125|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 119
+    - Name: text
+      Entry: 1
+      Data: "\u6703\u8B70\u6642\u9593"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Duration of Breaks
+    - Name: $v
+      Entry: 7
+      Data: 126|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 120
+    - Name: text
+      Entry: 1
+      Data: "\u4F11\u606F\u6642\u9593"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Number of Sessions
+    - Name: $v
+      Entry: 7
+      Data: 127|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 121
+    - Name: text
+      Entry: 1
+      Data: "\u6703\u8B70\u6B21\u6578"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: "\xB7 Reality"
+    - Name: $v
+      Entry: 7
+      Data: 128|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 122
+    - Name: text
+      Entry: 1
+      Data: "\u2022 \u7A00\u6709\u5EA6"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: "\xB7 Minute-earning"
+    - Name: $v
+      Entry: 7
+      Data: 129|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 123
+    - Name: text
+      Entry: 1
+      Data: "\u2022 \u5206\u9418\u8CFA\u91D1"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: "\xB7 Price for selling"
+    - Name: $v
+      Entry: 7
+      Data: 130|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 124
+    - Name: text
+      Entry: 1
+      Data: "\u2022 \u552E\u50F9"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Description
+    - Name: $v
+      Entry: 7
+      Data: 131|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 125
+    - Name: text
+      Entry: 1
+      Data: "\u63CF\u8FF0"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Habitat
+    - Name: $v
+      Entry: 7
+      Data: 132|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 126
+    - Name: text
+      Entry: 1
+      Data: "\u68F2\u606F\u5730"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Earnings/Minute
+    - Name: $v
+      Entry: 7
+      Data: 133|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 127
+    - Name: text
+      Entry: 1
+      Data: "\u6536\u76CA/\u5206\u9418"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: 'Sale Price:'
+    - Name: $v
+      Entry: 7
+      Data: 134|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 128
+    - Name: text
+      Entry: 1
+      Data: "\u552E\u50F9\uFF1A"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Delete
+    - Name: $v
+      Entry: 7
+      Data: 135|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 129
+    - Name: text
+      Entry: 1
+      Data: "\u522A\u9664"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Schedule
+    - Name: $v
+      Entry: 7
+      Data: 136|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 130
+    - Name: text
+      Entry: 1
+      Data: "\u65E5\u7A0B\u8868"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Diary
+    - Name: $v
+      Entry: 7
+      Data: 137|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 131
+    - Name: text
+      Entry: 1
+      Data: "\u65E5\u8A18"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Eggs
+    - Name: $v
+      Entry: 7
+      Data: 138|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 132
+    - Name: text
+      Entry: 1
+      Data: "\u9CE5\u86CB"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Decoration
+    - Name: $v
+      Entry: 7
+      Data: 139|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 133
+    - Name: text
+      Entry: 1
+      Data: "\u88DD\u98FE"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Tools
+    - Name: $v
+      Entry: 7
+      Data: 140|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 134
+    - Name: text
+      Entry: 1
+      Data: "\u5DE5\u5177"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Buy
+    - Name: $v
+      Entry: 7
+      Data: 141|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 135
+    - Name: text
+      Entry: 1
+      Data: "\u8CFC\u8CB7"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: BOOK
+    - Name: $v
+      Entry: 7
+      Data: 142|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 136
+    - Name: text
+      Entry: 1
+      Data: "\u65E5\u8A18"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Food
+    - Name: $v
+      Entry: 7
+      Data: 143|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 137
+    - Name: text
+      Entry: 1
+      Data: "\u98DF\u7269"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: TeddyBear
+    - Name: $v
+      Entry: 7
+      Data: 144|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 138
+    - Name: text
+      Entry: 1
+      Data: "\u6CF0\u8FEA\u718A"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Backpack
+    - Name: $v
+      Entry: 7
+      Data: 145|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 139
+    - Name: text
+      Entry: 1
+      Data: "\u80CC\u5305"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Light
+    - Name: $v
+      Entry: 7
+      Data: 146|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 140
+    - Name: text
+      Entry: 1
+      Data: "\u71C8\u5149"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Flower
+    - Name: $v
+      Entry: 7
+      Data: 147|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 141
+    - Name: text
+      Entry: 1
+      Data: "\u82B1\u6735"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Mushrrom
+    - Name: $v
+      Entry: 7
+      Data: 148|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 142
+    - Name: text
+      Entry: 1
+      Data: "\u8611\u83C7"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Cursor
+    - Name: $v
+      Entry: 7
+      Data: 149|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 143
+    - Name: text
+      Entry: 1
+      Data: "\u9F20\u6807"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Time to have a break!
+    - Name: $v
+      Entry: 7
+      Data: 150|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 144
+    - Name: text
+      Entry: 1
+      Data: "\u4F11\u606F\u4E00\u4E0B\uFF01"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Time to work!
+    - Name: $v
+      Entry: 7
+      Data: 151|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 145
+    - Name: text
+      Entry: 1
+      Data: "\u6642\u9593\u5230\u4E86\uFF01"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Delete Save
+    - Name: $v
+      Entry: 7
+      Data: 152|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 146
+    - Name: text
+      Entry: 1
+      Data: "\u522A\u9664\u6A94\u6848"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Decorations can only be placed on the ground!
+    - Name: $v
+      Entry: 7
+      Data: 153|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 147
+    - Name: text
+      Entry: 1
+      Data: "\u88DD\u98FE\u7269\u53EA\u80FD\u7F6E\u65BC\u5730\u9762\u4E0A\uFF01"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Insufficient coins
+    - Name: $v
+      Entry: 7
+      Data: 154|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 148
+    - Name: text
+      Entry: 1
+      Data: "\u91D1\u5E63\u4E0D\u8DB3"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: The maximum purchase quantity limit has been reached!
+    - Name: $v
+      Entry: 7
+      Data: 155|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 149
+    - Name: text
+      Entry: 1
+      Data: "\u5DF2\u9054\u6700\u5927\u8CFC\u8CB7\u6578\u91CF\u9650\u5236\uFF01"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Purchase successful! Left-click to place the ornament
+    - Name: $v
+      Entry: 7
+      Data: 156|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 150
+    - Name: text
+      Entry: 1
+      Data: "\u8CFC\u8CB7\u6210\u529F\uFF01\u9EDE\u64CA\u4EE5\u7F6E\u653E\u88DD\u98FE\u7269\u3002"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Purchase successful! The ornament has been placed in the designated place
+    - Name: $v
+      Entry: 7
+      Data: 157|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 151
+    - Name: text
+      Entry: 1
+      Data: "\u8CFC\u8CB7\u6210\u529F\uFF01\u98FE\u54C1\u5DF2\u88AB\u653E\u7F6E\u5728\u6307\u5B9A\u4F4D\u7F6E\u3002"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: 'Purchase successful! Food skins are equipped:'
+    - Name: $v
+      Entry: 7
+      Data: 158|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 152
+    - Name: text
+      Entry: 1
+      Data: "\u8CFC\u8CB7\u6210\u529F\uFF01\u98DF\u7269\u76AE\u819A\u5DF2\u88DD\u5099\uFF1A"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: 'Purchase successful! Cursor skins are equipped:'
+    - Name: $v
+      Entry: 7
+      Data: 159|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 153
+    - Name: text
+      Entry: 1
+      Data: "\u8CFC\u8CB7\u6210\u529F\uFF01\u9F20\u6A19\u76AE\u819A\u5DF2\u88DD\u5099\uFF1A"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: 'Food skin equipped:'
+    - Name: $v
+      Entry: 7
+      Data: 160|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 154
+    - Name: text
+      Entry: 1
+      Data: "\u5DF2\u88DD\u5099\u98DF\u7269\u76AE\u819A\uFF1A"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: 'Cursor skin equipped:'
+    - Name: $v
+      Entry: 7
+      Data: 161|BirdGame.Pattern, Assembly-CSharp
+    - Name: sprite
+      Entry: 10
+      Data: 155
+    - Name: text
+      Entry: 1
+      Data: "\u5DF2\u88DD\u5099\u9F20\u6A19\u76AE\u819A\uFF1A"
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 

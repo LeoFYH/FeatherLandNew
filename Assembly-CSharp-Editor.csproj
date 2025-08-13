@@ -47,6 +47,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\SpritePivotEditor\Editor\SpriteAlignmentEditor.cs" />
+    <Compile Include="Assets\Scripts\New\Editor\LocalizationGlobalConfig.cs" />
+    <Compile Include="Assets\Scripts\New\Editor\EditorCoroutineUtility.cs" />
     <Compile Include="Assets\Scripts\New\Editor\GameConfigWindow.cs" />
     <Compile Include="Assets\Scripts\New\Editor\CursorConfigEditor.cs" />
     <Compile Include="Assets\SpritePivotEditor\Editor\SpritePivotEditor.cs" />
@@ -468,6 +470,9 @@
     </Reference>
     <Reference Include="Sirenix.Utilities.Editor">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Assets\Plugins\Sirenix\Assemblies\Sirenix.Utilities.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\PackageCache\com.unity.nuget.newtonsoft-json@eebc3d041427\Runtime\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualScripting.TextureAssets">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\PackageCache\com.unity.visualscripting@1b53f46e931b\Editor\VisualScripting.Core\EditorAssetResources\Unity.VisualScripting.TextureAssets.dll</HintPath>
@@ -1116,17 +1121,37 @@
       <Project>{beb9e657-c796-fbc1-54ed-b795c12ad57a}</Project>
       <Name>Assembly-CSharp-Editor-firstpass</Name>
     </ProjectReference>
+    <ProjectReference Include="UniTask.Linq.csproj">
+      <Project>{41a4e458-3cbb-d21b-d356-953591dd7b23}</Project>
+      <Name>UniTask.Linq</Name>
+    </ProjectReference>
     <ProjectReference Include="Sirenix.OdinInspector.Modules.Unity.Addressables.csproj">
       <Project>{c691f609-ca61-0059-bbcc-5b7b1bf822bd}</Project>
       <Name>Sirenix.OdinInspector.Modules.Unity.Addressables</Name>
+    </ProjectReference>
+    <ProjectReference Include="UniTask.csproj">
+      <Project>{284f92be-a5cf-41c4-cfdb-57c4f72929df}</Project>
+      <Name>UniTask</Name>
     </ProjectReference>
     <ProjectReference Include="Sirenix.OdinInspector.Modules.UnityMathematics.csproj">
       <Project>{19718430-10c0-0b49-e5cc-311edcfb9240}</Project>
       <Name>Sirenix.OdinInspector.Modules.UnityMathematics</Name>
     </ProjectReference>
+    <ProjectReference Include="UniTask.Addressables.csproj">
+      <Project>{592d1615-0f7d-adeb-87c5-4a0f6b648eef}</Project>
+      <Name>UniTask.Addressables</Name>
+    </ProjectReference>
     <ProjectReference Include="QFramework.csproj">
       <Project>{9a4751c1-5c84-604f-65fc-023e59c2b792}</Project>
       <Name>QFramework</Name>
+    </ProjectReference>
+    <ProjectReference Include="UniTask.DOTween.csproj">
+      <Project>{0e4850d4-5945-bf03-fde3-ad5a1c86124e}</Project>
+      <Name>UniTask.DOTween</Name>
+    </ProjectReference>
+    <ProjectReference Include="UniTask.TextMeshPro.csproj">
+      <Project>{4fee49ee-b4b3-100a-ffa3-54e1fb013905}</Project>
+      <Name>UniTask.TextMeshPro</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

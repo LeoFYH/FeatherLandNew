@@ -7,7 +7,7 @@ namespace BirdGame
     {
         private void Start()
         {
-            this.GetSystem<IUISystem>().ShowPanel(UIPanel.MenuPanel);
+            this.GetSystem<IUISystem>().ShowPanel(UIPanel.LoadingPanel);
         }
     }
 }

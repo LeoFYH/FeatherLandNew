@@ -71,8 +71,6 @@ MonoBehaviour:
   nest: {fileID: 0}
   isInNest: 0
   heartPre: {fileID: 4319206358577329428, guid: 1b1407fb5a984994f874b58e70fc781d, type: 3}
-  smallPrice: 30
-  bigPrice: 50
   level: 1
   title: Cockatiel
   desc: Tropical Birds of Australia
@@ -81,8 +79,6 @@ MonoBehaviour:
   lineRenderer: {fileID: 7157863433077709732}
   clickCount: 1
   totalFavorability: 10
-  eatCountForBig: 4
-  incomeForBig: 30
   distance: 0
   eatFoodTime: 1
   isAte: 0
@@ -315,7 +311,7 @@ Transform:
   m_GameObject: {fileID: 5858436703613444375}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.293, y: 0.211, z: 0}
+  m_LocalPosition: {x: -0.009, y: 0.994, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -6,7 +6,7 @@ namespace BirdGame
 {
     public class AlertPopup : UIBase
     {
-        public TextMeshProUGUI alertText;
+        public LocalizationText alertText;
         public Button closeButton;
 
         private void Start()
@@ -14,15 +14,15 @@ namespace BirdGame
             var type = this.GetModel<IClockModel>().AlertType;
             if (type == AlertType.TimeUpForBreak)
             {
-                alertText.text = "Time's Up!";
+                alertText.SetKey("Time's Up!");
             }
             else if (type == AlertType.TimeUpForSession)
             {
-                alertText.text = "Time to have a break!";
+                alertText.SetKey("Time to have a break!");
             }
             else
             {
-                alertText.text = "Time to work!";
+                alertText.SetKey("Time to work!");
             }
             
             closeButton.onClick.AddListener(() =>

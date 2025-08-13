@@ -10,6 +10,7 @@ namespace BirdGame
     {
         void InitData();
         void SaveData();
+        void DeleteSave();
     }
 
     public class SaveSystem : AbstractSystem, ISaveSystem
@@ -94,14 +95,6 @@ namespace BirdGame
             {
                 Debug.Log("无存档文件，创建新存档");
                 T newData = new T();
-                
-                // 特殊处理 SettingData，确保默认值正确
-                if (newData is SettingData settingData)
-                {
-                    settingData.screenMode = 2; // 确保默认全屏
-                    Debug.Log($"创建新的 SettingData，设置默认屏幕模式: {settingData.screenMode}");
-                }
-                
                 return newData;
             }
 
@@ -122,17 +115,6 @@ namespace BirdGame
             
                 string jsonData = System.Text.Encoding.UTF8.GetString(jsonBytes);
                 T data = JsonUtility.FromJson<T>(jsonData);
-                
-                // 特殊处理 SettingData，确保默认值正确
-                if (data is SettingData settingData)
-                {
-                    // 如果从JSON加载的数据没有screenMode字段（旧版本存档），设置默认值
-                    if (settingData.screenMode == 0) // 如果是从旧版本加载的，默认值可能是0
-                    {
-                        settingData.screenMode = 2; // 设置为全屏模式
-                        Debug.Log($"从旧版本存档加载，设置默认屏幕模式: {settingData.screenMode}");
-                    }
-                }
             
                 return data;
             }
@@ -211,13 +193,6 @@ namespace BirdGame
             // 创建新存档
             T data = new T();
             
-            // 特殊处理 SettingData，确保默认值正确
-            if (data is SettingData settingData)
-            {
-                settingData.screenMode = 2; // 确保默认全屏
-                Debug.Log($"HandleLoadError: 设置默认屏幕模式: {settingData.screenMode}");
-            }
-            
             SaveData(fileName, data);
             return data;
         }
@@ -292,7 +267,6 @@ namespace BirdGame
             _saveModel.NoteData = GetData<NoteData>("NoteData");
             _saveModel.ScheduleData = GetData<ScheduleData>("ScheduleData");
             _saveModel.DecorationData = GetData<DecorationData>("DecorationData");
-            _saveModel.IllustratedData = GetData<IllustratedData>("IllustratedData");
         }
 
         public void SaveData()
@@ -304,7 +278,46 @@ namespace BirdGame
             SaveData("NoteData", _saveModel.NoteData);
             SaveData("ScheduleData", _saveModel.ScheduleData);
             SaveData("DecorationData", _saveModel.DecorationData);
-            SaveData("IllustratedData", _saveModel.IllustratedData);
+        }
+
+        public void DeleteSave()
+        {
+            string path = Application.persistentDataPath + "/GameData/AccountData.save";
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+            path = Application.persistentDataPath + "/GameData/BirdInfoData.save";
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+            path = Application.persistentDataPath + "/GameData/MusicSettingData.save";
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+            path = Application.persistentDataPath + "/GameData/SettingData.save";
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+            path = Application.persistentDataPath + "/GameData/NoteData.save";
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+            path = Application.persistentDataPath + "/GameData/ScheduleData.save";
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+            path = Application.persistentDataPath + "/GameData/DecorationData.save";
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+            Debug.Log("存档已删除！");
         }
     }
 }

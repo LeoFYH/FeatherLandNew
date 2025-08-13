@@ -12,7 +12,7 @@ namespace BirdGame
         public Button saleButton;
         public Button closeButton;
         public Image icon;
-        public Text birdName;
+        public TextMeshProUGUI birdName;
         public Image progressIcon;
         public Image progressFill;
         public Sprite iconForBig;
@@ -31,12 +31,13 @@ namespace BirdGame
             rect.DOAnchorPosX(rect.sizeDelta.x * transform.localScale.x * 0.5f, 0.2f).SetEase(Ease.InSine);
         }
 
-        public override void OnHidePanel()
+        public override void OnHidePanel(Action onComplete = null)
         {
             var rect = transform as RectTransform;
             rect.DOAnchorPosX(-rect.sizeDelta.x * transform.localScale.x * 0.5f, 0.2f).SetEase(Ease.OutSine).OnComplete(() =>
             {
                 Destroy(gameObject);
+                onComplete?.Invoke();
             });
         }
         

@@ -14,7 +14,7 @@ namespace BirdGame
         public void Init(int index, ToggleGroup group)
         {
             noteIndex = index;
-            titleText.text = $"Book{index + 1}";
+            titleText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("BOOK")}{index + 1}";
             thisToggle.group = group;
         }
 

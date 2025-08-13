@@ -7,8 +7,8 @@ namespace BirdGame
     public class ShopDecorationItem : ViewControllerBase
     {
         public Image icon;
-        public TextMeshProUGUI nameText;
-        public TextMeshProUGUI descriptionText;
+        public LocalizationText nameText;
+        public LocalizationText descriptionText;
         public Button buyButton;
         public TextMeshProUGUI priceText;
 
@@ -19,8 +19,8 @@ namespace BirdGame
             id = index;
             var item = this.GetModel<IConfigModel>().ShopConfig.decorations[index];
             icon.sprite = item.icon;
-            nameText.text = item.name;
-            descriptionText.text = item.description;
+            nameText.SetKey(item.name);
+            descriptionText.SetKey(item.description);
             priceText.text = item.price.ToString();
         }
 
@@ -37,7 +37,8 @@ namespace BirdGame
                 // 检查是否达到数量限制
                 if (item.maxQuantity > 0 && currentQuantity >= item.maxQuantity)
                 {
-                    this.GetSystem<IUISystem>().ShowPrompt($"已达到最大购买数量限制！({currentQuantity}/{item.maxQuantity})");
+                    string text = this.GetSystem<ILocalizationSystem>().GetString("The maximum purchase quantity limit has been reached!");
+                    this.GetSystem<IUISystem>().ShowPrompt($"{text} ({currentQuantity}/{item.maxQuantity})");
                     return;
                 }
                 
@@ -52,19 +53,24 @@ namespace BirdGame
                     {
                         // 可拖拽类型：创建跟随鼠标的装饰品
                         this.GetSystem<IGameSystem>().CreateDecoration(id);
-                        this.GetSystem<IUISystem>().ShowPrompt("购买成功！点击左键放置装饰品");
+                        string text = this.GetSystem<ILocalizationSystem>().GetString("Purchase successful! Left-click to place the ornament");
+                        this.GetSystem<IUISystem>().ShowPrompt(text);
+                        //this.GetSystem<IUISystem>().ShowPrompt("购买成功！点击左键放置装饰品");
                         this.GetSystem<IUISystem>().HidePopup(UIPopup.ShopPopup);
                     }
                     else if (item.decorationType == DecorationType.Fixed)
                     {
                         // 固定类型：直接放置在指定位置
                         this.GetSystem<IGameSystem>().CreateFixedDecoration(id);
-                        this.GetSystem<IUISystem>().ShowPrompt("购买成功！装饰品已放置在指定位置");
+                        string text = this.GetSystem<ILocalizationSystem>().GetString("Purchase successful! The ornament has been placed in the designated place");
+                        this.GetSystem<IUISystem>().ShowPrompt(text);
+                        //this.GetSystem<IUISystem>().ShowPrompt("购买成功！装饰品已放置在指定位置");
                     }
                 }
                 else
                 {
-                    this.GetSystem<IUISystem>().ShowPrompt("Insufficient coins");
+                    string text = this.GetSystem<ILocalizationSystem>().GetString("Insufficient coins");
+                    this.GetSystem<IUISystem>().ShowPrompt(text);
                 }
             });
         }

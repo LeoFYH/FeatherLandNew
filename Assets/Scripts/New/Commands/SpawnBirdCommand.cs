@@ -18,12 +18,26 @@ namespace BirdGame
         
         protected override void OnExecute()
         {
-            var config = this.GetModel<IConfigModel>().BirdConfig;
-
+            
             int val = RandomGetBirdIndex();
             CheckIllustratedUpdate(val);
-            GameObject go = GameObject.Instantiate(config.birds[val].prefab);
-            this.GetModel<IBirdModel>().AddBird(val, go.GetComponent<Brid>());
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("OpenEggAnim", obj =>
+            {
+                this.SendEvent<HideEggEvent>();
+                var anim = GameObject.Instantiate(obj).GetComponent<OpenEggAnim>();
+                anim.InitBird(val, () =>
+                {
+                    this.SendEvent<ShowEggEvent>();
+                    CreateBird(val);
+                });
+            });
+        }
+
+        private void CreateBird(int birdIndex)
+        {
+            var config = this.GetModel<IConfigModel>().BirdConfig;
+            GameObject go = GameObject.Instantiate(config.birds[birdIndex].prefab);
+            this.GetModel<IBirdModel>().AddBird(birdIndex, go.GetComponent<Brid>());
             var agent = go.GetComponent<NavMeshAgent>();
             agent.enabled = false;
 
@@ -40,10 +54,10 @@ namespace BirdGame
 
         private void CheckIllustratedUpdate(int birdIndex)
         {
-            var saveModel = this.GetModel<ISaveModel>();
-            if (!saveModel.IllustratedData.unlockedBirds.Contains(birdIndex))
+            var gameModel = this.GetModel<IGameModel>();
+            if (!gameModel.UnlockedBirds.Contains(birdIndex))
             {
-                saveModel.IllustratedData.unlockedBirds.Add(birdIndex);
+                gameModel.UnlockedBirds.Add(birdIndex);
                 this.GetSystem<ISaveSystem>().SaveData();
                 this.GetModel<IGameModel>().HasNewBirdIllustrated.Value = true;
             }

@@ -135,7 +135,7 @@ Transform:
   m_GameObject: {fileID: 5470888849984464756}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.379, y: 0.281, z: 0}
+  m_LocalPosition: {x: 0.031, y: 0.902, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -212,8 +212,6 @@ MonoBehaviour:
   nest: {fileID: 0}
   isInNest: 0
   heartPre: {fileID: 4319206358577329428, guid: 1b1407fb5a984994f874b58e70fc781d, type: 3}
-  smallPrice: 30
-  bigPrice: 50
   level: 1
   title: Pink Cockatoo
   desc: A rear tropical bird from Australia
@@ -222,8 +220,6 @@ MonoBehaviour:
   lineRenderer: {fileID: -9156183570746963583}
   clickCount: 1
   totalFavorability: 10
-  eatCountForBig: 4
-  incomeForBig: 30
   distance: 0
   eatFoodTime: 1
   isAte: 0

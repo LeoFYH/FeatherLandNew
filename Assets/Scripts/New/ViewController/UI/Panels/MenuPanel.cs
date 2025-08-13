@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using System;
+using DG.Tweening;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -35,9 +36,10 @@ namespace BirdGame
             
         }
 
-        public override void OnHidePanel()
+        public override void OnHidePanel(Action onComplete = null)
         {
             Destroy(gameObject);
+            onComplete?.Invoke();
         }
 
         private void Start()

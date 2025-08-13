@@ -11,6 +11,7 @@ namespace BirdGame
     {
         None,
         MenuPanel,
+        LoadingPanel
     }
 
     public enum UIPopup
@@ -107,7 +108,10 @@ namespace BirdGame
         {
             if(currentPanel == UIPanel.None || currentPanelObject == null)
                 return;
-            currentPanelObject.OnHidePanel();
+            currentPanelObject.OnHidePanel(() =>
+            {
+                this.GetSystem<IAssetSystem>().ReleaseAsset(panel.ToString());
+            });
         }
 
         public void ShowPopup(UIPopup popup, Action onComplete = null)
@@ -136,7 +140,10 @@ namespace BirdGame
 
             var obj = popupDic[popup];
             popupDic.Remove(popup);
-            obj.OnHidePanel();
+            obj.OnHidePanel(() =>
+            {
+                this.GetSystem<IAssetSystem>().ReleaseAsset(popup.ToString());
+            });
         }
 
         public T GetPopup<T>(UIPopup popup) where T : UIBase

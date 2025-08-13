@@ -59,6 +59,7 @@
     <Compile Include="Assets\Scripts\AnimationTest\AnimationTest.cs" />
     <Compile Include="Assets\Scripts\New\Models\IGameModel.cs" />
     <Compile Include="Assets\Scripts\BirdStates\BirdFlyDownState.cs" />
+    <Compile Include="Assets\Scripts\New\Models\ILoadingModel.cs" />
     <Compile Include="Assets\Scripts\New\Models\IBirdModel.cs" />
     <Compile Include="Assets\Scripts\New\Commands\CreateBirdCommand.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Note\ScheduleItem.cs" />
@@ -68,17 +69,21 @@
     <Compile Include="Assets\Scripts\New\Models\IClockModel.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\DecorationClickHandler.cs" />
     <Compile Include="Assets\Scripts\New\Utility\FullScreenUtility.cs" />
+    <Compile Include="Assets\Scripts\New\Systems\ILocalizationSystem.cs" />
     <Compile Include="Assets\Scripts\New\Events\RefreshNoteIndexEvent.cs" />
     <Compile Include="Assets\Scripts\Notebook\NotebookUI.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\MusicPlayItem.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\SettingPopup.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\ClockPopup.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\UI\Localization\FontAssetExchange.cs" />
     <Compile Include="Assets\Scripts\New\Systems\IUISystem.cs" />
     <Compile Include="Assets\Scripts\New\Events\DeleteScheduleItemEvent.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\UI\Localization\LocalizationText.cs" />
     <Compile Include="Assets\Scripts\BirdStates\BirdFlyHorizontalState.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\ShopPopup.cs" />
     <Compile Include="Assets\Scripts\Nest.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Shop\ShopDecorationItem.cs" />
+    <Compile Include="Assets\Scripts\New\Config\LocalizationConfig.cs" />
     <Compile Include="Assets\Scripts\UI\PopupPanelBase.cs" />
     <Compile Include="Assets\Scripts\BirdStates\BirdRunState.cs" />
     <Compile Include="Assets\Scripts\Radio\RadioManager.cs" />
@@ -98,6 +103,7 @@
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\MouseMenu.cs" />
     <Compile Include="Assets\Scripts\Radio\RadioUI.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\ButtonAnim.cs" />
+    <Compile Include="Assets\Scripts\New\Events\HideEggEvent.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Note\ScheduleViewController.cs" />
     <Compile Include="Assets\Scripts\WalkableArea.cs" />
     <Compile Include="Assets\Scripts\Managers\UIManager.cs" />
@@ -109,7 +115,9 @@
     <Compile Include="Assets\Scripts\New\Config\ShopConfig.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Illustrated\IllustratedItem.cs" />
     <Compile Include="Assets\Scripts\HouseToggle.cs" />
+    <Compile Include="Assets\Scripts\New\Commands\LoadGameCommand.cs" />
     <Compile Include="Assets\Scripts\Managers\PauseManager.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\UI\Panels\LoadingPanel.cs" />
     <Compile Include="Assets\Scripts\New\Models\ISaveModel.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\UIBase.cs" />
     <Compile Include="Assets\Scripts\New\Events\PlayEnvironmentEvent.cs" />
@@ -118,6 +126,7 @@
     <Compile Include="Assets\Scripts\New\Systems\ICursorSystem.cs" />
     <Compile Include="Assets\Scripts\New\GameApp.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Panels\MenuPanel.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\UI\Localization\LocalizationImage.cs" />
     <Compile Include="Assets\Scripts\New\Systems\IMonoSystem.cs" />
     <Compile Include="Assets\Scripts\Managers\FullscreenTest.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\NotePopup.cs" />
@@ -126,11 +135,14 @@
     <Compile Include="Assets\Scripts\New\Systems\IAudioSystem.cs" />
     <Compile Include="Assets\Scripts\New\Events\PlayMusicEvent.cs" />
     <Compile Include="Assets\Scripts\New\Events\SwitchWeatherEvent.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\Game\Heart.cs" />
     <Compile Include="Assets\Scripts\AnimationTest\AddItem.cs" />
     <Compile Include="Assets\Scripts\New\Models\IRadioModel.cs" />
     <Compile Include="Assets\Scripts\New\Config\BirdConfig.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Note\DailyViewController.cs" />
     <Compile Include="Assets\Scripts\AnimationTest\AddPanel.cs" />
+    <Compile Include="Assets\Scripts\New\Events\ChangeLanguageEvent.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\Game\OpenEggAnim.cs" />
     <Compile Include="Assets\Scripts\New\Models\ISettingModel.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\ToggleImage.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\DecorationFollowMouse.cs" />
@@ -175,6 +187,7 @@
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF SSD.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\SDFFunctions.hlsl" />
+    <None Include="Assets\Fonts\ChineseTra\Character.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />
     <None Include="Assets\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Custom-Atlas.shader" />
@@ -184,11 +197,14 @@
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
+    <None Include="Assets\Resources\PerformanceTestRunInfo.json" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF Overlay.shader" />
+    <None Include="Assets\Resources\PerformanceTestRunSettings.json" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Mobile.shader" />
     <None Include="Assets\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile.shader" />
+    <None Include="Assets\Fonts\Chinese\Chinese.txt" />
     <None Include="Assets\TextMesh Pro\Sprites\EmojiOne.json" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Sprite.shader" />
     <Reference Include="UnityEngine">
@@ -571,6 +587,9 @@
     </Reference>
     <Reference Include="Sirenix.Utilities.Editor">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Assets\Plugins\Sirenix\Assemblies\Sirenix.Utilities.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\PackageCache\com.unity.nuget.newtonsoft-json@eebc3d041427\Runtime\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\PackageCache\com.unity.nuget.mono-cecil@d6f9955a5d5f\Mono.Cecil.dll</HintPath>
@@ -1193,17 +1212,37 @@
       <Project>{f2b751c8-607b-3d36-e088-31b9ac6d438c}</Project>
       <Name>Assembly-CSharp-firstpass</Name>
     </ProjectReference>
+    <ProjectReference Include="UniTask.Linq.csproj">
+      <Project>{41a4e458-3cbb-d21b-d356-953591dd7b23}</Project>
+      <Name>UniTask.Linq</Name>
+    </ProjectReference>
     <ProjectReference Include="Sirenix.OdinInspector.Modules.Unity.Addressables.csproj">
       <Project>{c691f609-ca61-0059-bbcc-5b7b1bf822bd}</Project>
       <Name>Sirenix.OdinInspector.Modules.Unity.Addressables</Name>
+    </ProjectReference>
+    <ProjectReference Include="UniTask.csproj">
+      <Project>{284f92be-a5cf-41c4-cfdb-57c4f72929df}</Project>
+      <Name>UniTask</Name>
     </ProjectReference>
     <ProjectReference Include="Sirenix.OdinInspector.Modules.UnityMathematics.csproj">
       <Project>{19718430-10c0-0b49-e5cc-311edcfb9240}</Project>
       <Name>Sirenix.OdinInspector.Modules.UnityMathematics</Name>
     </ProjectReference>
+    <ProjectReference Include="UniTask.Addressables.csproj">
+      <Project>{592d1615-0f7d-adeb-87c5-4a0f6b648eef}</Project>
+      <Name>UniTask.Addressables</Name>
+    </ProjectReference>
     <ProjectReference Include="QFramework.csproj">
       <Project>{9a4751c1-5c84-604f-65fc-023e59c2b792}</Project>
       <Name>QFramework</Name>
+    </ProjectReference>
+    <ProjectReference Include="UniTask.DOTween.csproj">
+      <Project>{0e4850d4-5945-bf03-fde3-ad5a1c86124e}</Project>
+      <Name>UniTask.DOTween</Name>
+    </ProjectReference>
+    <ProjectReference Include="UniTask.TextMeshPro.csproj">
+      <Project>{4fee49ee-b4b3-100a-ffa3-54e1fb013905}</Project>
+      <Name>UniTask.TextMeshPro</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

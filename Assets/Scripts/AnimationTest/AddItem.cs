@@ -8,6 +8,7 @@ namespace AnimationTest
     public class AddItem : MonoBehaviour
     {
         public TextMeshProUGUI nameText;
+        
         public Toggle ThisToggle {
             get
             {

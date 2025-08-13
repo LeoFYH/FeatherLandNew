@@ -52,7 +52,8 @@ namespace BirdGame
                     else
                     {
                         // 提示用户只能放在地面上
-                        this.GetSystem<IUISystem>().ShowPrompt("装饰品只能放在地面上！");
+                        string text = this.GetSystem<ILocalizationSystem>().GetString("Decorations can only be placed on the ground!");
+                        this.GetSystem<IUISystem>().ShowPrompt(text);
                     }
                 }
             }

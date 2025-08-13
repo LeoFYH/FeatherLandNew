@@ -29,7 +29,22 @@ namespace BirdGame.Editor
             {
                 File.Delete(path);
             }
-            Debug.Log("存档已清理！");
+            path = Application.persistentDataPath + "/GameData/NoteData.save";
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+            path = Application.persistentDataPath + "/GameData/ScheduleData.save";
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+            path = Application.persistentDataPath + "/GameData/DecorationData.save";
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+            EditorUtility.DisplayDialog("提示", "存档已清理！", "ok");
         }
     }
 }

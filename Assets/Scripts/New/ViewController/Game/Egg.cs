@@ -26,6 +26,15 @@ namespace BirdGame
             {
                 Debug.LogError("SpriteRenderer not found on the Egg object!");
             }
+
+            this.RegisterEvent<HideEggEvent>(evt =>
+            {
+                gameObject.SetActive(false);
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            this.RegisterEvent<ShowEggEvent>(evt =>
+            {
+                gameObject.SetActive(true);
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
         }
 
         private void OnMouseDown()

@@ -9,9 +9,9 @@ namespace BirdGame
     public class ShopToolItem : ViewControllerBase
     {
         public Image icon;
-        public TextMeshProUGUI itemName;
+        public LocalizationText itemName;
         public TextMeshProUGUI selectName;
-        public TextMeshProUGUI description;
+        public LocalizationText description;
         public TextMeshProUGUI priceText;
         public Button buyButton;
         public TextMeshProUGUI buyButtonText;
@@ -42,9 +42,9 @@ namespace BirdGame
                 gameModel.SelectedToolDic.Add(index, new BindableProperty<int>());
             }
             icon.sprite = item.selections[gameModel.SelectedToolDic[index].Value].icon;
-            itemName.text = item.name;
+            itemName.SetKey(item.name);
             selectName.text = item.selections[gameModel.SelectedToolDic[index].Value].selectionName;
-            description.text = item.selections[gameModel.SelectedToolDic[index].Value].description;
+            description.SetKey(item.selections[gameModel.SelectedToolDic[index].Value].description);
             
             // 检查是否已购买，决定显示价格还是"equipped"
             var initialSelectedTool = item.selections[gameModel.SelectedToolDic[index].Value];
@@ -78,7 +78,7 @@ namespace BirdGame
                 icon.sprite = item.selections[v].icon;
                 selectName.text = item.selections[v].selectionName;
                 selectName.text = item.selections[v].selectionName;
-                description.text = item.selections[v].description;
+                description.SetKey(item.selections[v].description);
                 
                 // 检查食物状态，决定显示内容
                 var selectedTool = item.selections[v];
@@ -157,12 +157,15 @@ namespace BirdGame
                         {
                             // 设置当前食物类型（立即装备）
                             gameModel.CurrentFoodType = selectedTool.selectionName;
-                            this.GetSystem<IUISystem>().ShowPrompt($"购买成功！食物皮肤已装备: {selectedTool.selectionName}");
+                            string text = this.GetSystem<ILocalizationSystem>().GetString("Purchase successful! Food skins are equipped:");
+                            this.GetSystem<IUISystem>().ShowPrompt($"{text} {selectedTool.selectionName}");
+                            //this.GetSystem<IUISystem>().ShowPrompt($"购买成功！食物皮肤已装备: {selectedTool.selectionName}");
                         }
                         else if (toolItem.name.ToLower() == "cursor")
                         {
                             // 应用光标类型
-                            this.GetSystem<IUISystem>().ShowPrompt($"购买成功！光标皮肤已装备: {selectedTool.selectionName}");
+                            string text = this.GetSystem<ILocalizationSystem>().GetString("Purchase successful! Cursor skins are equipped:");
+                            this.GetSystem<IUISystem>().ShowPrompt($"{text} {selectedTool.selectionName}");
                         }
                         
                         UpdateButtonState();
@@ -170,7 +173,8 @@ namespace BirdGame
                     }
                     else
                     {
-                        this.GetSystem<IUISystem>().ShowPrompt("Insufficient coins");
+                        string text = this.GetSystem<ILocalizationSystem>().GetString("Insufficient coins");
+                        this.GetSystem<IUISystem>().ShowPrompt(text);
                     }
                 }
                 else
@@ -180,12 +184,14 @@ namespace BirdGame
                     {
                         // 设置当前食物类型
                         gameModel.CurrentFoodType = selectedTool.selectionName;
-                        this.GetSystem<IUISystem>().ShowPrompt($"已装备食物皮肤: {selectedTool.selectionName}");
+                        string text = this.GetSystem<ILocalizationSystem>().GetString("Food skin equipped:");
+                        this.GetSystem<IUISystem>().ShowPrompt($"{text} {selectedTool.selectionName}");
                     }
                     else if (toolItem.name.ToLower() == "cursor")
                     {
                         // 应用光标类型
-                        this.GetSystem<IUISystem>().ShowPrompt($"已装备光标皮肤: {selectedTool.selectionName}");
+                        string text = this.GetSystem<ILocalizationSystem>().GetString("Cursor skin equipped:");
+                        this.GetSystem<IUISystem>().ShowPrompt($"{text} {selectedTool.selectionName}");
                     }
                     
                     UpdateButtonState();

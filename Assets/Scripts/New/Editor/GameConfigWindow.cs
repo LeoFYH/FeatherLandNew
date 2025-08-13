@@ -96,7 +96,8 @@ namespace BirdGame.Editor
                 {"商店配置", shopConfig, SdfIconType.Shop},
                 {"鸟的配置", birdConfig, SdfIconType.Egg},
                 {"鼠标配置", cursorConfig, SdfIconType.Mouse},
-                {"图鉴配置", illustratedConfig, SdfIconType.Book}
+                {"图鉴配置", illustratedConfig, SdfIconType.Book},
+                {"本地化配置", LocalizationGlobalConfig.Instance, SdfIconType.Globe}
             };
             
             return tree;

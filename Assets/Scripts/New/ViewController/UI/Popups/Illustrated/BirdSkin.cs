@@ -18,7 +18,7 @@ namespace BirdGame
             onSelected = onSkinSelected;
             var sp = this.GetModel<IConfigModel>().BirdConfig.birds[birdIndex].preview;
             icon.sprite = sp;
-            if (!this.GetModel<ISaveModel>().IllustratedData.unlockedBirds.Contains(birdIndex))
+            if (!this.GetModel<IGameModel>().UnlockedBirds.Contains(birdIndex))
             {
                 icon.color = Color.black;
             }

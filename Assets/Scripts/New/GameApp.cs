@@ -16,6 +16,7 @@ namespace BirdGame
             this.RegisterModel<IConfigModel>(new ConfigModel());
             this.RegisterModel<IGameModel>(new GameModel());
             this.RegisterModel<IClockModel>(new ClockModel());
+            this.RegisterModel<ILoadingModel>(new LoadingModel());
             
             this.RegisterSystem<IMonoSystem>(new MonoSystem());
             this.RegisterSystem<IAssetSystem>(new AssetSystem());
@@ -25,6 +26,7 @@ namespace BirdGame
             this.RegisterSystem<IGameSystem>(new GameSystem());
             this.RegisterSystem<ISceneSystem>(new SceneSystem());
             this.RegisterSystem<ICursorSystem>(new CursorSystem());
+            this.RegisterSystem<ILocalizationSystem>(new LocalizationSystem());
         }
     }
 }
