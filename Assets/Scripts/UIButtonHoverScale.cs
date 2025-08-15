@@ -60,11 +60,10 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
                 return;
             }
             
-            Debug.Log("找到Canvas: " + canvas.name);
-            
+           
             // 创建悬浮提示对象
             CreateTooltipObject();
-            Debug.Log("悬浮提示对象创建完成");
+            
         }
         else
         {
@@ -82,7 +81,7 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
             {
                 tooltipObject.SetActive(true);
                 UpdateTooltipPosition();
-                Debug.Log("显示悬浮提示: " + hoverText);
+               //Debug.Log("显示悬浮提示: " + hoverText);
             }
         }
         else if (showTooltip && !isHovering && tooltipObject != null)
@@ -94,7 +93,7 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
     
     private void CreateTooltipObject()
     {
-        Debug.Log("开始创建悬浮提示对象");
+       
         
         // 获取Canvas（如果还没有获取）
         if (canvas == null)
@@ -102,10 +101,10 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
             canvas = FindObjectOfType<Canvas>();
             if (canvas == null)
             {
-                Debug.LogError("未找到Canvas，无法创建悬浮提示！");
+                
                 return;
             }
-            Debug.Log("找到Canvas: " + canvas.name);
+           
         }
         
         // 创建主对象
@@ -150,11 +149,11 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
         if (customFont != null)
         {
             tooltipText.font = customFont;
-            Debug.Log("设置自定义字体: " + customFont.name);
+            
         }
         else
         {
-            Debug.LogWarning("未设置自定义字体，使用系统默认字体");
+            
         }
         
         RectTransform textRect = textObject.GetComponent<RectTransform>();
@@ -166,7 +165,7 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
         // 设置初始大小
         tooltipRect.sizeDelta = new Vector2(200, 50);
         
-        Debug.Log("悬浮提示对象创建完成，文字内容: " + hoverText);
+       
     }
     
     private void UpdateTooltipPosition()
@@ -193,8 +192,7 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Debug.Log("鼠标进入按钮: " + gameObject.name);
-        Debug.Log("showTooltip状态: " + showTooltip);
+        
         
         // 缩放效果
         transform.localScale = originalScale * hoverScale;
@@ -205,13 +203,13 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
             // 如果tooltipObject还没创建，立即创建
             if (tooltipObject == null)
             {
-                Debug.Log("tooltipObject为空，立即创建");
+               
                 CreateTooltipObject();
             }
             
             isHovering = true;
             hoverTimer = 0f;
-            Debug.Log("开始悬浮计时");
+           
         }
     }
 
