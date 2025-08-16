@@ -12,103 +12,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c998ea8945749ad829e2434e82655c0, type: 3}
   m_Name: BirdConfig
   m_EditorClassIdentifier: 
-  isDrawPathLine: 1
-  birds:
-  - preview: {fileID: -8321102221490951993, guid: 0b953e01c19b580438772a8b2ab5c65d, type: 3}
-    birdId: Lory0
-    birdName: Lory
-    prefab: {fileID: 4594323129400064310, guid: c6c7d9c576c41344fadd6519160df9b5, type: 3}
-    reality: 2
-    eraning: 30
-    priceForSmall: 30
-    priceForBig: 50
-    eatForBig: 1
-    description: Austrilian bird lives in the tropical forest, really uncommon to
-      be seen in the wild. Have a great day with your bird!
-    habitat: Austrilian bird lives in the tropical forest, really uncommon to be
-      seen in the wild. Have a great day with your bird!
-    scenePreview: {fileID: 21300000, guid: 5c4ea7bbe3f1c174685df7b2cf8988e4, type: 3}
-  - preview: {fileID: 8569003786385872269, guid: f07b56d06f7d3a14d81937f31567b344, type: 3}
-    birdId: Cockatiel0
-    birdName: Cockatiel
-    prefab: {fileID: 1885250170276666100, guid: 7abd69cfb9b3a454f9fc535dbc6ab6e0, type: 3}
-    reality: 1
-    eraning: 30
-    priceForSmall: 30
-    priceForBig: 50
-    eatForBig: 1
-    description: Austrilian bird lives in the tropical forest, really uncommon to
-      be seen in the wild. Have a great day with your bird!
-    habitat: Austrilian bird lives in the tropical forest, really uncommon to be
-      seen in the wild. Have a great day with your bird!
-    scenePreview: {fileID: 21300000, guid: 5c4ea7bbe3f1c174685df7b2cf8988e4, type: 3}
-  - preview: {fileID: -8321102221490951993, guid: 1fd1210bc1e069b42abcc1bfceae6ef4, type: 3}
-    birdId: PinkCockatoo0
-    birdName: PinkCockatoo
-    prefab: {fileID: 7194070394800242606, guid: 82048ffcdabdb8e4cb022bb742db8570, type: 3}
-    reality: 3
-    eraning: 30
-    priceForSmall: 30
-    priceForBig: 50
-    eatForBig: 1
-    description: Austrilian bird lives in the tropical forest, really uncommon to
-      be seen in the wild. Have a great day with your bird!
-    habitat: Austrilian bird lives in the tropical forest, really uncommon to be
-      seen in the wild. Have a great day with your bird!
-    scenePreview: {fileID: 21300000, guid: 5c4ea7bbe3f1c174685df7b2cf8988e4, type: 3}
-  - preview: {fileID: 7737084677101330086, guid: a477ffa04c7e247449643201f6b7e89c, type: 3}
-    birdId: Lory1
-    birdName: Lory
-    prefab: {fileID: 900128412874830559, guid: fdddc65926a71014e8158e768618d607, type: 3}
-    reality: 2
-    eraning: 30
-    priceForSmall: 30
-    priceForBig: 50
-    eatForBig: 1
-    description: Austrilian bird lives in the tropical forest, really uncommon to
-      be seen in the wild. Have a great day with your bird!
-    habitat: Austrilian bird lives in the tropical forest, really uncommon to be
-      seen in the wild. Have a great day with your bird!
-    scenePreview: {fileID: 21300000, guid: 5c4ea7bbe3f1c174685df7b2cf8988e4, type: 3}
-  - preview: {fileID: 7808536817079003818, guid: 34ddccdfe214fdf47b625b2b77e9545c, type: 3}
-    birdId: Parakeet0
-    birdName: Parakeet
-    prefab: {fileID: 900128412874830559, guid: 27c1c0df13586bf4bb6407698e0098e0, type: 3}
-    reality: 1
-    eraning: 30
-    priceForSmall: 30
-    priceForBig: 50
-    eatForBig: 1
-    description: Austrilian bird lives in the tropical forest, really uncommon to
-      be seen in the wild. Have a great day with your bird!
-    habitat: Austrilian bird lives in the tropical forest, really uncommon to be
-      seen in the wild. Have a great day with your bird!
-    scenePreview: {fileID: 21300000, guid: 5c4ea7bbe3f1c174685df7b2cf8988e4, type: 3}
-  - preview: {fileID: -855298285791758126, guid: f5d2bb45520e6d0419288c52ca45b9c3, type: 3}
-    birdId: Cockatiel1
-    birdName: Cockatiel
-    prefab: {fileID: 1885250170276666100, guid: 84be906230323b24e8de396b89fda780, type: 3}
-    reality: 1
-    eraning: 30
-    priceForSmall: 30
-    priceForBig: 50
-    eatForBig: 1
-    description: Austrilian bird lives in the tropical forest, really uncommon to
-      be seen in the wild. Have a great day with your bird!
-    habitat: Austrilian bird lives in the tropical forest, really uncommon to be
-      seen in the wild. Have a great day with your bird!
-    scenePreview: {fileID: 21300000, guid: 5c4ea7bbe3f1c174685df7b2cf8988e4, type: 3}
-  - preview: {fileID: 5088316998373936774, guid: 77ce074dbe93e7d4490b26701dfe7294, type: 3}
-    birdId: Lory2
-    birdName: Lory
-    prefab: {fileID: 1885250170276666100, guid: fb85da11235ad094f8e2527d70da3604, type: 3}
-    reality: 2
-    eraning: 30
-    priceForSmall: 30
-    priceForBig: 50
-    eatForBig: 1
-    description: Austrilian bird lives in the tropical forest, really uncommon to
-      be seen in the wild. Have a great day with your bird!
-    habitat: Austrilian bird lives in the tropical forest, really uncommon to be
-      seen in the wild. Have a great day with your bird!
-    scenePreview: {fileID: 21300000, guid: 5c4ea7bbe3f1c174685df7b2cf8988e4, type: 3}
+  serializationData:
+    SerializedFormat: 0
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: AQENAAAAYwBvAGwAbwByAFMAZQB0AHQAaQBuAGcAcwAvAAAAAAF6AAAAUwB5AHMAdABlAG0ALgBDAG8AbABsAGUAYwB0AGkAbwBuAHMALgBHAGUAbgBlAHIAaQBjAC4ARABpAGMAdABpAG8AbgBhAHIAeQBgADIAWwBbAFMAeQBzAHQAZQBtAC4AUwB0AHIAaQBuAGcALAAgAG0AcwBjAG8AcgBsAGkAYgBdACwAWwBVAG4AaQB0AHkARQBuAGcAaQBuAGUALgBDAG8AbABvAHIAMwAyACwAIABVAG4AaQB0AHkARQBuAGcAaQBuAGUALgBDAG8AcgBlAE0AbwBkAHUAbABlAF0AXQAsACAAbQBzAGMAbwByAGwAaQBiAAAAAAABAQgAAABjAG8AbQBwAGEAcgBlAHIALwEAAAABWQAAAFMAeQBzAHQAZQBtAC4AQwBvAGwAbABlAGMAdABpAG8AbgBzAC4ARwBlAG4AZQByAGkAYwAuAEcAZQBuAGUAcgBpAGMARQBxAHUAYQBsAGkAdAB5AEMAbwBtAHAAYQByAGUAcgBgADEAWwBbAFMAeQBzAHQAZQBtAC4AUwB0AHIAaQBuAGcALAAgAG0AcwBjAG8AcgBsAGkAYgBdAF0ALAAgAG0AcwBjAG8AcgBsAGkAYgABAAAABQYFAAAAAAAAAAQuJwECAAAAJABrAAEGAAAAQwBvAG0AbQBvAG4AAwECAAAAJAB2AC8CAAAAASsAAABVAG4AaQB0AHkARQBuAGcAaQBuAGUALgBDAG8AbABvAHIAMwAyACwAIABVAG4AaQB0AHkARQBuAGcAaQBuAGUALgBDAG8AcgBlAE0AbwBkAHUAbABlABK1ErUStRL/BQUELicBAgAAACQAawABBAAAAFIAYQByAGUAAwECAAAAJAB2ADACAAAAEigS/xIAEv8FBQQuJwECAAAAJABrAAEKAAAARQBuAGQAYQBuAGcAZQByAGUAZAADAQIAAAAkAHYAMAIAAAASABKCEvwS/wUFBC4nAQIAAAAkAGsAAQcAAABFAHgAdABpAG4AYwB0AAMBAgAAACQAdgAwAgAAABL3EqgSBBL/BQUELicBAgAAACQAawABBwAAAFUAbgBrAG4AbwB3AG4AAwECAAAAJAB2ADACAAAAEv8S/xL/Ev8FBQcF
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  isDrawPathLine: 0
+  birdClasses:
+  - birdName: Cockatiel
+    birds:
+    - {fileID: 11400000, guid: 1d3cf216acfabcf4d984b870f6340668, type: 2}
+    - {fileID: 11400000, guid: 0cd0b67372145184ebbdfd3285f3a86d, type: 2}
+  - birdName: Cockatoo
+    birds:
+    - {fileID: 11400000, guid: a1c913ecfc117744cb8767af5cebb8e1, type: 2}
+  - birdName: Parakeet
+    birds:
+    - {fileID: 11400000, guid: a9a839fd191d6e84aadbc83930e57292, type: 2}
+  - birdName: Lorikeet
+    birds:
+    - {fileID: 11400000, guid: e93668c95397762409c6e45f30668ac4, type: 2}
+    - {fileID: 11400000, guid: bad7818fa5b839b4ab1e90226b0bdd01, type: 2}
+    - {fileID: 11400000, guid: 2ef5fc688aa0e4440b34bbd70d68b29f, type: 2}

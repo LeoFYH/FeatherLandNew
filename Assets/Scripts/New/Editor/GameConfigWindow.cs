@@ -74,19 +74,6 @@ namespace BirdGame.Editor
             OnCursorInit();
         }
 
-        [ReadOnly, LabelText("图鉴配置"), OnInspectorInit("OnOnCreateIllustratedInit"), HorizontalGroup("图鉴配置")]
-        public IllustratedConfig illustratedConfig;
-        
-        [ShowIf("@illustratedConfig==null"), Button("新建"), HorizontalGroup("图鉴配置")]
-        private void OnCreateIllustratedConfig()
-        {
-            var config = ScriptableObject.CreateInstance<IllustratedConfig>();
-            AssetDatabase.CreateAsset(config, "Assets/Prefabs/Config/IllustratedConfig.asset");
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-            OnCursorInit();
-        }
-
         protected override OdinMenuTree BuildMenuTree()
         {
             tree = new OdinMenuTree(supportsMultiSelect: true)
@@ -96,7 +83,6 @@ namespace BirdGame.Editor
                 {"商店配置", shopConfig, SdfIconType.Shop},
                 {"鸟的配置", birdConfig, SdfIconType.Egg},
                 {"鼠标配置", cursorConfig, SdfIconType.Mouse},
-                {"图鉴配置", illustratedConfig, SdfIconType.Book},
                 {"本地化配置", LocalizationGlobalConfig.Instance, SdfIconType.Globe}
             };
             
@@ -133,12 +119,6 @@ namespace BirdGame.Editor
         {
             cursorConfig = AssetDatabase.LoadAssetAtPath<CursorConfig>("Assets/Prefabs/Config/CursorConfig.asset");
             tree.MenuItems[4].Value = cursorConfig;
-        }
-
-        private void OnOnCreateIllustratedInit()
-        {
-            illustratedConfig = AssetDatabase.LoadAssetAtPath<IllustratedConfig>("Assets/Prefabs/Config/IllustratedConfig.asset");
-            tree.MenuItems[5].Value = illustratedConfig;
         }
     }
 }

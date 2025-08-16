@@ -20,7 +20,7 @@ namespace BirdGame
                 this.GetSystem<IAssetSystem>().LoadAssetAsync<RadioConfig>("RadioConfig", OnRadioConfigComplete,
                     progress =>
                     {
-                        OnProgress("Loading Radio Config", progress / 6f);
+                        OnProgress("Loading Radio Config", progress / 5f);
                     });
             }));
         }
@@ -38,7 +38,7 @@ namespace BirdGame
             this.GetSystem<IAssetSystem>().LoadAssetAsync<ShopConfig>("ShopConfig", OnShopConfigComplete,
                 progress =>
                 {
-                    OnProgress("Loading Shop Config", (progress + 1f) / 6f);
+                    OnProgress("Loading Shop Config", (progress + 1f) / 5f);
                 });
         }
 
@@ -48,27 +48,17 @@ namespace BirdGame
             this.GetSystem<IAssetSystem>().LoadAssetAsync<BirdConfig>("BirdConfig", OnBirdConfigComplete,
                 progress =>
                 {
-                    OnProgress("Loading Bird Config", (progress + 2f) / 6f);
+                    OnProgress("Loading Bird Config", (progress + 2f) / 5f);
                 });
         }
 
         private void OnBirdConfigComplete(BirdConfig config)
         {
             this.GetModel<IConfigModel>().BirdConfig = config;
-            this.GetSystem<IAssetSystem>().LoadAssetAsync<IllustratedConfig>("IllustratedConfig", OnIllustratedConfigComplete,
-                progress =>
-                {
-                    OnProgress("Loading Illustrated Config", (progress + 3f) / 6f);
-                });
-        }
-
-        private void OnIllustratedConfigComplete(IllustratedConfig config)
-        {
-            this.GetModel<IConfigModel>().IllustratedConfig = config;
             this.GetSystem<IAssetSystem>().LoadAssetAsync<LocalizationConfig>("LocalizationConfig", OnLocalizationConfigComplete,
                 progress =>
                 {
-                    OnProgress("Loading Localization Config", (progress + 4f) / 6f);
+                    OnProgress("Loading Localization Config", (progress + 3f) / 5f);
                 });
         }
 

@@ -743,7 +743,7 @@ MonoBehaviour:
   - {fileID: 8387360963367500181, guid: f40c4f0e696678647bdde570ccc963d0, type: 3}
   birdNameText: {fileID: 4040459671523463373}
   birdPreview: {fileID: 8065276808563481348}
-  rarityText: {fileID: 8422761518901139823}
+  rarityText: {fileID: 1562710451518911746}
   earningText: {fileID: 1201106136043236177}
   priceText: {fileID: 1173952752248126770}
   descriptionText: {fileID: 863088074049792777}
@@ -870,6 +870,8 @@ GameObject:
   - component: {fileID: 4529648925481412485}
   - component: {fileID: 4962669196148750231}
   - component: {fileID: 8422761518901139823}
+  - component: {fileID: 6705793063063294125}
+  - component: {fileID: 1562710451518911746}
   m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -995,6 +997,31 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &6705793063063294125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2040134755153386121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e984ebdff2b4348b2d29ab8ce8e9038, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1562710451518911746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2040134755153386121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Key: 
 --- !u!1 &2072892663768361802
 GameObject:
   m_ObjectHideFlags: 0

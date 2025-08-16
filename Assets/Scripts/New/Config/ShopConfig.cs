@@ -73,7 +73,7 @@ namespace BirdGame
         {
 #if UNITY_EDITOR
             var config = AssetDatabase.LoadAssetAtPath<BirdConfig>("Assets/Prefabs/Config/BirdConfig.asset");
-            preview = config.birds[birdType].preview.texture;
+            preview = config.GetBird(birdType).preview.texture;
 #endif
         }
 
@@ -82,13 +82,18 @@ namespace BirdGame
 #if UNITY_EDITOR
             
             var config = AssetDatabase.LoadAssetAtPath<BirdConfig>("Assets/Prefabs/Config/BirdConfig.asset");
-
+            
             var list = new ValueDropdownList<int>();
-            for (int i = 0; i < config.birds.Length; i++)
+            for (int i = 0; i < config.birdClasses.Length; i++)
             {
-                list.Add(config.birds[i].birdName, i);
+                int index = 0;
+                foreach (var bird in config.birdClasses[i].birds)
+                {
+                    list.Add(config.birdClasses[i].birdName + index, bird.id);
+                    index++;
+                }
             }
-
+            
             return list;
 #else
             return null;

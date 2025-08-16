@@ -40,7 +40,7 @@ namespace BirdGame
         private void OnMouseDown()
         {
             anim?.Kill();
-            anim = spriteRenderer.transform.DOShakeScale(0.2f, 0.5f, 50, 180f);
+            anim = spriteRenderer.transform.DOShakeScale(0.2f, 0.05f, 50, 180f);
             //spriteRenderer.transform.DOShakePosition(0.2f, 0.5f);
             PlayNextFrame();
 

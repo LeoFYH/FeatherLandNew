@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
+using Sirenix.Serialization;
 using TMPro;
 using UnityEngine;
 
@@ -18,7 +19,7 @@ namespace BirdGame
     {
         [LabelText("字体文件")]
         public TMP_FontAsset fontAsset;
-        [DictionaryDrawerSettings(KeyLabel = "标识", ValueLabel = "翻译")]
+        [OdinSerialize, DictionaryDrawerSettings(KeyLabel = "标识", ValueLabel = "翻译")]
         public Dictionary<string, Pattern> words = new Dictionary<string, Pattern>();
     }
 

@@ -266,7 +266,7 @@ namespace BirdGame
             if (!isSmall)
             {
                 int index = this.GetModel<IBirdModel>().BirdList[birdIndex].birdType;
-                int incomeForBig = this.GetModel<IConfigModel>().BirdConfig.birds[index].eraning;
+                int incomeForBig = this.GetModel<IConfigModel>().BirdConfig.GetBird(index).eraning;
                 this.GetModel<IAccountModel>().Coins.Value += incomeForBig;
             }
         }

@@ -39,6 +39,8 @@ namespace BirdGame.Editor
                 config = AssetDatabase.LoadAssetAtPath<LocalizationConfig>(
                     "Assets/Prefabs/Config/LocalizationConfig.asset");
             }
+            
+            LoadWords();
         }
 
         [LabelText("语言"), ShowIf("@page==Page.语言设置")]
@@ -109,7 +111,7 @@ namespace BirdGame.Editor
             GUILayout.BeginHorizontal();
             {
                 GUILayout.Label("Words");
-                if (GUILayout.Button("Load Words"))
+                if (GUILayout.Button("刷新", GUILayout.Width(50)))
                 {
                     LoadWords();
                 }
@@ -198,6 +200,7 @@ namespace BirdGame.Editor
                 words[index].keys.Clear();
                 words[index].values.Clear();
                 words[index].isImageFlags.Clear();
+                words[index].fontAsset = language.Value.fontAsset;
                 foreach (var word in language.Value.words)
                 {
                     if (index == 0)

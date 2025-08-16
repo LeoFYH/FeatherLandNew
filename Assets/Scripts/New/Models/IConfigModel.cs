@@ -8,7 +8,6 @@ namespace BirdGame
         RadioConfig RadioConfig { get; set; }
         ShopConfig ShopConfig { get; set; }
         BirdConfig BirdConfig { get; set; }
-        IllustratedConfig IllustratedConfig { get; set; }
         LocalizationConfig LocalizationConfig { get; set; }
     }
 
@@ -22,7 +21,6 @@ namespace BirdGame
         public RadioConfig RadioConfig { get; set; }
         public ShopConfig ShopConfig { get; set; }
         public BirdConfig BirdConfig { get; set; }
-        public IllustratedConfig IllustratedConfig { get; set; }
         public LocalizationConfig LocalizationConfig { get; set; }
     }
 }

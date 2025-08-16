@@ -1,21 +1,37 @@
 <linker>
   <assembly fullname="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="BirdGame.AlertPopup" preserve="all" />
     <type fullname="BirdGame.BagChecker" preserve="all" />
     <type fullname="BirdGame.BirdConfig" preserve="all" />
+    <type fullname="BirdGame.BirdSkin" preserve="all" />
     <type fullname="BirdGame.Brid" preserve="all" />
+    <type fullname="BirdGame.ButtonAnim" preserve="all" />
+    <type fullname="BirdGame.ClickAnim" preserve="all" />
     <type fullname="BirdGame.ClockPopup" preserve="all" />
+    <type fullname="BirdGame.CursorConfig" preserve="all" />
+    <type fullname="BirdGame.DailyViewController" preserve="all" />
     <type fullname="BirdGame.DecorationContentViewController" preserve="all" />
     <type fullname="BirdGame.Egg" preserve="all" />
     <type fullname="BirdGame.EggContentViewController" preserve="all" />
+    <type fullname="BirdGame.FontAssetExchange" preserve="all" />
     <type fullname="BirdGame.Food" preserve="all" />
     <type fullname="BirdGame.GameManager" preserve="all" />
+    <type fullname="BirdGame.IllustratedConfig" preserve="all" />
+    <type fullname="BirdGame.IllustratedItem" preserve="all" />
     <type fullname="BirdGame.IllustratedPopup" preserve="all" />
     <type fullname="BirdGame.InfoPopup" preserve="all" />
+    <type fullname="BirdGame.LocalizationConfig" preserve="all" />
+    <type fullname="BirdGame.LocalizationText" preserve="all" />
     <type fullname="BirdGame.MenuPanel" preserve="all" />
+    <type fullname="BirdGame.MouseMenu" preserve="all" />
+    <type fullname="BirdGame.MusicPlayItem" preserve="all" />
+    <type fullname="BirdGame.NoteItem" preserve="all" />
     <type fullname="BirdGame.NotePopup" preserve="all" />
     <type fullname="BirdGame.PromptPopup" preserve="all" />
     <type fullname="BirdGame.RadioConfig" preserve="all" />
     <type fullname="BirdGame.RadioPopup" preserve="all" />
+    <type fullname="BirdGame.ScheduleItem" preserve="all" />
+    <type fullname="BirdGame.ScheduleViewController" preserve="all" />
     <type fullname="BirdGame.SettingPopup" preserve="all" />
     <type fullname="BirdGame.ShopConfig" preserve="all" />
     <type fullname="BirdGame.ShopDecorationItem" preserve="all" />
@@ -24,6 +40,9 @@
     <type fullname="BirdGame.ShopToolItem" preserve="all" />
     <type fullname="BirdGame.ShopToolSelection" preserve="all" />
     <type fullname="BirdGame.StopWatchViewController" preserve="all" />
+    <type fullname="BirdGame.TimerViewController" preserve="all" />
+    <type fullname="BirdGame.ToggleImage" preserve="all" />
+    <type fullname="BirdGame.TomatoViewController" preserve="all" />
     <type fullname="BirdGame.ToolsContentViewController" preserve="all" />
     <type fullname="BirdGame.WeatherManager" preserve="all" />
     <type fullname="CameraManager" preserve="all" />
@@ -37,9 +56,14 @@
     <type fullname="BirdGame.Weather" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.Weather/WeatherEvent" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.AudioItem" preserve="nothing" serialized="true" />
+    <type fullname="BirdGame.BirdClass" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.BirdItem" preserve="nothing" serialized="true" />
+    <type fullname="BirdGame.CursorItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.DecorationItem" preserve="nothing" serialized="true" />
+    <type fullname="BirdGame.EggBirdItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.EggItem" preserve="nothing" serialized="true" />
+    <type fullname="BirdGame.RecordItem" preserve="nothing" serialized="true" />
+    <type fullname="BirdGame.SkinItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.ToolItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.ToolSelection" preserve="nothing" serialized="true" />
   </assembly>
@@ -72,7 +96,6 @@
     <type fullname="TMPro.KerningTable" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_Character" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_Dropdown/DropdownEvent" preserve="nothing" serialized="true" />
-    <type fullname="TMPro.TMP_Dropdown/OptionData" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_Dropdown/OptionDataList" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_FontFeatureTable" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_FontWeightPair" preserve="nothing" serialized="true" />
@@ -98,6 +121,7 @@
   </assembly>
   <assembly fullname="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.GameObject" preserve="all" />
+    <type fullname="UnityEngine.LineRenderer" preserve="all" />
     <type fullname="UnityEngine.Material" preserve="all" />
     <type fullname="UnityEngine.Object" preserve="all" />
     <type fullname="UnityEngine.RectTransform" preserve="all" />
@@ -115,9 +139,6 @@
     <type fullname="UnityEngine.BoxCollider2D" preserve="all" />
     <type fullname="UnityEngine.PolygonCollider2D" preserve="all" />
     <type fullname="UnityEngine.Rigidbody2D" preserve="all" />
-  </assembly>
-  <assembly fullname="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-    <type fullname="UnityEngine.BoxCollider" preserve="all" />
   </assembly>
   <assembly fullname="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.Font" preserve="all" />
@@ -153,6 +174,9 @@
   <assembly fullname="UnityEngine.UIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.CanvasGroup" preserve="all" />
     <type fullname="UnityEngine.CanvasRenderer" preserve="all" />
+  </assembly>
+  <assembly fullname="Sirenix.Serialization">
+    <type fullname="Sirenix.Serialization.SerializationData" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="UnityEngine.TextCoreFontEngineModule">
     <type fullname="UnityEngine.TextCore.FaceInfo" preserve="nothing" serialized="true" />

@@ -36,7 +36,7 @@ namespace BirdGame
         private void CreateBird(int birdIndex)
         {
             var config = this.GetModel<IConfigModel>().BirdConfig;
-            GameObject go = GameObject.Instantiate(config.birds[birdIndex].prefab);
+            GameObject go = GameObject.Instantiate(config.GetBird(birdIndex).prefab);
             this.GetModel<IBirdModel>().AddBird(birdIndex, go.GetComponent<Brid>());
             var agent = go.GetComponent<NavMeshAgent>();
             agent.enabled = false;

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -15,7 +14,7 @@ namespace BirdGame
         public GameObject[] illustratedItemPrefabs;
         public TextMeshProUGUI birdNameText;
         public Image birdPreview;
-        public TextMeshProUGUI rarityText;  // 稀有度文本显示
+        public LocalizationText rarityText;  // 稀有度文本显示
         public TextMeshProUGUI earningText;
         public TextMeshProUGUI priceText;
         public LocalizationText descriptionText;
@@ -104,7 +103,7 @@ namespace BirdGame
             });
             
             //var config = this.GetModel<IConfigModel>().BirdConfig;
-            var config = this.GetModel<IConfigModel>().IllustratedConfig;
+            var config = this.GetModel<IConfigModel>().BirdConfig;
             for (int i = 0; i < config.birdClasses.Length; i++)
             {
                 int itemIndex = i % illustratedItemPrefabs.Length;
@@ -121,26 +120,26 @@ namespace BirdGame
 
         private void OnSelectedItem(int index)
         {
-            var classInfo = this.GetModel<IConfigModel>().IllustratedConfig.birdClasses[index];
+            var classInfo = this.GetModel<IConfigModel>().BirdConfig.birdClasses[index];
             birdNameText.text = classInfo.birdName;
             ClearSkinItems();
             int unlockedIndex = -1;
-            for (int i = 0; i < classInfo.birdSkins.Length; i++)
+            foreach (var bird in classInfo.birds)
             {
                 var item = GameObject.Instantiate(skinPrefab, skinContent).GetComponent<BirdSkin>();
-                item.Init(classInfo.birdSkins[i].birdIndex, OnSkinSelected);
+                item.Init(bird.id, OnSkinSelected);
                 skinItems.Add(item.gameObject);
-                int birdIndex = classInfo.birdSkins[i].birdIndex;
+                int birdIndex = bird.id;
                 if (unlockedIndex == -1 && this.GetModel<IGameModel>().UnlockedBirds.Contains(birdIndex))
                 {
-                    unlockedIndex = i;
+                    unlockedIndex = birdIndex;
                 }
             }
 
             if (unlockedIndex == -1)
-                OnSkinSelected(classInfo.birdSkins[0].birdIndex);
+                OnSkinSelected(classInfo.birds[0].id);
             else 
-                OnSkinSelected(classInfo.birdSkins[unlockedIndex].birdIndex);
+                OnSkinSelected(unlockedIndex);
         }
 
         private void ClearSkinItems()
@@ -155,7 +154,7 @@ namespace BirdGame
         
         private void OnSkinSelected(int index)
         {
-            var birdInfo = this.GetModel<IConfigModel>().BirdConfig.birds[index];
+            var birdInfo = this.GetModel<IConfigModel>().BirdConfig.GetBird(index);
             birdPreview.sprite = birdInfo.preview;
             birdPreview.GetComponent<RectTransform>().sizeDelta = birdInfo.preview.rect.size * 0.2f;
             if (!this.GetModel<IGameModel>().UnlockedBirds.Contains(index))
@@ -166,36 +165,13 @@ namespace BirdGame
             {
                 birdPreview.color = Color.white;
             }
-            // 根据稀有度显示对应的英文文本
-            rarityText.text = GetRarityText(birdInfo.reality);
+            rarityText.SetKey(birdInfo.reality);
 
             earningText.text = birdInfo.eraning.ToString();
             priceText.text = birdInfo.priceForBig.ToString();
             descriptionText.SetKey(birdInfo.description);
             habitatText.SetKey(birdInfo.habitat);
             sceneView.sprite = birdInfo.scenePreview;
-        }
-        
-        /// <summary>
-        /// 根据稀有度数字返回对应的英文文本
-        /// </summary>
-        /// <param name="rarity">稀有度数字 (1-4)</param>
-        /// <returns>对应的英文文本</returns>
-        private string GetRarityText(int rarity)
-        {
-            switch (rarity)
-            {
-                case 1:
-                    return "Common";      // 常见
-                case 2:
-                    return "Rare";        // 稀有
-                case 3:
-                    return "Endangered";  // 濒危
-                case 4:
-                    return "Extinct";     // 灭绝
-                default:
-                    return "Unknown";     // 未知
-            }
         }
     }
 }

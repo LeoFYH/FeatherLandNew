@@ -46,11 +46,12 @@ namespace BirdGame
         {
             int index = this.GetModel<IGameModel>().CurrentSelectedBirdIndex;
             var data = this.GetModel<IBirdModel>().BirdList[index];
-            var birdConf = this.GetModel<IConfigModel>().BirdConfig.birds[data.birdType];
+            var birdConf = this.GetModel<IConfigModel>().BirdConfig.GetBird(data.birdType);
             icon.sprite = birdConf.preview;
-            birdName.text = birdConf.birdName;
+            string birdNameText = this.GetModel<IConfigModel>().BirdConfig.GetBirdName(data.birdType);
+            birdName.text = birdNameText;
             // 显示自定义名称，如果没有则显示默认名称
-            string displayName = string.IsNullOrEmpty(data.customName) ? birdConf.birdName : data.customName;
+            string displayName = string.IsNullOrEmpty(data.customName) ? birdNameText : data.customName;
             cutomName.text = displayName;
             
             // 添加输入框事件监听
@@ -122,8 +123,8 @@ namespace BirdGame
             // 如果输入为空，显示默认名称
             if (string.IsNullOrEmpty(data.customName))
             {
-                var birdConf = this.GetModel<IConfigModel>().BirdConfig.birds[data.birdType];
-                cutomName.text = birdConf.birdName;
+                var birdConf = this.GetModel<IConfigModel>().BirdConfig.GetBird(data.birdType);
+                cutomName.text = this.GetModel<IConfigModel>().BirdConfig.GetBirdName(data.birdType);
             }
         }
     }
