@@ -60,17 +60,17 @@ namespace BirdGame
         private void PlayLookAroundAnimation()
         {
           
-            Debug.Log("开始张望动画");
-            _brid.anim.SetTrigger("LookAround");
+            // Debug.Log("开始张望动画");
+            // _brid.anim.SetTrigger("LookAround");
             
            
-            DOTween.Sequence()
-                .SetDelay(1f)
-                .AppendCallback(() => {
+            // DOTween.Sequence()
+            //     .SetDelay(1f)
+            //     .AppendCallback(() => {
                    
-                    Debug.Log("切换回呼吸状态");
+            //         Debug.Log("切换回呼吸状态");
                     
-                });
+            //     });
         }
 
     }
