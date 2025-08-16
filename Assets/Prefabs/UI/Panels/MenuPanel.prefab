@@ -147,12 +147,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverScale: 1.3
   animTime: 0.1
-  hoverText: "\u6309\u94AE\u63D0\u793A"
-  textOffset: {x: 0, y: 100}
+  hoverText: shop
+  textOffset: {x: 0, y: 150}
   showDelay: 0.5
   showTooltip: 0
   textColor: {r: 1, g: 1, b: 1, a: 1}
-  fontSize: 30
+  fontSize: 40
   fontStyle: 1
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
@@ -293,12 +293,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverScale: 1.3
   animTime: 0.1
-  hoverText: "\u6309\u94AE\u63D0\u793A"
+  hoverText: book
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 0
   textColor: {r: 1, g: 1, b: 1, a: 1}
-  fontSize: 30
+  fontSize: 40
   fontStyle: 1
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
@@ -527,12 +527,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverScale: 1.3
   animTime: 0.1
-  hoverText: "\u6309\u94AE\u63D0\u793A"
-  textOffset: {x: 0, y: 100}
+  hoverText: bird book
+  textOffset: {x: 0, y: 150}
   showDelay: 0.5
   showTooltip: 0
   textColor: {r: 1, g: 1, b: 1, a: 1}
-  fontSize: 30
+  fontSize: 40
   fontStyle: 1
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
@@ -760,12 +760,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverScale: 1.3
   animTime: 0.1
-  hoverText: "\u6309\u94AE\u63D0\u793A"
+  hoverText: Radio
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 0
   textColor: {r: 1, g: 1, b: 1, a: 1}
-  fontSize: 30
+  fontSize: 40
   fontStyle: 1
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
@@ -918,12 +918,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverScale: 1.3
   animTime: 0.1
-  hoverText: "\u6309\u94AE\u63D0\u793A"
+  hoverText: Map
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 0
   textColor: {r: 1, g: 1, b: 1, a: 1}
-  fontSize: 30
+  fontSize: 40
   fontStyle: 1
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
@@ -1287,12 +1287,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverScale: 1.3
   animTime: 0.1
-  hoverText: "\u6309\u94AE\u63D0\u793A"
+  hoverText: Setting
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 0
   textColor: {r: 1, g: 1, b: 1, a: 1}
-  fontSize: 30
+  fontSize: 40
   fontStyle: 1
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
@@ -1593,6 +1593,7 @@ GameObject:
   - component: {fileID: 7169042557884193148}
   - component: {fileID: 77603682426194956}
   - component: {fileID: 124844076394129884}
+  - component: {fileID: 2905490483057594774}
   m_Layer: 5
   m_Name: WeatherIcon
   m_TagString: Untagged
@@ -1701,6 +1702,31 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2905490483057594774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6536987362346141445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hoverScale: 1.1
+  animTime: 0.1
+  hoverText: Weather
+  textOffset: {x: 0, y: -40}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 40
+  fontStyle: 1
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
+  customFont: {fileID: 11400000, guid: f7ffd71761713684a94dc40f5e30b830, type: 2}
 --- !u!1 &6576888212394274134
 GameObject:
   m_ObjectHideFlags: 0
@@ -2059,12 +2085,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverScale: 1.3
   animTime: 0.1
-  hoverText: "\u6309\u94AE\u63D0\u793A"
+  hoverText: Notebook
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 0
   textColor: {r: 1, g: 1, b: 1, a: 1}
-  fontSize: 30
+  fontSize: 40
   fontStyle: 1
   showBackground: 0
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
@@ -2442,12 +2468,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverScale: 1.3
   animTime: 0.1
-  hoverText: "\u6309\u94AE\u63D0\u793A"
+  hoverText: Timer
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 0
   textColor: {r: 1, g: 1, b: 1, a: 1}
-  fontSize: 30
+  fontSize: 40
   fontStyle: 1
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}

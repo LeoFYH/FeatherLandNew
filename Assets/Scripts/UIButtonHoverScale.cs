@@ -36,6 +36,9 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
     private Canvas canvas;
     private bool isHovering = false;
     private float hoverTimer = 0f;
+    
+    // 鼠标检测
+    private bool mouseWasOverButton = false;
 
     void Awake()
     {
@@ -46,7 +49,7 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         //测试
         showTooltip = true;
-        hoverText = this.gameObject.name;
+        // hoverText = this.gameObject.name; // 移除自动读取GameObject名称，使用Inspector中设置的hoverText
         showBackground = false;
         showDelay = 0f;
 
@@ -73,6 +76,26 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
     
     void Update()
     {
+        // 检测鼠标是否真的在按钮上
+        bool mouseIsOverButton = IsMouseOverButton();
+        
+        // 如果鼠标状态发生变化
+        if (mouseIsOverButton != mouseWasOverButton)
+        {
+            if (mouseIsOverButton && !isHovering)
+            {
+                // 鼠标进入按钮
+                OnMouseEnter();
+            }
+            else if (!mouseIsOverButton && isHovering)
+            {
+                // 鼠标离开按钮
+                OnMouseExit();
+            }
+        }
+        
+        mouseWasOverButton = mouseIsOverButton;
+        
         if (showTooltip && isHovering)
         {
             hoverTimer += Time.deltaTime;
@@ -88,6 +111,73 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
         {
             // 鼠标离开时隐藏tooltip
             tooltipObject.SetActive(false);
+        }
+    }
+    
+    /// <summary>
+    /// 检测鼠标是否真的在按钮上
+    /// </summary>
+    private bool IsMouseOverButton()
+    {
+        // 检查鼠标是否在UI元素上
+        if (!EventSystem.current.IsPointerOverGameObject())
+            return false;
+            
+        // 获取鼠标位置
+        Vector2 mousePosition = Input.mousePosition;
+        
+        // 获取按钮的RectTransform
+        RectTransform buttonRect = GetComponent<RectTransform>();
+        if (buttonRect == null) return false;
+        
+        // 将鼠标位置转换为按钮的本地坐标
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            buttonRect, mousePosition, null, out Vector2 localPoint))
+        {
+            // 检查点击是否在按钮区域内
+            return buttonRect.rect.Contains(localPoint);
+        }
+        
+        return false;
+    }
+    
+    /// <summary>
+    /// 鼠标进入按钮
+    /// </summary>
+    private void OnMouseEnter()
+    {
+        // 缩放效果
+        transform.localScale = originalScale * hoverScale;
+        
+        // 悬浮提示
+        if (showTooltip)
+        {
+            // 如果tooltipObject还没创建，立即创建
+            if (tooltipObject == null)
+            {
+               
+                CreateTooltipObject();
+            }
+            
+            isHovering = true;
+            hoverTimer = 0f;
+           
+        }
+    }
+    
+    /// <summary>
+    /// 鼠标离开按钮
+    /// </summary>
+    private void OnMouseExit()
+    {
+        // 缩放效果
+        transform.localScale = originalScale;
+        
+        // 悬浮提示
+        if (showTooltip)
+        {
+            isHovering = false;
+            hoverTimer = 0f;
         }
     }
     
@@ -192,38 +282,12 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        
-        
-        // 缩放效果
-        transform.localScale = originalScale * hoverScale;
-        
-        // 悬浮提示
-        if (showTooltip)
-        {
-            // 如果tooltipObject还没创建，立即创建
-            if (tooltipObject == null)
-            {
-               
-                CreateTooltipObject();
-            }
-            
-            isHovering = true;
-            hoverTimer = 0f;
-           
-        }
+        // 这个方法现在只用于初始触发，主要逻辑在Update中处理
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        // 缩放效果
-        transform.localScale = originalScale;
-        
-        // 悬浮提示
-        if (showTooltip)
-        {
-            isHovering = false;
-            hoverTimer = 0f;
-        }
+        // 这个方法现在只用于初始触发，主要逻辑在Update中处理
     }
     
     void OnDestroy()
