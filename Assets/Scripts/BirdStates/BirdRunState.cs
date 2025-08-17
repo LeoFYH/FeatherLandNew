@@ -135,6 +135,12 @@ namespace BirdGame
 
         private void DONext()
         {
+            int birdIndex = this.GetModel<IBirdModel>().BirdList[_brid.birdIndex].birdType;
+            if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex).canFly)
+            {
+                currMachine.ChangeState<BirdIdleState>();
+                return;
+            }
             if (_brid.isSmall)
             {
                 currMachine.ChangeState<BirdIdleState>();

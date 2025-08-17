@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using Sirenix.OdinInspector;
-using UnityEditor;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace BirdGame
 {
@@ -14,6 +16,8 @@ namespace BirdGame
         public int id;
         [VerticalGroup("content/Info"), LabelText("鸟的预制体")]
         public GameObject prefab;
+        [VerticalGroup("content/Info"), LabelText("是否能飞行")]
+        public bool canFly = true;
         [VerticalGroup("content/Info"), BoxGroup("content/Info/信息"), LabelText("稀有度"), ValueDropdown("rarityInfo"), GUIColor("realityColor"), OnValueChanged("OnRealityValueChanged")]
         public string reality;
         private Color32 realityColor = Color.white;
@@ -98,11 +102,13 @@ namespace BirdGame
 
         private void OnRealityValueChanged()
         {
+#if UNITY_EDITOR
             var config = AssetDatabase.LoadAssetAtPath<BirdConfig>("Assets/Prefabs/Config/BirdConfig.asset");
             if (config.colorSettings.TryGetValue(reality, out var setting))
             {
                 realityColor = setting;
             }
+#endif
         }
     }
 }

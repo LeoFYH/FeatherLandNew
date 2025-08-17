@@ -6,6 +6,9 @@ using UnityEngine.UI;
 
 namespace BirdGame
 {
+    /// <summary>
+    /// 本地化图片组件
+    /// </summary>
     [RequireComponent(typeof(Image))]
     public class LocalizationImage : ViewControllerBase
     {

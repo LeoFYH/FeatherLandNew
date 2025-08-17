@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace BirdGame
 {
+    /// <summary>
+    /// 字体资源交换组件
+    /// </summary>
     [RequireComponent(typeof(TextMeshProUGUI))]
     public class FontAssetExchange : ViewControllerBase
     {

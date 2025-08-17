@@ -13,23 +13,183 @@ MonoBehaviour:
   m_Name: BirdConfig
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 0
+    SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects: []
-    SerializedBytesString: AQENAAAAYwBvAGwAbwByAFMAZQB0AHQAaQBuAGcAcwAvAAAAAAF6AAAAUwB5AHMAdABlAG0ALgBDAG8AbABsAGUAYwB0AGkAbwBuAHMALgBHAGUAbgBlAHIAaQBjAC4ARABpAGMAdABpAG8AbgBhAHIAeQBgADIAWwBbAFMAeQBzAHQAZQBtAC4AUwB0AHIAaQBuAGcALAAgAG0AcwBjAG8AcgBsAGkAYgBdACwAWwBVAG4AaQB0AHkARQBuAGcAaQBuAGUALgBDAG8AbABvAHIAMwAyACwAIABVAG4AaQB0AHkARQBuAGcAaQBuAGUALgBDAG8AcgBlAE0AbwBkAHUAbABlAF0AXQAsACAAbQBzAGMAbwByAGwAaQBiAAAAAAABAQgAAABjAG8AbQBwAGEAcgBlAHIALwEAAAABWQAAAFMAeQBzAHQAZQBtAC4AQwBvAGwAbABlAGMAdABpAG8AbgBzAC4ARwBlAG4AZQByAGkAYwAuAEcAZQBuAGUAcgBpAGMARQBxAHUAYQBsAGkAdAB5AEMAbwBtAHAAYQByAGUAcgBgADEAWwBbAFMAeQBzAHQAZQBtAC4AUwB0AHIAaQBuAGcALAAgAG0AcwBjAG8AcgBsAGkAYgBdAF0ALAAgAG0AcwBjAG8AcgBsAGkAYgABAAAABQYFAAAAAAAAAAQuJwECAAAAJABrAAEGAAAAQwBvAG0AbQBvAG4AAwECAAAAJAB2AC8CAAAAASsAAABVAG4AaQB0AHkARQBuAGcAaQBuAGUALgBDAG8AbABvAHIAMwAyACwAIABVAG4AaQB0AHkARQBuAGcAaQBuAGUALgBDAG8AcgBlAE0AbwBkAHUAbABlABK1ErUStRL/BQUELicBAgAAACQAawABBAAAAFIAYQByAGUAAwECAAAAJAB2ADACAAAAEigS/xIAEv8FBQQuJwECAAAAJABrAAEKAAAARQBuAGQAYQBuAGcAZQByAGUAZAADAQIAAAAkAHYAMAIAAAASABKCEvwS/wUFBC4nAQIAAAAkAGsAAQcAAABFAHgAdABpAG4AYwB0AAMBAgAAACQAdgAwAgAAABL3EqgSBBL/BQUELicBAgAAACQAawABBwAAAFUAbgBrAG4AbwB3AG4AAwECAAAAJAB2ADACAAAAEv8S/xL/Ev8FBQcF
+    SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes: []
+    SerializationNodes:
+    - Name: colorSettings
+      Entry: 7
+      Data: 0|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[UnityEngine.Color32,
+        UnityEngine.CoreModule]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 1|System.Collections.Generic.GenericEqualityComparer`1[[System.String,
+        mscorlib]], mscorlib
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 5
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Common
+    - Name: $v
+      Entry: 7
+      Data: UnityEngine.Color32, UnityEngine.CoreModule
+    - Name: 
+      Entry: 3
+      Data: 181
+    - Name: 
+      Entry: 3
+      Data: 181
+    - Name: 
+      Entry: 3
+      Data: 181
+    - Name: 
+      Entry: 3
+      Data: 255
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Rare
+    - Name: $v
+      Entry: 7
+      Data: UnityEngine.Color32, UnityEngine.CoreModule
+    - Name: 
+      Entry: 3
+      Data: 40
+    - Name: 
+      Entry: 3
+      Data: 255
+    - Name: 
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 3
+      Data: 255
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Endangered
+    - Name: $v
+      Entry: 7
+      Data: UnityEngine.Color32, UnityEngine.CoreModule
+    - Name: 
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 3
+      Data: 130
+    - Name: 
+      Entry: 3
+      Data: 252
+    - Name: 
+      Entry: 3
+      Data: 255
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Extinct
+    - Name: $v
+      Entry: 7
+      Data: UnityEngine.Color32, UnityEngine.CoreModule
+    - Name: 
+      Entry: 3
+      Data: 247
+    - Name: 
+      Entry: 3
+      Data: 168
+    - Name: 
+      Entry: 3
+      Data: 4
+    - Name: 
+      Entry: 3
+      Data: 255
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Unknown
+    - Name: $v
+      Entry: 7
+      Data: UnityEngine.Color32, UnityEngine.CoreModule
+    - Name: 
+      Entry: 3
+      Data: 255
+    - Name: 
+      Entry: 3
+      Data: 255
+    - Name: 
+      Entry: 3
+      Data: 255
+    - Name: 
+      Entry: 3
+      Data: 255
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
   isDrawPathLine: 0
   birdClasses:
   - birdName: Cockatiel
     birds:
     - {fileID: 11400000, guid: 1d3cf216acfabcf4d984b870f6340668, type: 2}
     - {fileID: 11400000, guid: 0cd0b67372145184ebbdfd3285f3a86d, type: 2}
+    - {fileID: 11400000, guid: 27af311299b3cb943b0eeef492819b1a, type: 2}
+    - {fileID: 11400000, guid: f17abf92bab4d3e4eaf594aa939aa4bb, type: 2}
   - birdName: Cockatoo
     birds:
     - {fileID: 11400000, guid: a1c913ecfc117744cb8767af5cebb8e1, type: 2}
+    - {fileID: 11400000, guid: 21a0b45561d722f4ba71e65a1909d79d, type: 2}
+    - {fileID: 11400000, guid: 1fbc9ad5d9843b649a8b9ec8f6bdaad9, type: 2}
+    - {fileID: 11400000, guid: 49dfae3ab49d4d94dbd9a00a6bab71ba, type: 2}
   - birdName: Parakeet
     birds:
     - {fileID: 11400000, guid: a9a839fd191d6e84aadbc83930e57292, type: 2}
@@ -38,3 +198,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: e93668c95397762409c6e45f30668ac4, type: 2}
     - {fileID: 11400000, guid: bad7818fa5b839b4ab1e90226b0bdd01, type: 2}
     - {fileID: 11400000, guid: 2ef5fc688aa0e4440b34bbd70d68b29f, type: 2}
+  - birdName: DuDu
+    birds:
+    - {fileID: 11400000, guid: 99165c92a1752624c9bf81fb9b9bc932, type: 2}
+    - {fileID: 11400000, guid: d3ace339e24cf864aa2e7c172c975a2c, type: 2}

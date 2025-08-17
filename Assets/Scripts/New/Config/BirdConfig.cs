@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
-using UnityEditor;
 using UnityEngine;
 
 namespace BirdGame
@@ -12,7 +11,7 @@ namespace BirdGame
         [Title("鸟的配置"), Space(10)] 
         [LabelText("显示鸟走路的路线")]
         public bool isDrawPathLine;
-        [LabelText("鸟的种类"), TableList(ShowIndexLabels = true)]
+        [LabelText("鸟的种类"), TableList(ShowIndexLabels = true, AlwaysExpanded = true)]
         public BirdClassItem[] birdClasses;
         [LabelText("稀有度颜色配置"), OdinSerialize, DictionaryDrawerSettings(KeyLabel = "稀有度", ValueLabel = "颜色")]
         public Dictionary<string, Color32> colorSettings = new Dictionary<string, Color32>()
