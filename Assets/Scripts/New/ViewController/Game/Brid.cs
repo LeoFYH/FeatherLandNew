@@ -90,15 +90,7 @@ namespace BirdGame
             agent.acceleration = 1000f; // 极大加速度（瞬间达到最大速度）
             agent.autoBraking = false; // 禁用自动减速
             agent.stoppingDistance = 0f; // 零停止距离
-
-            // if (walkableArea == null)
-            // {
-            //     walkableArea = FindObjectOfType<WalkableArea>();
-            //     if (walkableArea == null)
-            //     {
-            //         Debug.LogWarning("No WalkableArea found, bird will not be restricted!");
-            //     }
-            // }
+            
             originalPos = transform.position;
             anim = GetComponentInChildren<Animator>();
             sr = GetComponentInChildren<SpriteRenderer>();
@@ -113,6 +105,8 @@ namespace BirdGame
             {
                 Debug.LogWarning("无法获取吃饭动画时长，使用默认值1秒");
             }
+
+            eatFoodTime = anim.runtimeAnimatorController.animationClips[3].length;
 
             // Setup state machine for bird behavior
             _stateMachine = new StateMachine(gameObject);

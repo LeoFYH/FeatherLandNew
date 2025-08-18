@@ -280,7 +280,7 @@ namespace BirdGame.Editor
                     texts[i] = languages[i].Language.ToString();
                 }
 
-                currentSelectedLanguage = GUILayout.Toolbar(currentSelectedLanguage, texts);
+                currentSelectedLanguage = GUILayout.Toolbar(currentSelectedLanguage, texts, GUILayout.Width(600));
             }
             GUILayout.EndHorizontal();
             if (words.Count != languages.Count)
