@@ -2,6 +2,8 @@
 using QFramework;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using Sirenix.OdinInspector;
 
 namespace BirdGame
 {
@@ -10,6 +12,10 @@ namespace BirdGame
         public RectTransform menu;
         public Button deleteButton;
         public Button closeButton;
+
+        [Header("菜单偏移设置")]
+        [LabelText("菜单偏移")]
+        public Vector2 menuOffset = Vector2.zero;
 
         private int decorationId;
         private GameObject deleteObject;
@@ -33,6 +39,62 @@ namespace BirdGame
             });
         }
 
+        private void Update()
+        {
+            // 检测左键点击
+            if (Input.GetMouseButtonDown(0))
+            {
+                // 检查是否点击在UI元素上
+                if (EventSystem.current.IsPointerOverGameObject())
+                {
+                    // 检查是否点击在菜单内部
+                    if (!IsClickInsideMenu())
+                    {
+                        // 点击在菜单外部，隐藏菜单
+                        this.GetSystem<IUISystem>().HideMouseMenu();
+                    }
+                }
+                else
+                {
+                    // 点击在非UI区域，隐藏菜单
+                    this.GetSystem<IUISystem>().HideMouseMenu();
+                }
+            }
+        }
+
+        private bool IsClickInsideMenu()
+        {
+            if (menu == null) return false;
+
+            Vector2 localPoint;
+            Camera canvasCamera = null;
+
+            var targetRectTransform = GetComponent<RectTransform>();
+            Canvas canvas = targetRectTransform.GetComponentInParent<Canvas>();
+            if (canvas.renderMode == RenderMode.ScreenSpaceCamera || canvas.renderMode == RenderMode.WorldSpace)
+            {
+                canvasCamera = canvas.worldCamera;
+            }
+
+            // 检查鼠标位置是否在菜单区域内
+            bool isInside = RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                menu,                    // 菜单的RectTransform
+                Input.mousePosition,     // 鼠标屏幕坐标
+                canvasCamera,           // 摄像机
+                out localPoint          // 输出的局部坐标
+            );
+
+            if (isInside)
+            {
+                // 检查是否在菜单的边界内
+                Rect menuRect = menu.rect;
+                return localPoint.x >= menuRect.xMin && localPoint.x <= menuRect.xMax &&
+                       localPoint.y >= menuRect.yMin && localPoint.y <= menuRect.yMax;
+            }
+
+            return false;
+        }
+
         public void Init(int id, GameObject obj)
         {
             decorationId = id;
@@ -49,38 +111,25 @@ namespace BirdGame
                 canvasCamera = canvas.worldCamera;
             }
 
-            // 执行坐标转换
+            // 获取装饰物的世界坐标，转换为屏幕坐标
+            Vector3 decorationWorldPos = deleteObject.transform.position;
+            Vector3 decorationScreenPos = Camera.main.WorldToScreenPoint(decorationWorldPos);
+            
+            // 将屏幕坐标转换为UI局部坐标
             bool success = RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 targetRectTransform,         // 目标UI
-                Input.mousePosition,         // 鼠标屏幕坐标
+                decorationScreenPos,         // 装饰物的屏幕坐标
                 canvasCamera,               // 摄像机（Overlay模式传null）
                 out localPoint              // 输出的局部坐标
             );
 
             if (success)
             {
-                Debug.Log($"UI局部坐标: {localPoint}");
-                float pivotX = 0f;
-                float pivotY = 0f;
-                if (localPoint.x < 0)
-                {
-                    pivotX = 0f;
-                }
-                else
-                {
-                    pivotX = 1f;
-                }
-
-                if (localPoint.y < 0)
-                {
-                    pivotY = 0;
-                }
-                else
-                {
-                    pivotY = 1f;
-                }
-                menu.pivot = new Vector2(pivotX, pivotY);
-                menu.anchoredPosition = localPoint;
+                Debug.Log($"装饰物UI局部坐标: {localPoint}");
+                
+                // 设置菜单在装饰物正下方
+                menu.pivot = new Vector2(0.5f, 1f); // 顶部中心对齐
+                menu.anchoredPosition = localPoint + menuOffset;
             }
         }
     }

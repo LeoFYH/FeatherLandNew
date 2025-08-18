@@ -124,7 +124,7 @@ namespace BirdGame
         public string description;
         [LabelText("价格"), VerticalGroup("Icon/Info")]
         public int price;
-        [LabelText("大小"), VerticalGroup("Icon/Info"), Range(0.1f, 2f)]
+        [LabelText("大小"), VerticalGroup("Icon/Info"), Range(0.01f, 2f)]
         public float scale = 1f;
         [LabelText("最大购买数量"), VerticalGroup("Icon/Info"), InfoBox("设置为0表示无限制", InfoMessageType.Info)]
         public int maxQuantity = 0;
@@ -137,6 +137,9 @@ namespace BirdGame
         [LabelText("固定位置"), VerticalGroup("Icon/Info")]
         [ShowIf("@decorationType == DecorationType.Fixed")]
         public Vector3 fixedPosition = Vector3.zero;
+        
+        [LabelText("是否显示"), VerticalGroup("Icon/Info"), InfoBox("取消勾选后，该装饰物不会出现在游戏商店中")]
+        public bool isVisible = true;
     }
 
     public enum DecorationType
