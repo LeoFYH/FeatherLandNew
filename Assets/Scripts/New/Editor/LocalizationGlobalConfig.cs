@@ -144,6 +144,7 @@ namespace BirdGame.Editor
         private Vector2 scrollPos;
         private bool translating;
         private bool progressing;
+        private bool isTranslatingAll = false;
 
         [ShowIf("@page==Page.翻译设置"), BoxGroup("Setting"), Button("翻译服务连接测试")]
         private void OnTestTranslationConnection()
@@ -311,6 +312,16 @@ namespace BirdGame.Editor
                 if (GUILayout.Button("刷新", GUILayout.Width(50)))
                 {
                     LoadWords();
+                }
+                
+                // 一键翻译按钮
+                if (isTranslatingAll)
+                {
+                    GUILayout.Label("翻译中...", GUILayout.Width(80));
+                }
+                else if (GUILayout.Button("一键翻译", GUILayout.Width(80)))
+                {
+                    TranslateAllKeys();
                 }
             }
             GUILayout.EndHorizontal();
@@ -739,6 +750,118 @@ namespace BirdGame.Editor
                 word.values.Add("");
                 word.spValues.Add(null);
                 word.isImageFlags.Add(false);
+            }
+        }
+        
+        private void TranslateAllKeys()
+        {
+            if (languages[currentSelectedLanguage].Language == SystemLanguage.English)
+            {
+                Debug.LogWarning("英文语言不需要翻译，请选择其他语言");
+                return;
+            }
+            
+            if (wordKeys.Count == 0)
+            {
+                Debug.LogWarning("没有可翻译的内容");
+                return;
+            }
+            
+            Debug.Log($"开始一键翻译 {wordKeys.Count} 个条目...");
+            isTranslatingAll = true;
+            
+            // 查找英文语言索引
+            int englishIndex = -1;
+            for (int j = 0; j < languages.Count; j++)
+            {
+                if (languages[j].Language == SystemLanguage.English)
+                {
+                    englishIndex = j;
+                    break;
+                }
+            }
+            
+            if (englishIndex == -1)
+            {
+                Debug.LogError("未找到英文语言，无法进行翻译");
+                isTranslatingAll = false;
+                return;
+            }
+            
+            // 批量翻译
+            int totalToTranslate = 0;
+            int translatedCount = 0;
+            
+            // 先计算需要翻译的数量
+            for (int i = 0; i < wordKeys.Count; i++)
+            {
+                if (!words[currentSelectedLanguage].isImageFlags[i] && 
+                    string.IsNullOrEmpty(words[currentSelectedLanguage].values[i]))
+                {
+                    totalToTranslate++;
+                }
+            }
+            
+            if (totalToTranslate == 0)
+            {
+                Debug.Log("所有条目都已翻译完成或无需翻译");
+                isTranslatingAll = false;
+                return;
+            }
+            
+            Debug.Log($"需要翻译 {totalToTranslate} 个条目...");
+            
+            for (int i = 0; i < wordKeys.Count; i++)
+            {
+                // 跳过图片翻译
+                if (words[currentSelectedLanguage].isImageFlags[i])
+                {
+                    continue;
+                }
+                
+                // 如果当前语言已有内容，跳过
+                if (!string.IsNullOrEmpty(words[currentSelectedLanguage].values[i]))
+                {
+                    continue;
+                }
+                
+                string textToTranslate = "";
+                
+                // 优先使用英文内容
+                if (englishIndex < words.Count && i < words[englishIndex].values.Count && 
+                    !string.IsNullOrEmpty(words[englishIndex].values[i]))
+                {
+                    textToTranslate = words[englishIndex].values[i];
+                }
+                // 否则使用key
+                else if (!string.IsNullOrEmpty(wordKeys[i]))
+                {
+                    textToTranslate = wordKeys[i];
+                }
+                
+                if (!string.IsNullOrEmpty(textToTranslate))
+                {
+                    int index = i; // 捕获循环变量
+                    Translate(textToTranslate, languages[currentSelectedLanguage].Language, s => 
+                    {
+                        words[currentSelectedLanguage].values[index] = s;
+                        translatedCount++;
+                        Debug.Log($"翻译完成 ({translatedCount}/{totalToTranslate}): {textToTranslate} -> {s}");
+                        
+                        // 当所有翻译完成时保存
+                        if (translatedCount >= totalToTranslate)
+                        {
+                            Save();
+                            Debug.Log("✅ 一键翻译完成！");
+                            isTranslatingAll = false;
+                        }
+                    });
+                }
+            }
+            
+            if (translatedCount == 0)
+            {
+                Debug.Log("所有条目都已翻译完成或无需翻译");
             }
         }
 
