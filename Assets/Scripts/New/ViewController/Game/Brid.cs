@@ -108,6 +108,8 @@ namespace BirdGame
 
             eatFoodTime = anim.runtimeAnimatorController.animationClips[3].length;
 
+            eatFoodTime = anim.runtimeAnimatorController.animationClips[3].length;
+
             // Setup state machine for bird behavior
             _stateMachine = new StateMachine(gameObject);
             _stateMachine.AddState(new BirdIdleState(_stateMachine));
