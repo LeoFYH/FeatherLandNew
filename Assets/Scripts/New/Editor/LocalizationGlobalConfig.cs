@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Net;
+using System.IO;
 using Sirenix.OdinInspector;
 using Sirenix.Utilities;
 using TMPro;
@@ -123,19 +125,72 @@ namespace BirdGame.Editor
         private List<LanguageWordItem> words = new List<LanguageWordItem>();
         //private Dictionary<SystemLanguage, LanguageWordItem> words = new Dictionary<SystemLanguage, LanguageWordItem>();
 
-        [LabelText("大语言模型"), ShowIf("@page==Page.翻译设置"), BoxGroup("Setting"),
-         InfoBox("<color=green>✅ Ollama已就绪！模型llama3已安装，翻译功能可用。</color>")]
+        [LabelText("翻译服务"), ShowIf("@page==Page.翻译设置"), BoxGroup("Setting")]
+        public TranslationService translationService = TranslationService.Ollama;
+        
+        [LabelText("ChatGPT API Key"), ShowIf("@translationService==TranslationService.ChatGPT"), BoxGroup("Setting")]
+        public string chatGPTApiKey = "";
+        
+        [LabelText("Ollama模型"), ShowIf("@translationService==TranslationService.Ollama"), BoxGroup("Setting")]
         public string selectModel = "llama3:latest";
+        
+        public enum TranslationService
+        {
+            ChatGPT,
+            Ollama
+        }
 
         private int currentSelectedLanguage = 0;
         private Vector2 scrollPos;
         private bool translating;
         private bool progressing;
 
-        [ShowIf("@page==Page.翻译设置"), BoxGroup("Setting"), Button("Ollama连接测试")]
-        private void OnTestOllamaConnection()
+        [ShowIf("@page==Page.翻译设置"), BoxGroup("Setting"), Button("翻译服务连接测试")]
+        private void OnTestTranslationConnection()
         {
-            TestOllamaConnectionAsync();
+            if (translationService == TranslationService.ChatGPT)
+            {
+                TestChatGPTConnectionAsync();
+            }
+            else
+            {
+                TestOllamaConnectionAsync();
+            }
+        }
+        
+        private void TestChatGPTConnectionAsync()
+        {
+            if (string.IsNullOrEmpty(chatGPTApiKey))
+            {
+                Debug.LogError("❌ ChatGPT API Key 未设置");
+                Debug.LogError("请在设置中输入你的ChatGPT API Key");
+                return;
+            }
+
+            // 验证API Key格式
+            if (!chatGPTApiKey.StartsWith("sk-"))
+            {
+                Debug.LogError("❌ ChatGPT API Key 格式错误");
+                Debug.LogError("API Key 应该以 'sk-' 开头");
+                return;
+            }
+
+            Debug.Log("正在测试ChatGPT连接...");
+            Debug.Log($"API Key 格式验证通过: {chatGPTApiKey.Substring(0, 10)}...");
+            
+            // 简单的连接测试
+            Translate("Hello", SystemLanguage.Chinese, s => 
+            {
+                if (s != "Hello")
+                {
+                    Debug.Log("✅ ChatGPT连接成功！");
+                    Debug.Log($"翻译测试结果: {s}");
+                }
+                else
+                {
+                    Debug.LogError("❌ ChatGPT连接失败");
+                }
+            });
         }
         
         private void TestOllamaConnectionAsync()
@@ -440,11 +495,18 @@ namespace BirdGame.Editor
                 return;
             }
 
-            // 使用异步方法避免阻塞UI
-            EditorApplication.delayCall += () => TranslateAsync(text, language, callback);
+            // 根据选择的翻译服务调用不同的方法
+            if (translationService == TranslationService.ChatGPT)
+            {
+                EditorApplication.delayCall += () => TranslateWithChatGPTAsync(text, language, callback);
+            }
+            else
+            {
+                EditorApplication.delayCall += () => TranslateWithOllamaAsync(text, language, callback);
+            }
         }
         
-        private void TranslateAsync(string text, SystemLanguage language, Action<string> callback)
+        private void TranslateWithOllamaAsync(string text, SystemLanguage language, Action<string> callback)
         {
             string targetLanguage = GetLanguageName(language);
             
@@ -502,6 +564,143 @@ namespace BirdGame.Editor
                 Debug.LogError($"❌ Ollama翻译异常: {e.Message}");
                 callback?.Invoke(text);
             }
+        }
+
+        private void TranslateWithChatGPTAsync(string text, SystemLanguage language, Action<string> callback)
+        {
+            if (string.IsNullOrEmpty(chatGPTApiKey))
+            {
+                Debug.LogError("❌ ChatGPT API Key 未设置");
+                callback?.Invoke(text);
+                return;
+            }
+
+            // 验证API Key格式
+            if (!chatGPTApiKey.StartsWith("sk-"))
+            {
+                Debug.LogError("❌ ChatGPT API Key 格式错误");
+                Debug.LogError("API Key 应该以 'sk-' 开头");
+                callback?.Invoke(text);
+                return;
+            }
+
+            string targetLanguage = GetLanguageName(language);
+            string prompt = $"请将以下文字翻译为{targetLanguage}，只返回翻译结果，不要其他内容：{text}";
+
+            // 手动构建JSON，因为Unity的JsonUtility不支持匿名类型
+            string jsonData = $@"{{
+                ""model"": ""gpt-3.5-turbo"",
+                ""messages"": [
+                    {{
+                        ""role"": ""user"",
+                        ""content"": ""{prompt.Replace("\"", "\\\"")}""
+                    }}
+                ],
+                ""max_tokens"": 1000,
+                ""temperature"": 0.3
+            }}";
+
+            byte[] data = Encoding.UTF8.GetBytes(jsonData);
+
+            try
+            {
+                var request = (HttpWebRequest)WebRequest.Create("https://api.openai.com/v1/chat/completions");
+                request.Method = "POST";
+                request.ContentType = "application/json";
+                request.Headers.Add("Authorization", $"Bearer {chatGPTApiKey}");
+                request.ContentLength = data.Length;
+                request.Timeout = 30000; // 30秒超时
+
+                Debug.Log($"[ChatGPT请求] 发送翻译请求: {text} -> {targetLanguage}");
+
+                using (var stream = request.GetRequestStream())
+                {
+                    stream.Write(data, 0, data.Length);
+                }
+
+                using (var response = (HttpWebResponse)request.GetResponse())
+                using (var reader = new StreamReader(response.GetResponseStream()))
+                {
+                    string responseText = reader.ReadToEnd();
+                    Debug.Log($"[ChatGPT响应] {responseText}");
+                    
+                    var responseData = JsonUtility.FromJson<ChatGPTResponse>(responseText);
+                    
+                    if (responseData != null && responseData.choices != null && responseData.choices.Length > 0)
+                    {
+                        string translation = responseData.choices[0].message.content.Trim();
+                        Debug.Log($"[ChatGPT翻译] {translation}");
+                        callback?.Invoke(CleanTranslation(translation));
+                    }
+                    else
+                    {
+                        Debug.LogError("❌ ChatGPT翻译失败：响应格式错误");
+                        Debug.LogError($"响应内容: {responseText}");
+                        callback?.Invoke(text);
+                    }
+                }
+            }
+            catch (WebException e)
+            {
+                Debug.LogError($"❌ ChatGPT翻译网络错误: {e.Message}");
+                if (e.Response != null)
+                {
+                    using (var reader = new StreamReader(e.Response.GetResponseStream()))
+                    {
+                        string errorResponse = reader.ReadToEnd();
+                        Debug.LogError($"错误详情: {errorResponse}");
+                        
+                        // 检查是否是配额不足错误
+                        if (errorResponse.Contains("insufficient_quota") || errorResponse.Contains("quota"))
+                        {
+                            Debug.LogError("💡 解决方案：");
+                            Debug.LogError("1. 访问 https://platform.openai.com/account/billing 检查余额");
+                            Debug.LogError("2. 添加支付方式充值");
+                            Debug.LogError("3. 或切换到Ollama翻译服务");
+                        }
+                    }
+                }
+                callback?.Invoke(text);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"❌ ChatGPT翻译异常: {e.Message}");
+                callback?.Invoke(text);
+            }
+        }
+
+        [System.Serializable]
+        private class ChatGPTResponse
+        {
+            public Choice[] choices;
+            public string id;
+            public string object_type;
+            public long created;
+            public string model;
+            public Usage usage;
+        }
+
+        [System.Serializable]
+        private class Choice
+        {
+            public Message message;
+            public string finish_reason;
+            public int index;
+        }
+
+        [System.Serializable]
+        private class Message
+        {
+            public string role;
+            public string content;
+        }
+
+        [System.Serializable]
+        private class Usage
+        {
+            public int prompt_tokens;
+            public int completion_tokens;
+            public int total_tokens;
         }
 
         private string CleanTranslation(string translation)
