@@ -147,7 +147,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverScale: 1.3
   animTime: 0.1
-  hoverText: shop
+  localizationKey: SHOPKEY
+  useLocalization: 1
   textOffset: {x: 0, y: 150}
   showDelay: 0.5
   showTooltip: 0
@@ -157,7 +158,6 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
-  customFont: {fileID: 11400000, guid: f7ffd71761713684a94dc40f5e30b830, type: 2}
 --- !u!1 &540670021987066778
 GameObject:
   m_ObjectHideFlags: 0
@@ -293,7 +293,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverScale: 1.3
   animTime: 0.1
-  hoverText: book
+  localizationKey: BIRDBOOKKEY
+  useLocalization: 1
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 0
@@ -303,7 +304,6 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
-  customFont: {fileID: 11400000, guid: f7ffd71761713684a94dc40f5e30b830, type: 2}
 --- !u!1 &1230584317835759892
 GameObject:
   m_ObjectHideFlags: 0
@@ -527,7 +527,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverScale: 1.3
   animTime: 0.1
-  hoverText: bird book
+  localizationKey: BOOKKEY
+  useLocalization: 1
   textOffset: {x: 0, y: 150}
   showDelay: 0.5
   showTooltip: 0
@@ -537,7 +538,6 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
-  customFont: {fileID: 11400000, guid: f7ffd71761713684a94dc40f5e30b830, type: 2}
 --- !u!1 &1488027855364964313
 GameObject:
   m_ObjectHideFlags: 0
@@ -760,7 +760,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverScale: 1.3
   animTime: 0.1
-  hoverText: Radio
+  localizationKey: RADIOKEY
+  useLocalization: 1
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 0
@@ -770,7 +771,6 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
-  customFont: {fileID: 11400000, guid: f7ffd71761713684a94dc40f5e30b830, type: 2}
 --- !u!1 &4697057890520605378
 GameObject:
   m_ObjectHideFlags: 0
@@ -918,7 +918,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverScale: 1.3
   animTime: 0.1
-  hoverText: Map
+  localizationKey: MAPKEY
+  useLocalization: 1
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 0
@@ -928,7 +929,6 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
-  customFont: {fileID: 11400000, guid: f7ffd71761713684a94dc40f5e30b830, type: 2}
 --- !u!1 &5285233634084931261
 GameObject:
   m_ObjectHideFlags: 0
@@ -1287,7 +1287,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverScale: 1.3
   animTime: 0.1
-  hoverText: Setting
+  localizationKey: SETTINGKEY
+  useLocalization: 1
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 0
@@ -1297,7 +1298,6 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
-  customFont: {fileID: 11400000, guid: f7ffd71761713684a94dc40f5e30b830, type: 2}
 --- !u!1 &6360358924382749110
 GameObject:
   m_ObjectHideFlags: 0
@@ -1716,7 +1716,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverScale: 1.1
   animTime: 0.1
-  hoverText: Weather
+  localizationKey: 
+  useLocalization: 0
   textOffset: {x: 0, y: -40}
   showDelay: 0.5
   showTooltip: 1
@@ -1726,7 +1727,6 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
-  customFont: {fileID: 11400000, guid: f7ffd71761713684a94dc40f5e30b830, type: 2}
 --- !u!1 &6576888212394274134
 GameObject:
   m_ObjectHideFlags: 0
@@ -2085,7 +2085,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverScale: 1.3
   animTime: 0.1
-  hoverText: Notebook
+  localizationKey: NOTEBOOKKEY
+  useLocalization: 1
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 0
@@ -2095,7 +2096,6 @@ MonoBehaviour:
   showBackground: 0
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
-  customFont: {fileID: 11400000, guid: f7ffd71761713684a94dc40f5e30b830, type: 2}
 --- !u!1 &7647745248032650129
 GameObject:
   m_ObjectHideFlags: 0
@@ -2468,7 +2468,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverScale: 1.3
   animTime: 0.1
-  hoverText: Timer
+  localizationKey: TIMERKEY
+  useLocalization: 1
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 0
@@ -2478,7 +2479,6 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
-  customFont: {fileID: 11400000, guid: f7ffd71761713684a94dc40f5e30b830, type: 2}
 --- !u!1 &9094524295001125479
 GameObject:
   m_ObjectHideFlags: 0

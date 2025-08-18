@@ -2,6 +2,10 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
+#if UNITY_EDITOR
+using UnityEditor;
+using Sirenix.OdinInspector;
+#endif
 
 public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -9,9 +13,44 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
     public float hoverScale = 1.1f;      // 悬停时的缩放倍数
     public float animTime = 0.1f;        // 动画时长
 
-    [Header("悬浮文字设置")]
-    [TextArea(2, 4)]
-    public string hoverText = "buttonHint";  // 悬浮时显示的文字
+    [Header("本地化设置")]
+    [LabelText("本地化Key")]
+    public string localizationKey = "";  // 本地化key
+    [LabelText("使用本地化")]
+    public bool useLocalization = true;  // 是否使用本地化，默认开启
+    
+#if UNITY_EDITOR
+    [BoxGroup("本地化操作"), Button("添加Key到本地化配置"), GUIColor("buttonColor"), ShowIf("useLocalization")]
+    private void OnAddLocalizationKey()
+    {
+        if (string.IsNullOrEmpty(localizationKey))
+        {
+            EditorUtility.DisplayDialog("警告", "本地化Key不能为空", "ok");
+            return;
+        }
+
+        var config = AssetDatabase.LoadAssetAtPath<BirdGame.LocalizationConfig>("Assets/Prefabs/Config/LocalizationConfig.asset");
+        if (config == null)
+        {
+            EditorUtility.DisplayDialog("错误", "未找到本地化配置文件", "ok");
+            return;
+        }
+        
+        foreach (var language in config.languageDic)
+        {
+            if (language.Value.words.ContainsKey(localizationKey))
+            {
+                EditorUtility.DisplayDialog("警告", $"本地化配置中已经存在key: {localizationKey}", "ok");
+                return;
+            }
+            language.Value.words.Add(localizationKey, new BirdGame.Pattern());
+        }
+        EditorUtility.SetDirty(config);
+        AssetDatabase.SaveAssets();
+        EditorUtility.DisplayDialog("提示", $"key[{localizationKey}]已添加,请在本地化配置中配置语言翻译！", "ok");
+    }
+#endif
+    
     public Vector2 textOffset = new Vector2(0, 50);  // 文字位置偏移
     public float showDelay = 0.5f;  // 显示延迟时间
     public bool showTooltip = true;  // 是否显示悬浮提示
@@ -25,9 +64,6 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
     public bool showBackground = true;
     public Color backgroundColor = new Color(0, 0, 0, 0.8f);
     public Vector2 backgroundPadding = new Vector2(10, 5);
-    
-    [Header("字体设置")]
-    public TMP_FontAsset customFont;  // 自定义字体资源
 
     private Vector3 originalScale;
     private GameObject tooltipObject;
@@ -39,6 +75,9 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
     
     // 鼠标检测
     private bool mouseWasOverButton = false;
+    
+    // 本地化系统引用
+    private BirdGame.ILocalizationSystem localizationSystem;
 
     void Awake()
     {
@@ -49,9 +88,22 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         //测试
         showTooltip = true;
-        // hoverText = this.gameObject.name; // 移除自动读取GameObject名称，使用Inspector中设置的hoverText
         showBackground = false;
         showDelay = 0f;
+
+        // 获取本地化系统
+        if (useLocalization)
+        {
+            // 尝试通过QFramework获取本地化系统
+            try
+            {
+                localizationSystem = BirdGame.GameApp.Interface.GetSystem<BirdGame.ILocalizationSystem>();
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning($"无法获取本地化系统: {e.Message}");
+            }
+        }
 
         if (showTooltip)
         {
@@ -104,6 +156,7 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
             {
                 tooltipObject.SetActive(true);
                 UpdateTooltipPosition();
+                UpdateTooltipText();
                //Debug.Log("显示悬浮提示: " + hoverText);
             }
         }
@@ -111,6 +164,48 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
         {
             // 鼠标离开时隐藏tooltip
             tooltipObject.SetActive(false);
+        }
+    }
+    
+    /// <summary>
+    /// 更新提示文本（支持本地化）
+    /// </summary>
+    private void UpdateTooltipText()
+    {
+        if (tooltipText == null) return;
+        
+        string displayText = "";
+        
+        // 如果启用本地化且有本地化系统
+        if (useLocalization && localizationSystem != null && !string.IsNullOrEmpty(localizationKey))
+        {
+            string localizedText = localizationSystem.GetString(localizationKey);
+            if (!string.IsNullOrEmpty(localizedText))
+            {
+                displayText = localizedText;
+            }
+            else
+            {
+                Debug.LogWarning($"本地化key[{localizationKey}]未找到对应翻译！");
+                displayText = $"[{localizationKey}]";
+            }
+        }
+        else
+        {
+            Debug.LogWarning("本地化未启用或本地化Key为空！");
+            displayText = "[未配置]";
+        }
+        
+        tooltipText.text = displayText;
+        
+        // 使用本地化系统的字体
+        if (localizationSystem != null)
+        {
+            TMP_FontAsset fontAsset = localizationSystem.GetFontAsset();
+            if (fontAsset != null)
+            {
+                tooltipText.font = fontAsset;
+            }
         }
     }
     
@@ -229,21 +324,20 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
         textObject.transform.SetParent(tooltipObject.transform, false);
         
         tooltipText = textObject.AddComponent<TextMeshProUGUI>();
-        tooltipText.text = hoverText;
+        tooltipText.text = "";
         tooltipText.color = textColor;
         tooltipText.fontSize = fontSize;
         tooltipText.fontStyle = fontStyle;
         tooltipText.alignment = TextAlignmentOptions.Center;
         
-        // 设置字体
-        if (customFont != null)
+        // 使用本地化系统的字体
+        if (localizationSystem != null)
         {
-            tooltipText.font = customFont;
-            
-        }
-        else
-        {
-            
+            TMP_FontAsset fontAsset = localizationSystem.GetFontAsset();
+            if (fontAsset != null)
+            {
+                tooltipText.font = fontAsset;
+            }
         }
         
         RectTransform textRect = textObject.GetComponent<RectTransform>();
@@ -299,14 +393,31 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
     }
     
     /// <summary>
-    /// 动态更新提示文字
+    /// 动态更新本地化Key
     /// </summary>
-    public void UpdateTooltipText(string newText)
+    public void UpdateLocalizationKey(string newKey)
     {
-        hoverText = newText;
+        localizationKey = newKey;
+        useLocalization = true;
         if (tooltipText != null)
         {
-            tooltipText.text = newText;
+            UpdateTooltipText();
         }
     }
+    
+    /// <summary>
+    /// 切换本地化开关
+    /// </summary>
+    public void ToggleLocalization(bool enable)
+    {
+        useLocalization = enable;
+        if (tooltipText != null)
+        {
+            UpdateTooltipText();
+        }
+    }
+    
+#if UNITY_EDITOR
+    private Color32 buttonColor = Color.green;
+#endif
 }
