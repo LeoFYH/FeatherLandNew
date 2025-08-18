@@ -21,6 +21,7 @@ namespace BirdGame
         void CreateFixedDecoration(int decorationId);
         void DestroyDecoration(int decorationId, GameObject decorationObject);
         void PlaceDecoration();
+        bool IsPlacingDecoration();
     }
 
     public class GameSystem : AbstractSystem, IGameSystem
@@ -119,6 +120,10 @@ namespace BirdGame
                 
                 // 设置位置
                 food.transform.position = finalPosition;
+                
+                // 添加随机旋转
+                float randomRotation = Random.Range(0f, 360f);
+                food.transform.rotation = Quaternion.Euler(0f, 0f, randomRotation);
             
                 // 如果有Rigidbody2D，确保它不会移动
                 Rigidbody2D rb = food.GetComponent<Rigidbody2D>();
@@ -452,6 +457,11 @@ namespace BirdGame
                 currentPlacingDecoration = null;
                 currentPlacingDecorationId = -1;
             }
+        }
+
+        public bool IsPlacingDecoration()
+        {
+            return currentPlacingDecoration != null;
         }
 
         private Vector3 GetDefaultDecorationPosition()

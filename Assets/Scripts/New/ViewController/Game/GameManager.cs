@@ -22,11 +22,37 @@ namespace BirdGame
         {
             if (EventSystem.current.IsPointerOverGameObject()) return;
 
+            // 检查是否正在放置装饰物
+            if (this.GetSystem<IGameSystem>().IsPlacingDecoration()) return;
+
+            // 检查是否点击到装饰物
+            if (IsClickingOnDecoration()) return;
+
             // 取消撒食物冷却，每次点击都能撒
             if (Input.GetMouseButtonDown(0))
             {
                 this.GetSystem<IGameSystem>().CreateFood();
             }
+        }
+
+        private bool IsClickingOnDecoration()
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                RaycastHit2D[] hits = Physics2D.RaycastAll(mousePosition, Vector2.zero);
+                
+                foreach (var hit in hits)
+                {
+                    // 检查是否点击到装饰物（通过检查是否有DecorationClickHandler或DecorationDrag组件）
+                    if (hit.collider.GetComponent<DecorationClickHandler>() != null || 
+                        hit.collider.GetComponent<DecorationDrag>() != null)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 }
