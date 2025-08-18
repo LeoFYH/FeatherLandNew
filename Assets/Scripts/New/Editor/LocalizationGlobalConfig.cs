@@ -28,19 +28,92 @@ namespace BirdGame.Editor
         {
             if (config != null)
                 return;
-            config = AssetDatabase.LoadAssetAtPath<LocalizationConfig>(
-                "Assets/Prefabs/Config/LocalizationConfig.asset");
-            if (config == null)
+                
+            try
             {
-                var conf = ScriptableObject.CreateInstance<LocalizationConfig>();
-                AssetDatabase.CreateAsset(conf, "Assets/Prefabs/Config/LocalizationConfig.asset");
-                AssetDatabase.SaveAssets();
-                AssetDatabase.Refresh();
                 config = AssetDatabase.LoadAssetAtPath<LocalizationConfig>(
                     "Assets/Prefabs/Config/LocalizationConfig.asset");
+                if (config == null)
+                {
+                    var conf = ScriptableObject.CreateInstance<LocalizationConfig>();
+                    AssetDatabase.CreateAsset(conf, "Assets/Prefabs/Config/LocalizationConfig.asset");
+                    AssetDatabase.SaveAssets();
+                    AssetDatabase.Refresh();
+                    config = AssetDatabase.LoadAssetAtPath<LocalizationConfig>(
+                        "Assets/Prefabs/Config/LocalizationConfig.asset");
+                }
+                
+                if (config != null)
+                {
+                    LoadWords();
+                }
+                
+                // 延迟检查Ollama状态，避免阻塞UI
+                EditorApplication.delayCall += () =>
+                {
+                    CheckOllamaStatusAsync();
+                };
             }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"初始化配置失败: {e.Message}");
+            }
+        }
+        
+        private void CheckOllamaStatusAsync()
+        {
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = "ollama",
+                Arguments = "list",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
             
-            LoadWords();
+            try
+            {
+                using (var process = Process.Start(startInfo))
+                {
+                    if (process != null)
+                    {
+                        // 设置超时时间为5秒
+                        if (!process.WaitForExit(5000))
+                        {
+                            process.Kill();
+                            Debug.LogWarning("⚠️ Ollama未运行，翻译功能将不可用");
+                            Debug.LogWarning("启动Ollama: 在终端运行 'ollama serve'");
+                            return;
+                        }
+                        
+                        string output = process.StandardOutput.ReadToEnd();
+                        string error = process.StandardError.ReadToEnd();
+                        
+                        if (process.ExitCode == 0)
+                        {
+                            if (output.Contains(selectModel))
+                            {
+                                Debug.Log($"✅ Ollama已就绪，模型 '{selectModel}' 可用");
+                            }
+                            else
+                            {
+                                Debug.LogWarning($"⚠️ Ollama已运行，但模型 '{selectModel}' 未安装");
+                                Debug.LogWarning($"请运行: ollama pull {selectModel}");
+                            }
+                        }
+                        else
+                        {
+                            Debug.LogWarning("⚠️ Ollama未运行，翻译功能将不可用");
+                            Debug.LogWarning("启动Ollama: 在终端运行 'ollama serve'");
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                Debug.LogWarning("⚠️ 无法检测Ollama状态，请确保Ollama已正确安装");
+            }
         }
 
         [LabelText("语言"), ShowIf("@page==Page.语言设置")]
@@ -51,8 +124,8 @@ namespace BirdGame.Editor
         //private Dictionary<SystemLanguage, LanguageWordItem> words = new Dictionary<SystemLanguage, LanguageWordItem>();
 
         [LabelText("大语言模型"), ShowIf("@page==Page.翻译设置"), BoxGroup("Setting"),
-         InfoBox("<color=green>若电脑没有安装Ollama，无法使用翻译功能！如果使用请在电脑安装ollama软件，并且下载对应的大语言模型。</color>")]
-        public string selectModel = "llama3";
+         InfoBox("<color=green>✅ Ollama已就绪！模型llama3已安装，翻译功能可用。</color>")]
+        public string selectModel = "llama3:latest";
 
         private int currentSelectedLanguage = 0;
         private Vector2 scrollPos;
@@ -62,7 +135,76 @@ namespace BirdGame.Editor
         [ShowIf("@page==Page.翻译设置"), BoxGroup("Setting"), Button("Ollama连接测试")]
         private void OnTestOllamaConnection()
         {
-            Translate("你好", SystemLanguage.English, s => Debug.Log($"测试翻译结果: {s}"));
+            TestOllamaConnectionAsync();
+        }
+        
+        private void TestOllamaConnectionAsync()
+        {
+            Debug.Log("正在测试Ollama连接...");
+            
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = "ollama",
+                Arguments = "list",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+            
+            try
+            {
+                using (var process = Process.Start(startInfo))
+                {
+                    if (process == null)
+                    {
+                        Debug.LogError("❌ 无法启动Ollama进程");
+                        return;
+                    }
+                    
+                    // 设置超时时间为10秒
+                    if (!process.WaitForExit(10000))
+                    {
+                        process.Kill();
+                        Debug.LogError("❌ Ollama连接超时");
+                        Debug.LogError("请确保Ollama已安装并正在运行");
+                        Debug.LogError("启动Ollama: 在终端运行 'ollama serve'");
+                        return;
+                    }
+                    
+                    string output = process.StandardOutput.ReadToEnd();
+                    string error = process.StandardError.ReadToEnd();
+                    
+                    if (process.ExitCode == 0)
+                    {
+                        Debug.Log("✅ Ollama连接成功！");
+                        Debug.Log($"已安装的模型: {output}");
+                        
+                        // 检查指定模型是否存在
+                        if (output.Contains(selectModel))
+                        {
+                            Debug.Log($"✅ 模型 '{selectModel}' 已安装");
+                            // 进行翻译测试
+                            Translate("你好", SystemLanguage.English, s => Debug.Log($"翻译测试结果: {s}"));
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"⚠️ 模型 '{selectModel}' 未安装，请运行: ollama pull {selectModel}");
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogError($"❌ Ollama连接失败: {error}");
+                        Debug.LogError("请确保Ollama已安装并正在运行");
+                        Debug.LogError("启动Ollama: 在终端运行 'ollama serve'");
+                    }
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"❌ Ollama连接异常: {e.Message}");
+                Debug.LogError("请确保Ollama已正确安装");
+            }
         }
 
         [OnInspectorGUI]
@@ -146,12 +288,55 @@ namespace BirdGame.Editor
                         {
                             if (languages[currentSelectedLanguage].Language == SystemLanguage.English)
                             {
+                                // 英文时，key和value保持一致
                                 words[currentSelectedLanguage].values[i] = wordKeys[i];
                             }
                             else
                             {
+                                // 其他语言时，优先使用英文内容作为翻译源
                                 int index = i;
-                                Translate(wordKeys[i], languages[currentSelectedLanguage].Language, s => { words[currentSelectedLanguage].values[index] = s; });
+                                string textToTranslate = "";
+                                
+                                // 首先查找英文语言的内容
+                                int englishIndex = -1;
+                                for (int j = 0; j < languages.Count; j++)
+                                {
+                                    if (languages[j].Language == SystemLanguage.English)
+                                    {
+                                        englishIndex = j;
+                                        break;
+                                    }
+                                }
+                                
+                                // 如果找到英文语言且有内容，使用英文内容
+                                if (englishIndex >= 0 && englishIndex < words.Count && 
+                                    i < words[englishIndex].values.Count && 
+                                    !string.IsNullOrEmpty(words[englishIndex].values[i]))
+                                {
+                                    textToTranslate = words[englishIndex].values[i];
+                                    Debug.Log($"使用英文内容作为翻译源: {textToTranslate}");
+                                }
+                                // 否则使用当前语言的内容
+                                else if (!string.IsNullOrEmpty(words[currentSelectedLanguage].values[i]))
+                                {
+                                    textToTranslate = words[currentSelectedLanguage].values[i];
+                                    Debug.Log($"使用当前语言内容作为翻译源: {textToTranslate}");
+                                }
+                                // 最后才使用key作为翻译源
+                                else if (!string.IsNullOrEmpty(wordKeys[i]))
+                                {
+                                    textToTranslate = wordKeys[i];
+                                    Debug.Log($"使用key作为翻译源: {textToTranslate}");
+                                }
+                                
+                                // 如果所有都为空，提示用户输入
+                                if (string.IsNullOrEmpty(textToTranslate))
+                                {
+                                    Debug.LogWarning($"Key '{wordKeys[i]}' 没有可翻译的内容，请先在英文语言下输入文本");
+                                    return;
+                                }
+                                
+                                Translate(textToTranslate, languages[currentSelectedLanguage].Language, s => { words[currentSelectedLanguage].values[index] = s; });
                             }
                         }
 
@@ -192,25 +377,39 @@ namespace BirdGame.Editor
 
         private void LoadWords()
         {
+            if (config == null || config.languageDic == null)
+            {
+                Debug.LogWarning("配置对象为空，无法加载词汇");
+                return;
+            }
+            
             int index = 0;
             wordKeys.Clear();
             foreach (var language in config.languageDic)
             {
-                words[index].spValues.Clear();
-                words[index].keys.Clear();
-                words[index].values.Clear();
-                words[index].isImageFlags.Clear();
-                words[index].fontAsset = language.Value.fontAsset;
-                foreach (var word in language.Value.words)
+                if (index >= words.Count)
                 {
-                    if (index == 0)
+                    words.Add(new LanguageWordItem(wordKeys));
+                }
+                
+                if (words[index] != null)
+                {
+                    words[index].spValues.Clear();
+                    words[index].keys.Clear();
+                    words[index].values.Clear();
+                    words[index].isImageFlags.Clear();
+                    words[index].fontAsset = language.Value.fontAsset;
+                    foreach (var word in language.Value.words)
                     {
-                        wordKeys.Add(word.Key);
+                        if (index == 0)
+                        {
+                            wordKeys.Add(word.Key);
+                        }
+                        words[index].spValues.Add(word.Value.sprite);
+                        words[index].values.Add(word.Value.text);
+                        words[index].keys.Add(word.Key);
+                        words[index].isImageFlags.Add(word.Value.Type == Pattern.PatternType.Text);
                     }
-                    words[index].spValues.Add(word.Value.sprite);
-                    words[index].values.Add(word.Value.text);
-                    words[index].keys.Add(word.Key);
-                    words[index].isImageFlags.Add(word.Value.Type == Pattern.PatternType.Text);
                 }
                 index++;
             }
@@ -241,11 +440,18 @@ namespace BirdGame.Editor
                 return;
             }
 
+            // 使用异步方法避免阻塞UI
+            EditorApplication.delayCall += () => TranslateAsync(text, language, callback);
+        }
+        
+        private void TranslateAsync(string text, SystemLanguage language, Action<string> callback)
+        {
             string targetLanguage = GetLanguageName(language);
+            
             var startInfo = new ProcessStartInfo
             {
                 FileName = "ollama",
-                Arguments =  $"run {selectModel} \"请翻译一段文字为{targetLanguage}，并且只回复我结果，文字：{text}\"",
+                Arguments = $"run {selectModel} \"请翻译一段文字为{targetLanguage}，并且只回复我结果，文字：{text}\"",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
@@ -254,15 +460,47 @@ namespace BirdGame.Editor
                 StandardErrorEncoding = Encoding.UTF8
             };
 
-            using (var process = Process.Start(startInfo))
+            try
             {
-                string output = process.StandardOutput.ReadToEnd();
-                string error = process.StandardError.ReadToEnd();
-                process.WaitForExit();
+                using (var process = Process.Start(startInfo))
+                {
+                    if (process == null)
+                    {
+                        Debug.LogError("❌ 无法启动Ollama进程");
+                        callback?.Invoke(text);
+                        return;
+                    }
+                    
+                    // 设置超时时间为30秒
+                    if (!process.WaitForExit(30000))
+                    {
+                        process.Kill();
+                        Debug.LogError("❌ Ollama翻译超时");
+                        Debug.LogError("请检查Ollama是否正在运行，或模型是否正确安装");
+                        callback?.Invoke(text);
+                        return;
+                    }
+                    
+                    string output = process.StandardOutput.ReadToEnd();
+                    string error = process.StandardError.ReadToEnd();
 
-                Debug.Log($"[输出] {output}");
-                
-                callback?.Invoke(CleanTranslation(output.Trim())); // 不要返回空内容
+                    if (process.ExitCode == 0 && !string.IsNullOrEmpty(output))
+                    {
+                        Debug.Log($"[Ollama翻译] {output}");
+                        callback?.Invoke(CleanTranslation(output.Trim()));
+                    }
+                    else
+                    {
+                        Debug.LogError($"❌ Ollama翻译失败: {error}");
+                        Debug.LogError("请检查Ollama是否正在运行，或模型是否正确安装");
+                        callback?.Invoke(text);
+                    }
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"❌ Ollama翻译异常: {e.Message}");
+                callback?.Invoke(text);
             }
         }
 
@@ -307,13 +545,22 @@ namespace BirdGame.Editor
 
         private void Save()
         {
-            EditorUtility.SetDirty(this);
+            if (this != null)
+            {
+                EditorUtility.SetDirty(this);
+            }
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
 
         private void SaveToGameConfig()
         {
+            if (config == null)
+            {
+                Debug.LogError("配置对象为空，无法保存");
+                return;
+            }
+            
             config.languageDic.Clear();
             int count = words.Count;
             for (int i = 0; i < count; i++)
@@ -332,7 +579,10 @@ namespace BirdGame.Editor
                 }
             }
             
-            EditorUtility.SetDirty(config);
+            if (config != null)
+            {
+                EditorUtility.SetDirty(config);
+            }
             Save();
         }
     }
