@@ -102,6 +102,17 @@ namespace BirdGame
             originalPos = transform.position;
             anim = GetComponentInChildren<Animator>();
             sr = GetComponentInChildren<SpriteRenderer>();
+            
+            // 动态获取吃饭动画的时长
+            if (anim != null && anim.runtimeAnimatorController != null && anim.runtimeAnimatorController.animationClips.Length > 3)
+            {
+                eatFoodTime = anim.runtimeAnimatorController.animationClips[3].length;
+                Debug.Log($"动态设置吃饭动画时长: {eatFoodTime}秒");
+            }
+            else
+            {
+                Debug.LogWarning("无法获取吃饭动画时长，使用默认值1秒");
+            }
 
             // Setup state machine for bird behavior
             _stateMachine = new StateMachine(gameObject);
