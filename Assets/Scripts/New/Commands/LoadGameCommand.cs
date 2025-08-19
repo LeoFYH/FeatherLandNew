@@ -1,4 +1,5 @@
 ﻿using QFramework;
+using UnityEngine;
 
 namespace BirdGame
 {
@@ -45,6 +46,10 @@ namespace BirdGame
         private void OnShopConfigComplete(ShopConfig config)
         {
             this.GetModel<IConfigModel>().ShopConfig = config;
+            
+            // 初始化默认食物为第一个食物
+            InitializeDefaultFood();
+            
             this.GetSystem<IAssetSystem>().LoadAssetAsync<BirdConfig>("BirdConfig", OnBirdConfigComplete,
                 progress =>
                 {
@@ -65,6 +70,14 @@ namespace BirdGame
         private void OnLocalizationConfigComplete(LocalizationConfig config)
         {
             this.GetModel<IConfigModel>().LocalizationConfig = config;
+            
+            // 调试：检查加载的语言配置
+            Debug.Log($"LocalizationConfig加载完成，包含 {config.languageDic.Count} 种语言:");
+            foreach (var language in config.languageDic)
+            {
+                Debug.Log($"  - {language.Key}: {language.Value.words.Count} 个翻译条目");
+            }
+            
             this.GetSystem<ISceneSystem>().LoadScene(0, progress =>
             {
                 OnProgress("Loading Scene", (progress + 5f) / 6f);
@@ -72,6 +85,39 @@ namespace BirdGame
             {
                 this.GetSystem<IUISystem>().ShowPanel(UIPanel.MenuPanel);
             });
+        }
+
+        /// <summary>
+        /// 初始化默认食物为第一个食物
+        /// </summary>
+        private void InitializeDefaultFood()
+        {
+            var gameModel = this.GetModel<IGameModel>();
+            var configModel = this.GetModel<IConfigModel>();
+            
+            // 查找食物工具配置
+            for (int i = 0; i < configModel.ShopConfig.tools.Length; i++)
+            {
+                var toolItem = configModel.ShopConfig.tools[i];
+                if (toolItem.name.ToLower() == "food")
+                {
+                    // 如果食物数组不为空，设置第一个为默认食物
+                    if (toolItem.selections != null && toolItem.selections.Length > 0)
+                    {
+                        var firstFood = toolItem.selections[0];
+                        gameModel.CurrentFoodType = firstFood.selectionName;
+                        
+                        // 将第一个食物添加到已购买列表（作为默认食物）
+                        if (!gameModel.PurchasedFoods.Contains(firstFood.selectionName))
+                        {
+                            gameModel.PurchasedFoods.Add(firstFood.selectionName);
+                        }
+                        
+                        Debug.Log($"默认食物已设置为: {firstFood.selectionName}");
+                    }
+                    break;
+                }
+            }
         }
     }
 }

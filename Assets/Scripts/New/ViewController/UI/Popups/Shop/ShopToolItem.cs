@@ -118,7 +118,7 @@ namespace BirdGame
             // 检查是否已经购买过这个食物
             bool isPurchased = gameModel.PurchasedFoods.Contains(selectedTool.selectionName);
             
-            Debug.Log($"更新按钮状态: {selectedTool.selectionName}, 已购买: {isPurchased}");
+            //Debug.Log($"更新按钮状态: {selectedTool.selectionName}, 已购买: {isPurchased}");
             
             // 价格文本的显示/隐藏逻辑保持不变
             if (priceText != null)

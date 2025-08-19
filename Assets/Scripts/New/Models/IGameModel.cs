@@ -36,7 +36,7 @@ namespace BirdGame
         public Dictionary<int, BindableProperty<int>> SelectedToolDic { get; } =
             new Dictionary<int, BindableProperty<int>>();
 
-        public string CurrentFoodType { get; set; } = "default";
+        public string CurrentFoodType { get; set; } = "";
         public HashSet<string> PurchasedFoods { get; } = new HashSet<string>();
 
         public Coroutine StopWatchCoroutine { get; set; }

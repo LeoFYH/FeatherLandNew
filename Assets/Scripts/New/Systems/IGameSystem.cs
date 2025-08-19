@@ -64,6 +64,39 @@ namespace BirdGame
             }
         }
 
+        /// <summary>
+        /// 初始化默认食物为第一个食物
+        /// </summary>
+        private void InitializeDefaultFood()
+        {
+            var gameModel = this.GetModel<IGameModel>();
+            var configModel = this.GetModel<IConfigModel>();
+            
+            // 查找食物工具配置
+            for (int i = 0; i < configModel.ShopConfig.tools.Length; i++)
+            {
+                var toolItem = configModel.ShopConfig.tools[i];
+                if (toolItem.name.ToLower() == "food")
+                {
+                    // 如果食物数组不为空，设置第一个为默认食物
+                    if (toolItem.selections != null && toolItem.selections.Length > 0)
+                    {
+                        var firstFood = toolItem.selections[0];
+                        gameModel.CurrentFoodType = firstFood.selectionName;
+                        
+                        // 将第一个食物添加到已购买列表（作为默认食物）
+                        if (!gameModel.PurchasedFoods.Contains(firstFood.selectionName))
+                        {
+                            gameModel.PurchasedFoods.Add(firstFood.selectionName);
+                        }
+                        
+                        Debug.Log($"默认食物已设置为: {firstFood.selectionName}");
+                    }
+                    break;
+                }
+            }
+        }
+
         public void CreateNum(string s, Vector3 pos)
         {
             GameObject go = GameObject.Instantiate(numPrefab);
