@@ -87,18 +87,36 @@ namespace BirdGame
             }
             else if (this.GetModel<IBirdModel>().FlyPositions.Count > 0)
             {
-                int index = Random.Range(0, 3);
-                if (index == 0)
+                // 检查是否能飞行等待
+                if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex).canFlyWait)
                 {
-                    currMachine.ChangeState<BirdRunState>();
-                }
-                else if (index == 1)
-                {
-                    currMachine.ChangeState<BirdFlyState>();
+                    // 如果不能飞行等待，只进行远处飞行
+                    int index = Random.Range(0, 2);
+                    if (index == 0)
+                    {
+                        currMachine.ChangeState<BirdRunState>();
+                    }
+                    else
+                    {
+                        currMachine.ChangeState<BirdFlyHorizontalState>();
+                    }
                 }
                 else
                 {
-                    currMachine.ChangeState<BirdFlyHorizontalState>();
+                    // 如果可以飞行等待，正常选择飞行方式
+                    int index = Random.Range(0, 3);
+                    if (index == 0)
+                    {
+                        currMachine.ChangeState<BirdRunState>();
+                    }
+                    else if (index == 1)
+                    {
+                        currMachine.ChangeState<BirdFlyState>();
+                    }
+                    else
+                    {
+                        currMachine.ChangeState<BirdFlyHorizontalState>();
+                    }
                 }
             }
             else //基本不会触发

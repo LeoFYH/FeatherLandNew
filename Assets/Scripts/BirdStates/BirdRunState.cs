@@ -147,27 +147,45 @@ namespace BirdGame
                 return;
             }
 
-            int random = Random.Range(0, 2);
-            if (random == 0)
+            // 检查是否能飞行等待
+            if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex).canFlyWait)
             {
-                currMachine.ChangeState<BirdIdleState>();
-            }
-            else if (random == 1)
-            {
-                if (this.GetModel<IBirdModel>().FlyPositions.Count == 0)
+                // 如果不能飞行等待，只进行远处飞行
+                int random = Random.Range(0, 2);
+                if (random == 0)
                 {
-                    currMachine.ChangeState<BirdFlyState>();
-                    return;
-                }
-
-                int index = Random.Range(0, 2);
-                if (index == 0)
-                {
-                    currMachine.ChangeState<BirdFlyState>();
+                    currMachine.ChangeState<BirdIdleState>();
                 }
                 else
                 {
-                    currMachine.ChangeState<BirdFlyState>();
+                    currMachine.ChangeState<BirdFlyHorizontalState>();
+                }
+            }
+            else
+            {
+                // 如果可以飞行等待，正常选择飞行方式
+                int random = Random.Range(0, 2);
+                if (random == 0)
+                {
+                    currMachine.ChangeState<BirdIdleState>();
+                }
+                else if (random == 1)
+                {
+                    if (this.GetModel<IBirdModel>().FlyPositions.Count == 0)
+                    {
+                        currMachine.ChangeState<BirdFlyState>();
+                        return;
+                    }
+
+                    int index = Random.Range(0, 2);
+                    if (index == 0)
+                    {
+                        currMachine.ChangeState<BirdFlyState>();
+                    }
+                    else
+                    {
+                        currMachine.ChangeState<BirdFlyState>();
+                    }
                 }
             }
         }
