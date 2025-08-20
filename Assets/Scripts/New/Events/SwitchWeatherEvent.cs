@@ -2,6 +2,6 @@
 {
     public struct SwitchWeatherEvent
     {
-        
+        public int index;
     }
 }

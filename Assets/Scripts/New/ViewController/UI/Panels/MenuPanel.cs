@@ -26,10 +26,14 @@ namespace BirdGame
         public CanvasGroup group2;
         public RectTransform timeItem;
         public TextMeshProUGUI timeText;
+        public GameObject[] weatherItems;
+        public RectTransform content;
 
         private Sequence anim;
         private Tweener timeAnim;
         private bool isShowBranch;
+        private bool isShowWeatherItems = false;
+        private Tweener contentAnim;
         
         public override void OnShowPanel()
         {
@@ -85,9 +89,49 @@ namespace BirdGame
             
             weatherButton.onClick.AddListener(() =>
             {
-                this.GetSystem<IGameSystem>().SendEvent<SwitchWeatherEvent>();
+                contentAnim?.Kill();
+                if (!isShowWeatherItems)
+                {
+                    for (int i = 0; i < weatherItems.Length; i++)
+                    {
+                        if (i == this.GetModel<IGameModel>().WeatherIndex.Value)
+                        {
+                            weatherItems[i].SetActive(false);
+                        }
+                        else if (!weatherItems[i].activeSelf)
+                        {
+                            weatherItems[i].SetActive(true);
+                        }
+                    }
+
+                    content.anchoredPosition = new Vector2(400, 0);
+                    content.gameObject.SetActive(true);
+                    contentAnim = content.DOAnchorPosX(0, 0.3f);
+                }
+                else
+                {
+                    content.anchoredPosition = new Vector2(0, 0);
+                    contentAnim = content.DOAnchorPosX(400, 0.3f).OnComplete(() =>
+                    {
+                        content.gameObject.SetActive(false);
+                    });
+                }
+
+                isShowWeatherItems = !isShowWeatherItems;
             });
 
+            this.RegisterEvent<HideWeatherContentEvent>(evt =>
+            {
+                content.anchoredPosition = new Vector2(0, 0);
+                contentAnim = content.DOAnchorPosX(400, 0.3f).OnComplete(() =>
+                {
+                    content.gameObject.SetActive(false);
+                });
+                isShowWeatherItems = false;
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            content.anchoredPosition = new Vector2(400, 0);
+            
             var accountModel = this.GetModel<IAccountModel>();
             coinsNum.text = accountModel.Coins.Value.ToString();
             accountModel.Coins.Register(v =>
@@ -101,18 +145,18 @@ namespace BirdGame
                 weatherIcon.sprite = weatherSps[v];
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
-            this.RegisterEvent<ShowBranchEvent>(evt =>
-            {
-                if (isShowBranch)
-                {
-                    HideBranch();
-                }
-                else
-                {
-                    ShowBranch();
-                }
-            }).UnRegisterWhenGameObjectDestroyed(gameObject);
-            ShowBranch();
+            // this.RegisterEvent<ShowBranchEvent>(evt =>
+            // {
+            //     if (isShowBranch)
+            //     {
+            //         HideBranch();
+            //     }
+            //     else
+            //     {
+            //         ShowBranch();
+            //     }
+            // }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            // ShowBranch();
 
             this.RegisterEvent<ChangeTimeViewEvent>(evt =>
             {

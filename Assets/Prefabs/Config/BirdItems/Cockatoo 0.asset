@@ -24,11 +24,13 @@ MonoBehaviour:
   preview: {fileID: 963498483747758163, guid: c7bbc7993dcc1114baeee117d9ab4da0, type: 3}
   id: 2
   prefab: {fileID: 7194070394800242606, guid: 82048ffcdabdb8e4cb022bb742db8570, type: 3}
+  canFly: 1
+  canFlyWait: 1
   reality: Endangered
   eraning: 30
   priceForSmall: 30
   priceForBig: 50
   eatForBig: 8
-  description: 
-  habitat: 
+  description: CockatooDescription
+  habitat: CockatooHabitat
   scenePreview: {fileID: 0}

@@ -4052,7 +4052,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverScale: 1.1
   animTime: 0.1
-  hoverText: Stop Watch
+  localizationKey: Stop Watch
+  useLocalization: 1
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 1
@@ -4062,7 +4063,6 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
-  customFont: {fileID: 11400000, guid: f7ffd71761713684a94dc40f5e30b830, type: 2}
 --- !u!1 &2829177915578542027
 GameObject:
   m_ObjectHideFlags: 0
@@ -8334,7 +8334,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverScale: 1.1
   animTime: 0.1
-  hoverText: Timer
+  localizationKey: Timer
+  useLocalization: 1
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 1
@@ -8344,7 +8345,6 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
-  customFont: {fileID: 11400000, guid: f7ffd71761713684a94dc40f5e30b830, type: 2}
 --- !u!1 &5951052784808542026
 GameObject:
   m_ObjectHideFlags: 0
@@ -11583,7 +11583,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverScale: 1.1
   animTime: 0.1
-  hoverText: Pomodoro clock
+  localizationKey: Pomodoro Clock
+  useLocalization: 1
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 1
@@ -11593,7 +11594,6 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
-  customFont: {fileID: 11400000, guid: f7ffd71761713684a94dc40f5e30b830, type: 2}
 --- !u!1 &8656768479195505145
 GameObject:
   m_ObjectHideFlags: 0

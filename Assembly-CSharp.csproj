@@ -96,15 +96,18 @@
     <Compile Include="Assets\Scripts\AnimationTest\AnimationItem.cs" />
     <Compile Include="Assets\Scripts\FSM\StateBase.cs" />
     <Compile Include="Assets\Scripts\New\Events\TomatoOverEvent.cs" />
+    <Compile Include="Assets\Scripts\New\Commands\ChangeWeatherCommand.cs" />
     <Compile Include="Assets\Scripts\Feather.cs" />
     <Compile Include="Assets\Scripts\New\Systems\ISaveSystem.cs" />
     <Compile Include="Assets\Scripts\New\Events\RefreshSongEvent.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\MouseMenu.cs" />
     <Compile Include="Assets\Scripts\Radio\RadioUI.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\ButtonAnim.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\UI\WeatherItem.cs" />
     <Compile Include="Assets\Scripts\New\Events\HideEggEvent.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Note\ScheduleViewController.cs" />
     <Compile Include="Assets\Scripts\WalkableArea.cs" />
+    <Compile Include="Assets\Scripts\New\Events\HideWeatherContentEvent.cs" />
     <Compile Include="Assets\Scripts\Managers\UIManager.cs" />
     <Compile Include="Assets\Scripts\New\Events\TimerOverEvent.cs" />
     <Compile Include="Assets\Scripts\New\Systems\IGameSystem.cs" />
@@ -140,6 +143,7 @@
     <Compile Include="Assets\Scripts\New\Models\IRadioModel.cs" />
     <Compile Include="Assets\Scripts\New\Config\BirdConfig.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Radio\MusicViewController.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\UI\MenuButton.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Note\DailyViewController.cs" />
     <Compile Include="Assets\Scripts\New\Config\Items\BirdItem.cs" />
     <Compile Include="Assets\Scripts\AnimationTest\AddPanel.cs" />
