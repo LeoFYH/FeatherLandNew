@@ -12,40 +12,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5538057c912442f3a08104428b69fd96, type: 3}
   m_Name: RadioConfig
   m_EditorClassIdentifier: 
-  recordItems:
-  - icon: {fileID: -2787770647414651828, guid: 48da60f9ad4a65e44bc47f823259ced5, type: 3}
-    recordImage: {fileID: -8705311259480248182, guid: d0a787ef92d12cc4fb2e860229a9b1f3, type: 3}
-    musics:
-    - songName: Campfire
-      songFile: {fileID: 8300000, guid: 10de7ba5ed87e8247961de466789e137, type: 3}
-    - songName: Forest
-      songFile: {fileID: 8300000, guid: 312c63cfd6ed4d4438c99a28653c5faf, type: 3}
-  - icon: {fileID: 7255554491718486684, guid: 7be8681afbf61f148a00526cd6e29d74, type: 3}
-    recordImage: {fileID: -8705311259480248182, guid: d0a787ef92d12cc4fb2e860229a9b1f3, type: 3}
-    musics:
-    - songName: Song1
-      songFile: {fileID: 8300000, guid: 7065d19f906d6a84fb083cc3667f5ac7, type: 3}
-    - songName: Song2
-      songFile: {fileID: 8300000, guid: 435519c351bed8746a49f76acfe9e231, type: 3}
-    - songName: Song3
-      songFile: {fileID: 8300000, guid: a270c845b8065ba4dba6cf3a6a06be27, type: 3}
-    - songName: Song4
-      songFile: {fileID: 8300000, guid: 2a348c7f4a015d840baf5c744e7b3834, type: 3}
-    - songName: Song5
-      songFile: {fileID: 8300000, guid: b005e2918c02a5944897bb82f1429dc2, type: 3}
+  musicItems:
+  - songName: Campfire
+    songFile: {fileID: 8300000, guid: 10de7ba5ed87e8247961de466789e137, type: 3}
+  - songName: Forest
+    songFile: {fileID: 8300000, guid: 312c63cfd6ed4d4438c99a28653c5faf, type: 3}
+  - songName: Song 1
+    songFile: {fileID: 8300000, guid: 7065d19f906d6a84fb083cc3667f5ac7, type: 3}
+  - songName: Song 2
+    songFile: {fileID: 8300000, guid: 435519c351bed8746a49f76acfe9e231, type: 3}
+  - songName: Song 3
+    songFile: {fileID: 8300000, guid: a270c845b8065ba4dba6cf3a6a06be27, type: 3}
+  - songName: Song 4
+    songFile: {fileID: 8300000, guid: 2a348c7f4a015d840baf5c744e7b3834, type: 3}
+  - songName: Song 5
+    songFile: {fileID: 8300000, guid: b005e2918c02a5944897bb82f1429dc2, type: 3}
   environments:
-  - songName: Fire
-    songFile: {fileID: 0}
-  - songName: River
-    songFile: {fileID: 8300000, guid: b808bbe2de35c8a4380b21ba8f6f2d6d, type: 3}
-  - songName: Bee
-    songFile: {fileID: 0}
+  - songName: Wind
+    songFile: {fileID: 8300000, guid: 2a60000a6fec11446ae931edb71f5b62, type: 3}
   - songName: Bird
     songFile: {fileID: 8300000, guid: 284f0c856c1592943b803813f3ca0158, type: 3}
   - songName: Rain
     songFile: {fileID: 8300000, guid: e802c2a982b6085468d6b2cb51411a21, type: 3}
-  - songName: Wind
-    songFile: {fileID: 8300000, guid: 2a60000a6fec11446ae931edb71f5b62, type: 3}
+  - songName: Fire
+    songFile: {fileID: 0}
+  - songName: Lightning
+    songFile: {fileID: 0}
+  - songName: River
+    songFile: {fileID: 8300000, guid: b808bbe2de35c8a4380b21ba8f6f2d6d, type: 3}
+  - songName: Snow
+    songFile: {fileID: 0}
   click: {fileID: 8300000, guid: 969577f2cbdbe84469d245d754aa10c0, type: 3}
   dropFood: {fileID: 8300000, guid: ac9a82e218683ea42bcb24478bc5a01c, type: 3}
   stroke: {fileID: 8300000, guid: 3573113d04c964e409b61a1cfc94047b, type: 3}

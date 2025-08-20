@@ -6,8 +6,8 @@ namespace BirdGame
 {
     public class RadioConfig : ScriptableObject
     {
-        [Title("音乐播放器库"), Space(10),TableList(ShowIndexLabels = true)]
-        public RecordItem[] recordItems;
+        [Title("音乐播放器库"), Space(10),TableList(ShowIndexLabels = true, AlwaysExpanded = true)]
+        public AudioItem[] musicItems;
         [TableList(ShowIndexLabels = true)]
         public AudioItem[] environments;
         
@@ -16,19 +16,8 @@ namespace BirdGame
         public AudioClip dropFood;
         public AudioClip stroke;
 
-        [Title("Clock提示音乐库"), Space(10), TableList(ShowIndexLabels = true)] 
+        [Title("Clock提示音乐库"), Space(10), TableList(ShowIndexLabels = true, AlwaysExpanded = true)] 
         public AudioItem[] alertClips;
-    }
-
-    [Serializable]
-    public class RecordItem
-    {
-        [PreviewField(50, ObjectFieldAlignment.Left), HorizontalGroup("content", Width = 70), VerticalGroup("content/preview"), HideLabel]
-        public Sprite icon;
-        [PreviewField(70, ObjectFieldAlignment.Left), VerticalGroup("content/preview"), HideLabel]
-        public Sprite recordImage;
-        [TableList(ShowIndexLabels = true, ScrollViewHeight = 100), HorizontalGroup("content")]
-        public AudioItem[] musics;
     }
 
     [Serializable]

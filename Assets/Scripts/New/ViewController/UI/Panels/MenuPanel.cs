@@ -164,6 +164,10 @@ namespace BirdGame
             anim.Join(group1.DOFade(1f, 0.3f).SetEase(Ease.Linear));
             anim.Append(rect2.DOAnchorPosY(-135f, 0.3f).SetEase(Ease.Linear));
             anim.Join(group2.DOFade(1f, 0.3f).SetEase(Ease.Linear));
+            anim.OnComplete(() =>
+            {
+                this.GetSystem<IAudioSystem>().InitEnvironments();
+            });
         }
 
         private void HideBranch()
