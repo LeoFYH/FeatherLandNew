@@ -61,41 +61,105 @@ namespace BirdGame
                 }
                 
                 // 检查是否点击到可点击的物体（如鸟、蛋等）
-                Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                RaycastHit2D[] hits = Physics2D.RaycastAll(mousePosition, Vector2.zero);
+                Vector2 mousePosition = Input.mousePosition;
                 
+                // 获取主摄像机
+                Camera mainCamera = Camera.main;
                 bool clickedOnInteractiveObject = false;
                 bool clickedOnBird = false;  // 新增：检测是否点击到鸟
-                foreach (var hit in hits)
+                
+                if (mainCamera != null)
                 {
-                    // 检查是否点击到鸟
-                    if (hit.collider.CompareTag("Bird"))
+                    // 将鼠标位置转换为世界坐标
+                    Vector3 worldPosition = mainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, -mainCamera.transform.position.z));
+                    
+                    // 检查鸟
+                    GameObject[] birds = GameObject.FindGameObjectsWithTag("Bird");
+                    foreach (var bird in birds)
                     {
-                        clickedOnInteractiveObject = true;
-                        clickedOnBird = true;  // 标记点击到鸟
-                        break;
+                        if (bird == null) continue;
+                        
+                        Collider2D collider2D = bird.GetComponent<Collider2D>();
+                        
+                        if (collider2D != null)
+                        {
+                            if (collider2D.OverlapPoint(worldPosition))
+                            {
+                                clickedOnInteractiveObject = true;
+                                clickedOnBird = true;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            float distance = Vector2.Distance(worldPosition, bird.transform.position);
+                            if (distance < 0.5f)
+                            {
+                                clickedOnInteractiveObject = true;
+                                clickedOnBird = true;
+                                break;
+                            }
+                        }
                     }
                     
-                    // 检查是否点击到蛋
-                    if (hit.collider.GetComponent<Egg>() != null)
+                    // 检查蛋
+                    if (!clickedOnBird)
                     {
-                        clickedOnInteractiveObject = true;
-                        break;
+                        GameObject[] eggs = GameObject.FindGameObjectsWithTag("Egg");
+                        foreach (var egg in eggs)
+                        {
+                            if (egg == null) continue;
+                            
+                            Collider2D collider2D = egg.GetComponent<Collider2D>();
+                            
+                            if (collider2D != null)
+                            {
+                                if (collider2D.OverlapPoint(worldPosition))
+                                {
+                                    clickedOnInteractiveObject = true;
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                float distance = Vector2.Distance(worldPosition, egg.transform.position);
+                                if (distance < 0.5f)
+                                {
+                                    clickedOnInteractiveObject = true;
+                                    break;
+                                }
+                            }
+                        }
                     }
                     
-                    // 检查是否点击到食物
-                    if (hit.collider.GetComponent<Food>() != null)
+                    // 检查食物和其他物体
+                    if (!clickedOnBird)
                     {
-                        clickedOnInteractiveObject = true;
-                        break;
-                    }
-                    
-                    // 检查是否点击到其他有交互功能的物体
-                    if (hit.collider.GetComponent<MonoBehaviour>() != null)
-                    {
-                        // 这里可以添加更多具体的交互物体检测
-                        clickedOnInteractiveObject = true;
-                        break;
+                        GameObject[] foods = GameObject.FindGameObjectsWithTag("Food");
+                        foreach (var food in foods)
+                        {
+                            if (food == null) continue;
+                            
+                            Collider2D collider2D = food.GetComponent<Collider2D>();
+                            
+                            if (collider2D != null)
+                            {
+                                if (collider2D.OverlapPoint(worldPosition))
+                                {
+                                    clickedOnInteractiveObject = true;
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                float distance = Vector2.Distance(worldPosition, food.transform.position);
+                                if (distance < 0.5f)
+                                {
+                                    clickedOnInteractiveObject = true;
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
                 
@@ -111,15 +175,26 @@ namespace BirdGame
         {
             if(this.GetSystem<ICursorSystem>().IsPlayingAnim())
                 return;
-            if (this.GetSystem<IGameSystem>().IsCoverUI())
+                
+            bool isCoverUI = this.GetSystem<IGameSystem>().IsCoverUI();
+            bool isCoverBird = this.GetSystem<IGameSystem>().IsCoverBird();
+            bool isCoverGround = this.GetSystem<IGameSystem>().IsCoverGround();
+            
+            // 调试信息
+            if (isCoverBird)
+            {
+                Debug.Log("检测到鸟，设置cursor为Click状态");
+            }
+            
+            if (isCoverUI)
             {
                 this.GetSystem<ICursorSystem>().SetCursorState(CursorState.Click);
             }
-            else if (this.GetSystem<IGameSystem>().IsCoverBird())
+            else if (isCoverBird)
             {
                 this.GetSystem<ICursorSystem>().SetCursorState(CursorState.Click);
             }
-            else if (this.GetSystem<IGameSystem>().IsCoverGround())
+            else if (isCoverGround)
             {
                 this.GetSystem<ICursorSystem>().SetCursorState(CursorState.Feed1);
             }
