@@ -217,14 +217,14 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
             }
             else
             {
-                Debug.LogWarning($"本地化key[{localizationKey}]未找到对应翻译！");
+                // 未找到对应翻译时，直接显示key，不打印警告
                 displayText = $"[{localizationKey}]";
             }
         }
         else
         {
-            Debug.LogWarning("本地化未启用或本地化Key为空！");
-            displayText = "[未配置]";
+            // 本地化未启用或本地化Key为空时，直接什么都不显示，不打印警告
+            displayText = "";
         }
         
         tooltipText.text = displayText;
