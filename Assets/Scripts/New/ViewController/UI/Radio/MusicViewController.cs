@@ -67,26 +67,41 @@ namespace BirdGame
                 playTween?.Kill();
                 if (v)
                 {
+                    // 确保先完全停止之前的旋转动画
+                    rollTween?.Kill();
+                    rollTween = null;
+                    
+                    // 重置唱片旋转角度到0度
+                    roll.localRotation = Quaternion.identity;
+                    
                     playTween = playAnim.DOLocalRotate(Vector3.zero, 0.3f).OnComplete(() =>
                     {
-                        rollTween = roll.DOLocalRotate(new Vector3(0, 0, 360), 5f, RotateMode.FastBeyond360).SetEase(Ease.Linear).SetLoops(-1);
+                        // 使用独立的时间缩放，不受游戏时间缩放影响
+                        rollTween = roll.DOLocalRotate(new Vector3(0, 0, 360), 5f, RotateMode.FastBeyond360)
+                            .SetEase(Ease.Linear)
+                            .SetLoops(-1)
+                            .SetUpdate(true); // 使用独立更新，不受时间缩放影响
                     });
                 }
                 else
                 {
+                    // 完全停止旋转动画
                     rollTween?.Kill();
+                    rollTween = null;
                     playTween = playAnim.DOLocalRotate(new Vector3(0, 0, 25), 0.3f);
                 }
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             if (radioModel.PlayingSong.Value)
             {
                 playAnim.localRotation = Quaternion.identity;
+                roll.localRotation = Quaternion.identity; // 确保唱片初始角度为0
                 playButton.gameObject.SetActive(false);
                 pauseButton.gameObject.SetActive(true);
             }
             else
             {
                 playAnim.localRotation = Quaternion.Euler(0, 0, 25f);
+                roll.localRotation = Quaternion.identity; // 确保唱片初始角度为0
                 playButton.gameObject.SetActive(true);
                 pauseButton.gameObject.SetActive(false);
             }
