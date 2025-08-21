@@ -13,6 +13,7 @@ namespace BirdGame
         public TMP_Dropdown screenDropdown;
         public TMP_Dropdown languageDropdown;
         public Button quitButton;
+        public Button tutorialButton;
         public Sprite itemSprite;
 
         [Header("点击外部关闭设置")]
@@ -212,6 +213,10 @@ namespace BirdGame
             closeButton.onClick.AddListener(() =>
             {
                 this.GetSystem<IUISystem>().HidePopup(UIPopup.SettingPopup);
+            });
+            tutorialButton.onClick.AddListener(() =>
+            {
+                this.GetSystem<IUISystem>().ShowPopup(UIPopup.TutorialPopup);
             });
             quitButton.onClick.AddListener(() =>
             {

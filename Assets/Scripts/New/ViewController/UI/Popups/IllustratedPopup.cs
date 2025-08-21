@@ -154,7 +154,8 @@ namespace BirdGame
         
         private void OnSkinSelected(int index)
         {
-            var birdInfo = this.GetModel<IConfigModel>().BirdConfig.GetBird(index);
+            int classIndex;
+            var birdInfo = this.GetModel<IConfigModel>().BirdConfig.GetBird(index, out classIndex);
             birdPreview.sprite = birdInfo.preview;
             birdPreview.GetComponent<RectTransform>().sizeDelta = birdInfo.preview.rect.size * 0.2f;
             if (!this.GetModel<IGameModel>().UnlockedBirds.Contains(index))
@@ -171,7 +172,7 @@ namespace BirdGame
             priceText.text = birdInfo.priceForBig.ToString();
             descriptionText.SetKey(birdInfo.description);
             habitatText.SetKey(birdInfo.habitat);
-            sceneView.sprite = birdInfo.scenePreview;
+            sceneView.sprite = this.GetModel<IConfigModel>().BirdConfig.birdClasses[classIndex].birds[0].scenePreview;
         }
     }
 }

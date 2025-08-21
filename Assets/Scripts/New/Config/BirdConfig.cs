@@ -51,6 +51,24 @@ namespace BirdGame
             Debug.LogError($"没有找到id为{birdId}的鸟的配置!");
             return null;
         }
+
+        public BirdItem GetBird(int birdId, out int classIndex)
+        {
+            for (int i = 0; i < birdClasses.Length; i++)
+            {
+                foreach (var bird in birdClasses[i].birds)
+                {
+                    if (bird.id == birdId)
+                    {
+                        classIndex = i;
+                        return bird;
+                    }
+                }
+            }
+            Debug.LogError($"没有找到id为{birdId}的鸟的配置!");
+            classIndex = 0;
+            return null;
+        }
     }
 
     [Serializable]

@@ -91,7 +91,12 @@ namespace BirdGame
                 this.GetSystem<IUISystem>().ShowPanel(UIPanel.MenuPanel);
                 
                 // 游戏加载完成，显示教程弹窗
-                this.GetSystem<IUISystem>().ShowPopup(UIPopup.TutorialPopup);
+                if (!this.GetModel<ISaveModel>().SettingData.isShowedTutorial)
+                {
+                    this.GetSystem<IUISystem>().ShowPopup(UIPopup.TutorialPopup);
+                    this.GetModel<ISaveModel>().SettingData.isShowedTutorial = true;
+                    this.GetSystem<ISaveSystem>().SaveData();
+                }
             });
         }
 

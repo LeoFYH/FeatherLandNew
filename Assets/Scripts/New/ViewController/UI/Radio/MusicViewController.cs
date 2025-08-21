@@ -95,6 +95,14 @@ namespace BirdGame
             {
                 playAnim.localRotation = Quaternion.identity;
                 roll.localRotation = Quaternion.identity; // 确保唱片初始角度为0
+                playTween = playAnim.DOLocalRotate(Vector3.zero, 0.3f).OnComplete(() =>
+                {
+                    // 使用独立的时间缩放，不受游戏时间缩放影响
+                    rollTween = roll.DOLocalRotate(new Vector3(0, 0, 360), 5f, RotateMode.FastBeyond360)
+                        .SetEase(Ease.Linear)
+                        .SetLoops(-1)
+                        .SetUpdate(true); // 使用独立更新，不受时间缩放影响
+                });
                 playButton.gameObject.SetActive(false);
                 pauseButton.gameObject.SetActive(true);
             }
