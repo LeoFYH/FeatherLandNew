@@ -65,12 +65,14 @@ namespace BirdGame
                 RaycastHit2D[] hits = Physics2D.RaycastAll(mousePosition, Vector2.zero);
                 
                 bool clickedOnInteractiveObject = false;
+                bool clickedOnBird = false;  // 新增：检测是否点击到鸟
                 foreach (var hit in hits)
                 {
                     // 检查是否点击到鸟
                     if (hit.collider.CompareTag("Bird"))
                     {
                         clickedOnInteractiveObject = true;
+                        clickedOnBird = true;  // 标记点击到鸟
                         break;
                     }
                     
@@ -97,8 +99,8 @@ namespace BirdGame
                     }
                 }
                 
-                // 只有在点击到UI或可交互物体时才播放音效
-                if (clickedOnInteractiveObject)
+                // 只有在点击到UI或可交互物体时才播放音效，但鸟除外
+                if (clickedOnInteractiveObject && !clickedOnBird)
                 {
                     this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Click);
                 }

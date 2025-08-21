@@ -25,7 +25,8 @@ namespace BirdGame
         PromptPopup,
         IllustratedPopup,
         AlertPopup,
-        MouseMenu
+        MouseMenu,
+        TutorialPopup
     }
 
     public interface IUISystem : ISystem
