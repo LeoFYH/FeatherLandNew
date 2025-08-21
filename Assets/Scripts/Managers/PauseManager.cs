@@ -12,7 +12,7 @@ public class PauseManager : PopupPanelBase
         {
             _group = gameObject.AddComponent<CanvasGroup>();
         }
-
+        
         _originScale = PauseMenu.transform.localScale;
     }
 

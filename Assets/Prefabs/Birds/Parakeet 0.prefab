@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5432761182424397203}
   - component: {fileID: 6213063424958691100}
   - component: {fileID: 7157863433077709732}
+  - component: {fileID: 7196277513611636369}
   m_Layer: 0
   m_Name: Parakeet 0
   m_TagString: Bird
@@ -286,6 +287,68 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &7196277513611636369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900128412874830559}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 0
+  hoverScale: 1
+  animTime: 0.1
+  useRectTransform: 0
+  detectionRange: 1
+  showDebugInfo: 0
+  localizationKey: 
+  useLocalization: 0
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5052730404944593054}
+        m_TargetAssemblyTypeName: BirdGame.Brid, Assembly-CSharp
+        m_MethodName: OnMouseEnter
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5052730404944593054}
+        m_TargetAssemblyTypeName: BirdGame.Brid, Assembly-CSharp
+        m_MethodName: OnMouseExit
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 0
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 16
+  fontStyle: 0
+  showBackground: 0
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
 --- !u!1 &5858436703613444375
 GameObject:
   m_ObjectHideFlags: 0

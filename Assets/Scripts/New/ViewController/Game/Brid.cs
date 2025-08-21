@@ -138,12 +138,12 @@ namespace BirdGame
             // }
         }
 
-        private void OnMouseEnter()
+        public void OnMouseEnter()
         {
             isEnter = true;
         }
 
-        private void OnMouseExit()
+        public void OnMouseExit()
         {
             isEnter = false;
         }

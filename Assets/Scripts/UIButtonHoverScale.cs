@@ -16,7 +16,18 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
     }
 
-    [Header("缩放设置")]
+    [Serializable]
+    public class OnMouseEnterAction : UnityEvent
+    {
+    }
+    
+    [Serializable]
+    public class OnMouseExitAction : UnityEvent
+    {
+    }
+
+    [Header("缩放设置")] 
+    public bool isScaleOn = true;
     public float hoverScale = 1.1f;      // 悬停时的缩放倍数
     public float animTime = 0.1f;        // 动画时长
 
@@ -41,6 +52,8 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
     public bool useLocalization = true;  // 是否使用本地化，默认开启
 
     public OnClickAction onClick;
+    public OnMouseEnterAction onMouseEnter;
+    public OnMouseEnterAction onMouseExit;
     
 #if UNITY_EDITOR
     [BoxGroup("本地化操作"), Button("添加Key到本地化配置"), GUIColor("buttonColor"), ShowIf("useLocalization")]
@@ -204,11 +217,13 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
             {
                 onClick?.Invoke();
             }
+            onMouseEnter?.Invoke();
         }
         else if (showTooltip && !isHovering && tooltipObject != null)
         {
             // 鼠标离开时隐藏tooltip
             tooltipObject.SetActive(false);
+            onMouseExit?.Invoke();
         }
     }
     
@@ -346,7 +361,8 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
     private void OnMouseEnter()
     {
         // 缩放效果
-        transform.localScale = originalScale * hoverScale;
+        if (isScaleOn)
+            transform.localScale = originalScale * hoverScale;
         
         // 悬浮提示
         if (showTooltip)
@@ -370,7 +386,8 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
     private void OnMouseExit()
     {
         // 缩放效果
-        transform.localScale = originalScale;
+        if (isScaleOn)
+            transform.localScale = originalScale;
         
         // 悬浮提示
         if (showTooltip)
