@@ -74,6 +74,9 @@ namespace BirdGame
             {
                 radioAudio.volume = v;
             });
+            
+            // 延迟一帧后自动播放第一首歌
+            this.GetSystem<IMonoSystem>().StartCoroutine(AutoPlayFirstSong());
         }
 
         public void PlaySong()
@@ -235,6 +238,21 @@ namespace BirdGame
                 }
                 radioModel.EnvironmentVolumes.Add(new BindableProperty<float>());
                 audio.loop = true;
+                
+                // 根据环境音效名称设置默认音量
+                float defaultVolume = 0f; // 默认音量为0
+                if (config.environments[i].songName.ToLower() == "bird")
+                {
+                    defaultVolume = 0.5f; // Bird环境音设为0.5
+                    Debug.Log($"🎵 设置Bird环境音效音量为: {defaultVolume}");
+                }
+                
+                // 如果用户没有设置过这个环境音效的音量，使用默认值
+                if (saveModel.environmentVolumes[i] == 0f)
+                {
+                    saveModel.environmentVolumes[i] = defaultVolume;
+                }
+                
                 audio.volume = saveModel.environmentVolumes[i] * radioModel.Volume.Value;
                 audio.clip = config.environments[i].songFile;
                 if(audio.clip != null)
@@ -246,6 +264,46 @@ namespace BirdGame
                     saveModel.environmentVolumes[index] = v;
                     audio.volume = v * radioModel.Volume.Value;
                 });
+            }
+            
+            isEnvironmentInited = true;
+            Debug.Log("🌍 环境音效初始化完成！Bird环境音设为0.5，其他环境音设为0");
+        }
+
+        /// <summary>
+        /// 自动播放第一首歌
+        /// </summary>
+        private System.Collections.IEnumerator AutoPlayFirstSong()
+        {
+            // 等待一帧，确保所有配置都已加载
+            yield return null;
+            
+            // 检查是否有音乐配置
+            var configModel = this.GetModel<IConfigModel>();
+            if (configModel.RadioConfig != null && configModel.RadioConfig.musicItems != null && configModel.RadioConfig.musicItems.Length > 0)
+            {
+                // 设置第一首歌为当前歌曲
+                radioModel.SongIndex = 0;
+                
+                // 应用用户保存的音量设置
+                var saveModel = this.GetModel<ISaveModel>();
+                if (saveModel.MusicSettingData != null)
+                {
+                    radioModel.Volume.Value = saveModel.MusicSettingData.bgmVolume;
+                }
+                
+                // 确保环境音效已初始化
+                InitEnvironments();
+                
+                // 开始播放第一首歌
+                PlaySong();
+                
+                Debug.Log($"🎵 音频系统初始化完成，自动播放第一首歌: {configModel.RadioConfig.musicItems[0].songName} (音量: {radioModel.Volume.Value})");
+                Debug.Log("📻 音乐播放器UI已收到播放通知！");
+            }
+            else
+            {
+                Debug.LogWarning("❌ RadioConfig中没有找到音乐文件，无法自动播放");
             }
         }
     }

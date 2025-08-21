@@ -13,6 +13,20 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
     public float hoverScale = 1.1f;      // 悬停时的缩放倍数
     public float animTime = 0.1f;        // 动画时长
 
+    [Header("Transform设置")]
+    [LabelText("使用RectTransform")]
+    [Tooltip("勾选：适用于UI元素（Button、Image等）\n取消勾选：适用于GameObject（需要碰撞器）")]
+    public bool useRectTransform = true;  // 是否使用RectTransform，对于GameObject设为false
+    
+    [LabelText("检测范围")]
+    [Tooltip("当不使用RectTransform且没有碰撞器时的检测范围")]
+    [ShowIf("useRectTransform", false)]
+    public float detectionRange = 1f;  // 检测范围
+    
+    [LabelText("显示调试信息")]
+    [ShowIf("useRectTransform", false)]
+    public bool showDebugInfo = false;  // 是否显示调试信息
+
     [Header("本地化设置")]
     [LabelText("本地化Key")]
     public string localizationKey = "";  // 本地化key
@@ -131,6 +145,23 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
         // 检测鼠标是否真的在按钮上
         bool mouseIsOverButton = IsMouseOverButton();
         
+        // 显示调试信息
+        if (showDebugInfo && !useRectTransform)
+        {
+            Camera mainCamera = Camera.main;
+            if (mainCamera != null)
+            {
+                Vector2 mousePosition = Input.mousePosition;
+                Vector3 worldPosition = mainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, Vector3.Distance(mainCamera.transform.position, transform.position)));
+                float distance = Vector2.Distance(worldPosition, transform.position);
+                
+                if (mouseIsOverButton)
+                {
+                    Debug.Log($"[{gameObject.name}] 鼠标悬停中 - 距离: {distance:F2}, 检测范围: {detectionRange}");
+                }
+            }
+        }
+        
         // 如果鼠标状态发生变化
         if (mouseIsOverButton != mouseWasOverButton)
         {
@@ -186,14 +217,14 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
             }
             else
             {
-                Debug.LogWarning($"本地化key[{localizationKey}]未找到对应翻译！");
+                // 未找到对应翻译时，直接显示key，不打印警告
                 displayText = $"[{localizationKey}]";
             }
         }
         else
         {
-            Debug.LogWarning("本地化未启用或本地化Key为空！");
-            displayText = "[未配置]";
+            // 本地化未启用或本地化Key为空时，直接什么都不显示，不打印警告
+            displayText = "";
         }
         
         tooltipText.text = displayText;
@@ -214,23 +245,79 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
     /// </summary>
     private bool IsMouseOverButton()
     {
-        // 检查鼠标是否在UI元素上
-        if (!EventSystem.current.IsPointerOverGameObject())
-            return false;
-            
         // 获取鼠标位置
         Vector2 mousePosition = Input.mousePosition;
         
-        // 获取按钮的RectTransform
-        RectTransform buttonRect = GetComponent<RectTransform>();
-        if (buttonRect == null) return false;
-        
-        // 将鼠标位置转换为按钮的本地坐标
-        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            buttonRect, mousePosition, null, out Vector2 localPoint))
+        if (useRectTransform)
         {
-            // 检查点击是否在按钮区域内
-            return buttonRect.rect.Contains(localPoint);
+            // 使用RectTransform检测（适用于UI元素）
+            // 检查鼠标是否在UI元素上
+            if (!EventSystem.current.IsPointerOverGameObject())
+                return false;
+                
+            RectTransform buttonRect = GetComponent<RectTransform>();
+            if (buttonRect == null) return false;
+            
+            // 将鼠标位置转换为按钮的本地坐标
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                buttonRect, mousePosition, null, out Vector2 localPoint))
+            {
+                // 检查点击是否在按钮区域内
+                return buttonRect.rect.Contains(localPoint);
+            }
+        }
+        else
+        {
+            // 使用Transform检测（适用于GameObject）
+            Transform buttonTransform = transform;
+            if (buttonTransform == null) return false;
+            
+            // 获取主摄像机
+            Camera mainCamera = Camera.main;
+            if (mainCamera == null) return false;
+            
+            // 创建从摄像机到鼠标位置的射线
+            Ray ray = mainCamera.ScreenPointToRay(mousePosition);
+            
+            // 获取按钮的碰撞器
+            Collider2D collider2D = GetComponent<Collider2D>();
+            Collider collider3D = GetComponent<Collider>();
+            
+            if (collider2D != null)
+            {
+                // 2D碰撞器检测 - 使用射线检测
+                RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, Mathf.Infinity);
+                if (hit.collider != null && hit.collider == collider2D)
+                {
+                    return true;
+                }
+                
+                // 备用方法：直接检测鼠标位置是否在碰撞器内
+                Vector3 worldPosition = mainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, -mainCamera.transform.position.z));
+                return collider2D.OverlapPoint(worldPosition);
+            }
+            else if (collider3D != null)
+            {
+                // 3D碰撞器检测 - 使用射线检测
+                if (Physics.Raycast(ray, out RaycastHit hit))
+                {
+                    if (hit.collider == collider3D)
+                    {
+                        return true;
+                    }
+                }
+                
+                // 备用方法：检测鼠标位置是否在碰撞器边界内
+                Vector3 worldPosition = mainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, Vector3.Distance(mainCamera.transform.position, buttonTransform.position)));
+                return collider3D.bounds.Contains(worldPosition);
+            }
+            else
+            {
+                // 如果没有碰撞器，使用简单的距离检测
+                Vector3 worldPosition = mainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, Vector3.Distance(mainCamera.transform.position, buttonTransform.position)));
+                float distance = Vector2.Distance(worldPosition, buttonTransform.position);
+                return distance < detectionRange; // 使用可配置的检测范围
+            }
         }
         
         return false;
@@ -356,16 +443,28 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         if (tooltipObject == null) return;
         
-        // 获取按钮的RectTransform
-        RectTransform buttonRect = GetComponent<RectTransform>();
-        if (buttonRect == null) return;
+        Vector2 buttonPos;
         
-        // 直接获取按钮位置
-        Vector2 buttonPos = buttonRect.position;
+        if (useRectTransform)
+        {
+            // 使用RectTransform获取位置（适用于UI元素）
+            RectTransform buttonRect = GetComponent<RectTransform>();
+            if (buttonRect == null) return;
+            buttonPos = buttonRect.position;
+        }
+        else
+        {
+            // 使用Transform获取位置（适用于GameObject）
+            Transform buttonTransform = transform;
+            if (buttonTransform == null) return;
+            
+            // 将世界坐标转换为屏幕坐标
+            Vector3 screenPos = Camera.main.WorldToScreenPoint(buttonTransform.position);
+            buttonPos = screenPos;
+        }
         
         // 计算提示框位置（按钮位置上方50像素）
         Vector2 tooltipPos = buttonPos + textOffset;  // 文字位置偏移
-;
         
         // 设置tooltip位置
         RectTransform tooltipRect = tooltipObject.GetComponent<RectTransform>();
@@ -417,7 +516,92 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
         }
     }
     
+    /// <summary>
+    /// 切换是否使用RectTransform
+    /// </summary>
+    public void ToggleRectTransform(bool useRect)
+    {
+        useRectTransform = useRect;
+    }
+    
+    /// <summary>
+    /// 设置是否使用RectTransform
+    /// </summary>
+    public void SetUseRectTransform(bool useRect)
+    {
+        useRectTransform = useRect;
+    }
+    
+    /// <summary>
+    /// 设置检测范围
+    /// </summary>
+    public void SetDetectionRange(float range)
+    {
+        detectionRange = range;
+    }
+    
+    /// <summary>
+    /// 获取当前检测范围
+    /// </summary>
+    public float GetDetectionRange()
+    {
+        return detectionRange;
+    }
+    
 #if UNITY_EDITOR
     private Color32 buttonColor = Color.green;
+    
+    /// <summary>
+    /// 编辑器验证
+    /// </summary>
+    private void OnValidate()
+    {
+        if (!useRectTransform)
+        {
+            // 检查是否有碰撞器
+            Collider2D collider2D = GetComponent<Collider2D>();
+            Collider collider3D = GetComponent<Collider>();
+            
+            if (collider2D == null && collider3D == null)
+            {
+                Debug.LogWarning($"[{gameObject.name}] 当useRectTransform为false时，建议添加Collider2D或Collider组件以获得更准确的鼠标检测！");
+            }
+        }
+    }
+    
+    /// <summary>
+    /// 在Scene视图中绘制调试信息
+    /// </summary>
+    private void OnDrawGizmos()
+    {
+        if (!useRectTransform && showDebugInfo)
+        {
+            // 绘制检测范围
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, detectionRange);
+            
+            // 绘制碰撞器边界（如果有的话）
+            Collider2D collider2D = GetComponent<Collider2D>();
+            Collider collider3D = GetComponent<Collider>();
+            
+            if (collider2D != null)
+            {
+                Gizmos.color = Color.green;
+                if (collider2D is BoxCollider2D box2D)
+                {
+                    Gizmos.DrawWireCube(transform.position, box2D.size);
+                }
+                else if (collider2D is CircleCollider2D circle2D)
+                {
+                    Gizmos.DrawWireSphere(transform.position, circle2D.radius);
+                }
+            }
+            else if (collider3D != null)
+            {
+                Gizmos.color = Color.green;
+                Gizmos.DrawWireCube(collider3D.bounds.center, collider3D.bounds.size);
+            }
+        }
+    }
 #endif
 }
