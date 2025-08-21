@@ -32,31 +32,31 @@ namespace BirdGame
                 startButton.gameObject.SetActive(false);
                 stopButton.gameObject.SetActive(true);
                 this.GetModel<IClockModel>().TimerType = TimerType.StopWatch;
+                this.SendCommand<StopOtherTimerCommand>();
             });
             stopButton.onClick.AddListener(() =>
             {
-                if(item.TimerCoroutine != null)
+                if (item.TimerCoroutine != null)
                     this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
                 item.TimerCoroutine = null;
                 startButton.gameObject.SetActive(true);
                 stopButton.gameObject.SetActive(false);
-                if (this.GetModel<IClockModel>().TomatoItem.TimerCoroutine != null)
+
+                this.GetModel<IClockModel>().TimerType = TimerType.None;
+                this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
                 {
-                    this.GetModel<IClockModel>().TimerType = TimerType.Tomato;
-                }
-                else if (this.GetModel<IClockModel>().TimerItem.TimerCoroutine != null)
-                {
-                    this.GetModel<IClockModel>().TimerType = TimerType.Timer;
-                }
-                else
-                {
-                    this.GetModel<IClockModel>().TimerType = TimerType.None;
-                    this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
-                    {
-                        show = false
-                    });
-                }
+                    show = false
+                });
             });
+            this.RegisterEvent<StopStopWatchEvent>(evt =>
+            {
+                if (item.TimerCoroutine != null)
+                    this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
+                item.TimerCoroutine = null;
+                startButton.gameObject.SetActive(true);
+                stopButton.gameObject.SetActive(false);
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            
             item.Hours.Register(v =>
             {
                 hourText.text = string.Format("{0:00}", v);

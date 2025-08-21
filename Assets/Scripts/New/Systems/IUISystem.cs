@@ -169,6 +169,7 @@ namespace BirdGame
             mask = new GameObject("Mask");
             mask.transform.SetParent(popupLayer);
             var image = mask.AddComponent<Image>();
+            mask.AddComponent<EggMask>();
             image.color = Color.clear;
             var rect = mask.GetComponent<RectTransform>();
             rect.anchorMax = Vector2.one;

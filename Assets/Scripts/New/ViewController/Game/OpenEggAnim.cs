@@ -11,6 +11,19 @@ namespace BirdGame
         public TextMeshProUGUI nameText;
 
         private Action onAnimComplete;
+        private bool canWait = false;
+
+        private void Start()
+        {
+            this.RegisterEvent<OnMaskClickEvent>(evt =>
+            {
+                if (canWait)
+                {
+                    onAnimComplete?.Invoke();
+                    Destroy(gameObject);
+                }
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+        }
 
         public void InitBird(int index, Action onComplete)
         {
@@ -18,12 +31,13 @@ namespace BirdGame
             var config = this.GetModel<IConfigModel>().BirdConfig;
             sr.sprite = config.GetBird(index).preview;
             nameText.text = config.GetBirdName(index);
+            string rarity = config.GetBird(index).reality;
+            nameText.color = config.colorSettings[rarity];
         }
 
         public void OnAnimComplete()
         {
-            onAnimComplete?.Invoke();
-            Destroy(gameObject);
+            canWait = true;
         }
     }
 }

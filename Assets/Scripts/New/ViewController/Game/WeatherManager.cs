@@ -37,10 +37,10 @@ namespace BirdGame
                 uiGroup = GameObject.Find("UIRoot").GetComponent<CanvasGroup>();
             this.RegisterEvent<SwitchWeatherEvent>(evt =>
             {
-                int index = currentIndex;
-                index++;
+                int index = evt.index;
                 if (index >= weathers.Length)
                     index = 0;
+                Debug.Log($"天气：" + index);
                 SwitchWeather(index);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             SwitchWeather(0);

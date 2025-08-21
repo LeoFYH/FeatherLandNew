@@ -71,29 +71,26 @@ namespace BirdGame
                 item.TimerCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(StartTimer());
                 Refresh(true);
                 this.GetModel<IClockModel>().TimerType = TimerType.Timer;
+                this.SendCommand<StopOtherTimerCommand>();
             });
             stopButton.onClick.AddListener(() =>
             {
                 this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
                 item.TimerCoroutine = null;
                 Refresh(false);
-                if (this.GetModel<IClockModel>().TomatoItem.TimerCoroutine != null)
+                this.GetModel<IClockModel>().TimerType = TimerType.None;
+                this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
                 {
-                    this.GetModel<IClockModel>().TimerType = TimerType.Tomato;
-                }
-                else if (this.GetModel<IClockModel>().StopWatchItem.TimerCoroutine != null)
-                {
-                    this.GetModel<IClockModel>().TimerType = TimerType.StopWatch;
-                }
-                else
-                {
-                    this.GetModel<IClockModel>().TimerType = TimerType.None;
-                    this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
-                    {
-                        show = false
-                    });
-                }
+                    show = false
+                });
             });
+
+            this.RegisterEvent<StopTimerEvent>(evt =>
+            {
+                this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
+                item.TimerCoroutine = null;
+                Refresh(false);
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
             for (int i = 0; i < audioToggles.Length; i++)
             {
                 int index = i;
@@ -189,7 +186,8 @@ namespace BirdGame
                 item.Hours.Value = totalSeconds / 3600;
                 item.Minutes.Value = totalSeconds / 60 % 60;
                 item.Seconds.Value = totalSeconds % 60;
-                item.TimeString.Value = string.Format("{0:00}:{1:00}:{2:00}", item.Hours.Value, item.Minutes.Value, item.Seconds.Value);
+                item.TimeString.Value = string.Format("{0:00}:{1:00}:{2:00}", item.Hours.Value, item.Minutes.Value,
+                    item.Seconds.Value);
                 yield return frame;
                 item.Timer -= Time.fixedDeltaTime;
             }
@@ -201,22 +199,13 @@ namespace BirdGame
             this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForTimer;
             this.SendCommand<AlertCommand>();
             this.GetSystem<IMonoSystem>().SendEvent<TimerOverEvent>();
-            if (this.GetModel<IClockModel>().TomatoItem.TimerCoroutine != null)
+
+            this.GetModel<IClockModel>().TimerType = TimerType.None;
+            this.GetModel<IClockModel>().TimerItem.TimerCoroutine = null;
+            this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
             {
-                this.GetModel<IClockModel>().TimerType = TimerType.Tomato;
-            }
-            else if (this.GetModel<IClockModel>().StopWatchItem.TimerCoroutine != null)
-            {
-                this.GetModel<IClockModel>().TimerType = TimerType.StopWatch;
-            }
-            else
-            {
-                this.GetModel<IClockModel>().TimerType = TimerType.None;
-                this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
-                {
-                    show = false
-                });
-            }
+                show = false
+            });
         }
 
         private void OnToggleValueChanged(int index, bool isOn)

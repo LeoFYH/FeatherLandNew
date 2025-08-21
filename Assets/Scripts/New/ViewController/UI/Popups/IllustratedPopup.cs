@@ -166,7 +166,7 @@ namespace BirdGame
                 birdPreview.color = Color.white;
             }
             rarityText.SetKey(birdInfo.reality);
-
+            rarityText.ThisText.color = this.GetModel<IConfigModel>().BirdConfig.colorSettings[birdInfo.reality];
             earningText.text = birdInfo.eraning.ToString();
             priceText.text = birdInfo.priceForBig.ToString();
             descriptionText.SetKey(birdInfo.description);

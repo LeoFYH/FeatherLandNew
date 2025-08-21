@@ -69,29 +69,27 @@ namespace BirdGame
                 item.TimerCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(StartTimer());
                 Refresh(true);
                 this.GetModel<IClockModel>().TimerType = TimerType.Tomato;
+                this.SendCommand<StopOtherTimerCommand>();
             });
             stopButton.onClick.AddListener(() =>
             {
                 this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
                 item.TimerCoroutine = null;
-                if (this.GetModel<IClockModel>().TimerItem.TimerCoroutine != null)
+
+                this.GetModel<IClockModel>().TimerType = TimerType.None;
+                this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
                 {
-                    this.GetModel<IClockModel>().TimerType = TimerType.Timer;
-                }
-                else if (this.GetModel<IClockModel>().StopWatchItem.TimerCoroutine != null)
-                {
-                    this.GetModel<IClockModel>().TimerType = TimerType.StopWatch;
-                }
-                else
-                {
-                    this.GetModel<IClockModel>().TimerType = TimerType.None;
-                    this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
-                    {
-                        show = false
-                    });
-                }
+                    show = false
+                });
+
                 Refresh(false);
             });
+            this.RegisterEvent<StopTomatoEvent>(evt =>
+            {
+                this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
+                item.TimerCoroutine = null;
+                Refresh(false);
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
             for (int i = 0; i < audioToggles.Length; i++)
             {
                 int index = i;
@@ -189,7 +187,8 @@ namespace BirdGame
                 int minute = totalSeconds / 60 % 60;
                 int second = totalSeconds % 60;
                 int currentCount = item.TotalNumber - item.Number.Value;
-                item.TimeString.Value = string.Format("{0:00}:{1:00}:{2:00}  {3}/{4}", hour, minute, second, currentCount, item.TotalNumber);
+                item.TimeString.Value = string.Format("{0:00}:{1:00}:{2:00}  {3}/{4}", hour, minute, second,
+                    currentCount, item.TotalNumber);
                 yield return frame;
                 item.Timer -= Time.fixedDeltaTime;
                 if (item.Timer <= 0)
@@ -203,7 +202,7 @@ namespace BirdGame
                         item.Number.Value--;
                         this.SendCommand<AlertCommand>();
                     }
-                    else if(item.TimerType.Value == TomatoTimerType.Break)
+                    else if (item.TimerType.Value == TomatoTimerType.Break)
                     {
                         item.TimerType.Value = TomatoTimerType.Session;
                         item.Timer = item.SessionMinutes.Value * 60;
@@ -218,24 +217,14 @@ namespace BirdGame
                     }
                 }
             }
-            
+
+            this.GetModel<IClockModel>().TomatoItem.TimerCoroutine = null;
             this.GetSystem<IMonoSystem>().SendEvent<TomatoOverEvent>();
-            if (this.GetModel<IClockModel>().TimerItem.TimerCoroutine != null)
+            this.GetModel<IClockModel>().TimerType = TimerType.None;
+            this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
             {
-                this.GetModel<IClockModel>().TimerType = TimerType.Timer;
-            }
-            else if (this.GetModel<IClockModel>().StopWatchItem.TimerCoroutine != null)
-            {
-                this.GetModel<IClockModel>().TimerType = TimerType.StopWatch;
-            }
-            else
-            {
-                this.GetModel<IClockModel>().TimerType = TimerType.None;
-                this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
-                {
-                    show = false
-                });
-            }
+                show = false
+            });
         }
 
         private void OnToggleValueChanged(int index, bool isOn)
