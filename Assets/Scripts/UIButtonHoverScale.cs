@@ -1,7 +1,9 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Events;
 #if UNITY_EDITOR
 using UnityEditor;
 using Sirenix.OdinInspector;
@@ -9,6 +11,11 @@ using Sirenix.OdinInspector;
 
 public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    [Serializable]
+    public class OnClickAction : UnityEvent
+    {
+    }
+
     [Header("缩放设置")]
     public float hoverScale = 1.1f;      // 悬停时的缩放倍数
     public float animTime = 0.1f;        // 动画时长
@@ -32,6 +39,8 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
     public string localizationKey = "";  // 本地化key
     [LabelText("使用本地化")]
     public bool useLocalization = true;  // 是否使用本地化，默认开启
+
+    public OnClickAction onClick;
     
 #if UNITY_EDITOR
     [BoxGroup("本地化操作"), Button("添加Key到本地化配置"), GUIColor("buttonColor"), ShowIf("useLocalization")]
@@ -190,6 +199,11 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
                 UpdateTooltipText();
                //Debug.Log("显示悬浮提示: " + hoverText);
             }
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                onClick?.Invoke();
+            }
         }
         else if (showTooltip && !isHovering && tooltipObject != null)
         {
@@ -274,7 +288,10 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
             
             // 获取主摄像机
             Camera mainCamera = Camera.main;
-            if (mainCamera == null) return false;
+            if (mainCamera == null)
+            {
+                return false;
+            }
             
             // 创建从摄像机到鼠标位置的射线
             Ray ray = mainCamera.ScreenPointToRay(mousePosition);

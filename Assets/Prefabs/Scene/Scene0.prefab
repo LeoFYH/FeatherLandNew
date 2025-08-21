@@ -621,6 +621,21 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: MAPKEY
   useLocalization: 1
+  onClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5610323581579128474}
+        m_TargetAssemblyTypeName: BirdGame.MenuButton, Assembly-CSharp
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 1
@@ -1243,6 +1258,21 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: NewBookKey
   useLocalization: 1
+  onClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4980450855176163718}
+        m_TargetAssemblyTypeName: BirdGame.MenuButton, Assembly-CSharp
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 1
@@ -1420,6 +1450,21 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: TIMERKEY
   useLocalization: 1
+  onClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6114875591752524620}
+        m_TargetAssemblyTypeName: BirdGame.MenuButton, Assembly-CSharp
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 1
@@ -2255,6 +2300,21 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: RADIOKEY
   useLocalization: 1
+  onClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3509850441743799568}
+        m_TargetAssemblyTypeName: BirdGame.MenuButton, Assembly-CSharp
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 1
@@ -3203,6 +3263,21 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: NOTEBOOKKEY
   useLocalization: 1
+  onClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4597183616251175768}
+        m_TargetAssemblyTypeName: BirdGame.MenuButton, Assembly-CSharp
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 1
@@ -3281,8 +3356,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4659966116000368978}
   - component: {fileID: 2246383955933795819}
-  - component: {fileID: 8627430560483424255}
   - component: {fileID: 2327485848336735992}
+  - component: {fileID: 9165636043316024488}
+  - component: {fileID: 691319030319422113}
   m_Layer: 0
   m_Name: "\u7BDD\u706B-\u80CC\u5305_0"
   m_TagString: Untagged
@@ -3300,7 +3376,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 10.08, y: -6.22, z: 0}
-  m_LocalScale: {x: 0.45199, y: 0.45199, z: 0.45199}
+  m_LocalScale: {x: 0.45199, y: 0.45199, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4019492145905793651}
@@ -3361,7 +3437,22 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &8627430560483424255
+--- !u!114 &2327485848336735992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6903499728617494383}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb938f60471f41fd85cd04e03cf32947, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  openBag: {fileID: 6280321811276731265, guid: 203f49189a6b31c4d985a10977d6936f, type: 3}
+  closeBag: {fileID: 2260529739857958631, guid: c7936314c08b8a847a19f98130522aa9, type: 3}
+  menu: {fileID: 4019492145905793651}
+--- !u!61 &9165636043316024488
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3395,7 +3486,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 2.0483947}
+  m_Offset: {x: 0, y: 2.08}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0}
@@ -3405,9 +3496,9 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 3.79, y: 4.198407}
+  m_Size: {x: 3.78, y: 4.16}
   m_EdgeRadius: 0
---- !u!114 &2327485848336735992
+--- !u!114 &691319030319422113
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3416,12 +3507,40 @@ MonoBehaviour:
   m_GameObject: {fileID: 6903499728617494383}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb938f60471f41fd85cd04e03cf32947, type: 3}
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  openBag: {fileID: 6280321811276731265, guid: 203f49189a6b31c4d985a10977d6936f, type: 3}
-  closeBag: {fileID: 2260529739857958631, guid: c7936314c08b8a847a19f98130522aa9, type: 3}
-  menu: {fileID: 4019492145905793651}
+  hoverScale: 1
+  animTime: 0.1
+  useRectTransform: 0
+  detectionRange: 1
+  showDebugInfo: 0
+  localizationKey: 
+  useLocalization: 0
+  onClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2327485848336735992}
+        m_TargetAssemblyTypeName: BirdGame.BagChecker, Assembly-CSharp
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 0
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 16
+  fontStyle: 0
+  showBackground: 0
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
 --- !u!1 &7060891611490149357
 GameObject:
   m_ObjectHideFlags: 0
@@ -4285,6 +4404,21 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: SETTINGKEY
   useLocalization: 1
+  onClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6140482486372198100}
+        m_TargetAssemblyTypeName: BirdGame.MenuButton, Assembly-CSharp
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 1

@@ -1,5 +1,7 @@
 ﻿using System;
 using QFramework;
+using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace BirdGame
 {
@@ -7,8 +9,9 @@ namespace BirdGame
     {
         public UIPopup popup;
 
-        private void OnMouseDown()
+        public void OnClick()
         {
+            Debug.Log("Click");
             this.GetSystem<IUISystem>().ShowPopup(popup);
         }
     }

@@ -37,7 +37,7 @@ namespace BirdGame
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
         }
 
-        private void OnMouseDown()
+        public void OnClick()
         {
             anim?.Kill();
             anim = spriteRenderer.transform.DOShakeScale(0.2f, 0.05f, 50, 180f);

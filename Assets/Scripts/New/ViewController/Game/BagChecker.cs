@@ -42,7 +42,7 @@ namespace BirdGame
             isOpen = false;
         }
 
-        private void OnMouseDown()
+        public void OnClick()
         {
             if (isOpen)
             {
