@@ -4440,6 +4440,8 @@ MonoBehaviour:
   volumeSlider: {fileID: 4783653444476346031}
   musicView: {fileID: 7209330874697729135}
   environmentView: {fileID: 4991057615953238004}
+  contentTransform: {fileID: 9170841365237427516}
+  enableClickOutsideToClose: 1
 --- !u!1 &6234594805334561284
 GameObject:
   m_ObjectHideFlags: 0
@@ -6179,7 +6181,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5308512138606324013
 RectTransform:
   m_ObjectHideFlags: 0

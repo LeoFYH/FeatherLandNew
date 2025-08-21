@@ -4,6 +4,7 @@ using QFramework;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 namespace BirdGame
 {
@@ -21,8 +22,240 @@ namespace BirdGame
         public TextMeshProUGUI priceText;
         public TMP_InputField cutomName;
 
+        [Header("点击外部关闭设置")]
+        public Transform contentTransform;  // 主要内容区域，用于检测点击区域
+        [Header("功能设置")]
+        public bool enableClickOutsideToClose = true;  // 是否启用点击外部关闭功能
 
         private int price;
+        
+        void Update()
+        {
+            // 只有在启用点击外部关闭功能时才检测
+            if (enableClickOutsideToClose)
+            {
+                // 检测鼠标点击
+                if (Input.GetMouseButtonDown(0))
+                {
+                    CheckClickOutside();
+                }
+            }
+        }
+        
+        /// <summary>
+        /// 检测是否点击了InfoPopup外部区域
+        /// </summary>
+        private void CheckClickOutside()
+        {
+            // 检查是否点击了UI元素
+            if (!EventSystem.current.IsPointerOverGameObject())
+            {
+                // 没有点击UI元素，关闭InfoPopup
+                this.GetSystem<IUISystem>().HidePopup(UIPopup.InfoPopup);
+                return;
+            }
+            
+            // 获取鼠标位置
+            Vector2 mousePosition = Input.mousePosition;
+            
+            // 检查是否点击了主要内容区域
+            if (contentTransform != null)
+            {
+                RectTransform contentRect = contentTransform.GetComponent<RectTransform>();
+                if (contentRect != null)
+                {
+                    // 将鼠标位置转换为内容区域的本地坐标
+                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                        contentRect, mousePosition, null, out Vector2 localPoint))
+                    {
+                        // 检查点击是否在内容区域内
+                        if (contentRect.rect.Contains(localPoint))
+                        {
+                            // 点击在内容区域内，不关闭
+                            return;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // 如果contentTransform未设置，使用当前GameObject作为默认检测区域
+                RectTransform selfRect = GetComponent<RectTransform>();
+                if (selfRect != null)
+                {
+                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                        selfRect, mousePosition, null, out Vector2 localPoint))
+                    {
+                        if (selfRect.rect.Contains(localPoint))
+                        {
+                            // 点击在当前区域内，不关闭
+                            return;
+                        }
+                    }
+                }
+            }
+            
+            // 检查是否点击了关闭按钮
+            if (closeButton != null)
+            {
+                RectTransform closeRect = closeButton.GetComponent<RectTransform>();
+                if (closeRect != null)
+                {
+                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                        closeRect, mousePosition, null, out Vector2 localPoint))
+                    {
+                        if (closeRect.rect.Contains(localPoint))
+                        {
+                            // 点击了关闭按钮，不在这里处理
+                            return;
+                        }
+                    }
+                }
+            }
+            
+            // 检查是否点击了出售按钮
+            if (saleButton != null)
+            {
+                RectTransform saleRect = saleButton.GetComponent<RectTransform>();
+                if (saleRect != null)
+                {
+                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                        saleRect, mousePosition, null, out Vector2 localPoint))
+                    {
+                        if (saleRect.rect.Contains(localPoint))
+                        {
+                            // 点击了出售按钮，不关闭
+                            return;
+                        }
+                    }
+                }
+            }
+            
+            // 检查是否点击了输入框
+            if (cutomName != null)
+            {
+                RectTransform inputRect = cutomName.GetComponent<RectTransform>();
+                if (inputRect != null)
+                {
+                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                        inputRect, mousePosition, null, out Vector2 localPoint))
+                    {
+                        if (inputRect.rect.Contains(localPoint))
+                        {
+                            // 点击了输入框，不关闭
+                            return;
+                        }
+                    }
+                }
+            }
+            
+            // 检查是否点击了子UI元素（如鸟图标、进度条等）
+            if (icon != null)
+            {
+                RectTransform iconRect = icon.GetComponent<RectTransform>();
+                if (iconRect != null)
+                {
+                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                        iconRect, mousePosition, null, out Vector2 localPoint))
+                    {
+                        if (iconRect.rect.Contains(localPoint))
+                        {
+                            // 点击了鸟图标，不关闭
+                            return;
+                        }
+                    }
+                }
+            }
+            
+            if (progressIcon != null)
+            {
+                RectTransform progressIconRect = progressIcon.GetComponent<RectTransform>();
+                if (progressIconRect != null)
+                {
+                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                        progressIconRect, mousePosition, null, out Vector2 localPoint))
+                    {
+                        if (progressIconRect.rect.Contains(localPoint))
+                        {
+                            // 点击了进度图标，不关闭
+                            return;
+                        }
+                    }
+                }
+            }
+            
+            if (progressFill != null)
+            {
+                RectTransform progressFillRect = progressFill.GetComponent<RectTransform>();
+                if (progressFillRect != null)
+                {
+                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                        progressFillRect, mousePosition, null, out Vector2 localPoint))
+                    {
+                        if (progressFillRect.rect.Contains(localPoint))
+                        {
+                            // 点击了进度条，不关闭
+                            return;
+                        }
+                    }
+                }
+            }
+            
+            // 检查是否点击了文本元素
+            if (birdName != null)
+            {
+                RectTransform birdNameRect = birdName.GetComponent<RectTransform>();
+                if (birdNameRect != null)
+                {
+                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                        birdNameRect, mousePosition, null, out Vector2 localPoint))
+                    {
+                        if (birdNameRect.rect.Contains(localPoint))
+                        {
+                            // 点击了鸟名称，不关闭
+                            return;
+                        }
+                    }
+                }
+            }
+            
+            if (incomeText != null)
+            {
+                RectTransform incomeRect = incomeText.GetComponent<RectTransform>();
+                if (incomeRect != null)
+                {
+                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                        incomeRect, mousePosition, null, out Vector2 localPoint))
+                    {
+                        if (incomeRect.rect.Contains(localPoint))
+                        {
+                            // 点击了收入文本，不关闭
+                            return;
+                        }
+                    }
+                }
+            }
+            
+            if (priceText != null)
+            {
+                RectTransform priceRect = priceText.GetComponent<RectTransform>();
+                if (priceRect != null)
+                {
+                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                        priceRect, mousePosition, null, out Vector2 localPoint))
+                    {
+                        if (priceRect.rect.Contains(localPoint))
+                        {
+                            // 点击了价格文本，不关闭
+                            return;
+                        }
+                    }
+                }
+            }
+            
+            // 点击了UI元素但不在InfoPopup区域内，关闭InfoPopup
+            this.GetSystem<IUISystem>().HidePopup(UIPopup.InfoPopup);
+        }
         
         public override void OnShowPanel()
         {

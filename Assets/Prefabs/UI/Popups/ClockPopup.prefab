@@ -4052,6 +4052,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverScale: 1.1
   animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  showDebugInfo: 0
   localizationKey: Stop Watch
   useLocalization: 1
   textOffset: {x: 0, y: 50}
@@ -6304,7 +6307,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1524873426865768316
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8334,6 +8337,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverScale: 1.1
   animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  showDebugInfo: 0
   localizationKey: Timer
   useLocalization: 1
   textOffset: {x: 0, y: 50}
@@ -10797,6 +10803,8 @@ MonoBehaviour:
   stopWatch: {fileID: 9217401821312992880}
   timer: {fileID: 222542246263789346}
   tomato: {fileID: 258469652213996896}
+  contentTransform: {fileID: 7671305457144502240}
+  enableClickOutsideToClose: 1
 --- !u!1 &8113300635505892318
 GameObject:
   m_ObjectHideFlags: 0
@@ -11583,6 +11591,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverScale: 1.1
   animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  showDebugInfo: 0
   localizationKey: Pomodoro Clock
   useLocalization: 1
   textOffset: {x: 0, y: 50}
