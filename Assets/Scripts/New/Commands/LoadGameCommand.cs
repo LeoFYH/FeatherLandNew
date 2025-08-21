@@ -1,5 +1,6 @@
 ﻿using QFramework;
 using UnityEngine;
+using System.Collections;
 
 namespace BirdGame
 {
@@ -36,6 +37,10 @@ namespace BirdGame
         private void OnRadioConfigComplete(RadioConfig config)
         {
             this.GetModel<IConfigModel>().RadioConfig = config;
+            
+            // RadioConfig加载完成后，触发环境音效自动播放
+            this.GetSystem<IMonoSystem>().StartCoroutine(TriggerEnvironmentAudioAfterConfigLoad());
+            
             this.GetSystem<IAssetSystem>().LoadAssetAsync<ShopConfig>("ShopConfig", OnShopConfigComplete,
                 progress =>
                 {
@@ -117,6 +122,25 @@ namespace BirdGame
                     }
                     break;
                 }
+            }
+        }
+
+        /// <summary>
+        /// 触发环境音效自动播放
+        /// </summary>
+        private IEnumerator TriggerEnvironmentAudioAfterConfigLoad()
+        {
+            yield return new WaitForSeconds(0.5f); // 等待一小段时间，确保配置加载完成
+            
+            // 只初始化环境音效，不播放歌曲
+            var audioSystem = this.GetSystem<IAudioSystem>();
+            if (audioSystem != null)
+            {
+                // 初始化环境音效（Bird音效0.5音量，其他0音量）
+                audioSystem.InitEnvironments();
+                
+                // Debug.Log($"🌍 RadioConfig加载完成，环境音效已自动播放！");
+                // Debug.Log("🐦 Bird环境音效音量设为100%，🌪️ Wind环境音效音量设为100%，其他环境音效设为0");
             }
         }
     }
