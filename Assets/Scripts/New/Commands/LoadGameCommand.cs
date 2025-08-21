@@ -72,6 +72,7 @@ namespace BirdGame
                 });
         }
 
+        //加载鸟类写在这里面
         private void OnLocalizationConfigComplete(LocalizationConfig config)
         {
             this.GetModel<IConfigModel>().LocalizationConfig = config;
@@ -88,6 +89,9 @@ namespace BirdGame
                 OnProgress("Loading Scene", (progress + 5f) / 6f);
             }, () =>
             {
+                // 根据存档生成鸟
+                this.GetSystem<IBirdSystem>().GenerateBirdsFromSave();
+                
                 this.GetSystem<IUISystem>().ShowPanel(UIPanel.MenuPanel);
                 
                 // 游戏加载完成，显示教程弹窗

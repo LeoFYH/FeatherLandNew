@@ -21,6 +21,7 @@ namespace BirdGame
             this.RegisterSystem<IMonoSystem>(new MonoSystem());
             this.RegisterSystem<IAssetSystem>(new AssetSystem());
             this.RegisterSystem<ISaveSystem>(new SaveSystem());
+            this.RegisterSystem<IBirdSystem>(new BirdSystem());
             this.RegisterSystem<IUISystem>(new UISystem());
             this.RegisterSystem<IAudioSystem>(new AudioSystem());
             this.RegisterSystem<IGameSystem>(new GameSystem());

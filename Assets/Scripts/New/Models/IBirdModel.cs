@@ -17,7 +17,7 @@ namespace BirdGame
         void RemoveBird(int index);
     }
 
-    public class BirdModel : AbstractModel, IBirdModel
+    public class BirdModel : AbstractModel, IBirdModel, ICanGetSystem
     {
         protected override void OnInit()
         {
@@ -38,6 +38,9 @@ namespace BirdGame
             };
             bird.birdIndex = BirdList.Count;
             BirdList.Add(data);
+            
+            // 设置鸟的数据监听器
+            this.GetSystem<IBirdSystem>().SetupBirdListener(data);
         }
 
         public void RemoveBird(int index)
@@ -45,6 +48,10 @@ namespace BirdGame
             if(index >= BirdList.Count)
                 return;
             var data = BirdList[index];
+            
+            // 清理鸟的监听器
+            this.GetSystem<IBirdSystem>().CleanupBirdListener(index);
+            
             BirdList.RemoveAt(index);
             GameObject.Destroy(data.bird.gameObject);
             data = null;

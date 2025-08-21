@@ -40,15 +40,13 @@ namespace BirdGame
             if (Input.GetMouseButtonDown(0))
             {
                 Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                RaycastHit2D[] hits = Physics2D.RaycastAll(mousePosition, Vector2.zero);
                 
-                // 使用OverlapPointAll来检测触发器，这样可以检测到IsTrigger的Collider2D
-                Collider2D[] colliders = Physics2D.OverlapPointAll(mousePosition);
-                
-                foreach (var collider in colliders)
+                foreach (var hit in hits)
                 {
                     // 检查是否点击到装饰物（通过检查是否有DecorationClickHandler或DecorationDrag组件）
-                    if (collider.GetComponent<DecorationClickHandler>() != null || 
-                        collider.GetComponent<DecorationDrag>() != null)
+                    if (hit.collider.GetComponent<DecorationClickHandler>() != null || 
+                        hit.collider.GetComponent<DecorationDrag>() != null)
                     {
                         return true;
                     }

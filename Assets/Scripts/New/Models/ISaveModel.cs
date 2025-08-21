@@ -80,7 +80,24 @@ namespace BirdGame
     [Serializable]
     public class BirdInfoData : SavableData
     {
-        
+        public int unopenEggs = 0;
+        public List<SerializableBirdData> birdList = new List<SerializableBirdData>();
+    }
+
+    /// <summary>
+    /// 可序列化的鸟数据
+    /// </summary>
+    [Serializable]
+    public class SerializableBirdData
+    {
+        public int birdType;
+        public string customName;
+        public bool isSmall;
+        public int eatFoodCount;
+        public int currentFavorability;
+        public int totalFavorability;
+        public float petTime;
+        public Vector3 position;
     }
 
     /// <summary>
