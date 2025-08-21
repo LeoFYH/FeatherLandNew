@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -14,6 +15,7 @@ namespace BirdGame
         public TMP_Dropdown languageDropdown;
         public Button quitButton;
         public Button tutorialButton;
+        public Button clearSaveButton; // 添加清除存档按钮
         public Sprite itemSprite;
 
         [Header("点击外部关闭设置")]
@@ -22,6 +24,120 @@ namespace BirdGame
         public bool enableClickOutsideToClose = true;  // 是否启用点击外部关闭功能
 
         private List<SystemLanguage> languages = new List<SystemLanguage>();
+        
+
+               public void onClick()
+        {
+            // 显示确认对话框（使用简单的确认方式）
+            Debug.Log("确认清除存档？这将删除所有游戏数据，包括鸟、金币、设置等。");
+            // 直接执行清除操作（为了简化，暂时跳过确认对话框）
+            ExecuteClearSave();
+        }
+        
+        /// <summary>
+        /// 执行清除存档操作
+        /// </summary>
+        private void ExecuteClearSave()
+        {
+            try
+            {
+                // 删除所有存档文件
+                string path = Application.persistentDataPath + "/GameData/AccountData.save";
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+                path = Application.persistentDataPath + "/GameData/BirdInfoData.save";
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+                path = Application.persistentDataPath + "/GameData/MusicSettingData.save";
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+                path = Application.persistentDataPath + "/GameData/SettingData.save";
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+                path = Application.persistentDataPath + "/GameData/NoteData.save";
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+                path = Application.persistentDataPath + "/GameData/ScheduleData.save";
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+                path = Application.persistentDataPath + "/GameData/DecorationData.save";
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+                
+                // 清理当前游戏中的鸟
+                var birdModel = this.GetModel<IBirdModel>();
+                if (birdModel != null)
+                {
+                    // 清理所有鸟的监听器
+                    this.GetSystem<IBirdSystem>().CleanupAllListeners();
+                    
+                    // 销毁场景中的所有鸟对象
+                    var birds = GameObject.FindGameObjectsWithTag("Bird");
+                    foreach (var bird in birds)
+                    {
+                        if (bird != null)
+                        {
+                            GameObject.DestroyImmediate(bird);
+                        }
+                    }
+                    
+                    // 清空鸟列表
+                    birdModel.BirdList.Clear();
+                    birdModel.UnopenEggs = 0;
+                }
+                
+                // 重新初始化数据（创建新的默认存档）
+                this.GetSystem<ISaveSystem>().InitData();
+                
+                // 显示成功消息
+                this.GetSystem<IUISystem>().ShowPrompt("存档已清除！所有游戏数据已重置为初始状态。");
+                
+                Debug.Log("存档清除成功！");
+                
+                // 重新加载游戏
+                RestartGame();
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"清除存档失败: {e.Message}");
+                this.GetSystem<IUISystem>().ShowPrompt("清除失败！清除存档时发生错误，请重试。");
+            }
+        }
+        
+        /// <summary>
+        /// 重新加载游戏
+        /// </summary>
+        private void RestartGame()
+        {
+            // 关闭当前设置弹窗
+            this.GetSystem<IUISystem>().HidePopup(UIPopup.SettingPopup);
+            
+            // 等待一帧，确保UI关闭完成
+            this.GetSystem<IMonoSystem>().StartCoroutine(RestartGameCoroutine());
+        }
+        
+        private System.Collections.IEnumerator RestartGameCoroutine()
+        {
+            // 等待一帧，确保UI关闭完成
+            yield return null;
+            
+            // 重新加载游戏
+            this.SendCommand<LoadGameCommand>();
+        }
 
         void Update()
         {
@@ -125,6 +241,24 @@ namespace BirdGame
                 }
             }
             
+            // 检查是否点击了清除存档按钮
+            if (clearSaveButton != null)
+            {
+                RectTransform clearSaveRect = clearSaveButton.GetComponent<RectTransform>();
+                if (clearSaveRect != null)
+                {
+                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                        clearSaveRect, mousePosition, null, out Vector2 localPoint))
+                    {
+                        if (clearSaveRect.rect.Contains(localPoint))
+                        {
+                            // 点击了清除存档按钮，不关闭
+                            return;
+                        }
+                    }
+                }
+            }
+            
             // 检查是否点击了下拉菜单
             if (screenDropdown != null)
             {
@@ -222,6 +356,15 @@ namespace BirdGame
             {
                 UnityEngine.Application.Quit();
             });
+            
+            // 添加清除存档按钮的点击监听器
+            if (clearSaveButton != null)
+            {
+                clearSaveButton.onClick.AddListener(() =>
+                {
+                    onClick(); // 调用清除存档功能
+                });
+            }
             
             // 初始化下拉菜单的默认值
             InitializeScreenDropdown();

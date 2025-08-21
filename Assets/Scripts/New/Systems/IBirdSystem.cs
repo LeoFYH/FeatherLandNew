@@ -12,6 +12,7 @@ namespace BirdGame
         void GenerateBirdsFromSave();
         void SetupBirdListener(BirdData birdData);
         void CleanupBirdListener(int birdIndex);
+        void CleanupAllListeners();
     }
 
     public class BirdSystem : AbstractSystem, IBirdSystem
@@ -60,7 +61,8 @@ namespace BirdGame
                     currentFavorability = birdData.bird.currentFavorability.Value,
                     totalFavorability = birdData.bird.totalFavorability,
                     petTime = 0, // petTime是私有字段，暂时设为0
-                    position = birdData.bird.transform.position
+                    position = birdData.bird.transform.position,
+                    walkArea = birdData.bird.walkArea
                 };
 
                 saveModel.BirdInfoData.birdList.Add(serializableData);

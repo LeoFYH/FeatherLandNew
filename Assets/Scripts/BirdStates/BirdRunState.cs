@@ -135,6 +135,14 @@ namespace BirdGame
 
         private void DONext()
         {
+            // 安全检查：确保birdIndex在有效范围内
+            if (_brid.birdIndex < 0 || _brid.birdIndex >= this.GetModel<IBirdModel>().BirdList.Count)
+            {
+                Debug.LogWarning($"鸟的索引无效: {_brid.birdIndex}, BirdList.Count: {this.GetModel<IBirdModel>().BirdList.Count}");
+                currMachine.ChangeState<BirdIdleState>();
+                return;
+            }
+            
             int birdIndex = this.GetModel<IBirdModel>().BirdList[_brid.birdIndex].birdType;
             if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex).canFly)
             {

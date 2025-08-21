@@ -98,6 +98,7 @@ namespace BirdGame
         public int totalFavorability;
         public float petTime;
         public Vector3 position;
+        public int walkArea;
     }
 
     /// <summary>
