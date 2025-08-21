@@ -222,17 +222,42 @@ namespace BirdGame
             if (NavigationManager.Instance == numPrefab)
                 return false;
             
-            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mouseWorldPos.z = 0; // 确保Z轴位置正确
-        
-            //检测是否点击到鸟，如果点击到鸟，则不生成食物
-            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D[] hits = Physics2D.RaycastAll(mousePosition, Vector2.zero);
-            if (hits.Length > 0)
+            // 获取鼠标位置
+            Vector2 mousePosition = Input.mousePosition;
+            
+            // 获取主摄像机
+            Camera mainCamera = Camera.main;
+            if (mainCamera == null)
             {
-                foreach (var hit in hits)
+                return false;
+            }
+            
+            // 将鼠标位置转换为世界坐标
+            Vector3 worldPosition = mainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, -mainCamera.transform.position.z));
+            
+            // 检查是否点击到鸟，如果点击到鸟，则不生成食物
+            GameObject[] birds = GameObject.FindGameObjectsWithTag("Bird");
+            
+            foreach (var bird in birds)
+            {
+                if (bird == null) continue;
+                
+                // 获取鸟的Collider2D
+                Collider2D collider2D = bird.GetComponent<Collider2D>();
+                
+                if (collider2D != null)
                 {
-                    if (hit.collider.CompareTag("Bird"))
+                    // 使用OverlapPoint检测鼠标是否在碰撞器内（适用于触发器）
+                    if (collider2D.OverlapPoint(worldPosition))
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    // 如果没有碰撞器，使用简单的距离检测
+                    float distance = Vector2.Distance(worldPosition, bird.transform.position);
+                    if (distance < 0.5f) // 使用0.5f作为检测范围
                     {
                         return false;
                     }
@@ -243,7 +268,8 @@ namespace BirdGame
                 return false;
 
             // 检查基础偏移位置是否在可导航区域
-            if (NavigationManager.Instance.IsPointInNavMeshArea(3, mousePosition + (Vector2)foodDropOffset))
+            Vector2 worldPos2D = new Vector2(worldPosition.x, worldPosition.y);
+            if (NavigationManager.Instance.IsPointInNavMeshArea(3, worldPos2D + (Vector2)foodDropOffset))
                 return true;
 
             return false;
@@ -251,19 +277,77 @@ namespace BirdGame
 
         public bool IsCoverBird()
         {
-            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mouseWorldPos.z = 0; // 确保Z轴位置正确
-        
-            //检测是否点击到鸟，如果点击到鸟，则不生成食物
-            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D[] hits = Physics2D.RaycastAll(mousePosition, Vector2.zero);
-            if (hits.Length > 0)
+            // 获取鼠标位置
+            Vector2 mousePosition = Input.mousePosition;
+            
+            // 获取主摄像机
+            Camera mainCamera = Camera.main;
+            if (mainCamera == null)
             {
-                foreach (var hit in hits)
+                return false;
+            }
+            
+            // 将鼠标位置转换为世界坐标
+            Vector3 worldPosition = mainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, -mainCamera.transform.position.z));
+            
+            // 查找所有带有"Bird"或"Egg"标签的GameObject
+            GameObject[] birds = GameObject.FindGameObjectsWithTag("Bird");
+            GameObject[] eggs = GameObject.FindGameObjectsWithTag("Egg");
+            
+            // 检查鸟
+            foreach (var bird in birds)
+            {
+                if (bird == null) continue;
+                
+                // 获取鸟的Collider2D
+                Collider2D collider2D = bird.GetComponent<Collider2D>();
+                
+                if (collider2D != null)
                 {
-                    if (hit.collider.CompareTag("Bird") || hit.collider.CompareTag("Egg"))
+                    // 使用OverlapPoint检测鼠标是否在碰撞器内（适用于触发器）
+                    if (collider2D.OverlapPoint(worldPosition))
                     {
-                            return true;
+                        Debug.Log($"检测到鸟: {bird.name}");
+                        return true;
+                    }
+                }
+                else
+                {
+                    // 如果没有碰撞器，使用简单的距离检测
+                    float distance = Vector2.Distance(worldPosition, bird.transform.position);
+                    if (distance < 0.5f) // 使用0.5f作为检测范围
+                    {
+                        Debug.Log($"通过距离检测到鸟: {bird.name}, 距离: {distance}");
+                        return true;
+                    }
+                }
+            }
+            
+            // 检查蛋
+            foreach (var egg in eggs)
+            {
+                if (egg == null) continue;
+                
+                // 获取蛋的Collider2D
+                Collider2D collider2D = egg.GetComponent<Collider2D>();
+                
+                if (collider2D != null)
+                {
+                    // 使用OverlapPoint检测鼠标是否在碰撞器内（适用于触发器）
+                    if (collider2D.OverlapPoint(worldPosition))
+                    {
+                        Debug.Log($"检测到蛋: {egg.name}");
+                        return true;
+                    }
+                }
+                else
+                {
+                    // 如果没有碰撞器，使用简单的距离检测
+                    float distance = Vector2.Distance(worldPosition, egg.transform.position);
+                    if (distance < 0.5f) // 使用0.5f作为检测范围
+                    {
+                        Debug.Log($"通过距离检测到蛋: {egg.name}, 距离: {distance}");
+                        return true;
                     }
                 }
             }
