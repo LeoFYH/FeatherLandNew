@@ -18,6 +18,7 @@ namespace BirdGame
         public Vector2 menuOffset = Vector2.zero;
 
         private int decorationId;
+        private int decorationIndex;
         private GameObject deleteObject;
 
         public override void OnShowPanel()
@@ -34,7 +35,7 @@ namespace BirdGame
         {
             deleteButton.onClick.AddListener(() =>
             {
-                this.GetSystem<IGameSystem>().DestroyDecoration(decorationId, deleteObject);
+                this.GetSystem<IGameSystem>().DestroyDecoration(decorationId, decorationIndex, deleteObject);
                 this.GetSystem<IUISystem>().HideMouseMenu();
             });
         }
@@ -95,9 +96,10 @@ namespace BirdGame
             return false;
         }
 
-        public void Init(int id, GameObject obj)
+        public void Init(int id, int index, GameObject obj)
         {
             decorationId = id;
+            decorationIndex = index;
             deleteObject = obj;
             
             Vector2 localPoint;

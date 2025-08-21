@@ -202,13 +202,16 @@ namespace BirdGame
             // petTime是私有字段，无法直接设置
 
             // 根据isSmall设置鸟的大小
-            if (savedBirdData.isSmall)
+            if (savedBirdData.eatFoodCount <= birdItem.eatForBig)
             {
-                // 幼鸟：缩小到0.7倍
                 birdObject.transform.localScale = Vector3.one * bird.BabyBirdSize;
+                savedBirdData.isSmall = true;
+                bird.isSmall = true;
             }
             else
             {
+                savedBirdData.isSmall = false;
+                bird.isSmall = false;
                 // 成鸟：保持原始大小
                 birdObject.transform.localScale = Vector3.one * bird.AdultBirdSize;
             }
@@ -217,7 +220,7 @@ namespace BirdGame
             birdModel.AddBird(savedBirdData.birdType, bird);
 
             // 设置自定义名称
-            var birdData = birdModel.BirdList[birdModel.BirdList.Count - 1];
+            var birdData = birdModel.BirdList[^1];
             birdData.customName = savedBirdData.customName;
             
             agent.enabled = true;

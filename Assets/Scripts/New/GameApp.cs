@@ -9,7 +9,6 @@ namespace BirdGame
             this.RegisterUtility<IFullScreenUtility>(new FullScreenUtility());
             
             this.RegisterModel<ISaveModel>(new SaveModel());
-            this.RegisterModel<ISettingModel>(new SettingModel());
             this.RegisterModel<IAccountModel>(new AccountModel());
             this.RegisterModel<IRadioModel>(new RadioModel());
             this.RegisterModel<IBirdModel>(new BirdModel());

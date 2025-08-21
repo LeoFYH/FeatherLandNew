@@ -1,5 +1,7 @@
-﻿using QFramework;
+﻿using System.Collections.Generic;
+using QFramework;
 using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace BirdGame
@@ -29,10 +31,10 @@ namespace BirdGame
             buyButton.onClick.AddListener(() =>
             {
                 var item = this.GetModel<IConfigModel>().ShopConfig.decorations[id];
-                var quantities = this.GetModel<IGameModel>().PurchasedDecorationQuantities;
+                var accountData = this.GetModel<ISaveModel>().AccountData;
                 
                 // 获取当前已购买的数量
-                int currentQuantity = quantities.ContainsKey(id) ? quantities[id] : 0;
+                int currentQuantity = accountData.decorations[id].count;
                 
                 // 检查是否达到数量限制
                 if (item.maxQuantity > 0 && currentQuantity >= item.maxQuantity)
@@ -52,7 +54,10 @@ namespace BirdGame
                     if (item.decorationType == DecorationType.Draggable)
                     {
                         // 可拖拽类型：创建跟随鼠标的装饰品
-                        this.GetSystem<IGameSystem>().CreateDecoration(id);
+                        this.GetSystem<IGameSystem>().CreateDecoration(id, accountData.decorations[id].count);
+                        accountData.decorations[id].count++;
+                        accountData.decorations[id].position.Add(Vector3.zero);
+                        this.GetSystem<ISaveSystem>().SaveData();
                         string text = this.GetSystem<ILocalizationSystem>().GetString("Purchase successful! Left-click to place the ornament");
                         this.GetSystem<IUISystem>().ShowPrompt(text);
                         //this.GetSystem<IUISystem>().ShowPrompt("购买成功！点击左键放置装饰品");
@@ -61,7 +66,10 @@ namespace BirdGame
                     else if (item.decorationType == DecorationType.Fixed)
                     {
                         // 固定类型：直接放置在指定位置
-                        this.GetSystem<IGameSystem>().CreateFixedDecoration(id);
+                        this.GetSystem<IGameSystem>().CreateFixedDecoration(id,accountData.decorations[id].count);
+                        accountData.decorations[id].count++;
+                        accountData.decorations[id].position.Add(Vector3.zero);
+                        this.GetSystem<ISaveSystem>().SaveData();
                         string text = this.GetSystem<ILocalizationSystem>().GetString("Purchase successful! The ornament has been placed in the designated place");
                         this.GetSystem<IUISystem>().ShowPrompt(text);
                         //this.GetSystem<IUISystem>().ShowPrompt("购买成功！装饰品已放置在指定位置");

@@ -29,7 +29,7 @@ namespace BirdGame
             foreach (var bird in classInfo.birds)
             {
                 int id = bird.id;
-                if (this.GetModel<IGameModel>().UnlockedBirds.Contains(id))
+                if (this.GetModel<ISaveModel>().IllustratedData.birds.Contains(id))
                 {
                     var sp = this.GetModel<IConfigModel>().BirdConfig.GetBird(id).preview;
                     icon.sprite = sp;

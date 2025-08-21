@@ -266,7 +266,7 @@ namespace BirdGame
             _saveModel.BirdInfoData = GetData<BirdInfoData>("BirdInfoData");
             _saveModel.NoteData = GetData<NoteData>("NoteData");
             _saveModel.ScheduleData = GetData<ScheduleData>("ScheduleData");
-            _saveModel.DecorationData = GetData<DecorationData>("DecorationData");
+            _saveModel.IllustratedData = GetData<IllustratedData>("IllustratedData");
         }
 
         public void SaveData()
@@ -277,7 +277,7 @@ namespace BirdGame
             SaveData("BirdInfoData", _saveModel.BirdInfoData);
             SaveData("NoteData", _saveModel.NoteData);
             SaveData("ScheduleData", _saveModel.ScheduleData);
-            SaveData("DecorationData", _saveModel.DecorationData);
+            SaveData("IllustratedData", _saveModel.IllustratedData);
         }
 
         public void DeleteSave()
@@ -312,7 +312,7 @@ namespace BirdGame
             {
                 File.Delete(path);
             }
-            path = Application.persistentDataPath + "/GameData/DecorationData.save";
+            path = Application.persistentDataPath + "/GameData/IllustratedData.save";
             if (File.Exists(path))
             {
                 File.Delete(path);

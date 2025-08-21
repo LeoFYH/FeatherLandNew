@@ -1,6 +1,7 @@
 ﻿using QFramework;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace BirdGame
 {
@@ -92,6 +93,8 @@ namespace BirdGame
                 // 根据存档生成鸟
                 this.GetSystem<IBirdSystem>().GenerateBirdsFromSave();
                 
+                this.GetSystem<IGameSystem>().CreateDecorations();
+                
                 this.GetSystem<IUISystem>().ShowPanel(UIPanel.MenuPanel);
                 
                 // 游戏加载完成，显示教程弹窗
@@ -109,31 +112,42 @@ namespace BirdGame
         /// </summary>
         private void InitializeDefaultFood()
         {
-            var gameModel = this.GetModel<IGameModel>();
             var configModel = this.GetModel<IConfigModel>();
-            
+            var saveModel = this.GetModel<ISaveModel>();
+            if (saveModel.AccountData.tools == null)
+                saveModel.AccountData.tools = new List<ToolInfo>();
             // 查找食物工具配置
             for (int i = 0; i < configModel.ShopConfig.tools.Length; i++)
             {
-                var toolItem = configModel.ShopConfig.tools[i];
-                if (toolItem.name.ToLower() == "food")
+                if (saveModel.AccountData.tools.Count <= i)
                 {
-                    // 如果食物数组不为空，设置第一个为默认食物
-                    if (toolItem.selections != null && toolItem.selections.Length > 0)
-                    {
-                        var firstFood = toolItem.selections[0];
-                        gameModel.CurrentFoodType = firstFood.selectionName;
-                        
-                        // 将第一个食物添加到已购买列表（作为默认食物）
-                        if (!gameModel.PurchasedFoods.Contains(firstFood.selectionName))
-                        {
-                            gameModel.PurchasedFoods.Add(firstFood.selectionName);
-                        }
-                        
-                        Debug.Log($"默认食物已设置为: {firstFood.selectionName}");
-                    }
-                    break;
+                    saveModel.AccountData.tools.Add(new ToolInfo());
                 }
+
+                if (saveModel.AccountData.tools[i].unlockedList == null)
+                {
+                    saveModel.AccountData.tools[i].unlockedList = new List<int>() { 0 };
+                }
+
+                // var toolItem = configModel.ShopConfig.tools[i];
+                // if (toolItem.name.ToLower() == "food")
+                // {
+                //     // 如果食物数组不为空，设置第一个为默认食物
+                //     if (toolItem.selections != null && toolItem.selections.Length > 0)
+                //     {
+                //         var firstFood = toolItem.selections[0];
+                //         gameModel.CurrentFoodType = firstFood.selectionName;
+                //         
+                //         // 将第一个食物添加到已购买列表（作为默认食物）
+                //         if (!gameModel.PurchasedFoods.Contains(firstFood.selectionName))
+                //         {
+                //             gameModel.PurchasedFoods.Add(firstFood.selectionName);
+                //         }
+                //         
+                //         Debug.Log($"默认食物已设置为: {firstFood.selectionName}");
+                //     }
+                //     break;
+                // }
             }
         }
 

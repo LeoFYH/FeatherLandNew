@@ -130,7 +130,7 @@ namespace BirdGame
                 item.Init(bird.id, OnSkinSelected);
                 skinItems.Add(item.gameObject);
                 int birdIndex = bird.id;
-                if (unlockedIndex == -1 && this.GetModel<IGameModel>().UnlockedBirds.Contains(birdIndex))
+                if (unlockedIndex == -1 && this.GetModel<ISaveModel>().IllustratedData.birds.Contains(birdIndex))
                 {
                     unlockedIndex = birdIndex;
                 }
@@ -158,7 +158,7 @@ namespace BirdGame
             var birdInfo = this.GetModel<IConfigModel>().BirdConfig.GetBird(index, out classIndex);
             birdPreview.sprite = birdInfo.preview;
             birdPreview.GetComponent<RectTransform>().sizeDelta = birdInfo.preview.rect.size * 0.2f;
-            if (!this.GetModel<IGameModel>().UnlockedBirds.Contains(index))
+            if (!this.GetModel<ISaveModel>().IllustratedData.birds.Contains(index))
             {
                 birdPreview.color = Color.black;
             }

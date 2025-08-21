@@ -37,6 +37,7 @@ namespace BirdGame
             
             var item = this.GetModel<IConfigModel>().ShopConfig.tools[index];
             var gameModel = this.GetModel<IGameModel>();
+            var saveModel = this.GetModel<ISaveModel>();
             if (!gameModel.SelectedToolDic.ContainsKey(index))
             {
                 gameModel.SelectedToolDic.Add(index, new BindableProperty<int>());
@@ -49,10 +50,8 @@ namespace BirdGame
             selectName.text = item.selections[gameModel.SelectedToolDic[index].Value].selectionName;
             description.SetKey(item.selections[gameModel.SelectedToolDic[index].Value].description);
             
-            // 检查是否已购买，决定显示价格还是"equipped"
-            var initialSelectedTool = item.selections[gameModel.SelectedToolDic[index].Value];
-            bool isInitialPurchased = gameModel.PurchasedFoods.Contains(initialSelectedTool.selectionName);
-            bool isInitialEquipped = gameModel.CurrentFoodType == initialSelectedTool.selectionName;
+            bool isInitialPurchased = saveModel.AccountData.tools[itemIndex].unlockedList.Contains(gameModel.SelectedToolDic[index].Value);
+            bool isInitialEquipped = saveModel.AccountData.tools[itemIndex].equipedId == gameModel.SelectedToolDic[index].Value;
             
             if (isInitialEquipped)
             {
@@ -67,7 +66,7 @@ namespace BirdGame
             else
             {
                 // 未购买：显示价格
-                priceText.text = initialSelectedTool.price.ToString();
+                priceText.text = item.selections[gameModel.SelectedToolDic[index].Value].price.ToString();
             }
             for (int i = 0; i < item.selections.Length; i++)
             {
@@ -87,8 +86,8 @@ namespace BirdGame
                 
                 // 检查食物状态，决定显示内容
                 var selectedTool = item.selections[v];
-                bool isPurchased = this.GetModel<IGameModel>().PurchasedFoods.Contains(selectedTool.selectionName);
-                bool isEquipped = this.GetModel<IGameModel>().CurrentFoodType == selectedTool.selectionName;
+                bool isPurchased = saveModel.AccountData.tools[index].unlockedList.Contains(v);
+                bool isEquipped = saveModel.AccountData.tools[index].equipedId == v;
                 
                 if (isEquipped)
                 {
@@ -114,14 +113,12 @@ namespace BirdGame
 
         private void UpdateButtonState()
         {
-            var gameModel = this.GetModel<IGameModel>();
-            var configModel = this.GetModel<IConfigModel>();
-            var selectedToolIndex = gameModel.SelectedToolDic[itemIndex].Value;
-            var toolItem = configModel.ShopConfig.tools[itemIndex];
-            var selectedTool = toolItem.selections[selectedToolIndex];
-            
+            //var gameModel = this.GetModel<IGameModel>();
+            // var saveModel = this.GetModel<ISaveModel>();
+            // var configModel = this.GetModel<IConfigModel>();
+            // var selectedToolIndex = gameModel.SelectedToolDic[itemIndex].Value;
             // 检查是否已经购买过这个食物
-            bool isPurchased = gameModel.PurchasedFoods.Contains(selectedTool.selectionName);
+            //bool isPurchased = saveModel.AccountData.tools[itemIndex].unlockedList.Contains(selectedToolIndex);
             
             //Debug.Log($"更新按钮状态: {selectedTool.selectionName}, 已购买: {isPurchased}");
             
@@ -138,12 +135,13 @@ namespace BirdGame
             {
                 var configModel = this.GetModel<IConfigModel>();
                 var gameModel = this.GetModel<IGameModel>();
+                var saveModel = this.GetModel<ISaveModel>();
                 var selectedToolIndex = gameModel.SelectedToolDic[itemIndex].Value;
                 var toolItem = configModel.ShopConfig.tools[itemIndex];
                 var selectedTool = toolItem.selections[selectedToolIndex];
                 
                 // 检查是否已经购买过
-                bool isPurchased = gameModel.PurchasedFoods.Contains(selectedTool.selectionName);
+                bool isPurchased = saveModel.AccountData.tools[itemIndex].unlockedList.Contains(selectedToolIndex);
                 
                 if (!isPurchased)
                 {
@@ -155,13 +153,13 @@ namespace BirdGame
                         this.GetModel<IAccountModel>().Coins.Value -= price;
                         
                         // 添加到已购买列表
-                        gameModel.PurchasedFoods.Add(selectedTool.selectionName);
-                        
+                        saveModel.AccountData.tools[itemIndex].unlockedList.Add(selectedToolIndex);
+
+                        saveModel.AccountData.tools[itemIndex].equipedId = selectedToolIndex;
                         // 根据工具类型应用不同的效果
                         if (toolItem.name.ToLower() == "food")
                         {
                             // 设置当前食物类型（立即装备）
-                            gameModel.CurrentFoodType = selectedTool.selectionName;
                             string text = this.GetSystem<ILocalizationSystem>().GetString("Purchase successful! Food skins are equipped:");
                             this.GetSystem<IUISystem>().ShowPrompt($"{text} {selectedTool.selectionName}");
                             //this.GetSystem<IUISystem>().ShowPrompt($"购买成功！食物皮肤已装备: {selectedTool.selectionName}");
@@ -173,6 +171,7 @@ namespace BirdGame
                             this.GetSystem<IUISystem>().ShowPrompt($"{text} {selectedTool.selectionName}");
                         }
                         
+                        this.GetSystem<ISaveSystem>().SaveData();
                         UpdateButtonState();
                         this.GetSystem<IUISystem>().HidePopup(UIPopup.ShopPopup);
                     }
@@ -188,7 +187,7 @@ namespace BirdGame
                     if (toolItem.name.ToLower() == "food")
                     {
                         // 设置当前食物类型
-                        gameModel.CurrentFoodType = selectedTool.selectionName;
+                        saveModel.AccountData.tools[itemIndex].equipedId = selectedToolIndex;
                         string text = this.GetSystem<ILocalizationSystem>().GetString("Food skin equipped:");
                         this.GetSystem<IUISystem>().ShowPrompt($"{text} {selectedTool.selectionName}");
                     }

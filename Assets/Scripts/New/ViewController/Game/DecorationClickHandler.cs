@@ -6,10 +6,12 @@ namespace BirdGame
     public class DecorationClickHandler : ViewControllerBase
     {
         private int decorationId;
+        public int decorationIndex;
 
-        public void Initialize(int id)
+        public void Initialize(int id, int index)
         {
             decorationId = id;
+            decorationIndex = index;
         }
 
         private void OnMouseOver()
@@ -31,7 +33,7 @@ namespace BirdGame
         {
             // 调用游戏系统的销毁方法
             //this.GetSystem<IGameSystem>().DestroyDecoration(decorationId, gameObject);
-            this.GetSystem<IUISystem>().ShowMouseMenu(decorationId, gameObject);
+            this.GetSystem<IUISystem>().ShowMouseMenu(decorationId, decorationIndex, gameObject);
         }
     }
 } 

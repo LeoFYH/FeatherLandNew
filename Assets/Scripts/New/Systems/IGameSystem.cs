@@ -1,4 +1,5 @@
-﻿using QFramework;
+﻿using System.Collections.Generic;
+using QFramework;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -17,11 +18,12 @@ namespace BirdGame
         bool IsCoverBird();
         bool IsCoverUI();
         bool IsOnGround();
-        void CreateDecoration(int decorationId);
-        void CreateFixedDecoration(int decorationId);
-        void DestroyDecoration(int decorationId, GameObject decorationObject);
+        void CreateDecoration(int decorationId, int index);
+        void CreateFixedDecoration(int decorationId, int index);
+        void DestroyDecoration(int decorationId, int index, GameObject decorationObject);
         void PlaceDecoration();
         bool IsPlacingDecoration();
+        void CreateDecorations();
     }
 
     public class GameSystem : AbstractSystem, IGameSystem
@@ -31,6 +33,7 @@ namespace BirdGame
         private IBirdModel birdModel;
         private GameObject currentPlacingDecoration; // 当前正在放置的装饰品
         private int currentPlacingDecorationId; // 当前正在放置的装饰品ID
+        private int currentIndex;
         
         [Header("食物位置偏移")]
         [Tooltip("食物落下位置相对于鼠标的偏移量")]
@@ -70,39 +73,6 @@ namespace BirdGame
             }
         }
 
-        /// <summary>
-        /// 初始化默认食物为第一个食物
-        /// </summary>
-        private void InitializeDefaultFood()
-        {
-            var gameModel = this.GetModel<IGameModel>();
-            var configModel = this.GetModel<IConfigModel>();
-            
-            // 查找食物工具配置
-            for (int i = 0; i < configModel.ShopConfig.tools.Length; i++)
-            {
-                var toolItem = configModel.ShopConfig.tools[i];
-                if (toolItem.name.ToLower() == "food")
-                {
-                    // 如果食物数组不为空，设置第一个为默认食物
-                    if (toolItem.selections != null && toolItem.selections.Length > 0)
-                    {
-                        var firstFood = toolItem.selections[0];
-                        gameModel.CurrentFoodType = firstFood.selectionName;
-                        
-                        // 将第一个食物添加到已购买列表（作为默认食物）
-                        if (!gameModel.PurchasedFoods.Contains(firstFood.selectionName))
-                        {
-                            gameModel.PurchasedFoods.Add(firstFood.selectionName);
-                        }
-                        
-                        Debug.Log($"默认食物已设置为: {firstFood.selectionName}");
-                    }
-                    break;
-                }
-            }
-        }
-
         public void CreateNum(string s, Vector3 pos)
         {
             GameObject go = GameObject.Instantiate(numPrefab);
@@ -121,6 +91,7 @@ namespace BirdGame
 
                 // 根据当前选择的食物类型更换sprite
                 var gameModel = this.GetModel<IGameModel>();
+                var saveModel = this.GetModel<ISaveModel>();
                 var configModel = this.GetModel<IConfigModel>();
                 
                 // 查找食物工具配置
@@ -133,7 +104,7 @@ namespace BirdGame
                         for (int j = 0; j < toolItem.selections.Length; j++)
                         {
                             var selection = toolItem.selections[j];
-                            if (selection.selectionName == gameModel.CurrentFoodType)
+                            if (j == saveModel.AccountData.tools[i].equipedId)
                             {
                                 // 更换食物的sprite
                                 SpriteRenderer spriteRenderer = food.GetComponent<SpriteRenderer>();
@@ -429,7 +400,7 @@ namespace BirdGame
             return basePosition + forcedOffset;
         }
 
-        public void CreateDecoration(int decorationId)
+        public void CreateDecoration(int decorationId, int index)
         {
             var decorationItem = this.GetModel<IConfigModel>().ShopConfig.decorations[decorationId];
             
@@ -459,6 +430,8 @@ namespace BirdGame
                 // 设置为当前正在放置的装饰品
                 currentPlacingDecoration = decoration;
                 currentPlacingDecorationId = decorationId;
+                currentIndex = index;
+                Debug.Log("CurrentIndex: " + currentIndex);
                 
                 // 设置初始位置为鼠标位置
                 Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -471,7 +444,7 @@ namespace BirdGame
             }
         }
 
-        public void CreateFixedDecoration(int decorationId)
+        public void CreateFixedDecoration(int decorationId, int index)
         {
             var decorationItem = this.GetModel<IConfigModel>().ShopConfig.decorations[decorationId];
             
@@ -496,24 +469,13 @@ namespace BirdGame
                 
                 // 设置固定位置
                 decoration.transform.position = decorationItem.fixedPosition;
+
+                currentIndex = index;
                 
                 // 添加点击检测组件
                 DecorationClickHandler clickHandler = decoration.AddComponent<DecorationClickHandler>();
-                clickHandler.Initialize(decorationId);
                 
-                // 添加到已购买列表
-                this.GetModel<IGameModel>().PurchasedDecorations.Add(decoration);
-                
-                // 更新已购买的装饰品数量
-                var quantities = this.GetModel<IGameModel>().PurchasedDecorationQuantities;
-                if (quantities.ContainsKey(decorationId))
-                {
-                    quantities[decorationId]++;
-                }
-                else
-                {
-                    quantities[decorationId] = 1;
-                }
+                clickHandler.Initialize(decorationId, currentIndex);
             }
             else
             {
@@ -521,27 +483,20 @@ namespace BirdGame
             }
         }
 
-        public void DestroyDecoration(int decorationId, GameObject decorationObject)
+        public void DestroyDecoration(int decorationId, int index, GameObject decorationObject)
         {
-            // 从已购买列表中移除
-            this.GetModel<IGameModel>().PurchasedDecorations.Remove(decorationObject);
-            
-            // 更新已购买的装饰品数量
-            var quantities = this.GetModel<IGameModel>().PurchasedDecorationQuantities;
-            if (quantities.ContainsKey(decorationId))
-            {
-                quantities[decorationId]--;
-                if (quantities[decorationId] <= 0)
-                {
-                    quantities.Remove(decorationId);
-                }
-            }
-            
             // 销毁装饰品对象
             GameObject.Destroy(decorationObject);
-            
-            int remainingCount = quantities.ContainsKey(decorationId) ? quantities[decorationId] : 0;
-            Debug.Log($"销毁装饰品 {decorationId}，剩余数量: {remainingCount}");
+            var accountData = this.GetModel<ISaveModel>().AccountData;
+            if(accountData.decorations[decorationId].count > 0)
+                accountData.decorations[decorationId].position.RemoveAt(index);
+            accountData.decorations[decorationId].count--;
+            if (accountData.decorations[decorationId].count <= 0)
+            {
+                accountData.decorations[decorationId].count = 0;
+            }
+            this.GetSystem<ISaveSystem>().SaveData();
+            Debug.Log($"销毁装饰品 {decorationId}，剩余数量: {accountData.decorations[decorationId].count}");
         }
 
         public void PlaceDecoration()
@@ -560,31 +515,71 @@ namespace BirdGame
                 
                 // 添加点击检测组件
                 DecorationClickHandler clickHandler = currentPlacingDecoration.AddComponent<DecorationClickHandler>();
-                clickHandler.Initialize(currentPlacingDecorationId);
-                
-                // 添加到已购买列表
-                this.GetModel<IGameModel>().PurchasedDecorations.Add(currentPlacingDecoration);
+                clickHandler.Initialize(currentPlacingDecorationId, currentIndex);
                 
                 // 更新已购买的装饰品数量
-                var quantities = this.GetModel<IGameModel>().PurchasedDecorationQuantities;
-                if (quantities.ContainsKey(currentPlacingDecorationId))
-                {
-                    quantities[currentPlacingDecorationId]++;
-                }
-                else
-                {
-                    quantities[currentPlacingDecorationId] = 1;
-                }
-                
+                var accountData = this.GetModel<ISaveModel>().AccountData;
+                Debug.Log("index:" + currentIndex);
+                accountData.decorations[currentPlacingDecorationId].position[currentIndex] =
+                    currentPlacingDecoration.transform.position;
+                this.GetSystem<ISaveSystem>().SaveData();
                 // 清空当前放置的装饰品
                 currentPlacingDecoration = null;
                 currentPlacingDecorationId = -1;
+                currentIndex = -1;
             }
         }
 
         public bool IsPlacingDecoration()
         {
             return currentPlacingDecoration != null;
+        }
+
+        public void CreateDecorations()
+        {
+            var accountData = this.GetModel<ISaveModel>().AccountData;
+            int count = accountData.decorations.Count;
+            for (int i = 0; i < count; i++)
+            {
+                if (accountData.decorations[i].position == null)
+                {
+                    accountData.decorations[i].position = new List<Vector3>();
+                }
+
+                for (int j = 0; j < accountData.decorations[i].count; j++)
+                {
+                    var decorationItem = this.GetModel<IConfigModel>().ShopConfig.decorations[i];
+                    // 创建一个 GameObject 来承载 Sprite
+                    GameObject decoration = new GameObject("Decoration");
+                    Sprite spriteToUse = decorationItem.sceneSprite != null
+                        ? decorationItem.sceneSprite
+                        : decorationItem.icon;
+
+                    // 添加 SpriteRenderer 组件
+                    SpriteRenderer spriteRenderer = decoration.AddComponent<SpriteRenderer>();
+                    spriteRenderer.sprite = spriteToUse; // 设置 Sprite
+
+                    // 设置大小
+                    decoration.transform.localScale = Vector3.one * decorationItem.scale;
+
+                    // 添加碰撞器用于点击检测
+                    BoxCollider2D collider = decoration.AddComponent<BoxCollider2D>();
+                    collider.size = spriteRenderer.sprite.bounds.size;
+
+                    // 添加拖拽组件
+                    decoration.AddComponent<DecorationDrag>();
+
+                    // 添加点击检测组件
+                    DecorationClickHandler clickHandler = decoration.AddComponent<DecorationClickHandler>();
+                    clickHandler.Initialize(i, j);
+                    if (accountData.decorations[i].position.Count <= j)
+                    {
+                        accountData.decorations[i].position.Add(Vector3.zero);
+                    }
+
+                    decoration.transform.position = accountData.decorations[i].position[j];
+                }
+            }
         }
 
         private Vector3 GetDefaultDecorationPosition()

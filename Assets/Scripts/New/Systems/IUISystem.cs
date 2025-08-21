@@ -70,7 +70,7 @@ namespace BirdGame
         /// <summary>
         /// 显示鼠标右键菜单
         /// </summary>
-        void ShowMouseMenu(int decorationId, GameObject gameObject);
+        void ShowMouseMenu(int decorationId, int index, GameObject gameObject);
 
         void HideMouseMenu();
     }
@@ -188,14 +188,16 @@ namespace BirdGame
             }
         }
 
-        public void ShowMouseMenu(int decorationId, GameObject gameObject)
+        public void ShowMouseMenu(int decorationId, int index, GameObject gameObject)
         {
             ShowPopup(UIPopup.MouseMenu, () =>
             {
                 var menu = popupDic[UIPopup.MouseMenu] as MouseMenu;
-                menu.Init(decorationId, gameObject);
+                menu.Init(decorationId, index, gameObject);
             });
         }
+
+        
 
         public void HideMouseMenu()
         {

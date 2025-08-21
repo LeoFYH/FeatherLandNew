@@ -54,10 +54,10 @@ namespace BirdGame
 
         private void CheckIllustratedUpdate(int birdIndex)
         {
-            var gameModel = this.GetModel<IGameModel>();
-            if (!gameModel.UnlockedBirds.Contains(birdIndex))
+            var saveModel = this.GetModel<ISaveModel>();
+            if (!saveModel.IllustratedData.birds.Contains(birdIndex))
             {
-                gameModel.UnlockedBirds.Add(birdIndex);
+                saveModel.IllustratedData.birds.Add(birdIndex);
                 this.GetSystem<ISaveSystem>().SaveData();
                 this.GetModel<IGameModel>().HasNewBirdIllustrated.Value = true;
             }

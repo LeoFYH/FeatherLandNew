@@ -13,7 +13,7 @@ namespace BirdGame
         BirdInfoData BirdInfoData { get; set; }
         NoteData NoteData { get; set; }
         ScheduleData ScheduleData { get; set; }
-        DecorationData DecorationData { get; set; }
+        IllustratedData IllustratedData { get; set; }
     }
 
     public class SaveModel : AbstractModel, ISaveModel
@@ -29,8 +29,7 @@ namespace BirdGame
         public BirdInfoData BirdInfoData { get; set; }
         public NoteData NoteData { get; set; }
         public ScheduleData ScheduleData { get; set; }
-        public DecorationData DecorationData { get; set; }
-        //public IllustratedData IllustratedData { get; set; }
+        public IllustratedData IllustratedData { get; set; }
     }
     
     [Serializable]
@@ -45,6 +44,22 @@ namespace BirdGame
     public class AccountData : SavableData
     {
         public int coins = 100;
+        public List<DecorationInfo> decorations = new List<DecorationInfo>();
+        public List<ToolInfo> tools = new List<ToolInfo>();
+    }
+
+    [Serializable]
+    public class DecorationInfo
+    {
+        public int count;
+        public List<Vector3> position = new List<Vector3>();
+    }
+
+    [Serializable]
+    public class ToolInfo
+    {
+        public int equipedId = 0;
+        public List<int> unlockedList = new List<int>();
     }
 
     /// <summary>
@@ -84,6 +99,12 @@ namespace BirdGame
         public List<SerializableBirdData> birdList = new List<SerializableBirdData>();
     }
 
+    [Serializable]
+    public class IllustratedData : SavableData
+    {
+        public List<int> birds = new List<int>();
+    }
+
     /// <summary>
     /// 可序列化的鸟数据
     /// </summary>
@@ -99,15 +120,6 @@ namespace BirdGame
         public float petTime;
         public Vector3 position;
         public int walkArea;
-    }
-
-    /// <summary>
-    /// 装饰品存档数据
-    /// </summary>
-    [Serializable]
-    public class DecorationData : SavableData
-    {
-        public Dictionary<int, int> purchasedQuantities = new Dictionary<int, int>();
     }
 
     /// <summary>
