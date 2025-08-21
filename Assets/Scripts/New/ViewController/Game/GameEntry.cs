@@ -1,4 +1,5 @@
-﻿using QFramework;
+﻿using System;
+using QFramework;
 using UnityEngine;
 
 namespace BirdGame
@@ -135,30 +136,37 @@ namespace BirdGame
                     // 检查食物和其他物体
                     if (!clickedOnBird)
                     {
-                        GameObject[] foods = GameObject.FindGameObjectsWithTag("Food");
-                        foreach (var food in foods)
+                        try
                         {
-                            if (food == null) continue;
-                            
-                            Collider2D collider2D = food.GetComponent<Collider2D>();
-                            
-                            if (collider2D != null)
+                            GameObject[] foods = GameObject.FindGameObjectsWithTag("Food");
+                            foreach (var food in foods)
                             {
-                                if (collider2D.OverlapPoint(worldPosition))
+                                if (food == null) continue;
+
+                                Collider2D collider2D = food.GetComponent<Collider2D>();
+
+                                if (collider2D != null)
                                 {
-                                    clickedOnInteractiveObject = true;
-                                    break;
+                                    if (collider2D.OverlapPoint(worldPosition))
+                                    {
+                                        clickedOnInteractiveObject = true;
+                                        break;
+                                    }
+                                }
+                                else
+                                {
+                                    float distance = Vector2.Distance(worldPosition, food.transform.position);
+                                    if (distance < 0.5f)
+                                    {
+                                        clickedOnInteractiveObject = true;
+                                        break;
+                                    }
                                 }
                             }
-                            else
-                            {
-                                float distance = Vector2.Distance(worldPosition, food.transform.position);
-                                if (distance < 0.5f)
-                                {
-                                    clickedOnInteractiveObject = true;
-                                    break;
-                                }
-                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e);
                         }
                     }
                 }

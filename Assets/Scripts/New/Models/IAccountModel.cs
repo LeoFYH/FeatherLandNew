@@ -14,7 +14,6 @@ namespace BirdGame
     {
         protected override void OnInit()
         {
-            
         }
 
         public BindableProperty<int> Coins { get; } = new BindableProperty<int>(100);

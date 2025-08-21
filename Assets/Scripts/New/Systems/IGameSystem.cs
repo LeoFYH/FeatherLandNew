@@ -55,6 +55,12 @@ namespace BirdGame
             {
                 numPrefab = obj;
             });
+            this.GetModel<IAccountModel>().Coins.Value = this.GetModel<ISaveModel>().AccountData.coins;
+            this.GetModel<IAccountModel>().Coins.Register(v =>
+            {
+                this.GetModel<ISaveModel>().AccountData.coins = v;
+                this.GetSystem<ISaveSystem>().SaveData();
+            });
         }
 
         public Vector3 FoodDropOffset {

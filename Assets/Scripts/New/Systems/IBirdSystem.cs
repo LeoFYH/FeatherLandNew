@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using QFramework;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace BirdGame
 {
@@ -178,9 +179,11 @@ namespace BirdGame
             // 实例化鸟预制体
             GameObject birdObject = GameObject.Instantiate(birdItem.prefab);
             Brid bird = birdObject.GetComponent<Brid>();
+            var agent = birdObject.GetComponent<NavMeshAgent>();
+            agent.enabled = false;
             
-            // 设置鸟的位置
-            birdObject.transform.position = savedBirdData.position;
+            var point = NavigationManager.Instance.GetRandomTarget(3);
+            birdObject.transform.position = new Vector3(point.x, point.y, 0);
             
             if (bird == null)
             {
@@ -200,12 +203,12 @@ namespace BirdGame
             if (savedBirdData.isSmall)
             {
                 // 幼鸟：缩小到0.7倍
-                birdObject.transform.localScale = Vector3.one * 0.7f;
+                birdObject.transform.localScale = Vector3.one * bird.BabyBirdSize;
             }
             else
             {
                 // 成鸟：保持原始大小
-                birdObject.transform.localScale = Vector3.one;
+                birdObject.transform.localScale = Vector3.one * bird.AdultBirdSize;
             }
 
             // 添加到BirdModel
@@ -214,6 +217,8 @@ namespace BirdGame
             // 设置自定义名称
             var birdData = birdModel.BirdList[birdModel.BirdList.Count - 1];
             birdData.customName = savedBirdData.customName;
+            
+            agent.enabled = true;
         }
 
 
