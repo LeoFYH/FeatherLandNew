@@ -19,13 +19,19 @@ namespace BirdGame
 
         [Header("点击外部关闭设置")]
         public Transform contentTransform;  // 主要内容区域，用于检测点击区域
+        [Header("功能设置")]
+        public bool enableClickOutsideToClose = true;  // 是否启用点击外部关闭功能
 
         void Update()
         {
-            // 检测鼠标点击
-            if (Input.GetMouseButtonDown(0))
+            // 只有在启用点击外部关闭功能时才检测
+            if (enableClickOutsideToClose)
             {
-                CheckClickOutside();
+                // 检测鼠标点击
+                if (Input.GetMouseButtonDown(0))
+                {
+                    CheckClickOutside();
+                }
             }
         }
         
@@ -59,6 +65,23 @@ namespace BirdGame
                         if (contentRect.rect.Contains(localPoint))
                         {
                             // 点击在内容区域内，不关闭
+                            return;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // 如果contentTransform未设置，使用当前GameObject作为默认检测区域
+                RectTransform selfRect = GetComponent<RectTransform>();
+                if (selfRect != null)
+                {
+                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                        selfRect, mousePosition, null, out Vector2 localPoint))
+                    {
+                        if (selfRect.rect.Contains(localPoint))
+                        {
+                            // 点击在当前区域内，不关闭
                             return;
                         }
                     }
@@ -118,10 +141,54 @@ namespace BirdGame
                 }
             }
             
+            // 检查是否点击了子UI元素（如输入框、按钮等）
+            if (scheduleBar != null && scheduleBar.activeSelf)
+            {
+                // 如果日程表栏是激活的，检查是否点击了其中的元素
+                if (IsClickInChildUI(scheduleBar, mousePosition))
+                {
+                    return;
+                }
+            }
+            
+            if (diaryBar != null && diaryBar.activeSelf)
+            {
+                // 如果日记栏是激活的，检查是否点击了其中的元素
+                if (IsClickInChildUI(diaryBar, mousePosition))
+                {
+                    return;
+                }
+            }
+            
             // 点击了UI元素但不在NotePopup区域内，关闭NotePopup
             this.GetSystem<IUISystem>().HidePopup(UIPopup.NotePopup);
         }
-
+        
+        /// <summary>
+        /// 检查是否点击了指定GameObject的子UI元素
+        /// </summary>
+        private bool IsClickInChildUI(GameObject parent, Vector2 mousePosition)
+        {
+            // 获取所有子UI元素
+            RectTransform[] childRects = parent.GetComponentsInChildren<RectTransform>();
+            
+            foreach (var childRect in childRects)
+            {
+                if (childRect.gameObject == parent) continue; // 跳过父对象本身
+                
+                if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                    childRect, mousePosition, null, out Vector2 localPoint))
+                {
+                    if (childRect.rect.Contains(localPoint))
+                    {
+                        return true;
+                    }
+                }
+            }
+            
+            return false;
+        }
+        
         private void Start()
         {
             closeButton.onClick.AddListener(() =>
