@@ -5,6 +5,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace BirdGame
 {
@@ -42,74 +45,35 @@ namespace BirdGame
             try
             {
                 // 删除所有存档文件
-                string path = Application.persistentDataPath + "/GameData/AccountData.save";
-                if (File.Exists(path))
-                {
-                    File.Delete(path);
-                }
-                path = Application.persistentDataPath + "/GameData/BirdInfoData.save";
-                if (File.Exists(path))
-                {
-                    File.Delete(path);
-                }
-                path = Application.persistentDataPath + "/GameData/MusicSettingData.save";
-                if (File.Exists(path))
-                {
-                    File.Delete(path);
-                }
-                path = Application.persistentDataPath + "/GameData/SettingData.save";
-                if (File.Exists(path))
-                {
-                    File.Delete(path);
-                }
-                path = Application.persistentDataPath + "/GameData/NoteData.save";
-                if (File.Exists(path))
-                {
-                    File.Delete(path);
-                }
-                path = Application.persistentDataPath + "/GameData/ScheduleData.save";
-                if (File.Exists(path))
-                {
-                    File.Delete(path);
-                }
-                path = Application.persistentDataPath + "/GameData/DecorationData.save";
-                if (File.Exists(path))
-                {
-                    File.Delete(path);
-                }
+                string[] saveFiles = {
+                    "AccountData.save",
+                    "BirdInfoData.save", 
+                    "MusicSettingData.save",
+                    "SettingData.save",
+                    "NoteData.save",
+                    "ScheduleData.save",
+                    "DecorationData.save"
+                };
                 
-                // 清理当前游戏中的鸟
-                var birdModel = this.GetModel<IBirdModel>();
-                if (birdModel != null)
+                string gameDataPath = Application.persistentDataPath + "/GameData/";
+                
+                foreach (string fileName in saveFiles)
                 {
-                    // 清理所有鸟的监听器
-                    this.GetSystem<IBirdSystem>().CleanupAllListeners();
-                    
-                    // 销毁场景中的所有鸟对象
-                    var birds = GameObject.FindGameObjectsWithTag("Bird");
-                    foreach (var bird in birds)
+                    string filePath = gameDataPath + fileName;
+                    if (File.Exists(filePath))
                     {
-                        if (bird != null)
-                        {
-                            GameObject.DestroyImmediate(bird);
-                        }
+                        File.Delete(filePath);
+                        Debug.Log($"已删除存档文件: {fileName}");
                     }
-                    
-                    // 清空鸟列表
-                    birdModel.BirdList.Clear();
-                    birdModel.UnopenEggs = 0;
                 }
                 
-                // 重新初始化数据（创建新的默认存档）
-                this.GetSystem<ISaveSystem>().InitData();
+                Debug.Log("所有存档文件已清除！程序即将重启...");
                 
                 // 显示成功消息
-                this.GetSystem<IUISystem>().ShowPrompt("存档已清除！所有游戏数据已重置为初始状态。");
+                this.GetSystem<IUISystem>().ShowPrompt("存档已清除！程序即将重启。");
                 
-                Debug.Log("存档清除成功！");
-                
-                // 重新加载游戏
-                RestartGame();
+                // 等待一帧确保消息显示
+                this.GetSystem<IMonoSystem>().StartCoroutine(RestartApplication());
             }
             catch (System.Exception e)
             {
@@ -119,25 +83,31 @@ namespace BirdGame
         }
         
         /// <summary>
-        /// 重新加载游戏
+        /// 重启应用程序
         /// </summary>
-        private void RestartGame()
+        private System.Collections.IEnumerator RestartApplication()
         {
-            // 关闭当前设置弹窗
+            // 等待一帧确保UI消息显示
+            yield return new WaitForSeconds(1f);
+            
+            // 关闭设置弹窗
             this.GetSystem<IUISystem>().HidePopup(UIPopup.SettingPopup);
             
-            // 等待一帧，确保UI关闭完成
-            this.GetSystem<IMonoSystem>().StartCoroutine(RestartGameCoroutine());
+            // 等待UI关闭
+            yield return new WaitForSeconds(0.5f);
+            
+            // 重启应用程序
+            #if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+                yield return new WaitForSeconds(0.1f);
+                UnityEditor.EditorApplication.isPlaying = true;
+            #else
+                // 在构建版本中重启应用
+                UnityEngine.Application.Restart();
+            #endif
         }
         
-        private System.Collections.IEnumerator RestartGameCoroutine()
-        {
-            // 等待一帧，确保UI关闭完成
-            yield return null;
-            
-            // 重新加载游戏
-            this.SendCommand<LoadGameCommand>();
-        }
+
 
         void Update()
         {

@@ -142,17 +142,42 @@ namespace BirdGame
         /// </summary>
         private IEnumerator TriggerEnvironmentAudioAfterConfigLoad()
         {
-            yield return new WaitForSeconds(0.5f); // 等待一小段时间，确保配置加载完成
+            yield return new WaitForSeconds(1f); // 增加等待时间，确保所有系统初始化完成
+            
+            // 检查SaveSystem是否已初始化
+            var saveSystem = this.GetSystem<ISaveSystem>();
+            if (saveSystem == null)
+            {
+                Debug.LogError("SaveSystem未初始化，跳过环境音效初始化");
+                yield break;
+            }
+            
+            // 检查MusicSettingData是否已加载
+            var musicSettingData = this.GetModel<ISaveModel>().MusicSettingData;
+            if (musicSettingData == null)
+            {
+                Debug.LogError("MusicSettingData未加载，跳过环境音效初始化");
+                yield break;
+            }
             
             // 只初始化环境音效，不播放歌曲
             var audioSystem = this.GetSystem<IAudioSystem>();
             if (audioSystem != null)
             {
-                // 初始化环境音效（Bird音效0.5音量，其他0音量）
-                audioSystem.InitEnvironments();
-                
-                // Debug.Log($"🌍 RadioConfig加载完成，环境音效已自动播放！");
-                // Debug.Log("🐦 Bird环境音效音量设为100%，🌪️ Wind环境音效音量设为100%，其他环境音效设为0");
+                try
+                {
+                    // 初始化环境音效（Bird音效0.5音量，其他0音量）
+                    audioSystem.InitEnvironments();
+                    Debug.Log("🌍 环境音效初始化完成！");
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"环境音效初始化失败: {e.Message}");
+                }
+            }
+            else
+            {
+                Debug.LogError("AudioSystem未初始化，跳过环境音效初始化");
             }
         }
     }

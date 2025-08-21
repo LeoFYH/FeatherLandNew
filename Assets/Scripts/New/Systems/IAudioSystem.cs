@@ -225,6 +225,24 @@ namespace BirdGame
                 return;
             var config = this.GetModel<IConfigModel>().RadioConfig;
             var saveModel = this.GetModel<ISaveModel>().MusicSettingData;
+            
+            // 安全检查
+            if (config == null)
+            {
+                Debug.LogError("RadioConfig未加载，无法初始化环境音效");
+                return;
+            }
+            
+            if (saveModel == null)
+            {
+                Debug.LogError("MusicSettingData为null，无法初始化环境音效");
+                return;
+            }
+            
+            if (saveModel.environmentVolumes == null)
+            {
+                saveModel.environmentVolumes = new List<float>();
+            }
             for (int i = 0; i < config.environments.Length; i++)
             {
                 var audio = obj.AddComponent<AudioSource>();

@@ -71,7 +71,7 @@ namespace BirdGame
     public class MusicSettingData : SavableData
     {
         public float bgmVolume = 0.5f;
-        public List<float> environmentVolumes;
+        public List<float> environmentVolumes = new List<float>();
     }
 
     /// <summary>
