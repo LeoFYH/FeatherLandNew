@@ -7,7 +7,7 @@ namespace BirdGame
 {
     public class CursorConfig : ScriptableObject
     {
-        [ListDrawerSettings(Expanded = true)]
+        [ListDrawerSettings(ShowFoldout = true)]
         public List<CursorItem> mouseStates;
     }
 

@@ -103,7 +103,14 @@ namespace BirdGame
                 UnityEditor.EditorApplication.isPlaying = true;
             #else
                 // 在构建版本中重启应用
-                UnityEngine.Application.Restart();
+                UnityEngine.Application.Quit();
+                #if UNITY_STANDALONE_WIN
+                    System.Diagnostics.Process.Start(Application.dataPath.Replace("_Data", ".exe"));
+                #elif UNITY_STANDALONE_OSX
+                    System.Diagnostics.Process.Start(Application.dataPath.Replace(".app/Contents", ".app"));
+                #elif UNITY_STANDALONE_LINUX
+                    System.Diagnostics.Process.Start(Application.dataPath.Replace("_Data", ".x86_64"));
+                #endif
             #endif
         }
         

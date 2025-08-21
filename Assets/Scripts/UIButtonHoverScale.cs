@@ -4,9 +4,9 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Events;
+using Sirenix.OdinInspector;
 #if UNITY_EDITOR
 using UnityEditor;
-using Sirenix.OdinInspector;
 #endif
 
 public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
@@ -144,7 +144,7 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
         if (showTooltip)
         {
             // 获取或创建Canvas
-            canvas = FindObjectOfType<Canvas>();
+            canvas = FindFirstObjectByType<Canvas>();
             if (canvas == null)
             {
                 Debug.LogWarning("未找到Canvas，无法显示悬浮提示！");
@@ -404,7 +404,7 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
         // 获取Canvas（如果还没有获取）
         if (canvas == null)
         {
-            canvas = FindObjectOfType<Canvas>();
+            canvas = FindFirstObjectByType<Canvas>();
             if (canvas == null)
             {
                 
