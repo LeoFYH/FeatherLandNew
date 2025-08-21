@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -108,6 +109,11 @@ namespace BirdGame
             volumeSlider.value = item.AudioVolume.Value;
             volumeFill.fillAmount = item.AudioVolume.Value;
             Refresh(item.TimerCoroutine != null);
+        }
+
+        private void OnEnable()
+        {
+            Refresh(this.GetModel<IClockModel>().TomatoItem.TimerCoroutine != null);
         }
 
         private void Refresh(bool isTiming)

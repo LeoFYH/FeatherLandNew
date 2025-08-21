@@ -1,13 +1,14 @@
 ﻿using System;
 using QFramework;
 using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace BirdGame
 {
     public class ShopToolSelection : ViewControllerBase
     {
-        public TextMeshProUGUI indexText;
+        public Image icon;
 
         private int itemId;
         private int selectId;
@@ -16,8 +17,11 @@ namespace BirdGame
         {
             itemId = itemIndex;
             selectId = selectIndex;
-            indexText.text = this.GetModel<IConfigModel>().ShopConfig.tools[itemIndex].selections[selectIndex]
-                .selectionName;
+            // indexText.text = this.GetModel<IConfigModel>().ShopConfig.tools[itemIndex].selections[selectIndex]
+            //     .selectionName;
+            var sp = this.GetModel<IConfigModel>().ShopConfig.tools[itemIndex].selections[selectIndex].icon;
+            icon.sprite = sp;
+            icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.1f;
         }
 
         private void Start()

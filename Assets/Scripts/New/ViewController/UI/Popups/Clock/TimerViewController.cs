@@ -75,7 +75,8 @@ namespace BirdGame
             });
             stopButton.onClick.AddListener(() =>
             {
-                this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
+                if (item.TimerCoroutine != null)
+                    this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
                 item.TimerCoroutine = null;
                 Refresh(false);
                 this.GetModel<IClockModel>().TimerType = TimerType.None;
@@ -87,7 +88,8 @@ namespace BirdGame
 
             this.RegisterEvent<StopTimerEvent>(evt =>
             {
-                this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
+                if (item.TimerCoroutine != null)
+                    this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
                 item.TimerCoroutine = null;
                 Refresh(false);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
@@ -109,6 +111,11 @@ namespace BirdGame
             volumeSlider.value = item.AudioVolume.Value;
             volumeFill.fillAmount = item.AudioVolume.Value;
             Refresh(item.TimerCoroutine != null);
+        }
+
+        private void OnEnable()
+        {
+            Refresh(this.GetModel<IClockModel>().TimerItem.TimerCoroutine != null);
         }
 
         private void Refresh(bool isTiming)

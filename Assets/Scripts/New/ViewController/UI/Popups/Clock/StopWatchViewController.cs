@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -76,6 +77,12 @@ namespace BirdGame
             
             startButton.gameObject.SetActive(item.TimerCoroutine == null);
             stopButton.gameObject.SetActive(item.TimerCoroutine != null);
+        }
+
+        private void OnEnable()
+        {
+            startButton.gameObject.SetActive(this.GetModel<IClockModel>().StopWatchItem.TimerCoroutine == null);
+            stopButton.gameObject.SetActive(this.GetModel<IClockModel>().StopWatchItem.TimerCoroutine != null);
         }
 
         private IEnumerator StartTimer()

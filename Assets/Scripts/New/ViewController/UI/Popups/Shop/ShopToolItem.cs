@@ -41,7 +41,10 @@ namespace BirdGame
             {
                 gameModel.SelectedToolDic.Add(index, new BindableProperty<int>());
             }
-            icon.sprite = item.selections[gameModel.SelectedToolDic[index].Value].icon;
+
+            var sp = item.selections[gameModel.SelectedToolDic[index].Value].icon;
+            icon.sprite = sp;
+            icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.3f;
             itemName.SetKey(item.name);
             selectName.text = item.selections[gameModel.SelectedToolDic[index].Value].selectionName;
             description.SetKey(item.selections[gameModel.SelectedToolDic[index].Value].description);
@@ -75,7 +78,9 @@ namespace BirdGame
 
             gameModel.SelectedToolDic[itemIndex].Register(v =>
             {
-                icon.sprite = item.selections[v].icon;
+                var sp = item.selections[v].icon;
+                icon.sprite = sp;
+                icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.3f;
                 selectName.text = item.selections[v].selectionName;
                 selectName.text = item.selections[v].selectionName;
                 description.SetKey(item.selections[v].description);
