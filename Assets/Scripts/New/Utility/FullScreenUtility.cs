@@ -34,6 +34,12 @@ namespace BirdGame
         [DllImport("user32.dll")]
         private static extern int GetSystemMetrics(int nIndex);
 
+        [DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
+
         #region 桌面模式相关API
 
         [DllImport("user32.dll", SetLastError = true)]
@@ -82,6 +88,7 @@ namespace BirdGame
         private const uint SWP_SHOWWINDOW = 0x0040;
         private const uint SWP_NOMOVE = 0x0001;
         private const uint SWP_NOSIZE = 0x0002;
+        private const uint GW_HWNDNEXT = 2;
 
         private struct RECT
         {
@@ -128,6 +135,8 @@ namespace BirdGame
 
         public void WallpaperMode()
         {
+            Debug.Log("开始尝试激活桌面模式...");
+            
             InitializeWindowHandle();
             if (windowHandle == IntPtr.Zero)
             {
@@ -135,35 +144,86 @@ namespace BirdGame
                 return;
             }
 
-            // 在 Unity 编辑器中，我们跳过权限检查
-            // 在构建后的独立应用程序中，如果需要权限，可以手动以管理员身份运行
+            Debug.Log($"Unity 窗口句柄: {windowHandle}");
 
             try
             {
                 // 保存原始状态
                 originalParent = GetParent(windowHandle);
                 originalStyle = GetWindowLong(windowHandle, GWL_STYLE);
+                
+                Debug.Log($"原始父窗口: {originalParent}, 原始样式: {originalStyle}");
 
-                // 找到桌面 WorkerW 窗口
-                IntPtr workerW = FindDesktopWorkerW();
+                // 尝试多种方法找到桌面窗口
+                IntPtr workerW = IntPtr.Zero;
+                
+                // 方法1: 直接查找 WorkerW
+                workerW = FindWindow("WorkerW", null);
+                if (workerW != IntPtr.Zero)
+                {
+                    Debug.Log($"方法1成功: 找到 WorkerW 窗口 {workerW}");
+                }
+                else
+                {
+                    Debug.Log("方法1失败: 直接查找 WorkerW 失败");
+                    
+                    // 方法2: 查找 Progman 并发送消息
+                    IntPtr progman = FindWindow("Progman", null);
+                    if (progman != IntPtr.Zero)
+                    {
+                        Debug.Log($"找到 Progman 窗口: {progman}");
+                        SendMessage(progman, 0x052C, IntPtr.Zero, IntPtr.Zero);
+                        
+                        // 等待一下让系统创建 WorkerW
+                        System.Threading.Thread.Sleep(100);
+                        
+                        workerW = FindWindow("WorkerW", null);
+                        if (workerW != IntPtr.Zero)
+                        {
+                            Debug.Log($"方法2成功: 通过 Progman 找到 WorkerW 窗口 {workerW}");
+                        }
+                    }
+                }
+                
+                // 方法3: 使用改进的查找方法
                 if (workerW == IntPtr.Zero)
                 {
-                    Debug.LogError("未找到桌面 WorkerW 窗口，桌面模式失败");
+                    workerW = FindDesktopWorkerW();
+                    if (workerW != IntPtr.Zero)
+                    {
+                        Debug.Log($"方法3成功: 使用改进方法找到 WorkerW 窗口 {workerW}");
+                    }
+                }
+
+                if (workerW == IntPtr.Zero)
+                {
+                    Debug.LogError("所有方法都无法找到桌面 WorkerW 窗口，尝试备用方案");
+                    
+                    // 备用方案: 使用全屏模式作为壁纸模式的替代
+                    Debug.Log("使用全屏模式作为壁纸模式的备用方案");
+                    FullscreenMode();
                     return;
                 }
 
+                Debug.Log($"最终找到桌面 WorkerW 窗口: {workerW}");
+
                 // 设置无边框样式
                 SetWindowLong(windowHandle, GWL_STYLE, WS_POPUP | WS_VISIBLE);
+                Debug.Log("已设置无边框样式");
 
                 // 嵌入到桌面
                 SetParent(windowHandle, workerW);
+                Debug.Log("已将窗口嵌入到桌面");
 
                 // 显示窗口
                 ShowWindow(windowHandle, SW_SHOW);
+                Debug.Log("已显示窗口");
 
                 // 获取工作区域大小
                 RECT workArea = new RECT();
                 SystemParametersInfo(SPI_GETWORKAREA, 0, ref workArea, 0);
+
+                Debug.Log($"工作区域: Left={workArea.Left}, Top={workArea.Top}, Right={workArea.Right}, Bottom={workArea.Bottom}");
 
                 // 设置窗口位置和大小
                 SetWindowPos(windowHandle, HWND_TOP,
@@ -176,11 +236,12 @@ namespace BirdGame
                 workAreaHeight = workArea.Bottom - workArea.Top;
                 isWallpaperMode = true;
 
-                Debug.Log("桌面模式已激活");
+                Debug.Log($"桌面模式已激活，窗口大小: {workAreaWidth}x{workAreaHeight}");
             }
             catch (Exception ex)
             {
                 Debug.LogError($"桌面模式激活失败: {ex.Message}");
+                Debug.LogError($"异常堆栈: {ex.StackTrace}");
                 // 恢复原始状态
                 RestoreOriginalState();
             }
@@ -287,32 +348,101 @@ namespace BirdGame
         /// </summary>
         private IntPtr FindDesktopWorkerW()
         {
-            IntPtr workerW = IntPtr.Zero;
             IntPtr result = IntPtr.Zero;
 
-            // 枚举所有窗口
-            EnumWindows((hWnd, lParam) =>
+            // 方法1: 查找 Progman 窗口，然后查找其子窗口
+            IntPtr progman = FindWindow("Progman", null);
+            if (progman != IntPtr.Zero)
             {
-                if (!IsWindowVisible(hWnd))
-                    return true;
-
-                var className = new System.Text.StringBuilder(256);
-                GetClassName(hWnd, className, className.Capacity);
-
-                // 查找 WorkerW 窗口
-                if (className.ToString() == "WorkerW")
+                // 发送消息给 Progman，让它创建 WorkerW
+                SendMessage(progman, 0x052C, IntPtr.Zero, IntPtr.Zero);
+                
+                // 枚举所有窗口查找 WorkerW
+                EnumWindows((hWnd, lParam) =>
                 {
-                    // 检查是否有 SHELLDLL_DefView 子窗口
-                    IntPtr shellView = FindWindowEx(hWnd, IntPtr.Zero, "SHELLDLL_DefView", null);
-                    if (shellView != IntPtr.Zero)
+                    if (!IsWindowVisible(hWnd))
+                        return true;
+
+                    var className = new System.Text.StringBuilder(256);
+                    GetClassName(hWnd, className, className.Capacity);
+
+                    // 查找 WorkerW 窗口
+                    if (className.ToString() == "WorkerW")
                     {
-                        result = hWnd;
-                        return false; // 停止枚举
+                        // 检查是否有 SHELLDLL_DefView 子窗口
+                        IntPtr shellView = FindWindowEx(hWnd, IntPtr.Zero, "SHELLDLL_DefView", null);
+                        if (shellView != IntPtr.Zero)
+                        {
+                            result = hWnd;
+                            return false; // 停止枚举
+                        }
+                    }
+
+                    return true; // 继续枚举
+                }, IntPtr.Zero);
+            }
+
+            // 方法2: 如果方法1失败，尝试直接查找 WorkerW
+            if (result == IntPtr.Zero)
+            {
+                EnumWindows((hWnd, lParam) =>
+                {
+                    if (!IsWindowVisible(hWnd))
+                        return true;
+
+                    var className = new System.Text.StringBuilder(256);
+                    GetClassName(hWnd, className, className.Capacity);
+
+                    // 查找 WorkerW 窗口
+                    if (className.ToString() == "WorkerW")
+                    {
+                        // 检查是否有 SHELLDLL_DefView 子窗口
+                        IntPtr shellView = FindWindowEx(hWnd, IntPtr.Zero, "SHELLDLL_DefView", null);
+                        if (shellView != IntPtr.Zero)
+                        {
+                            result = hWnd;
+                            return false; // 停止枚举
+                        }
+                    }
+
+                    return true; // 继续枚举
+                }, IntPtr.Zero);
+            }
+
+            // 方法3: 如果还是找不到，尝试查找 Shell_TrayWnd 的兄弟窗口
+            if (result == IntPtr.Zero)
+            {
+                IntPtr shellTray = FindWindow("Shell_TrayWnd", null);
+                if (shellTray != IntPtr.Zero)
+                {
+                    IntPtr workerW = GetWindow(shellTray, GW_HWNDNEXT);
+                    while (workerW != IntPtr.Zero)
+                    {
+                        var className = new System.Text.StringBuilder(256);
+                        GetClassName(workerW, className, className.Capacity);
+                        
+                        if (className.ToString() == "WorkerW")
+                        {
+                            IntPtr shellView = FindWindowEx(workerW, IntPtr.Zero, "SHELLDLL_DefView", null);
+                            if (shellView != IntPtr.Zero)
+                            {
+                                result = workerW;
+                                break;
+                            }
+                        }
+                        workerW = GetWindow(workerW, GW_HWNDNEXT);
                     }
                 }
+            }
 
-                return true; // 继续枚举
-            }, IntPtr.Zero);
+            if (result == IntPtr.Zero)
+            {
+                Debug.LogWarning("无法找到桌面 WorkerW 窗口，尝试使用备用方法");
+            }
+            else
+            {
+                Debug.Log("成功找到桌面 WorkerW 窗口");
+            }
 
             return result;
         }

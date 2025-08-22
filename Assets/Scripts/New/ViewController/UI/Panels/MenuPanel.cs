@@ -20,6 +20,7 @@ namespace BirdGame
         public Button illustratedButton;
         public Button illustratedButton1;
         public Button mapButton;
+        public Button externalLinkButton; // 新增外部链接按钮
         public TextMeshProUGUI coinsNum;
         public RectTransform branch;
         public CanvasGroup group1;
@@ -86,6 +87,15 @@ namespace BirdGame
             {
                 
             });
+            
+            // 外部链接按钮点击事件
+            if (externalLinkButton != null)
+            {
+                externalLinkButton.onClick.AddListener(() =>
+                {
+                    OpenExternalLink();
+                });
+            }
             
             weatherButton.onClick.AddListener(() =>
             {
@@ -220,6 +230,27 @@ namespace BirdGame
             anim?.Kill();
             anim = DOTween.Sequence();
             anim.Append(branch.DOAnchorPosX(403.8f, 0.5f).SetEase(Ease.OutSine));
+        }
+
+        /// <summary>
+        /// 打开外部链接
+        /// </summary>
+        private void OpenExternalLink()
+        {
+            try
+            {
+                // 这里可以替换为你想要跳转的网址
+                string url = "https://itch.io/"; // 请替换为实际的网址
+                
+                Debug.Log($"正在打开外部链接: {url}");
+                
+                // 使用系统默认浏览器打开链接
+                Application.OpenURL(url);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"打开外部链接失败: {ex.Message}");
+            }
         }
     }
 }
