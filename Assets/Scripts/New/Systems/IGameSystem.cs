@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using QFramework;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using Random = UnityEngine.Random;
 
 namespace BirdGame
 {
@@ -24,6 +26,7 @@ namespace BirdGame
         void PlaceDecoration();
         bool IsPlacingDecoration();
         void CreateDecorations();
+        void OpenUrl(string url);
     }
 
     public class GameSystem : AbstractSystem, IGameSystem
@@ -579,6 +582,21 @@ namespace BirdGame
 
                     decoration.transform.position = accountData.decorations[i].position[j];
                 }
+            }
+        }
+
+        public void OpenUrl(string url)
+        {
+            try
+            {
+                Debug.Log($"正在打开外部链接: {url}");
+                
+                // 使用系统默认浏览器打开链接
+                Application.OpenURL(url);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"打开外部链接失败: {ex.Message}");
             }
         }
 

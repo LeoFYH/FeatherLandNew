@@ -237,20 +237,9 @@ namespace BirdGame
         /// </summary>
         private void OpenExternalLink()
         {
-            try
-            {
-                // 这里可以替换为你想要跳转的网址
-                string url = "https://itch.io/"; // 请替换为实际的网址
-                
-                Debug.Log($"正在打开外部链接: {url}");
-                
-                // 使用系统默认浏览器打开链接
-                Application.OpenURL(url);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"打开外部链接失败: {ex.Message}");
-            }
+            // 这里可以替换为你想要跳转的网址
+            string url = "https://itch.io/"; // 请替换为实际的网址
+            this.GetSystem<IGameSystem>().OpenUrl(url);
         }
     }
 }
