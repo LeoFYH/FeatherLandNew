@@ -68,6 +68,9 @@ namespace BirdGame
                 saveModel.BirdInfoData.birdList.Add(serializableData);
             }
 
+            // 同步图鉴数据
+            SyncIllustratedDataFromBirds();
+            
             // 保存到文件
             saveSystem?.SaveData();
         }
@@ -142,6 +145,9 @@ namespace BirdGame
 
             // 更新未开启的蛋数量
             birdModel.UnopenEggs = saveModel.BirdInfoData.unopenEggs;
+            
+            // 同步图鉴数据 - 确保所有已拥有的鸟都在图鉴中
+            SyncIllustratedDataFromBirds();
         }
 
         /// <summary>
@@ -224,6 +230,38 @@ namespace BirdGame
             birdData.customName = savedBirdData.customName;
             
             agent.enabled = true;
+        }
+
+        /// <summary>
+        /// 同步图鉴数据 - 确保所有已拥有的鸟都在图鉴中
+        /// </summary>
+        private void SyncIllustratedDataFromBirds()
+        {
+            if (saveModel?.IllustratedData?.birds == null)
+            {
+                Debug.LogError("IllustratedData为null，无法同步图鉴数据");
+                return;
+            }
+
+            bool hasChanges = false;
+            
+            // 遍历所有已拥有的鸟，确保它们都在图鉴中
+            foreach (var birdData in birdModel.BirdList)
+            {
+                if (!saveModel.IllustratedData.birds.Contains(birdData.birdType))
+                {
+                    saveModel.IllustratedData.birds.Add(birdData.birdType);
+                    hasChanges = true;
+                    Debug.Log($"添加鸟到图鉴: {birdData.birdType}");
+                }
+            }
+
+            // 如果有变化，保存数据
+            if (hasChanges)
+            {
+                saveSystem?.SaveData();
+                Debug.Log($"图鉴数据已同步，当前图鉴包含 {saveModel.IllustratedData.birds.Count} 种鸟");
+            }
         }
 
 

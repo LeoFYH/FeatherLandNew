@@ -104,6 +104,15 @@ namespace BirdGame
             
             //var config = this.GetModel<IConfigModel>().BirdConfig;
             var config = this.GetModel<IConfigModel>().BirdConfig;
+            
+            // 调试：显示图鉴数据
+            var illustratedData = this.GetModel<ISaveModel>().IllustratedData;
+            Debug.Log($"图鉴数据: 包含 {illustratedData.birds.Count} 种鸟");
+            foreach (var birdId in illustratedData.birds)
+            {
+                Debug.Log($"  - 鸟ID: {birdId}");
+            }
+            
             for (int i = 0; i < config.birdClasses.Length; i++)
             {
                 int itemIndex = i % illustratedItemPrefabs.Length;
