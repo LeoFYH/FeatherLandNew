@@ -30,7 +30,19 @@ namespace BirdGame
             onAnimComplete = onComplete;
             var config = this.GetModel<IConfigModel>().BirdConfig;
             sr.sprite = config.GetBird(index).preview;
-            nameText.text = config.GetBirdName(index);
+            
+            // 使用本地化系统获取鸟类名称
+            string birdNameKey = config.GetBirdNameKey(index);
+            string localizedBirdName = this.GetSystem<ILocalizationSystem>().GetString(birdNameKey);
+            if (string.IsNullOrEmpty(localizedBirdName))
+            {
+                localizedBirdName = birdNameKey; // 如果本地化没有找到，使用原始key作为显示文本
+            }
+            
+            nameText.text = localizedBirdName;
+            nameText.font = this.GetSystem<ILocalizationSystem>().GetFontAsset();
+            nameText.ForceMeshUpdate();
+            
             string rarity = config.GetBird(index).reality;
             nameText.color = config.colorSettings[rarity];
         }

@@ -37,6 +37,32 @@ namespace BirdGame
             Debug.LogError($"没有找到id为{birdId}的鸟的配置!");
             return "";
         }
+        
+        /// <summary>
+        /// 获取鸟类名称的本地化key
+        /// </summary>
+        /// <param name="birdId">鸟类ID</param>
+        /// <returns>本地化key</returns>
+        public string GetBirdNameKey(int birdId)
+        {
+            return GetBirdName(birdId);
+        }
+        
+        /// <summary>
+        /// 根据鸟类类别索引获取鸟类名称的本地化key
+        /// </summary>
+        /// <param name="classIndex">鸟类类别索引</param>
+        /// <returns>本地化key</returns>
+        public string GetBirdNameKeyByClassIndex(int classIndex)
+        {
+            if (classIndex >= 0 && classIndex < birdClasses.Length)
+            {
+                return birdClasses[classIndex].birdName;
+            }
+            
+            Debug.LogError($"鸟类类别索引{classIndex}超出范围!");
+            return "";
+        }
 
         public BirdItem GetBird(int birdId)
         {

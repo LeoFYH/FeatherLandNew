@@ -27,6 +27,7 @@ namespace BirdGame
         public Transform barTransform;  // Bar对象，用于检测点击区域
 
         private List<GameObject> skinItems = new List<GameObject>();
+        private int currentSelectedIndex = 0; // 记录当前选中的鸟类索引
         
         void Update()
         {
@@ -102,6 +103,16 @@ namespace BirdGame
                 this.GetSystem<IUISystem>().HidePopup(UIPopup.IllustratedPopup);
             });
             
+            // 注册语言切换事件
+            this.RegisterEvent<ChangeLanguageEvent>(evt =>
+            {
+                // 当语言改变时，重新更新当前显示的鸟类名称
+                if (birdNameText != null)
+                {
+                    UpdateBirdNameText();
+                }
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            
             //var config = this.GetModel<IConfigModel>().BirdConfig;
             var config = this.GetModel<IConfigModel>().BirdConfig;
             
@@ -129,8 +140,11 @@ namespace BirdGame
 
         private void OnSelectedItem(int index)
         {
+            currentSelectedIndex = index; // 记录当前选中的索引
             var classInfo = this.GetModel<IConfigModel>().BirdConfig.birdClasses[index];
-            birdNameText.text = classInfo.birdName;
+            
+            UpdateBirdNameText();
+            
             ClearSkinItems();
             int unlockedIndex = -1;
             foreach (var bird in classInfo.birds)
@@ -149,6 +163,31 @@ namespace BirdGame
                 OnSkinSelected(classInfo.birds[0].id);
             else 
                 OnSkinSelected(unlockedIndex);
+        }
+        
+        /// <summary>
+        /// 更新鸟类名称文本（支持本地化）
+        /// </summary>
+        private void UpdateBirdNameText()
+        {
+            if (birdNameText == null || currentSelectedIndex < 0 || 
+                currentSelectedIndex >= this.GetModel<IConfigModel>().BirdConfig.birdClasses.Length)
+            {
+                return;
+            }
+            
+            // 使用BirdConfig的方法获取本地化key
+            string birdNameKey = this.GetModel<IConfigModel>().BirdConfig.GetBirdNameKeyByClassIndex(currentSelectedIndex);
+            string localizedBirdName = this.GetSystem<ILocalizationSystem>().GetString(birdNameKey);
+            if (string.IsNullOrEmpty(localizedBirdName))
+            {
+                localizedBirdName = birdNameKey; // 如果本地化没有找到，使用原始key作为显示文本
+            }
+            
+            // 更新文本和字体
+            birdNameText.text = localizedBirdName;
+            birdNameText.font = this.GetSystem<ILocalizationSystem>().GetFontAsset();
+            birdNameText.ForceMeshUpdate();
         }
 
         private void ClearSkinItems()

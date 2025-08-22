@@ -380,7 +380,7 @@ namespace BirdGame
             var data = this.GetModel<IBirdModel>().BirdList[index];
             
             // 获取鸟的名称作为本地化key
-            string birdNameKey = this.GetModel<IConfigModel>().BirdConfig.GetBirdName(data.birdType);
+            string birdNameKey = this.GetModel<IConfigModel>().BirdConfig.GetBirdNameKey(data.birdType);
             
             // 使用本地化系统获取翻译
             string birdNameText = this.GetSystem<ILocalizationSystem>().GetString(birdNameKey);
