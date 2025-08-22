@@ -234,10 +234,11 @@ namespace BirdGame
                 tomato.SetActive(isOn);
             });
 
-            stopWatchToggle.isOn = true;
-            stopWatch.SetActive(true);
+            // 设置番茄钟为默认模式
+            tomatoToggle.isOn = true;
+            tomato.SetActive(true);
+            stopWatch.SetActive(false);
             timer.SetActive(false);
-            tomato.SetActive(false);
         }
 
         private void OnDestroy()
