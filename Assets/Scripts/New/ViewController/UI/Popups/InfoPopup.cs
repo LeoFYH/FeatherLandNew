@@ -277,15 +277,29 @@ namespace BirdGame
         
         private void Start()
         {
+            // 注册语言切换事件，更新鸟名称文本和字体
+            this.RegisterEvent<ChangeLanguageEvent>(evt =>
+            {
+                UpdateBirdNameText();
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            
             int index = this.GetModel<IGameModel>().CurrentSelectedBirdIndex;
             var data = this.GetModel<IBirdModel>().BirdList[index];
             var birdConf = this.GetModel<IConfigModel>().BirdConfig.GetBird(data.birdType);
             icon.sprite = birdConf.preview;
-            string birdNameText = this.GetModel<IConfigModel>().BirdConfig.GetBirdName(data.birdType);
-            birdName.text = birdNameText;
+            
+            // 初始化鸟名称文本和字体
+            UpdateBirdNameText();
+            
             // 显示自定义名称，如果没有则显示默认名称
-            string displayName = string.IsNullOrEmpty(data.customName) ? birdNameText : data.customName;
-            cutomName.text = displayName;
+            if (string.IsNullOrEmpty(data.customName))
+            {
+                cutomName.text = "Name!!"; // 空的自定义名称显示为"Name!"
+            }
+            else
+            {
+                cutomName.text = data.customName;
+            }
             
             // 添加输入框事件监听
             if (cutomName != null)
@@ -356,9 +370,29 @@ namespace BirdGame
             // 如果输入为空，显示默认名称
             if (string.IsNullOrEmpty(data.customName))
             {
-                var birdConf = this.GetModel<IConfigModel>().BirdConfig.GetBird(data.birdType);
-                cutomName.text = this.GetModel<IConfigModel>().BirdConfig.GetBirdName(data.birdType);
+                cutomName.text = "Name!";
             }
+        }
+        
+        private void UpdateBirdNameText()
+        {
+            int index = this.GetModel<IGameModel>().CurrentSelectedBirdIndex;
+            var data = this.GetModel<IBirdModel>().BirdList[index];
+            
+            // 获取鸟的名称作为本地化key
+            string birdNameKey = this.GetModel<IConfigModel>().BirdConfig.GetBirdName(data.birdType);
+            
+            // 使用本地化系统获取翻译
+            string birdNameText = this.GetSystem<ILocalizationSystem>().GetString(birdNameKey);
+            if (string.IsNullOrEmpty(birdNameText))
+            {
+                birdNameText = birdNameKey; // 如果本地化没有找到，使用原始key作为显示文本
+            }
+            
+            // 更新文本和字体
+            birdName.text = birdNameText;
+            birdName.font = this.GetSystem<ILocalizationSystem>().GetFontAsset();
+            birdName.ForceMeshUpdate();
         }
     }
 }
