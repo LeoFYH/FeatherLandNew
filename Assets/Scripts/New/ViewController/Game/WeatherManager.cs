@@ -30,7 +30,6 @@ namespace BirdGame
         public SpriteRenderer[] others;
 
         private int currentIndex = -1;
-        private bool birdsShown = false;
 
         private void Start()
         {
@@ -87,9 +86,6 @@ namespace BirdGame
             currentIndex = index;
             var weather = weathers[index];
             
-            // 在开始动画前隐藏所有鸟类
-            HideAllBirds();
-            birdsShown = false; // 重置鸟类显示标志
             var anim0 = DOTween.Sequence();
             anim0.Append(background.DOColor(Color.black, 0.5f));
             anim0.AppendCallback(() =>
@@ -97,13 +93,6 @@ namespace BirdGame
                 weather.onWeatherEnter?.Invoke();
                 background.sprite = weather.background.sprite;
                 background.transform.localScale = Vector3.one * weather.background.scale;
-                // 背景贴图更换完成后显示鸟类
-                if (!birdsShown)
-                {
-                    ShowAllBirds();
-                    birdsShown = true;
-                    Debug.Log("背景贴图更换完成，鸟类出现");
-                }
             });
             anim0.Append(background.DOColor(Color.white, 0.5f));
 
@@ -220,54 +209,6 @@ namespace BirdGame
             {
                 Debug.Log("天气切换完成");
             });
-        }
-        
-        /// <summary>
-        /// 隐藏所有鸟类
-        /// </summary>
-        private void HideAllBirds()
-        {
-            var birdModel = this.GetModel<IBirdModel>();
-            if (birdModel?.BirdList != null)
-            {
-                int hiddenCount = 0;
-                foreach (var birdData in birdModel.BirdList)
-                {
-                    if (birdData.bird != null && birdData.bird.gameObject.activeInHierarchy)
-                    {
-                        birdData.bird.gameObject.SetActive(false);
-                        hiddenCount++;
-                    }
-                }
-                if (hiddenCount > 0)
-                {
-                    Debug.Log($"天气切换：隐藏了 {hiddenCount} 只鸟");
-                }
-            }
-        }
-        
-        /// <summary>
-        /// 显示所有鸟类
-        /// </summary>
-        private void ShowAllBirds()
-        {
-            var birdModel = this.GetModel<IBirdModel>();
-            if (birdModel?.BirdList != null)
-            {
-                int shownCount = 0;
-                foreach (var birdData in birdModel.BirdList)
-                {
-                    if (birdData.bird != null && !birdData.bird.gameObject.activeInHierarchy)
-                    {
-                        birdData.bird.gameObject.SetActive(true);
-                        shownCount++;
-                    }
-                }
-                if (shownCount > 0)
-                {
-                    Debug.Log($"天气切换：重新显示了 {shownCount} 只鸟");
-                }
-            }
         }
     }
 
