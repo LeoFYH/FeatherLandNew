@@ -52,6 +52,7 @@ namespace BirdGame
                     "SettingData.save",
                     "NoteData.save",
                     "ScheduleData.save",
+                    "IllustratedData.save",
                     "DecorationData.save"
                 };
                 
@@ -67,7 +68,34 @@ namespace BirdGame
                     }
                 }
                 
-                Debug.Log("所有存档文件已清除！程序即将重启...");
+                // 清空内存中的数据
+                var saveModel = this.GetModel<ISaveModel>();
+                if (saveModel != null)
+                {
+                    saveModel.AccountData = new AccountData();
+                    saveModel.BirdInfoData = new BirdInfoData();
+                    saveModel.MusicSettingData = new MusicSettingData();
+                    saveModel.SettingData = new SettingData();
+                    saveModel.NoteData = new NoteData();
+                    saveModel.ScheduleData = new ScheduleData();
+                    saveModel.IllustratedData = new IllustratedData();
+                }
+                
+                // 清空鸟模型中的数据
+                var birdModel = this.GetModel<IBirdModel>();
+                if (birdModel != null)
+                {
+                    // 清理所有鸟的监听器
+                    this.GetSystem<IBirdSystem>().CleanupAllListeners();
+                    
+                    // 清空鸟列表
+                    birdModel.BirdList.Clear();
+                    birdModel.UnopenEggs = 0;
+                    
+                    Debug.Log("鸟模型数据已清空！");
+                }
+                
+                Debug.Log("所有存档文件已清除！内存数据已清空！程序即将重启...");
                 
                 // 显示成功消息
                 this.GetSystem<IUISystem>().ShowPrompt("存档已清除！程序即将重启。");

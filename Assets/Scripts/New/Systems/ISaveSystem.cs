@@ -317,7 +317,34 @@ namespace BirdGame
             {
                 File.Delete(path);
             }
-            Debug.Log("存档已删除！");
+            
+            // 清空内存中的数据
+            if (_saveModel != null)
+            {
+                _saveModel.AccountData = new AccountData();
+                _saveModel.BirdInfoData = new BirdInfoData();
+                _saveModel.MusicSettingData = new MusicSettingData();
+                _saveModel.SettingData = new SettingData();
+                _saveModel.NoteData = new NoteData();
+                _saveModel.ScheduleData = new ScheduleData();
+                _saveModel.IllustratedData = new IllustratedData();
+            }
+            
+            // 清空鸟模型中的数据
+            var birdModel = this.GetModel<IBirdModel>();
+            if (birdModel != null)
+            {
+                // 清理所有鸟的监听器
+                this.GetSystem<IBirdSystem>().CleanupAllListeners();
+                
+                // 清空鸟列表
+                birdModel.BirdList.Clear();
+                birdModel.UnopenEggs = 0;
+                
+                Debug.Log("鸟模型数据已清空！");
+            }
+            
+            Debug.Log("存档已删除！内存数据已清空！");
         }
     }
 }

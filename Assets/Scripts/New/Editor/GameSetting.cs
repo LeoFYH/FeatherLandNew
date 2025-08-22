@@ -44,6 +44,11 @@ namespace BirdGame.Editor
             {
                 File.Delete(path);
             }
+            path = Application.persistentDataPath + "/GameData/IllustratedData.save";
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
             EditorUtility.DisplayDialog("提示", "存档已清理！", "ok");
         }
     }
