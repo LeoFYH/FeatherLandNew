@@ -27,10 +27,13 @@ MonoBehaviour:
   canFly: 1
   canFlyWait: 1
   reality: Common
-  eraning: 30
-  priceForSmall: 30
-  priceForBig: 50
-  eatForBig: 5
+  eraningForSmall: 1
+  eraningForBig: 2
+  priceForSmall: 10
+  priceForBig: 20
+  clickEarning: 3
+  clickEarningForFiveTimes: 0
+  eatForBig: 3
   description: cockatielDescription
   habitat: cockatielHabitat
   scenePreview: {fileID: 0}
