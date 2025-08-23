@@ -36,19 +36,37 @@ namespace BirdGame
             });
             xButton.onClick.AddListener(() =>
             {
-                OpenUrlWithCooldown("https://www.x.com/");
+                OpenUrlWithCooldown("https://x.com/sylvanhart_?s=21");
             });
             emailButton.onClick.AddListener(() =>
             {
-                OpenUrlWithCooldown("https://mail.qq.com/");
+                OpenUrlWithCooldown("https://subscribepage.io/dEZc2u");
             });
             questionButton.onClick.AddListener(() =>
             {
+                // 获取当前语言设置
+                var currentLanguage = this.GetModel<ISaveModel>().SettingData.gameLanguage;
                 
+                // 根据语言选择不同的问卷URL
+                string questionnaireUrl;
+                if (currentLanguage == SystemLanguage.Chinese || 
+                    currentLanguage == SystemLanguage.ChineseSimplified || 
+                    currentLanguage == SystemLanguage.ChineseTraditional)
+                {
+                    // 中文问卷URL
+                    questionnaireUrl = "https://mcnwrt7avkx7.feishu.cn/share/base/form/shrcnimeuXGiwfkLPcm6mMrk2ge";
+                }
+                else
+                {
+                    // 英文问卷URL
+                    questionnaireUrl = "https://docs.google.com/forms/d/e/1FAIpQLSc8n0iE8-QwvcCrxmZn1E0pmGNatpmasQMrVpxV-Su6SMGjAw/viewform";
+                }
+                
+                OpenUrlWithCooldown(questionnaireUrl);
             });
             steamButton.onClick.AddListener(() =>
             {
-                OpenUrlWithCooldown("https://store.steampowered.com/");
+                OpenUrlWithCooldown("https://store.steampowered.com/app/3661430/_/");
             });
 
             var rect = GetComponent<RectTransform>();
