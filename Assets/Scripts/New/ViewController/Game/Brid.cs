@@ -187,9 +187,6 @@ namespace BirdGame
                         {
                             lastClickTime = Time.time; // 更新最后点击时间
                             Debug.Log("Feather!");
-                            // GameObject go = Instantiate(heartPre); 
-                            // Vector2 newPosition = new Vector2(transform.position.x - 0.2f, transform.position.y + 0.2f);
-                            // go.transform.position = newPosition;
                             petTime += 0.1f;
                             //GameManager.Instance.coin += 1;
                             this.GetModel<IAccountModel>().Coins.Value += 1;
@@ -273,8 +270,14 @@ namespace BirdGame
             if (!isSmall)
             {
                 int index = this.GetModel<IBirdModel>().BirdList[birdIndex].birdType;
-                int incomeForBig = this.GetModel<IConfigModel>().BirdConfig.GetBird(index).eraning;
-                this.GetModel<IAccountModel>().Coins.Value += incomeForBig;
+                int income = this.GetModel<IConfigModel>().BirdConfig.GetBird(index).eraningForBig;
+                this.GetModel<IAccountModel>().Coins.Value += income;
+            }
+            else
+            {
+                int index = this.GetModel<IBirdModel>().BirdList[birdIndex].birdType;
+                int income = this.GetModel<IConfigModel>().BirdConfig.GetBird(index).eraningForSmall;
+                this.GetModel<IAccountModel>().Coins.Value += income;
             }
         }
 

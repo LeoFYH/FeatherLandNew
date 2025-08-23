@@ -23,8 +23,10 @@ namespace BirdGame
         [VerticalGroup("content/Info"), BoxGroup("content/Info/信息"), LabelText("稀有度"), ValueDropdown("rarityInfo"), GUIColor("realityColor"), OnValueChanged("OnRealityValueChanged")]
         public string reality;
         private Color32 realityColor = Color.white;
-        [BoxGroup("content/Info/信息"), LabelText("每分钟收入")]
-        public int eraning;
+        [BoxGroup("content/Info/信息"), LabelText("每分钟收入(幼鸟)")]
+        public int eraningForSmall;
+        [BoxGroup("content/Info/信息"), LabelText("每分钟收入(成鸟)")]
+        public int eraningForBig;
         [BoxGroup("content/Info/信息"), LabelText("价格(小)")]
         public int priceForSmall;
         [BoxGroup("content/Info/信息"), LabelText("价格(大)")]
