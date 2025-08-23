@@ -344,7 +344,7 @@ namespace BirdGame
                 price = birdConf.priceForBig;
             }
 
-            incomeText.text = birdConf.eraning.ToString();
+            incomeText.text = birdConf.eraningForBig.ToString();
             priceText.text = price.ToString();
             
             saleButton.onClick.AddListener(() =>

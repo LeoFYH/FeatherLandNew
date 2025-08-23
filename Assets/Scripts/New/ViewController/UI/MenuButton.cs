@@ -1,7 +1,5 @@
-﻿using System;
-using QFramework;
+﻿using QFramework;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace BirdGame
 {
@@ -13,6 +11,12 @@ namespace BirdGame
         {
             Debug.Log("Click");
             this.GetSystem<IUISystem>().ShowPopup(popup);
+        }
+        
+        public void ShowDevelopingTip()
+        {
+            string text = this.GetSystem<ILocalizationSystem>().GetString("DevelopingMap");
+            this.GetSystem<IUISystem>().ShowPrompt(text);
         }
     }
 }
