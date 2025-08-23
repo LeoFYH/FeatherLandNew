@@ -1,4 +1,6 @@
 using System;
+using BirdGame;
+using QFramework;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -9,7 +11,7 @@ using Sirenix.OdinInspector;
 using UnityEditor;
 #endif
 
-public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPointerExitHandler
 {
     [Serializable]
     public class OnClickAction : UnityEvent
@@ -108,6 +110,7 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
     private Canvas canvas;
     private bool isHovering = false;
     private float hoverTimer = 0f;
+    private bool disabled;
     
     // 鼠标检测
     private bool mouseWasOverButton = false;
@@ -126,6 +129,15 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
         showTooltip = true;
         showBackground = false;
         showDelay = 0f;
+
+        this.RegisterEvent<DisableButtonEvent>(evt =>
+        {
+            disabled = true;
+        }).UnRegisterWhenGameObjectDestroyed(gameObject);
+        this.RegisterEvent<EnableButtonEvent>(evt =>
+        {
+            disabled = false;
+        }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
         // 获取本地化系统
         if (useLocalization)
@@ -213,7 +225,7 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
                //Debug.Log("显示悬浮提示: " + hoverText);
             }
 
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && !disabled)
             {
                 onClick?.Invoke();
             }

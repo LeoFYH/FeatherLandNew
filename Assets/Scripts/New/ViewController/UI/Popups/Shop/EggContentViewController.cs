@@ -30,6 +30,14 @@ namespace BirdGame
             
             buyButton.onClick.AddListener(() =>
             {
+                if (configModel.ShopConfig.eggs[gameModel.ShopEggSelectIndex.Value].birds.Length +
+                    this.GetModel<IBirdModel>().BirdList.Count > this.GetModel<IConfigModel>().BirdConfig.maxBirdCount)
+                {
+                    string text = this.GetSystem<ILocalizationSystem>().GetString("MaxEggLimitKey");
+                    this.GetSystem<IUISystem>().ShowPrompt(text);
+                    return;
+                }
+
                 int price = configModel.ShopConfig.eggs[gameModel.ShopEggSelectIndex.Value].price;
                 if (price <= this.GetModel<IAccountModel>().Coins.Value)
                 {

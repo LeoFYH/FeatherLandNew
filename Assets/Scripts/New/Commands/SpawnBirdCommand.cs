@@ -49,6 +49,7 @@ namespace BirdGame
             if (this.GetModel<IBirdModel>().UnopenEggs <= 0)
             {
                 this.GetSystem<IUISystem>().HideMask();
+                this.SendEvent<EnableButtonEvent>();
             }
         }
 

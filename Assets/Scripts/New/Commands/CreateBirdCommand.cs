@@ -33,6 +33,7 @@ namespace BirdGame
                 }
             });
             this.GetSystem<IUISystem>().ShowMask();
+            this.SendEvent<DisableButtonEvent>();
         }
     }
 }
