@@ -43,7 +43,7 @@ namespace BirdGame
     [Serializable]
     public class AccountData : SavableData
     {
-        public int coins = 100;
+        public int coins = 600;
         public List<DecorationInfo> decorations = new List<DecorationInfo>();
         public List<ToolInfo> tools = new List<ToolInfo>();
     }

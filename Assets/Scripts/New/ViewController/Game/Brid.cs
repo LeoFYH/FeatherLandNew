@@ -188,8 +188,9 @@ namespace BirdGame
                             lastClickTime = Time.time; // 更新最后点击时间
                             Debug.Log("Feather!");
                             petTime += 0.1f;
-                            //GameManager.Instance.coin += 1;
-                            this.GetModel<IAccountModel>().Coins.Value += 1;
+                            int index = this.GetModel<IBirdModel>().BirdList[birdIndex].birdType;
+                            var birdConf = this.GetModel<IConfigModel>().BirdConfig.GetBird(index);
+                            this.GetModel<IAccountModel>().Coins.Value += birdConf.clickEarning;
                             if (currentFavorability.Value < totalFavorability && !isSmall)
                             {
                                 currentFavorability.Value++;
@@ -201,10 +202,9 @@ namespace BirdGame
                             {
                                 GameObject.Instantiate(obj, heartPos);
                             });
-                            //this.GetSystem<ICursorSystem>().Stroke();
                             if (petTime > 0.5)
                             {
-                                this.GetModel<IAccountModel>().Coins.Value += 3;
+                                this.GetModel<IAccountModel>().Coins.Value += birdConf.clickEarningForFiveTimes;
                             }
                         }
                     }

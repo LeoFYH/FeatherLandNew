@@ -31,6 +31,10 @@ namespace BirdGame
         public int priceForSmall;
         [BoxGroup("content/Info/信息"), LabelText("价格(大)")]
         public int priceForBig;
+        [BoxGroup("content/Info/信息"), LabelText("点击收益)")]
+        public int clickEarning = 1;
+        [BoxGroup("content/Info/信息"), LabelText("点击5次后的额外收益)")]
+        public int clickEarningForFiveTimes = 3;
         [BoxGroup("content/Info/信息"), LabelText("成长所需食物数量")]
         public int eatForBig;
         [BoxGroup("content/Info/信息"), LabelText("描述的key"), TextArea]

@@ -16,6 +16,6 @@ namespace BirdGame
         {
         }
 
-        public BindableProperty<int> Coins { get; } = new BindableProperty<int>(100);
+        public BindableProperty<int> Coins { get; } = new BindableProperty<int>(600);
     }
 }
