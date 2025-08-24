@@ -28,6 +28,7 @@ namespace BirdGame
         MouseMenu,
         TutorialPopup,
         ThanksPopup,
+        MapPopup,
     }
 
     public interface IUISystem : ISystem

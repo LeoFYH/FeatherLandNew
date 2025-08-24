@@ -45,7 +45,7 @@ namespace BirdGame
                 onCompleted?.Invoke((T)HandleDic[assetName].Result);
                 return;
             }
-
+            Debug.Log(assetName);
             var handle = Addressables.LoadAssetAsync<T>(assetName);
             HandleDic.Add(assetName, handle);
             while (!handle.IsDone)

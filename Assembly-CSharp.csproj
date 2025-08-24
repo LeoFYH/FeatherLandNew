@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\New\ViewController\Game\DecorationDrag.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Map\MapItem.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\InfoPopup.cs" />
     <Compile Include="Assets\Scripts\New\Config\RadioConfig.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\IllustratedPopup.cs" />
@@ -101,6 +102,7 @@
     <Compile Include="Assets\Scripts\Managers\CameraManager.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\GameManager.cs" />
     <Compile Include="Assets\Scripts\BirdStates\BirdIdleState.cs" />
+    <Compile Include="Assets\Scripts\New\Commands\LoadMapCommand.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Illustrated\BirdSkin.cs" />
     <Compile Include="Assets\Scripts\AnimationTest\AnimationItem.cs" />
     <Compile Include="Assets\Scripts\FSM\StateBase.cs" />
@@ -130,6 +132,7 @@
     <Compile Include="Assets\Scripts\New\Commands\LoadGameCommand.cs" />
     <Compile Include="Assets\Scripts\Managers\PauseManager.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Panels\LoadingPanel.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\MapPopup.cs" />
     <Compile Include="Assets\Scripts\New\Models\ISaveModel.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\UIBase.cs" />
     <Compile Include="Assets\Scripts\New\Events\PlayEnvironmentEvent.cs" />
@@ -151,6 +154,7 @@
     <Compile Include="Assets\Scripts\New\Events\SwitchWeatherEvent.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\Heart.cs" />
     <Compile Include="Assets\Scripts\AnimationTest\AddItem.cs" />
+    <Compile Include="Assets\Scripts\New\Config\MapConfig.cs" />
     <Compile Include="Assets\Scripts\New\Models\IRadioModel.cs" />
     <Compile Include="Assets\Scripts\New\Config\BirdConfig.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Radio\MusicViewController.cs" />

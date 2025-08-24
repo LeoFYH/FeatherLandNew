@@ -46,6 +46,7 @@ namespace BirdGame
         public int coins = 600;
         public List<DecorationInfo> decorations = new List<DecorationInfo>();
         public List<ToolInfo> tools = new List<ToolInfo>();
+        public int addedMaxBirdValue = 0;
     }
 
     [Serializable]
@@ -94,6 +95,13 @@ namespace BirdGame
     /// </summary>
     [Serializable]
     public class BirdInfoData : SavableData
+    {
+        public int currentMap = 0;
+        public List<MapBirdList> mapBirds = new List<MapBirdList>();
+    }
+
+    [Serializable]
+    public class MapBirdList
     {
         public int unopenEggs = 0;
         public List<SerializableBirdData> birdList = new List<SerializableBirdData>();

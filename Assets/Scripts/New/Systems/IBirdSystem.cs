@@ -13,6 +13,7 @@ namespace BirdGame
         void SetupBirdListener(BirdData birdData);
         void CleanupBirdListener(int birdIndex);
         void CleanupAllListeners();
+        void ClearAllBirds();
     }
 
     public class BirdSystem : AbstractSystem, IBirdSystem
@@ -43,11 +44,11 @@ namespace BirdGame
         {
             if (saveModel?.BirdInfoData == null) return;
 
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             // 更新unopenEggs
-            saveModel.BirdInfoData.unopenEggs = birdModel.UnopenEggs;
-
+            saveModel.BirdInfoData.mapBirds[mapIndex].unopenEggs = birdModel.UnopenEggs;
             // 更新birdList
-            saveModel.BirdInfoData.birdList.Clear();
+            saveModel.BirdInfoData.mapBirds[mapIndex].birdList.Clear();
             foreach (var birdData in birdModel.BirdList)
             {
                 if (birdData.bird == null) continue;
@@ -65,7 +66,7 @@ namespace BirdGame
                     walkArea = birdData.bird.walkArea
                 };
 
-                saveModel.BirdInfoData.birdList.Add(serializableData);
+                saveModel.BirdInfoData.mapBirds[mapIndex].birdList.Add(serializableData);
             }
 
             // 同步图鉴数据
@@ -125,26 +126,43 @@ namespace BirdGame
             birdListeners.Clear();
         }
 
+        public void ClearAllBirds()
+        {
+            for (int i = birdModel.BirdList.Count - 1; i >= 0; i--)
+            {
+                birdModel.RemoveBird(i);
+            }
+        }
+
         /// <summary>
         /// 根据存档数据生成鸟
         /// </summary>
         public void GenerateBirdsFromSave()
         {
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+
+            if (saveModel.BirdInfoData.mapBirds == null)
+                saveModel.BirdInfoData.mapBirds = new List<MapBirdList>();
+            while (saveModel.BirdInfoData.mapBirds.Count <= mapIndex)
+            {
+                saveModel.BirdInfoData.mapBirds.Add(new MapBirdList());
+            }
+
             // 先判断存档里有没有鸟信息，没有就不做
-            if (saveModel?.BirdInfoData?.birdList == null || saveModel.BirdInfoData.birdList.Count == 0) 
+            if (saveModel?.BirdInfoData?.mapBirds[mapIndex]?.birdList == null || saveModel.BirdInfoData.mapBirds[mapIndex].birdList.Count == 0) 
             {
                 Debug.Log("存档中没有鸟信息，跳过生成鸟");
                 return;
             }
 
             // 根据存档生成鸟
-            foreach (var savedBirdData in saveModel.BirdInfoData.birdList)
+            foreach (var savedBirdData in saveModel.BirdInfoData.mapBirds[mapIndex].birdList)
             {
                 GenerateBirdFromSaveData(savedBirdData);
             }
 
             // 更新未开启的蛋数量
-            birdModel.UnopenEggs = saveModel.BirdInfoData.unopenEggs;
+            birdModel.UnopenEggs = saveModel.BirdInfoData.mapBirds[mapIndex].unopenEggs;
             
             // 同步图鉴数据 - 确保所有已拥有的鸟都在图鉴中
             SyncIllustratedDataFromBirds();

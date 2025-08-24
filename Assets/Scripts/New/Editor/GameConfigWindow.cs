@@ -74,16 +74,30 @@ namespace BirdGame.Editor
             OnCursorInit();
         }
 
+        [ReadOnly, LabelText("地图配置"), OnInspectorInit("OnMapInit"), HorizontalGroup("地图配置")]
+        public MapConfig mapConfig;
+
+        [ShowIf("@mapConfig==null"), Button("新建"), HorizontalGroup("地图配置")]
+        private void OnCreateMapConfig()
+        {
+            var config = ScriptableObject.CreateInstance<MapConfig>();
+            AssetDatabase.CreateAsset(config, "Assets/Prefabs/Config/MapConfig.asset");
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            OnMapInit();
+        }
+
         protected override OdinMenuTree BuildMenuTree()
         {
             tree = new OdinMenuTree(supportsMultiSelect: true)
             {
-                {"首页", this, SdfIconType.House},
-                {"音乐列表配置", radioConfig, SdfIconType.MusicNoteList },
-                {"商店配置", shopConfig, SdfIconType.Shop},
-                {"鸟的配置", birdConfig, SdfIconType.Egg},
-                {"鼠标配置", cursorConfig, SdfIconType.Mouse},
-                {"本地化配置", LocalizationGlobalConfig.Instance, SdfIconType.Globe}
+                { "首页", this, SdfIconType.House },
+                { "音乐列表配置", radioConfig, SdfIconType.MusicNoteList },
+                { "商店配置", shopConfig, SdfIconType.Shop },
+                { "鸟的配置", birdConfig, SdfIconType.Egg },
+                { "鼠标配置", cursorConfig, SdfIconType.Mouse },
+                { "本地化配置", LocalizationGlobalConfig.Instance, SdfIconType.Globe },
+                { "地图配置", mapConfig, SdfIconType.Map }
             };
             
             return tree;
@@ -119,6 +133,12 @@ namespace BirdGame.Editor
         {
             cursorConfig = AssetDatabase.LoadAssetAtPath<CursorConfig>("Assets/Prefabs/Config/CursorConfig.asset");
             tree.MenuItems[4].Value = cursorConfig;
+        }
+
+        private void OnMapInit()
+        {
+            mapConfig = AssetDatabase.LoadAssetAtPath<MapConfig>("Assets/Prefabs/Config/MapConfig.asset");
+            tree.MenuItems[6].Value = mapConfig;
         }
     }
 }

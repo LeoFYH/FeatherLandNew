@@ -9,6 +9,7 @@ namespace BirdGame
         ShopConfig ShopConfig { get; set; }
         BirdConfig BirdConfig { get; set; }
         LocalizationConfig LocalizationConfig { get; set; }
+        MapConfig MapConfig { get; set; }
     }
 
     public class ConfigModel : AbstractModel, IConfigModel
@@ -22,5 +23,6 @@ namespace BirdGame
         public ShopConfig ShopConfig { get; set; }
         public BirdConfig BirdConfig { get; set; }
         public LocalizationConfig LocalizationConfig { get; set; }
+        public MapConfig MapConfig { get; set; }
     }
 }

@@ -10,6 +10,8 @@ namespace BirdGame
     /// </summary>
     public class LoadGameCommand : AbstractCommand
     {
+        private const float configCount = 5f;
+        
         protected override void OnExecute()
         {
             var loadingModel = this.GetModel<ILoadingModel>();
@@ -23,7 +25,7 @@ namespace BirdGame
                 this.GetSystem<IAssetSystem>().LoadAssetAsync<RadioConfig>("RadioConfig", OnRadioConfigComplete,
                     progress =>
                     {
-                        OnProgress("Loading Radio Config", progress / 5f);
+                        OnProgress("Loading Radio Config", progress / configCount);
                     });
             }));
         }
@@ -45,7 +47,7 @@ namespace BirdGame
             this.GetSystem<IAssetSystem>().LoadAssetAsync<ShopConfig>("ShopConfig", OnShopConfigComplete,
                 progress =>
                 {
-                    OnProgress("Loading Shop Config", (progress + 1f) / 5f);
+                    OnProgress("Loading Shop Config", (progress + 1f) / configCount);
                 });
         }
 
@@ -59,7 +61,7 @@ namespace BirdGame
             this.GetSystem<IAssetSystem>().LoadAssetAsync<BirdConfig>("BirdConfig", OnBirdConfigComplete,
                 progress =>
                 {
-                    OnProgress("Loading Bird Config", (progress + 2f) / 5f);
+                    OnProgress("Loading Bird Config", (progress + 2f) / configCount);
                 });
         }
 
@@ -69,7 +71,7 @@ namespace BirdGame
             this.GetSystem<IAssetSystem>().LoadAssetAsync<LocalizationConfig>("LocalizationConfig", OnLocalizationConfigComplete,
                 progress =>
                 {
-                    OnProgress("Loading Localization Config", (progress + 3f) / 5f);
+                    OnProgress("Loading Localization Config", (progress + 3f) / configCount);
                 });
         }
 
@@ -84,28 +86,40 @@ namespace BirdGame
             {
                 Debug.Log($"  - {language.Key}: {language.Value.words.Count} 个翻译条目");
             }
-            
-            this.GetSystem<ISceneSystem>().LoadScene(0, progress =>
+
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<MapConfig>("MapConfig", OnMapConfigComplete, progress =>
             {
-                OnProgress("Loading Scene", (progress + 5f) / 6f);
-            }, () =>
-            {
-                // 根据存档生成鸟
-                this.GetSystem<IBirdSystem>().GenerateBirdsFromSave();
-                
-                this.GetSystem<IGameSystem>().CreateDecorations();
-                
-                this.GetSystem<IUISystem>().ShowPanel(UIPanel.MenuPanel);
-                
-                // 游戏加载完成，显示教程弹窗
-                // if (!this.GetModel<ISaveModel>().SettingData.isShowedTutorial)
-                // {
-                //     this.GetSystem<IUISystem>().ShowPopup(UIPopup.TutorialPopup);
-                //     this.GetModel<ISaveModel>().SettingData.isShowedTutorial = true;
-                //     this.GetSystem<ISaveSystem>().SaveData();
-                // }
-                this.GetSystem<IUISystem>().ShowPopup(UIPopup.ThanksPopup);
+                OnProgress("Loading Map Config", (progress + 4f) / configCount);
             });
+        }
+
+        private void OnMapConfigComplete(MapConfig config)
+        {
+            this.GetModel<IConfigModel>().MapConfig = config;
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            this.GetSystem<ISceneSystem>().LoadScene(mapIndex, progress =>
+            {
+                OnProgress("Loading Scene", progress);
+            }, OnAllLoaded);
+        }
+
+        private void OnAllLoaded()
+        {
+            // 根据存档生成鸟
+            this.GetSystem<IBirdSystem>().GenerateBirdsFromSave();
+                
+            this.GetSystem<IGameSystem>().CreateDecorations();
+                
+            this.GetSystem<IUISystem>().ShowPanel(UIPanel.MenuPanel);
+                
+            // 游戏加载完成，显示教程弹窗
+            // if (!this.GetModel<ISaveModel>().SettingData.isShowedTutorial)
+            // {
+            //     this.GetSystem<IUISystem>().ShowPopup(UIPopup.TutorialPopup);
+            //     this.GetModel<ISaveModel>().SettingData.isShowedTutorial = true;
+            //     this.GetSystem<ISaveSystem>().SaveData();
+            // }
+            this.GetSystem<IUISystem>().ShowPopup(UIPopup.ThanksPopup);
         }
 
         /// <summary>
