@@ -16,7 +16,7 @@ namespace BirdGame
     {
         [LabelText("栖息地名称")]
         public string mapName;
-        [LabelText("栖息地文件")]
-        public AssetReference mapObject;
+        [PreviewField, HideLabel]
+        public Sprite mapPreview;
     }
 }

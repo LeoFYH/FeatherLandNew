@@ -46,8 +46,8 @@
     <Analyzer Include="E:\WorkSoftwares\Unity\6000.0.35f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\New\ViewController\Game\DecorationDrag.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Map\MapItem.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\Game\DecorationDrag.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\InfoPopup.cs" />
     <Compile Include="Assets\Scripts\New\Config\RadioConfig.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\IllustratedPopup.cs" />
@@ -198,6 +198,7 @@
     <Compile Include="Assets\Scripts\New\Events\ShowBranchEvent.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\Egg.cs" />
     <Compile Include="Assets\Scripts\New\Models\IConfigModel.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\UI\MapInfo.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Radio\EnvironmentViewController.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Note\NoteItem.cs" />
     <None Include="Assets\QFramework\Framework\PackageVersion.json" />

@@ -75,6 +75,15 @@ namespace BirdGame
         void ShowMouseMenu(int decorationId, int index, GameObject gameObject);
 
         void HideMouseMenu();
+        /// <summary>
+        /// 显示地图信息
+        /// </summary>
+        /// <param name="mapIndex"></param>
+        void ShowMapInfo(int mapIndex);
+        /// <summary>
+        /// 关闭地图信息
+        /// </summary>
+        void HideMapInfo();
     }
 
     public class UISystem : AbstractSystem, IUISystem
@@ -85,6 +94,7 @@ namespace BirdGame
         private Transform panelLayer;
         private Transform popupLayer;
         private GameObject mask;
+        private GameObject mapInfo;
         
         protected override void OnInit()
         {
@@ -204,6 +214,26 @@ namespace BirdGame
         public void HideMouseMenu()
         {
             HidePopup(UIPopup.MouseMenu);
+        }
+
+        public void ShowMapInfo(int mapIndex)
+        {
+            if(mapInfo != null)
+                GameObject.Destroy(mapInfo);
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("MapInfo", obj =>
+            {
+                mapInfo = GameObject.Instantiate(obj, popupLayer);
+                mapInfo.GetComponent<MapInfo>().Init(mapIndex);
+            });
+        }
+
+        public void HideMapInfo()
+        {
+            if (mapInfo != null)
+            {
+                GameObject.Destroy(mapInfo);
+                mapInfo = null;
+            }
         }
     }
 }

@@ -1,16 +1,18 @@
-﻿using System;
-using QFramework;
+﻿using QFramework;
 using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace BirdGame
 {
-    public class MapItem : ViewControllerBase
+    public class MapItem : ViewControllerBase, IPointerEnterHandler, IPointerExitHandler
     {
         public TextMeshProUGUI mapText;
 
         private Button thisButton;
         private int mapIndex;
+        private bool isEnter;
         
         public void Init(int index)
         {
@@ -30,6 +32,24 @@ namespace BirdGame
                 this.SendCommand(new LoadMapCommand(mapIndex));
                 this.GetSystem<IUISystem>().HidePopup(UIPopup.MapPopup);
             });
+        }
+        
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            if(isEnter)
+                return;
+            isEnter = true;
+            Debug.Log("Enter");
+            this.GetSystem<IUISystem>().ShowMapInfo(mapIndex);
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            if(!isEnter)
+                return;
+            isEnter = false;
+            Debug.Log("Exit");
+            this.GetSystem<IUISystem>().HideMapInfo();
         }
     }
 }
