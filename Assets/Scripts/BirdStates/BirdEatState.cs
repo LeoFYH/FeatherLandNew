@@ -141,7 +141,8 @@ namespace BirdGame
             {
                 eatFoodTimer = 0;
                 int birdIndex = this.GetModel<IBirdModel>().BirdList[_brid.birdIndex].birdType;
-                var conf = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex);
+                int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+                var conf = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex);
                 float totalExp = conf.totalExp;
                 _brid.currentExp.Value += conf.eatExp;
                 

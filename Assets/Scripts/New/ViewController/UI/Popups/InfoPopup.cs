@@ -285,7 +285,8 @@ namespace BirdGame
             
             int index = this.GetModel<IGameModel>().CurrentSelectedBirdIndex;
             var data = this.GetModel<IBirdModel>().BirdList[index];
-            var birdConf = this.GetModel<IConfigModel>().BirdConfig.GetBird(data.birdType);
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            var birdConf = this.GetModel<IConfigModel>().BirdConfig.GetBird(data.birdType, mapIndex);
             icon.sprite = birdConf.preview;
             
             // 初始化鸟名称文本和字体
@@ -378,9 +379,9 @@ namespace BirdGame
         {
             int index = this.GetModel<IGameModel>().CurrentSelectedBirdIndex;
             var data = this.GetModel<IBirdModel>().BirdList[index];
-            
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             // 获取鸟的名称作为本地化key
-            string birdNameKey = this.GetModel<IConfigModel>().BirdConfig.GetBirdNameKey(data.birdType);
+            string birdNameKey = this.GetModel<IConfigModel>().BirdConfig.GetBirdNameKey(data.birdType, mapIndex);
             
             // 使用本地化系统获取翻译
             string birdNameText = this.GetSystem<ILocalizationSystem>().GetString(birdNameKey);

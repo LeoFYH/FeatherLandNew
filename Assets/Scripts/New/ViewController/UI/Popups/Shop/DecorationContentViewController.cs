@@ -13,14 +13,21 @@ namespace BirdGame
         {
             var config = this.GetModel<IConfigModel>().ShopConfig;
             var accountData = this.GetModel<ISaveModel>().AccountData;
-            if (accountData.decorations == null)
-                accountData.decorations = new List<DecorationInfo>();
-            for (int i = 0; i < config.decorations.Length; i++)
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            if (accountData.sceneDecorationInfos == null)
+                accountData.sceneDecorationInfos = new List<SceneDecorationInfo>();
+            while (accountData.sceneDecorationInfos.Count <= mapIndex)
             {
-                if(accountData.decorations.Count <= i)
-                    accountData.decorations.Add(new DecorationInfo());
+                accountData.sceneDecorationInfos.Add(new SceneDecorationInfo());
+            }
+            if (accountData.sceneDecorationInfos[mapIndex].decorations == null)
+                accountData.sceneDecorationInfos[mapIndex].decorations = new List<DecorationInfo>();
+            for (int i = 0; i < config.sceneDecorations[mapIndex].decorations.Length; i++)
+            {
+                if(accountData.sceneDecorationInfos[mapIndex].decorations.Count <= i)
+                    accountData.sceneDecorationInfos[mapIndex].decorations.Add(new DecorationInfo());
                 // 只显示可见的装饰物
-                if (config.decorations[i].isVisible)
+                if (config.sceneDecorations[mapIndex].decorations[i].isVisible)
                 {
                     var item = GameObject.Instantiate(itemPrefab, itemPrefab.transform.parent).GetComponent<ShopDecorationItem>();
                     item.gameObject.SetActive(true);

@@ -36,7 +36,8 @@ namespace BirdGame
         private void CreateBird(int birdIndex)
         {
             var config = this.GetModel<IConfigModel>().BirdConfig;
-            GameObject go = GameObject.Instantiate(config.GetBird(birdIndex).prefab);
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            GameObject go = GameObject.Instantiate(config.GetBird(birdIndex, mapIndex).prefab);
             this.GetModel<IBirdModel>().AddBird(birdIndex, go.GetComponent<Brid>());
             var agent = go.GetComponent<NavMeshAgent>();
             agent.enabled = false;
@@ -66,7 +67,8 @@ namespace BirdGame
 
         private int RandomGetBirdIndex()
         {
-            var egg = this.GetModel<IConfigModel>().ShopConfig.eggs[eggIndex];
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            var egg = this.GetModel<IConfigModel>().ShopConfig.sceneEggs[mapIndex].eggs[eggIndex];
             float total = egg.GetTotalProbability();
             float pro = Random.Range(0f, total);
             Debug.Log($"随机数: {pro}");

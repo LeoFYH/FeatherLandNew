@@ -190,7 +190,8 @@ namespace BirdGame
                             Debug.Log("Feather!");
                             petTime += 0.1f;
                             int index = this.GetModel<IBirdModel>().BirdList[birdIndex].birdType;
-                            var birdConf = this.GetModel<IConfigModel>().BirdConfig.GetBird(index);
+                            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+                            var birdConf = this.GetModel<IConfigModel>().BirdConfig.GetBird(index, mapIndex);
                             this.GetModel<IAccountModel>().Coins.Value += birdConf.clickEarning;
                             if (currentFavorability.Value < totalFavorability && !isSmall)
                             {
@@ -273,7 +274,8 @@ namespace BirdGame
             if (isSmall)
             {
                 int index = this.GetModel<IBirdModel>().BirdList[birdIndex].birdType;
-                var conf = this.GetModel<IConfigModel>().BirdConfig.GetBird(index);
+                int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+                var conf = this.GetModel<IConfigModel>().BirdConfig.GetBird(index, mapIndex);
                 currentExp.Value += conf.autoExp;
                 if (currentExp.Value >= conf.totalExp)
                 {
@@ -287,16 +289,17 @@ namespace BirdGame
         private void AddCoins()
         {
             Debug.Log("Adding coins");
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             if (!isSmall)
             {
                 int index = this.GetModel<IBirdModel>().BirdList[birdIndex].birdType;
-                int income = this.GetModel<IConfigModel>().BirdConfig.GetBird(index).eraningForBig;
+                int income = this.GetModel<IConfigModel>().BirdConfig.GetBird(index, mapIndex).eraningForBig;
                 this.GetModel<IAccountModel>().Coins.Value += income;
             }
             else
             {
                 int index = this.GetModel<IBirdModel>().BirdList[birdIndex].birdType;
-                int income = this.GetModel<IConfigModel>().BirdConfig.GetBird(index).eraningForSmall;
+                int income = this.GetModel<IConfigModel>().BirdConfig.GetBird(index, mapIndex).eraningForSmall;
                 this.GetModel<IAccountModel>().Coins.Value += income;
             }
         }

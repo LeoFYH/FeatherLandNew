@@ -25,13 +25,14 @@ namespace BirdGame
         {
             index = classIndex;
             onItemSelected = onSelected;
-            var classInfo = this.GetModel<IConfigModel>().BirdConfig.birdClasses[classIndex];
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            var classInfo = this.GetModel<IConfigModel>().BirdConfig.sceneBirds[mapIndex].birdClasses[classIndex];
             foreach (var bird in classInfo.birds)
             {
                 int id = bird.id;
                 if (this.GetModel<ISaveModel>().IllustratedData.birds.Contains(id))
                 {
-                    var sp = this.GetModel<IConfigModel>().BirdConfig.GetBird(id).preview;
+                    var sp = this.GetModel<IConfigModel>().BirdConfig.GetBird(id, mapIndex).preview;
                     icon.sprite = sp;
                     var size = sp.rect.size * 0.1f;
                     icon.GetComponent<RectTransform>().sizeDelta = size;
@@ -44,7 +45,8 @@ namespace BirdGame
 
         private void ShowLocked(int birdIndex)
         {
-            var sp = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex).preview;
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            var sp = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).preview;
             icon.sprite = sp;
             var size = sp.rect.size * 0.1f;
             icon.GetComponent<RectTransform>().sizeDelta = size;

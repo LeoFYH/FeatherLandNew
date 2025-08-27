@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 #if UNITY_EDITOR
@@ -9,17 +10,84 @@ namespace BirdGame
 {
     public class ShopConfig : ScriptableObject
     {
-        [Title("鸟蛋购买配置"), Space(10)]
+#if UNITY_EDITOR
+        [ShowInInspector, HideLabel, BoxGroup("场景商店配置"), OnValueChanged("OnSelectSceneChanged"), ValueDropdown("GetScenes", DropdownTitle = "选择地图")]
+        private int sceneIndex;
+        [ShowInInspector, BoxGroup("场景商店配置"), Title("鸟蛋配置"), HideLabel]
+        private SceneEgg currentEgg = null;
+        [ShowInInspector, BoxGroup("场景商店配置"), Title("饰品配置"), HideLabel]
+        private SceneDecoration currentDecoration = null;
+
+        [OnInspectorInit]
+        private void OnInit()
+        {
+            if (sceneEggs == null)
+                sceneEggs = new List<SceneEgg>();
+            if (sceneDecorations == null)
+                sceneDecorations = new List<SceneDecoration>();
+        }
+
+        private ValueDropdownList<int> GetScenes()
+        {
+            var list = new ValueDropdownList<int>();
+            var config = AssetDatabase.LoadAssetAtPath<MapConfig>("Assets/Prefabs/Config/MapConfig.asset");
+            for (int i = 0; i < config.maps.Length; i++)
+            {
+                list.Add(new ValueDropdownItem<int>(config.maps[i].mapName, i));
+            }
+
+            return list;
+        }
+
+        private void OnSelectSceneChanged()
+        {
+            while (sceneIndex >= sceneEggs.Count)
+            {
+                sceneEggs.Add(new SceneEgg()
+                {
+                    eggs = new EggItem[]{}
+                });
+            }
+            currentEgg = sceneEggs[sceneIndex];
+            while (sceneIndex >= sceneDecorations.Count)
+            {
+                sceneDecorations.Add(new SceneDecoration()
+                {
+                    decorations = new DecorationItem[]{}
+                });
+            }
+
+            currentDecoration = sceneDecorations[sceneIndex];
+        }
+
+        public int MapIndex()
+        {
+            return sceneIndex;
+        }
+#endif
+            
+        [HideInInspector]
+        public List<SceneEgg> sceneEggs = new List<SceneEgg>();
+        
+        [HideInInspector]
+        public List<SceneDecoration> sceneDecorations = new List<SceneDecoration>();
+        
+        [TableList(ShowIndexLabels = true), BoxGroup("工具配置")]
+        public ToolItem[] tools;
+    }
+
+    [Serializable]
+    public class SceneEgg
+    {
         [TableList(ShowIndexLabels = true)]
         public EggItem[] eggs;
-
-        [Title("饰品配置")]
+    }
+    
+    [Serializable]
+    public class SceneDecoration
+    {
         [TableList(ShowIndexLabels = true)]
         public DecorationItem[] decorations;
-
-        [Title("工具配置")] 
-        [TableList(ShowIndexLabels = true)]
-        public ToolItem[] tools;
     }
 
     [Serializable]
@@ -73,7 +141,9 @@ namespace BirdGame
         {
 #if UNITY_EDITOR
             var config = AssetDatabase.LoadAssetAtPath<BirdConfig>("Assets/Prefabs/Config/BirdConfig.asset");
-            preview = config.GetBird(birdType).preview.texture;
+            int mapIndex = AssetDatabase.LoadAssetAtPath<ShopConfig>("Assets/Prefabs/Config/ShopConfig.asset")
+                .MapIndex();
+            preview = config.GetBird(birdType, mapIndex).preview.texture;
 #endif
         }
 
@@ -82,14 +152,15 @@ namespace BirdGame
 #if UNITY_EDITOR
             
             var config = AssetDatabase.LoadAssetAtPath<BirdConfig>("Assets/Prefabs/Config/BirdConfig.asset");
-            
+            int mapIndex = AssetDatabase.LoadAssetAtPath<ShopConfig>("Assets/Prefabs/Config/ShopConfig.asset")
+                .MapIndex();
             var list = new ValueDropdownList<int>();
-            for (int i = 0; i < config.birdClasses.Length; i++)
+            for (int i = 0; i < config.sceneBirds[mapIndex].birdClasses.Length; i++)
             {
                 int index = 0;
-                foreach (var bird in config.birdClasses[i].birds)
+                foreach (var bird in config.sceneBirds[mapIndex].birdClasses[i].birds)
                 {
-                    list.Add(config.birdClasses[i].birdName + index, bird.id);
+                    list.Add(config.sceneBirds[mapIndex].birdClasses[i].birdName + index, bird.id);
                     index++;
                 }
             }

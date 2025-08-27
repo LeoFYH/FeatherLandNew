@@ -11,13 +11,11 @@ namespace BirdGame
     public class BirdConfig : SerializedScriptableObject
     {
         [Title("鸟的配置"), Space(10)] 
-        [LabelText("显示鸟走路的路线")]
+        [LabelText("显示鸟走路的路线"), BoxGroup("信息")]
         public bool isDrawPathLine;
-        [LabelText("鸟的最大数量")]
+        [LabelText("鸟的最大数量"), BoxGroup("信息")]
         public int maxBirdCount = 35;
-        [LabelText("鸟的种类"), TableList(ShowIndexLabels = true, AlwaysExpanded = true)]
-        public BirdClassItem[] birdClasses;
-        [LabelText("稀有度颜色配置"), OdinSerialize, DictionaryDrawerSettings(KeyLabel = "稀有度", ValueLabel = "颜色")]
+        [LabelText("稀有度颜色配置"), OdinSerialize, DictionaryDrawerSettings(KeyLabel = "稀有度", ValueLabel = "颜色"), BoxGroup("信息")]
         public Dictionary<string, Color32> colorSettings = new Dictionary<string, Color32>()
         {
             {"Common", Color.white},
@@ -27,14 +25,57 @@ namespace BirdGame
             {"Unknown", Color.white},
         };
 
-        public string GetBirdName(int birdId)
+        [HideInInspector]
+        public List<SceneBird> sceneBirds = new List<SceneBird>();
+#if UNITY_EDITOR
+        
+        [ShowInInspector, HideLabel, BoxGroup("场景鸟列表"), OnValueChanged("OnSelectSceneChanged"), ValueDropdown("GetScenes", DropdownTitle = "选择地图")]
+        private int sceneIndex;
+
+        [ShowInInspector, BoxGroup("场景鸟列表"), HideLabel]
+        private SceneBird currentSceneBird;
+        
+        [OnInspectorInit]
+        private void OnInit()
         {
-            for (int i = 0; i < birdClasses.Length; i++)
+            if (sceneBirds == null)
+                sceneBirds = new List<SceneBird>();
+        }
+
+        private ValueDropdownList<int> GetScenes()
+        {
+            var list = new ValueDropdownList<int>();
+            var config = AssetDatabase.LoadAssetAtPath<MapConfig>("Assets/Prefabs/Config/MapConfig.asset");
+            for (int i = 0; i < config.maps.Length; i++)
             {
-                foreach (var bird in birdClasses[i].birds)
+                list.Add(new ValueDropdownItem<int>(config.maps[i].mapName, i));
+            }
+
+            return list;
+        }
+
+        private void OnSelectSceneChanged()
+        {
+            while (sceneIndex >= sceneBirds.Count)
+            {
+                sceneBirds.Add(new SceneBird()
+                {
+                    birdClasses = new BirdClassItem[]{}
+                });
+            }
+
+            currentSceneBird = sceneBirds[sceneIndex];
+        }
+#endif
+
+        public string GetBirdName(int birdId, int mapIndex)
+        {
+            for (int i = 0; i < sceneBirds[mapIndex].birdClasses.Length; i++)
+            {
+                foreach (var bird in sceneBirds[mapIndex].birdClasses[i].birds)
                 {
                     if (bird.id == birdId)
-                        return birdClasses[i].birdName;
+                        return sceneBirds[mapIndex].birdClasses[i].birdName;
                 }
             }
 
@@ -47,9 +88,9 @@ namespace BirdGame
         /// </summary>
         /// <param name="birdId">鸟类ID</param>
         /// <returns>本地化key</returns>
-        public string GetBirdNameKey(int birdId)
+        public string GetBirdNameKey(int birdId, int mapIndex)
         {
-            return GetBirdName(birdId);
+            return GetBirdName(birdId, mapIndex);
         }
         
         /// <summary>
@@ -57,22 +98,22 @@ namespace BirdGame
         /// </summary>
         /// <param name="classIndex">鸟类类别索引</param>
         /// <returns>本地化key</returns>
-        public string GetBirdNameKeyByClassIndex(int classIndex)
+        public string GetBirdNameKeyByClassIndex(int classIndex, int mapIndex)
         {
-            if (classIndex >= 0 && classIndex < birdClasses.Length)
+            if (classIndex >= 0 && classIndex < sceneBirds[mapIndex].birdClasses.Length)
             {
-                return birdClasses[classIndex].birdName;
+                return sceneBirds[mapIndex].birdClasses[classIndex].birdName;
             }
             
             Debug.LogError($"鸟类类别索引{classIndex}超出范围!");
             return "";
         }
 
-        public BirdItem GetBird(int birdId)
+        public BirdItem GetBird(int birdId, int mapIndex)
         {
-            for (int i = 0; i < birdClasses.Length; i++)
+            for (int i = 0; i < sceneBirds[mapIndex].birdClasses.Length; i++)
             {
-                foreach (var bird in birdClasses[i].birds)
+                foreach (var bird in sceneBirds[mapIndex].birdClasses[i].birds)
                 {
                     if (bird.id == birdId)
                         return bird;
@@ -82,11 +123,11 @@ namespace BirdGame
             return null;
         }
 
-        public BirdItem GetBird(int birdId, out int classIndex)
+        public BirdItem GetBird(int birdId, int mapIndex, out int classIndex)
         {
-            for (int i = 0; i < birdClasses.Length; i++)
+            for (int i = 0; i < sceneBirds[mapIndex].birdClasses.Length; i++)
             {
-                foreach (var bird in birdClasses[i].birds)
+                foreach (var bird in sceneBirds[mapIndex].birdClasses[i].birds)
                 {
                     if (bird.id == birdId)
                     {
@@ -99,6 +140,13 @@ namespace BirdGame
             classIndex = 0;
             return null;
         }
+    }
+
+    [Serializable]
+    public class SceneBird
+    {
+        [LabelText("鸟的种类"), TableList(ShowIndexLabels = true, AlwaysExpanded = true)]
+        public BirdClassItem[] birdClasses;
     }
 
     [Serializable]

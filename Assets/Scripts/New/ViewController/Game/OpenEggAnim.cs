@@ -29,10 +29,11 @@ namespace BirdGame
         {
             onAnimComplete = onComplete;
             var config = this.GetModel<IConfigModel>().BirdConfig;
-            sr.sprite = config.GetBird(index).preview;
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            sr.sprite = config.GetBird(index, mapIndex).preview;
             
             // 使用本地化系统获取鸟类名称
-            string birdNameKey = config.GetBirdNameKey(index);
+            string birdNameKey = config.GetBirdNameKey(index, mapIndex);
             string localizedBirdName = this.GetSystem<ILocalizationSystem>().GetString(birdNameKey);
             if (string.IsNullOrEmpty(localizedBirdName))
             {
@@ -43,7 +44,7 @@ namespace BirdGame
             nameText.font = this.GetSystem<ILocalizationSystem>().GetFontAsset();
             nameText.ForceMeshUpdate();
             
-            string rarity = config.GetBird(index).reality;
+            string rarity = config.GetBird(index, mapIndex).reality;
             nameText.color = config.colorSettings[rarity];
         }
 

@@ -123,8 +123,8 @@ namespace BirdGame
             {
                 Debug.Log($"  - 鸟ID: {birdId}");
             }
-            
-            for (int i = 0; i < config.birdClasses.Length; i++)
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            for (int i = 0; i < config.sceneBirds[mapIndex].birdClasses.Length; i++)
             {
                 int itemIndex = i % illustratedItemPrefabs.Length;
                 var item = GameObject.Instantiate(illustratedItemPrefabs[itemIndex], illustratedContent).GetComponent<IllustratedItem>();
@@ -141,7 +141,8 @@ namespace BirdGame
         private void OnSelectedItem(int index)
         {
             currentSelectedIndex = index; // 记录当前选中的索引
-            var classInfo = this.GetModel<IConfigModel>().BirdConfig.birdClasses[index];
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            var classInfo = this.GetModel<IConfigModel>().BirdConfig.sceneBirds[mapIndex].birdClasses[index];
             
             UpdateBirdNameText();
             
@@ -170,14 +171,15 @@ namespace BirdGame
         /// </summary>
         private void UpdateBirdNameText()
         {
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             if (birdNameText == null || currentSelectedIndex < 0 || 
-                currentSelectedIndex >= this.GetModel<IConfigModel>().BirdConfig.birdClasses.Length)
+                currentSelectedIndex >= this.GetModel<IConfigModel>().BirdConfig.sceneBirds[mapIndex].birdClasses.Length)
             {
                 return;
             }
             
             // 使用BirdConfig的方法获取本地化key
-            string birdNameKey = this.GetModel<IConfigModel>().BirdConfig.GetBirdNameKeyByClassIndex(currentSelectedIndex);
+            string birdNameKey = this.GetModel<IConfigModel>().BirdConfig.GetBirdNameKeyByClassIndex(currentSelectedIndex, mapIndex);
             string localizedBirdName = this.GetSystem<ILocalizationSystem>().GetString(birdNameKey);
             if (string.IsNullOrEmpty(localizedBirdName))
             {
@@ -203,7 +205,8 @@ namespace BirdGame
         private void OnSkinSelected(int index)
         {
             int classIndex;
-            var birdInfo = this.GetModel<IConfigModel>().BirdConfig.GetBird(index, out classIndex);
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            var birdInfo = this.GetModel<IConfigModel>().BirdConfig.GetBird(index, mapIndex, out classIndex);
             birdPreview.sprite = birdInfo.preview;
             birdPreview.GetComponent<RectTransform>().sizeDelta = birdInfo.preview.rect.size * 0.2f;
             if (!this.GetModel<ISaveModel>().IllustratedData.birds.Contains(index))
@@ -220,7 +223,7 @@ namespace BirdGame
             priceText.text = birdInfo.priceForBig.ToString();
             descriptionText.SetKey(birdInfo.description);
             habitatText.SetKey(birdInfo.habitat);
-            sceneView.sprite = this.GetModel<IConfigModel>().BirdConfig.birdClasses[classIndex].birds[0].scenePreview;
+            sceneView.sprite = this.GetModel<IConfigModel>().BirdConfig.sceneBirds[mapIndex].birdClasses[classIndex].birds[0].scenePreview;
         }
     }
 }

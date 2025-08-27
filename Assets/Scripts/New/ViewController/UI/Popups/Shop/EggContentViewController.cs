@@ -20,17 +20,18 @@ namespace BirdGame
         {
             gameModel = this.GetModel<IGameModel>();
             configModel = this.GetModel<IConfigModel>();
-            eggView.sprite = configModel.ShopConfig.eggs[gameModel.ShopEggSelectIndex.Value].eggSp;
-            priceText.text = configModel.ShopConfig.eggs[gameModel.ShopEggSelectIndex.Value].price.ToString();
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            eggView.sprite = configModel.ShopConfig.sceneEggs[mapIndex].eggs[gameModel.ShopEggSelectIndex.Value].eggSp;
+            priceText.text = configModel.ShopConfig.sceneEggs[mapIndex].eggs[gameModel.ShopEggSelectIndex.Value].price.ToString();
             gameModel.ShopEggSelectIndex.Register(v =>
             {
-                eggView.sprite = configModel.ShopConfig.eggs[v].eggSp;
-                priceText.text = configModel.ShopConfig.eggs[v].price.ToString();
+                eggView.sprite = configModel.ShopConfig.sceneEggs[mapIndex].eggs[v].eggSp;
+                priceText.text = configModel.ShopConfig.sceneEggs[mapIndex].eggs[v].price.ToString();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
             buyButton.onClick.AddListener(() =>
             {
-                if (configModel.ShopConfig.eggs[gameModel.ShopEggSelectIndex.Value].birdCount +
+                if (configModel.ShopConfig.sceneEggs[mapIndex].eggs[gameModel.ShopEggSelectIndex.Value].birdCount +
                     this.GetModel<IBirdModel>().BirdList.Count > this.GetModel<IConfigModel>().BirdConfig.maxBirdCount)
                 {
                     string text = this.GetSystem<ILocalizationSystem>().GetString("MaxEggLimitKey");
@@ -38,7 +39,7 @@ namespace BirdGame
                     return;
                 }
 
-                int price = configModel.ShopConfig.eggs[gameModel.ShopEggSelectIndex.Value].price;
+                int price = configModel.ShopConfig.sceneEggs[mapIndex].eggs[gameModel.ShopEggSelectIndex.Value].price;
                 if (price <= this.GetModel<IAccountModel>().Coins.Value)
                 {
                     this.GetModel<IAccountModel>().Coins.Value -= price;
@@ -52,7 +53,7 @@ namespace BirdGame
                 }
             });
 
-            for (int i = 0; i < configModel.ShopConfig.eggs.Length; i++)
+            for (int i = 0; i < configModel.ShopConfig.sceneEggs[mapIndex].eggs.Length; i++)
             {
                 var item = GameObject.Instantiate(itemPrefab, itemPrefab.transform.parent).GetComponent<ShopEggItem>();
                 item.gameObject.SetActive(true);

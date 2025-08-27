@@ -12,7 +12,8 @@ namespace BirdGame
         public void Init(int index)
         {
             id = index;
-            icon.sprite = this.GetModel<IConfigModel>().ShopConfig.eggs[index].eggSp;
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            icon.sprite = this.GetModel<IConfigModel>().ShopConfig.sceneEggs[mapIndex].eggs[index].eggSp;
         }
 
         private void Start()

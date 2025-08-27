@@ -11,7 +11,8 @@ namespace BirdGame
         protected override void OnExecute()
         {
             int index = this.GetModel<IGameModel>().ShopEggSelectIndex.Value;
-            var eggItem = this.GetModel<IConfigModel>().ShopConfig.eggs[index];
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            var eggItem = this.GetModel<IConfigModel>().ShopConfig.sceneEggs[mapIndex].eggs[index];
             this.GetModel<IBirdModel>().UnopenEggs = eggItem.birdCount;
             float startPosX = 0;
             if (eggItem.birdCount % 2 == 0)

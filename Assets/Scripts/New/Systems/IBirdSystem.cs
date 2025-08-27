@@ -173,6 +173,7 @@ namespace BirdGame
         /// </summary>
         private void GenerateBirdFromSaveData(SerializableBirdData savedBirdData)
         {
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             // 从BirdConfig获取鸟的预制体
             var configModel = this.GetModel<IConfigModel>();
             if (configModel?.BirdConfig == null)
@@ -183,7 +184,7 @@ namespace BirdGame
 
             // 在BirdConfig中查找对应类型的鸟
             BirdItem birdItem = null;
-            foreach (var birdClass in configModel.BirdConfig.birdClasses)
+            foreach (var birdClass in configModel.BirdConfig.sceneBirds[mapIndex].birdClasses)
             {
                 foreach (var birdConfig in birdClass.birds)
                 {

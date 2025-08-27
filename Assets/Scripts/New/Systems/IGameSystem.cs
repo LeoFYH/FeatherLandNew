@@ -405,7 +405,8 @@ namespace BirdGame
 
         public void CreateDecoration(int decorationId, int index)
         {
-            var decorationItem = this.GetModel<IConfigModel>().ShopConfig.decorations[decorationId];
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            var decorationItem = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[mapIndex].decorations[decorationId];
             
             // 优先使用场景Sprite，如果没有则使用icon
             Sprite spriteToUse = decorationItem.sceneSprite != null ? decorationItem.sceneSprite : decorationItem.icon;
@@ -449,7 +450,8 @@ namespace BirdGame
 
         public void CreateFixedDecoration(int decorationId, int index)
         {
-            var decorationItem = this.GetModel<IConfigModel>().ShopConfig.decorations[decorationId];
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            var decorationItem = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[mapIndex].decorations[decorationId];
             
             // 优先使用场景Sprite，如果没有则使用icon
             Sprite spriteToUse = decorationItem.sceneSprite != null ? decorationItem.sceneSprite : decorationItem.icon;
@@ -490,16 +492,17 @@ namespace BirdGame
         {
             // 销毁装饰品对象
             GameObject.Destroy(decorationObject);
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             var accountData = this.GetModel<ISaveModel>().AccountData;
-            if(accountData.decorations[decorationId].count > 0)
-                accountData.decorations[decorationId].position.RemoveAt(index);
-            accountData.decorations[decorationId].count--;
-            if (accountData.decorations[decorationId].count <= 0)
+            if(accountData.sceneDecorationInfos[mapIndex].decorations[decorationId].count > 0)
+                accountData.sceneDecorationInfos[mapIndex].decorations[decorationId].position.RemoveAt(index);
+            accountData.sceneDecorationInfos[mapIndex].decorations[decorationId].count--;
+            if (accountData.sceneDecorationInfos[mapIndex].decorations[decorationId].count <= 0)
             {
-                accountData.decorations[decorationId].count = 0;
+                accountData.sceneDecorationInfos[mapIndex].decorations[decorationId].count = 0;
             }
             this.GetSystem<ISaveSystem>().SaveData();
-            Debug.Log($"销毁装饰品 {decorationId}，剩余数量: {accountData.decorations[decorationId].count}");
+            Debug.Log($"销毁装饰品 {decorationId}，剩余数量: {accountData.sceneDecorationInfos[mapIndex].decorations[decorationId].count}");
         }
 
         public void PlaceDecoration()
@@ -519,11 +522,11 @@ namespace BirdGame
                 // 添加点击检测组件
                 DecorationClickHandler clickHandler = currentPlacingDecoration.AddComponent<DecorationClickHandler>();
                 clickHandler.Initialize(currentPlacingDecorationId, currentIndex);
-                
+                int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
                 // 更新已购买的装饰品数量
                 var accountData = this.GetModel<ISaveModel>().AccountData;
                 Debug.Log("index:" + currentIndex);
-                accountData.decorations[currentPlacingDecorationId].position[currentIndex] =
+                accountData.sceneDecorationInfos[mapIndex].decorations[currentPlacingDecorationId].position[currentIndex] =
                     currentPlacingDecoration.transform.position;
                 this.GetSystem<ISaveSystem>().SaveData();
                 // 清空当前放置的装饰品
@@ -541,17 +544,22 @@ namespace BirdGame
         public void CreateDecorations()
         {
             var accountData = this.GetModel<ISaveModel>().AccountData;
-            int count = accountData.decorations.Count;
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            while (accountData.sceneDecorationInfos.Count <= mapIndex)
+            {
+                accountData.sceneDecorationInfos.Add(new SceneDecorationInfo());
+            }
+            int count = accountData.sceneDecorationInfos[mapIndex].decorations.Count;
             for (int i = 0; i < count; i++)
             {
-                if (accountData.decorations[i].position == null)
+                if (accountData.sceneDecorationInfos[mapIndex].decorations[i].position == null)
                 {
-                    accountData.decorations[i].position = new List<Vector3>();
+                    accountData.sceneDecorationInfos[mapIndex].decorations[i].position = new List<Vector3>();
                 }
-
-                for (int j = 0; j < accountData.decorations[i].count; j++)
+                
+                for (int j = 0; j < accountData.sceneDecorationInfos[mapIndex].decorations[i].count; j++)
                 {
-                    var decorationItem = this.GetModel<IConfigModel>().ShopConfig.decorations[i];
+                    var decorationItem = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[mapIndex].decorations[i];
                     // 创建一个 GameObject 来承载 Sprite
                     GameObject decoration = new GameObject("Decoration");
                     Sprite spriteToUse = decorationItem.sceneSprite != null
@@ -575,12 +583,12 @@ namespace BirdGame
                     // 添加点击检测组件
                     DecorationClickHandler clickHandler = decoration.AddComponent<DecorationClickHandler>();
                     clickHandler.Initialize(i, j);
-                    if (accountData.decorations[i].position.Count <= j)
+                    if (accountData.sceneDecorationInfos[mapIndex].decorations[i].position.Count <= j)
                     {
-                        accountData.decorations[i].position.Add(Vector3.zero);
+                        accountData.sceneDecorationInfos[mapIndex].decorations[i].position.Add(Vector3.zero);
                     }
 
-                    decoration.transform.position = accountData.decorations[i].position[j];
+                    decoration.transform.position = accountData.sceneDecorationInfos[mapIndex].decorations[i].position[j];
                 }
             }
         }

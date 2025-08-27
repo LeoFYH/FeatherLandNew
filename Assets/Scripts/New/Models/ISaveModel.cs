@@ -44,9 +44,15 @@ namespace BirdGame
     public class AccountData : SavableData
     {
         public int coins = 600;
-        public List<DecorationInfo> decorations = new List<DecorationInfo>();
+        public List<SceneDecorationInfo> sceneDecorationInfos = new List<SceneDecorationInfo>();
         public List<ToolInfo> tools = new List<ToolInfo>();
         public int addedMaxBirdValue = 0;
+    }
+
+    [Serializable]
+    public class SceneDecorationInfo
+    {
+        public List<DecorationInfo> decorations = new List<DecorationInfo>();
     }
 
     [Serializable]
