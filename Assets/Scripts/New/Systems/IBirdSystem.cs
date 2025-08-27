@@ -58,7 +58,7 @@ namespace BirdGame
                     birdType = birdData.birdType,
                     customName = birdData.customName,
                     isSmall = birdData.bird.isSmall,
-                    eatFoodCount = birdData.bird.eatFoodCount.Value,
+                    currentExp = birdData.bird.currentExp.Value,
                     currentFavorability = birdData.bird.currentFavorability.Value,
                     totalFavorability = birdData.bird.totalFavorability,
                     petTime = 0, // petTime是私有字段，暂时设为0
@@ -87,7 +87,7 @@ namespace BirdGame
             var listeners = new List<IUnRegister>();
 
             // 监听食物计数变化
-            listeners.Add(birdData.bird.eatFoodCount.Register(_ => SyncBirdDataToSave()));
+            listeners.Add(birdData.bird.currentExp.Register(_ => SyncBirdDataToSave()));
 
             // 监听好感度变化
             listeners.Add(birdData.bird.currentFavorability.Register(_ => SyncBirdDataToSave()));
@@ -220,13 +220,13 @@ namespace BirdGame
 
             // 设置鸟的数据
             bird.isSmall = savedBirdData.isSmall;
-            bird.eatFoodCount.Value = savedBirdData.eatFoodCount;
+            bird.currentExp.Value = savedBirdData.currentExp;
             bird.currentFavorability.Value = savedBirdData.currentFavorability;
             bird.totalFavorability = savedBirdData.totalFavorability;
             // petTime是私有字段，无法直接设置
 
             // 根据isSmall设置鸟的大小
-            if (savedBirdData.eatFoodCount <= birdItem.eatForBig)
+            if (savedBirdData.currentExp <= birdItem.totalExp)
             {
                 birdObject.transform.localScale = Vector3.one * bird.BabyBirdSize;
                 savedBirdData.isSmall = true;

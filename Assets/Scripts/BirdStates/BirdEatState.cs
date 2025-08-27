@@ -140,7 +140,10 @@ namespace BirdGame
             else
             {
                 eatFoodTimer = 0;
-                _brid.eatFoodCount.Value++;
+                int birdIndex = this.GetModel<IBirdModel>().BirdList[_brid.birdIndex].birdType;
+                var conf = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex);
+                float totalExp = conf.totalExp;
+                _brid.currentExp.Value += conf.eatExp;
                 
                 // 安全检查：确保birdIndex在有效范围内
                 if (_brid.birdIndex < 0 || _brid.birdIndex >= this.GetModel<IBirdModel>().BirdList.Count)
@@ -150,9 +153,8 @@ namespace BirdGame
                     return;
                 }
                 
-                int birdIndex = this.GetModel<IBirdModel>().BirdList[_brid.birdIndex].birdType;
-                int eatForBig = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex).eatForBig;
-                if (_brid.eatFoodCount.Value == eatForBig)
+               
+                if (_brid.currentExp.Value >= totalExp)
                 {
                     _brid.transform.DOScale(_brid.AdultBirdSize, 0.2f);
                     _brid.isSmall = false;

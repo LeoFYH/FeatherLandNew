@@ -122,7 +122,7 @@ namespace BirdGame
         public int birdType;
         public string customName;
         public bool isSmall;
-        public int eatFoodCount;
+        public float currentExp;
         public int currentFavorability;
         public int totalFavorability;
         public float petTime;

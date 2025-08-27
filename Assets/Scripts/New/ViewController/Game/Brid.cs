@@ -1,5 +1,6 @@
 using System;
 using BirdGame;
+using DG.Tweening;
 using QFramework;
 using UnityEngine;
 using UnityEngine.AI;
@@ -53,7 +54,7 @@ namespace BirdGame
         public BindableProperty<int> currentFavorability = new BindableProperty<int>(0);
         
         public float distance;
-        public BindableProperty<int> eatFoodCount = new BindableProperty<int>();
+        public BindableProperty<float> currentExp = new BindableProperty<float>();
         public float eatFoodTime = 1;
 
         bool isEnter;
@@ -260,6 +261,25 @@ namespace BirdGame
             {
                 startTimer = Time.time;
                 AddCoins();
+                AutoExp();
+            }
+        }
+
+        /// <summary>
+        /// 每分钟成长值
+        /// </summary>
+        private void AutoExp()
+        {
+            if (isSmall)
+            {
+                int index = this.GetModel<IBirdModel>().BirdList[birdIndex].birdType;
+                var conf = this.GetModel<IConfigModel>().BirdConfig.GetBird(index);
+                currentExp.Value += conf.autoExp;
+                if (currentExp.Value >= conf.totalExp)
+                {
+                    transform.DOScale(AdultBirdSize, 0.2f);
+                    isSmall = false;
+                }
             }
         }
 

@@ -35,8 +35,6 @@ namespace BirdGame
         public int clickEarning = 1;
         [BoxGroup("content/Info/信息"), LabelText("点击5次后的额外收益)")]
         public int clickEarningForFiveTimes = 3;
-        [BoxGroup("content/Info/信息"), LabelText("成长所需食物数量")]
-        public int eatForBig;
         [BoxGroup("content/Info/信息"), LabelText("描述的key"), TextArea]
         public string description;
         [BoxGroup("content/Info/信息"), Button("添加描述(key)到本地化配置"), GUIColor("buttonColor")]
@@ -65,6 +63,13 @@ namespace BirdGame
             EditorUtility.DisplayDialog("提示", $"key[{description}]已添加,请在本地化配置中配置语言翻译！", "ok");
 #endif
         }
+        
+        [BoxGroup("content/Info/成长"), LabelText("成长所需成长值")]
+        public float totalExp;
+        [BoxGroup("content/Info/成长"), LabelText("每次食物的成长值")]
+        public float eatExp;
+        [BoxGroup("content/Info/成长"), LabelText("每分钟增加的成长值")]
+        public float autoExp;
 
         [VerticalGroup("content/Info"), BoxGroup("content/Info/习性"), LabelText("习性的key"), TextArea]
         public string habitat;
