@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
+using UnityEditor;
 using UnityEngine;
 
 namespace BirdGame
@@ -106,6 +108,51 @@ namespace BirdGame
         public string birdName;
         [OdinSerialize, TableList(ShowIndexLabels = true), VerticalGroup("Info")]
         public List<BirdItem> birds = new List<BirdItem>();
+        
+        [LabelText("选择的鸟"), ValueDropdown("GetBirdList"), BoxGroup("Info/标准信息设置"), ShowInInspector]
+        private int birdIndex;
+        [Button("同步"), BoxGroup("Info/标准信息设置")]
+        private void OnLoadClick()
+        {
+            if(birds == null || birds.Count == 0)
+                return;
+            if(birdIndex >= birds.Count || birdIndex < 0)
+                return;
+            var conf = birds[birdIndex];
+            for (int i = 0; i < birds.Count; i++)
+            {
+                if(i == birdIndex)
+                    continue;
+                birds[i].description = conf.description;
+                birds[i].habitat = conf.habitat;
+                birds[i].reality = conf.reality;
+                birds[i].autoExp = conf.autoExp;
+                birds[i].canFly = conf.canFly;
+                birds[i].clickEarning = conf.clickEarning;
+                birds[i].eatExp = conf.eatExp;
+                birds[i].scenePreview = conf.scenePreview;
+                birds[i].totalExp = conf.totalExp;
+                birds[i].canFlyWait = conf.canFlyWait;
+                birds[i].eraningForBig = conf.eraningForBig;
+                birds[i].eraningForSmall = conf.eraningForSmall;
+                birds[i].priceForBig = conf.priceForBig;
+                birds[i].priceForSmall = conf.priceForSmall;
+                birds[i].clickEarningForFiveTimes = conf.clickEarningForFiveTimes;
+            }
+        }
+
+       
+
+        private ValueDropdownList<int> GetBirdList()
+        {
+            var list = new ValueDropdownList<int>();
+            for (int i = 0; i < birds.Count; i++)
+            {
+                list.Add(new ValueDropdownItem<int>($"{birdName} {i}", i));
+            }
+
+            return list;
+        }
     }
     
 }
