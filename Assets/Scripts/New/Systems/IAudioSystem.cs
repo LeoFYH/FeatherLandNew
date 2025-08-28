@@ -9,7 +9,8 @@ namespace BirdGame
     {
         Click,
         DropFood,
-        Stroke
+        Stroke,
+        GrowUp,
     }
 
     public interface IAudioSystem : ISystem
@@ -156,6 +157,9 @@ namespace BirdGame
                     break;
                 case EffectType.Stroke:
                     clip = this.GetModel<IConfigModel>().RadioConfig.stroke;
+                    break;
+                case EffectType.GrowUp:
+                    clip = this.GetModel<IConfigModel>().RadioConfig.growUp;
                     break;
             }
             

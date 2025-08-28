@@ -11,12 +11,12 @@ namespace BirdGame
         {
             closeButton.onClick.AddListener(() =>
             {
-                if (!this.GetModel<ISaveModel>().SettingData.isShowedTutorial)
-                {
-                    this.GetSystem<IUISystem>().ShowPopup(UIPopup.TutorialPopup);
-                    this.GetModel<ISaveModel>().SettingData.isShowedTutorial = true;
-                    this.GetSystem<ISaveSystem>().SaveData();
-                }
+                // if (!this.GetModel<ISaveModel>().SettingData.isShowedTutorial)
+                // {
+                //     this.GetModel<ISaveModel>().SettingData.isShowedTutorial = true;
+                //     this.GetSystem<ISaveSystem>().SaveData();
+                // }
+                this.GetSystem<IUISystem>().ShowPopup(UIPopup.TutorialPopup);
                 this.GetSystem<IUISystem>().HidePopup(UIPopup.ThanksPopup);
             });
         }

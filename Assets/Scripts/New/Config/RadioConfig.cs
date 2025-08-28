@@ -15,6 +15,7 @@ namespace BirdGame
         public AudioClip click;
         public AudioClip dropFood;
         public AudioClip stroke;
+        public AudioClip growUp;
 
         [Title("Clock提示音乐库"), Space(10), TableList(ShowIndexLabels = true, AlwaysExpanded = true)] 
         public AudioItem[] alertClips;

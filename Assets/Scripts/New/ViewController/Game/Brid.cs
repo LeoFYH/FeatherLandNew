@@ -2,6 +2,7 @@ using System;
 using BirdGame;
 using DG.Tweening;
 using QFramework;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -76,6 +77,9 @@ namespace BirdGame
 
         public Vector3 originalScale;
         public float lastPerspectiveScale = 1f;
+
+        [ReadOnly]
+        public float animScale = 1f;
 
         void Start()
         {
@@ -252,7 +256,7 @@ namespace BirdGame
                     }
                     else
                     {
-                        transform.localScale = Vector3.one * AdultBirdSize * scaleFactor;
+                        transform.localScale = Vector3.one * AdultBirdSize * scaleFactor * animScale;
                     }
                 }
             }
