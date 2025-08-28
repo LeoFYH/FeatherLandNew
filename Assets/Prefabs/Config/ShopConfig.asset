@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: ShopConfig
   m_EditorClassIdentifier: 
   startCoins: 600
+  coinsLimit: 100000
   sceneEggs:
   - eggs:
     - eggSp: {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
@@ -49,8 +50,6 @@ MonoBehaviour:
         probability: 0.2
       - birdType: 8
         probability: 0.2
-      - birdType: 11
-        probability: 0.1
       - birdType: 15
         probability: 0.1
       - birdType: 12
