@@ -608,6 +608,12 @@ namespace BirdGame
             this.GetModel<IAccountModel>().Coins.Value = this.GetModel<ISaveModel>().AccountData.coins;
             this.GetModel<IAccountModel>().Coins.Register(v =>
             {
+                int limit = this.GetModel<IConfigModel>().ShopConfig.coinsLimit;
+                if (v > limit)
+                {
+                    this.GetModel<IAccountModel>().Coins.Value = limit;
+                    return;
+                }
                 this.GetModel<ISaveModel>().AccountData.coins = v;
                 this.GetSystem<ISaveSystem>().SaveData();
             });

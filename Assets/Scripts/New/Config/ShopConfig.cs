@@ -68,6 +68,8 @@ namespace BirdGame
 
         [LabelText("初始金币"), BoxGroup("信息")]
         public int startCoins = 200;
+        [LabelText("金币上限"), BoxGroup("信息")]
+        public int coinsLimit = 10000;
             
         [HideInInspector]
         public List<SceneEgg> sceneEggs = new List<SceneEgg>();
