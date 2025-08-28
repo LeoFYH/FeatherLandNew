@@ -27,6 +27,7 @@ namespace BirdGame
         bool IsPlacingDecoration();
         void CreateDecorations();
         void OpenUrl(string url);
+        void InitAccount();
     }
 
     public class GameSystem : AbstractSystem, IGameSystem
@@ -60,12 +61,6 @@ namespace BirdGame
             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("Num", obj =>
             {
                 numPrefab = obj;
-            });
-            this.GetModel<IAccountModel>().Coins.Value = this.GetModel<ISaveModel>().AccountData.coins;
-            this.GetModel<IAccountModel>().Coins.Register(v =>
-            {
-                this.GetModel<ISaveModel>().AccountData.coins = v;
-                this.GetSystem<ISaveSystem>().SaveData();
             });
         }
 
@@ -606,6 +601,16 @@ namespace BirdGame
             {
                 Debug.LogError($"打开外部链接失败: {ex.Message}");
             }
+        }
+
+        public void InitAccount()
+        {
+            this.GetModel<IAccountModel>().Coins.Value = this.GetModel<ISaveModel>().AccountData.coins;
+            this.GetModel<IAccountModel>().Coins.Register(v =>
+            {
+                this.GetModel<ISaveModel>().AccountData.coins = v;
+                this.GetSystem<ISaveSystem>().SaveData();
+            });
         }
 
         private Vector3 GetDefaultDecorationPosition()

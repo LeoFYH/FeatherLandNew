@@ -55,9 +55,6 @@ namespace BirdGame
         {
             this.GetModel<IConfigModel>().ShopConfig = config;
             
-            // 初始化默认食物为第一个食物
-            InitializeDefaultFood();
-            
             this.GetSystem<IAssetSystem>().LoadAssetAsync<BirdConfig>("BirdConfig", OnBirdConfigComplete,
                 progress =>
                 {
@@ -96,6 +93,9 @@ namespace BirdGame
         private void OnMapConfigComplete(MapConfig config)
         {
             this.GetModel<IConfigModel>().MapConfig = config;
+            this.GetSystem<ISaveSystem>().InitData();
+            this.GetSystem<IGameSystem>().InitAccount();
+            InitializeDefaultFood();
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             this.GetSystem<ISceneSystem>().LoadScene(mapIndex, progress =>
             {

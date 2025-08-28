@@ -31,7 +31,7 @@ namespace BirdGame
                 Directory.CreateDirectory(backupDir);
 
             _saveModel = this.GetModel<ISaveModel>();
-            InitData();
+            //InitData();
         }
 
         private void SaveData<T>(string fileName, T data) where T : SavableData
@@ -95,6 +95,10 @@ namespace BirdGame
             {
                 Debug.Log("无存档文件，创建新存档");
                 T newData = new T();
+                if (fileName.Equals("AccountData"))
+                {
+                    (newData as AccountData).coins = this.GetModel<IConfigModel>().ShopConfig.startCoins;
+                }
                 return newData;
             }
 

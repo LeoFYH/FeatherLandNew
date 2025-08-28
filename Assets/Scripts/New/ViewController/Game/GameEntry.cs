@@ -16,8 +16,10 @@ namespace BirdGame
         private System.Collections.IEnumerator InitializeAfterSystems()
         {
             // 等待一帧，确保所有系统都已初始化
-            yield return null;
-            
+            while (this.GetModel<ISaveModel>().SettingData == null)
+            {
+                yield return null;
+            }
             // 根据保存的设置设置屏幕模式
             int savedScreenMode = this.GetModel<ISaveModel>().SettingData.screenMode;
             Debug.Log($"从存档加载的屏幕模式: {savedScreenMode}");

@@ -65,6 +65,9 @@ namespace BirdGame
             return sceneIndex;
         }
 #endif
+
+        [LabelText("初始金币"), BoxGroup("信息")]
+        public int startCoins = 200;
             
         [HideInInspector]
         public List<SceneEgg> sceneEggs = new List<SceneEgg>();
