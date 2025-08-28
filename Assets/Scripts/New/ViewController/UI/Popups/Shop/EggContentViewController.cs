@@ -37,7 +37,7 @@ namespace BirdGame
                 if (currentCount + this.GetModel<IBirdModel>().BirdList.Count > maxCount)
                 {
                     string text = this.GetSystem<ILocalizationSystem>().GetString("MaxEggLimitKey");
-                    this.GetSystem<IUISystem>().ShowPrompt($"{text} {currentCount}/{maxCount}");
+                    this.GetSystem<IUISystem>().ShowPrompt($"{text} {this.GetModel<IBirdModel>().BirdList.Count}/{maxCount}");
                     return;
                 }
 
