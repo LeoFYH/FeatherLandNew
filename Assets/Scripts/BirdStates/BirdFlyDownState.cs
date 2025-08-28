@@ -46,7 +46,7 @@ namespace BirdGame
             DOTween.Sequence().AppendCallback(() =>
             {
                 _brid.transform.DOScale(_brid.AdultBirdSize, time).SetEase(Ease.Linear);
-                _brid.sr.sortingOrder = 0;
+                _brid.sr.sortingOrder = 3;
 
                 var anim = DOTween.Sequence();
                 anim.Append(_brid.transform.DOMove(target, time).SetEase(Ease.Linear));
