@@ -98,7 +98,7 @@ namespace BirdGame
                 Debug.Log("所有存档文件已清除！内存数据已清空！程序即将重启...");
                 
                 // 显示成功消息
-                this.GetSystem<IUISystem>().ShowPrompt("存档已清除！程序即将重启。");
+                //this.GetSystem<IUISystem>().ShowPrompt("存档已清除！程序即将重启。");
                 
                 // 等待一帧确保消息显示
                 this.GetSystem<IMonoSystem>().StartCoroutine(RestartApplication());
@@ -106,7 +106,7 @@ namespace BirdGame
             catch (System.Exception e)
             {
                 Debug.LogError($"清除存档失败: {e.Message}");
-                this.GetSystem<IUISystem>().ShowPrompt("清除失败！清除存档时发生错误，请重试。");
+                //this.GetSystem<IUISystem>().ShowPrompt("清除失败！清除存档时发生错误，请重试。");
             }
         }
         
