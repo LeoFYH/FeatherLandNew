@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -13,6 +14,9 @@ namespace BirdGame
 {
     public class SettingPopup : UIBase
     {
+        [DllImport("kernel32.dll")]
+        private static extern void ExitProcess(int ExitCode);
+        
         public Button closeButton;
         public TMP_Dropdown screenDropdown;
         public TMP_Dropdown languageDropdown;
@@ -131,7 +135,7 @@ namespace BirdGame
                 UnityEditor.EditorApplication.isPlaying = true;
             #else
                 // 在构建版本中重启应用
-                UnityEngine.Application.Quit();
+                ExitProcess(0);
                 #if UNITY_STANDALONE_WIN
                     System.Diagnostics.Process.Start(Application.dataPath.Replace("_Data", ".exe"));
                 #elif UNITY_STANDALONE_OSX
@@ -359,7 +363,8 @@ namespace BirdGame
             });
             quitButton.onClick.AddListener(() =>
             {
-                UnityEngine.Application.Quit();
+                ExitProcess(0);
+                //UnityEngine.Application.Quit();
             });
             
             // 添加清除存档按钮的点击监听器
