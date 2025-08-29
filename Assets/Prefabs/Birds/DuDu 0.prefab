@@ -164,7 +164,7 @@ MonoBehaviour:
   birdIndex: 0
   walkArea: 3
   BabyBirdSize: 0.8
-  AdultBirdSize: 11
+  AdultBirdSize: 1.1
   BirdEatDistance: 0.2
   BackgroundBirdSize: 0
   nestTrans: {fileID: 0}
@@ -197,6 +197,7 @@ MonoBehaviour:
   agent: {fileID: 0}
   originalScale: {x: 0, y: 0, z: 0}
   lastPerspectiveScale: 1
+  animScale: 1
 --- !u!61 &7270674382561921263
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3af29a6e86b04fca88f7fd9ffc287542, type: 3}
   m_Name: ShopConfig
   m_EditorClassIdentifier: 
-  startCoins: 600
+  startCoins: 5000
+  coinsLimit: 100000
   sceneEggs:
   - eggs:
     - eggSp: {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
@@ -28,12 +29,12 @@ MonoBehaviour:
       - birdType: 10
         probability: 0.5
       - birdType: 6
-        probability: 0.4
+        probability: 0.572
       - birdType: 3
-        probability: 0.1
+        probability: 0.494
     - eggSp: {fileID: 710238443548197888, guid: 1170092e8fa8e1142a7e347132e8ea45, type: 3}
       price: 500
-      birdCount: 4
+      birdCount: 3
       birds:
       - birdType: 3
         probability: 0.3
@@ -49,15 +50,13 @@ MonoBehaviour:
         probability: 0.2
       - birdType: 8
         probability: 0.2
-      - birdType: 11
-        probability: 0.1
       - birdType: 15
         probability: 0.1
       - birdType: 12
         probability: 0.1
     - eggSp: {fileID: 2219571566158466069, guid: 066d2d923c5b99944aa6d9ca568d816f, type: 3}
       price: 800
-      birdCount: 5
+      birdCount: 4
       birds:
       - birdType: 2
         probability: 0.25
@@ -73,9 +72,11 @@ MonoBehaviour:
         probability: 0.2
       - birdType: 11
         probability: 0.15
+      - birdType: 17
+        probability: 1
     - eggSp: {fileID: -8002347335681798773, guid: 3983a1dbff14cd040915f5a365b4942e, type: 3}
       price: 1200
-      birdCount: 5
+      birdCount: 4
       birds:
       - birdType: 15
         probability: 0.25
