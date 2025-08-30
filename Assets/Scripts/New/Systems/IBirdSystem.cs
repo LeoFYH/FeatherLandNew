@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using QFramework;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 namespace BirdGame
 {
@@ -45,8 +46,6 @@ namespace BirdGame
             if (saveModel?.BirdInfoData == null) return;
 
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
-            // 更新unopenEggs
-            saveModel.BirdInfoData.mapBirds[mapIndex].unopenEggs = birdModel.UnopenEggs;
             // 更新birdList
             saveModel.BirdInfoData.mapBirds[mapIndex].birdList.Clear();
             foreach (var birdData in birdModel.BirdList)
@@ -149,10 +148,9 @@ namespace BirdGame
             }
 
             // 先判断存档里有没有鸟信息，没有就不做
-            if (saveModel?.BirdInfoData?.mapBirds[mapIndex]?.birdList == null || saveModel.BirdInfoData.mapBirds[mapIndex].birdList.Count == 0) 
+            if (saveModel.BirdInfoData.mapBirds[mapIndex].birdList == null)
             {
-                Debug.Log("存档中没有鸟信息，跳过生成鸟");
-                return;
+                saveModel.BirdInfoData.mapBirds[mapIndex].birdList = new List<SerializableBirdData>();
             }
 
             // 根据存档生成鸟
@@ -160,12 +158,68 @@ namespace BirdGame
             {
                 GenerateBirdFromSaveData(savedBirdData);
             }
-
-            // 更新未开启的蛋数量
-            birdModel.UnopenEggs = saveModel.BirdInfoData.mapBirds[mapIndex].unopenEggs;
             
+            //根据鸟蛋生成鸟
+            if (saveModel.BirdInfoData.mapBirds[mapIndex].eggList == null)
+                saveModel.BirdInfoData.mapBirds[mapIndex].eggList = new List<int>();
+            Debug.Log("鸟蛋数量:" + saveModel.BirdInfoData.mapBirds[mapIndex].eggList.Count);
+            foreach (var eggIndex in saveModel.BirdInfoData.mapBirds[mapIndex].eggList)
+            {
+                int birdIndex = RandomGetBirdIndex(eggIndex);
+                CreateBird(birdIndex);
+            }
+            
+            saveModel.BirdInfoData.mapBirds[mapIndex].eggList.Clear();
             // 同步图鉴数据 - 确保所有已拥有的鸟都在图鉴中
             SyncIllustratedDataFromBirds();
+            
+            this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
+            
+        }
+        
+        private void CreateBird(int birdIndex)
+        {
+            var config = this.GetModel<IConfigModel>().BirdConfig;
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            GameObject go = GameObject.Instantiate(config.GetBird(birdIndex, mapIndex).prefab);
+            this.GetModel<IBirdModel>().AddBird(birdIndex, go.GetComponent<Brid>());
+            var agent = go.GetComponent<NavMeshAgent>();
+            agent.enabled = false;
+            var point = NavigationManager.Instance.GetRandomTarget(3);
+            go.transform.position = new Vector3(point.x, point.y, 0);
+            // 更新 GameManager 的未开启蛋数量
+            this.GetModel<IBirdModel>().UnopenEggs--;
+            agent.enabled = true;
+            if (this.GetModel<IBirdModel>().UnopenEggs <= 0)
+            {
+                this.GetSystem<IUISystem>().HideMask();
+                this.SendEvent<EnableButtonEvent>();
+            }
+        }
+        
+        private int RandomGetBirdIndex(int eggIndex)
+        {
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            var egg = this.GetModel<IConfigModel>().ShopConfig.sceneEggs[mapIndex].eggs[eggIndex];
+            float total = egg.GetTotalProbability();
+            float pro = Random.Range(0f, total);
+            Debug.Log($"随机数: {pro}");
+            float currentPro = egg.birds[0].probability;
+            if (pro < currentPro)
+            {
+                return egg.birds[0].birdType;
+            }
+            for (int i = 1; i < egg.birds.Length; i++)
+            {
+                if (pro >= currentPro && pro < currentPro + egg.birds[i].probability)
+                {
+                    return egg.birds[i].birdType;
+                }
+
+                currentPro += egg.birds[i].probability;
+            }
+
+            return egg.birds[egg.birds.Length - 1].birdType;
         }
 
         /// <summary>

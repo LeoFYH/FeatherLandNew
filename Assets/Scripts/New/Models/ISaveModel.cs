@@ -109,8 +109,8 @@ namespace BirdGame
     [Serializable]
     public class MapBirdList
     {
-        public int unopenEggs = 0;
         public List<SerializableBirdData> birdList = new List<SerializableBirdData>();
+        public List<int> eggList = new List<int>();
     }
 
     [Serializable]

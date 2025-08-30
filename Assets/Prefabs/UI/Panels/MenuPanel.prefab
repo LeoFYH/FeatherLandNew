@@ -212,6 +212,7 @@ GameObject:
   - component: {fileID: 707723388593710286}
   - component: {fileID: 9188378406070406985}
   - component: {fileID: 8092427179851522614}
+  - component: {fileID: 5190488759037318060}
   m_Layer: 5
   m_Name: ShopButton
   m_TagString: Untagged
@@ -370,6 +371,18 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
+--- !u!114 &5190488759037318060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 209583512461631260}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 558851de400c4c1f8414222e30161cc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &396927526642392072
 GameObject:
   m_ObjectHideFlags: 0

@@ -363,8 +363,8 @@ namespace BirdGame
             });
             quitButton.onClick.AddListener(() =>
             {
+                this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
                 ExitProcess(0);
-                //UnityEngine.Application.Quit();
             });
             
             // 添加清除存档按钮的点击监听器
@@ -372,6 +372,7 @@ namespace BirdGame
             {
                 clearSaveButton.onClick.AddListener(() =>
                 {
+                    this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
                     onClick(); // 调用清除存档功能
                 });
             }

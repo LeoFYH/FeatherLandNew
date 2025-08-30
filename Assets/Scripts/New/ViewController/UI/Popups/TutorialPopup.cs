@@ -11,6 +11,7 @@ namespace BirdGame
         {
             closeButton.onClick.AddListener(() =>
             {
+                this.GetSystem<IGameSystem>().SendEvent<EnableHoverScaleEvent>();
                 this.GetSystem<IUISystem>().HidePopup(UIPopup.TutorialPopup);
             });
         }

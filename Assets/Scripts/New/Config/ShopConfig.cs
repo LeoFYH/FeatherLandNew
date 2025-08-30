@@ -240,13 +240,23 @@ namespace BirdGame
     {
         [PreviewField(50, ObjectFieldAlignment.Left), HorizontalGroup("Content", Width = 50), HideLabel]
         public Sprite icon;
+        [LabelText("工具类型"), HorizontalGroup("Content"), VerticalGroup("Content/Info")]
+        public ToolType type;
         [LabelText("名称"), HorizontalGroup("Content"), VerticalGroup("Content/Info")]
         public string selectionName;
         [LabelText("描述"), HorizontalGroup("Content"), VerticalGroup("Content/Info")]
         public string description;
         [LabelText("价格"), HorizontalGroup("Content"), VerticalGroup("Content/Info")]
         public int price;
-        [LabelText("食物大小"), HorizontalGroup("Content"), VerticalGroup("Content/Info"), Range(0.01f, 5f)]
+        [LabelText("食物大小"), HorizontalGroup("Content"), VerticalGroup("Content/Info"), Range(0.01f, 5f), ShowIf("@type==ToolType.Food")]
         public float foodScale = 1f;
+        [LabelText("增加鸟的容量大小"), HorizontalGroup("Content"), VerticalGroup("Content/Info"), ShowIf("@type==ToolType.BirdMaxCount")]
+        public int addCount;
+    }
+
+    public enum ToolType
+    {
+        Food,
+        BirdMaxCount
     }
 }

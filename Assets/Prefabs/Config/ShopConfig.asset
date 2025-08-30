@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3af29a6e86b04fca88f7fd9ffc287542, type: 3}
   m_Name: ShopConfig
   m_EditorClassIdentifier: 
-  startCoins: 5000
+  startCoins: 600
   coinsLimit: 100000
   sceneEggs:
   - eggs:
@@ -73,7 +73,7 @@ MonoBehaviour:
       - birdType: 11
         probability: 0.15
       - birdType: 17
-        probability: 1
+        probability: 0.8
     - eggSp: {fileID: -8002347335681798773, guid: 3983a1dbff14cd040915f5a365b4942e, type: 3}
       price: 1200
       birdCount: 4
@@ -142,22 +142,30 @@ MonoBehaviour:
   - name: Food
     selections:
     - icon: {fileID: -1196716382573312124, guid: 2188b2416a3540547b887296393f1963, type: 3}
+      type: 0
       selectionName: Seed
       description: 
       price: 0
       foodScale: 0.04
+      addCount: 0
     - icon: {fileID: -3520649881568307650, guid: c53a4b854fc13b246880f045ae7f38b1, type: 3}
+      type: 0
       selectionName: Grain
       description: 
       price: 0
       foodScale: 0.06
+      addCount: 0
     - icon: {fileID: 4495422397181781673, guid: 2a09792a324f4874196f98f9c4eb95a7, type: 3}
+      type: 0
       selectionName: Bean
       description: 
       price: 0
       foodScale: 0.06
+      addCount: 0
     - icon: {fileID: 21300000, guid: 70afe432c14bafc4094c86c400ebb7a1, type: 3}
+      type: 0
       selectionName: Rice
       description: Just rice
       price: 0
       foodScale: 0.08
+      addCount: 0

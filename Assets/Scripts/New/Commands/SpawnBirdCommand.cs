@@ -25,6 +25,7 @@ namespace BirdGame
             {
                 this.SendEvent<HideEggEvent>();
                 var anim = GameObject.Instantiate(obj).GetComponent<OpenEggAnim>();
+                this.GetSystem<ISaveSystem>().SaveData();
                 anim.InitBird(val, () =>
                 {
                     this.SendEvent<ShowEggEvent>();
@@ -39,6 +40,9 @@ namespace BirdGame
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             GameObject go = GameObject.Instantiate(config.GetBird(birdIndex, mapIndex).prefab);
             this.GetModel<IBirdModel>().AddBird(birdIndex, go.GetComponent<Brid>());
+            if (this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].eggList.Count > 0)
+                this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].eggList.RemoveAt(0);
+            this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
             var agent = go.GetComponent<NavMeshAgent>();
             agent.enabled = false;
 
