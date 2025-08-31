@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using NUnit.Framework;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -18,6 +20,7 @@ namespace BirdGame
         public GameObject selectionPrefab;
 
         private int itemIndex;
+        private List<ShopToolSelection> selections = new List<ShopToolSelection>();
         
         public void Init(int index)
         {
@@ -45,56 +48,24 @@ namespace BirdGame
 
             var sp = item.selections[gameModel.SelectedToolDic[index].Value].icon;
             icon.sprite = sp;
-            icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.3f;
+            if (sp != null)
+                icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.3f;
             itemName.SetKey(item.name);
             selectName.text = item.selections[gameModel.SelectedToolDic[index].Value].selectionName;
             description.SetKey(item.selections[gameModel.SelectedToolDic[index].Value].description);
-            
-            bool isInitialPurchased = saveModel.AccountData.tools[itemIndex].unlockedList.Contains(gameModel.SelectedToolDic[index].Value);
-            bool isInitialEquipped = saveModel.AccountData.tools[itemIndex].equipedId == gameModel.SelectedToolDic[index].Value;
-            
-            if (isInitialEquipped)
+            if (item.selections[0].type == ToolType.Food)
             {
-                // 已装备：显示"equipped"
-                priceText.text = "equipped";
-            }
-            else if (isInitialPurchased)
-            {
-                // 已购买但未装备：显示"equip"
-                priceText.text = "equip";
-            }
-            else
-            {
-                // 未购买：显示价格
-                priceText.text = item.selections[gameModel.SelectedToolDic[index].Value].price.ToString();
-            }
-            for (int i = 0; i < item.selections.Length; i++)
-            {
-                var select = GameObject.Instantiate(selectionPrefab, selectionPrefab.transform.parent).GetComponent<ShopToolSelection>();
-                select.gameObject.SetActive(true);
-                select.Init(index, i);
-            }
+                bool isInitialPurchased = saveModel.AccountData.tools[itemIndex].unlockedList
+                    .Contains(gameModel.SelectedToolDic[index].Value);
+                bool isInitialEquipped = saveModel.AccountData.tools[itemIndex].equipedId ==
+                                         gameModel.SelectedToolDic[index].Value;
 
-            gameModel.SelectedToolDic[itemIndex].Register(v =>
-            {
-                var sp = item.selections[v].icon;
-                icon.sprite = sp;
-                icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.3f;
-                selectName.text = item.selections[v].selectionName;
-                selectName.text = item.selections[v].selectionName;
-                description.SetKey(item.selections[v].description);
-                
-                // 检查食物状态，决定显示内容
-                var selectedTool = item.selections[v];
-                bool isPurchased = saveModel.AccountData.tools[index].unlockedList.Contains(v);
-                bool isEquipped = saveModel.AccountData.tools[index].equipedId == v;
-                
-                if (isEquipped)
+                if (isInitialEquipped)
                 {
                     // 已装备：显示"equipped"
                     priceText.text = "equipped";
                 }
-                else if (isPurchased)
+                else if (isInitialPurchased)
                 {
                     // 已购买但未装备：显示"equip"
                     priceText.text = "equip";
@@ -102,9 +73,106 @@ namespace BirdGame
                 else
                 {
                     // 未购买：显示价格
-                    priceText.text = selectedTool.price.ToString();
+                    priceText.text = item.selections[gameModel.SelectedToolDic[index].Value].price.ToString();
                 }
-                
+                for (int i = 0; i < item.selections.Length; i++)
+                {
+                    var select = GameObject.Instantiate(selectionPrefab, selectionPrefab.transform.parent)
+                        .GetComponent<ShopToolSelection>();
+                    selections.Add(select);
+                    select.gameObject.SetActive(true);
+                    select.Init(index, i);
+                }
+            }
+            else if (item.selections[0].type == ToolType.BirdMaxCount)
+            {
+                bool isInitialPurchased = saveModel.AccountData.tools[itemIndex].unlockedList
+                    .Contains(gameModel.SelectedToolDic[index].Value);
+                if (isInitialPurchased)
+                {
+                    priceText.text = "equipped";
+                    buyButton.enabled = false;
+                }
+                else
+                {
+                    buyButton.enabled = true;
+                    priceText.text = item.selections[gameModel.SelectedToolDic[index].Value].price.ToString();
+                }
+
+                bool initFirst = false;
+                for (int i = 0; i < item.selections.Length; i++)
+                {
+                    var select = GameObject.Instantiate(selectionPrefab, selectionPrefab.transform.parent)
+                        .GetComponent<ShopToolSelection>();
+                    selections.Add(select);
+                    select.gameObject.SetActive(true);
+                    select.Init(index, i);
+                    
+                    if(saveModel.AccountData.tools[itemIndex].unlockedList.Contains(i))
+                    {
+                       continue; 
+                    }
+
+                    if (!initFirst)
+                    {
+                        initFirst = true;
+                    }
+                    else
+                    {
+                        var toggle = select.GetComponent<Toggle>();
+                        toggle.enabled = false;
+                        toggle.graphic.gameObject.SetActive(false);
+                    }
+                }
+            }
+
+            gameModel.SelectedToolDic[itemIndex].Register(v =>
+            {
+                var sp = item.selections[v].icon;
+                icon.sprite = sp;
+                if(sp != null)
+                    icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.3f;
+                selectName.text = item.selections[v].selectionName;
+                selectName.text = item.selections[v].selectionName;
+                description.SetKey(item.selections[v].description);
+                if (item.selections[0].type == ToolType.Food)
+                {
+                    // 检查食物状态，决定显示内容
+                    var selectedTool = item.selections[v];
+                    bool isPurchased = saveModel.AccountData.tools[index].unlockedList.Contains(v);
+                    bool isEquipped = saveModel.AccountData.tools[index].equipedId == v;
+
+                    if (isEquipped)
+                    {
+                        // 已装备：显示"equipped"
+                        priceText.text = "equipped";
+                    }
+                    else if (isPurchased)
+                    {
+                        // 已购买但未装备：显示"equip"
+                        priceText.text = "equip";
+                    }
+                    else
+                    {
+                        // 未购买：显示价格
+                        priceText.text = selectedTool.price.ToString();
+                    }
+                }
+                else if(item.selections[0].type == ToolType.BirdMaxCount)
+                {
+                    var selectedTool = item.selections[v];
+                    bool isPurchased = saveModel.AccountData.tools[index].unlockedList.Contains(v);
+                    if (isPurchased)
+                    {
+                        priceText.text = "equipped";
+                        buyButton.enabled = false;
+                    }
+                    else
+                    {
+                        priceText.text = selectedTool.price.ToString();
+                        buyButton.enabled = true;
+                    }
+                }
                 UpdateButtonState();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
@@ -170,7 +238,35 @@ namespace BirdGame
                             string text = this.GetSystem<ILocalizationSystem>().GetString("Purchase successful! Cursor skins are equipped:");
                             this.GetSystem<IUISystem>().ShowPrompt($"{text} {selectedTool.selectionName}");
                         }
-                        
+                        else if (toolItem.selections[0].type == ToolType.BirdMaxCount)
+                        {
+                            this.GetModel<ISaveModel>().AccountData.addedMaxBirdValue += selectedTool.addCount;
+                            this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
+                            bool initFirst = false;
+                            for (int i = 0; i < selections.Count; i++)
+                            {
+                                var toggle = selections[i].GetComponent<Toggle>();
+                                if(saveModel.AccountData.tools[itemIndex].unlockedList.Contains(i))
+                                {
+                                    toggle.enabled = true;
+                                    toggle.graphic.gameObject.SetActive(true);
+                                    continue; 
+                                }
+
+                                if (!initFirst)
+                                {
+                                    toggle.enabled = true;
+                                    toggle.graphic.gameObject.SetActive(true);
+                                    initFirst = true;
+                                }
+                                else
+                                {
+                                    toggle.enabled = false;
+                                    toggle.graphic.gameObject.SetActive(false);
+                                }
+                            }
+                        }
+
                         this.GetSystem<ISaveSystem>().SaveData();
                         UpdateButtonState();
                         this.GetSystem<IUISystem>().HidePopup(UIPopup.ShopPopup);

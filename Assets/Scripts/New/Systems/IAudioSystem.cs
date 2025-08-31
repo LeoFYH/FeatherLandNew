@@ -33,6 +33,8 @@ namespace BirdGame
         void NextSong();
 
         void PlayEffect(EffectType type);
+        void PlayBirdEffect(int birdIndex);
+        
         /// <summary>
         /// 通过Index播放音乐
         /// </summary>
@@ -57,6 +59,7 @@ namespace BirdGame
         private AudioSource radioAudio;
         private List<AudioSource> environmentAudios = new List<AudioSource>();
         private AudioSource effectAudio;
+        private AudioSource birdAudio;
         private AudioSource alertAudio;
         private bool isEnvironmentInited = false;
         private GameObject obj;
@@ -69,6 +72,8 @@ namespace BirdGame
             radioAudio.loop = true;
             effectAudio = obj.AddComponent<AudioSource>();
             effectAudio.loop = false;
+            birdAudio = obj.AddComponent<AudioSource>();
+            birdAudio.loop = false;
             radioModel = this.GetModel<IRadioModel>();
             radioAudio.volume = radioModel.Volume.Value;
             radioModel.Volume.Register(v =>
@@ -184,6 +189,19 @@ namespace BirdGame
             }
             
             effectAudio.Play();
+        }
+
+        public void PlayBirdEffect(int birdIndex)
+        {
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            var clip = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).clickAudio;
+            if(clip == null)
+                return;
+            birdAudio.clip = clip;
+            birdAudio.pitch = 1.0f;
+            birdAudio.reverbZoneMix = 1f;
+            birdAudio.spatialBlend = 0f;
+            birdAudio.Play();
         }
 
         public void PlaySong(int index)

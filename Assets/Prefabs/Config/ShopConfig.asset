@@ -169,3 +169,26 @@ MonoBehaviour:
       price: 0
       foodScale: 0.08
       addCount: 0
+  - name: Bird Max Count
+    selections:
+    - icon: {fileID: 0}
+      type: 1
+      selectionName: +5
+      description: 
+      price: 0
+      foodScale: 1
+      addCount: 5
+    - icon: {fileID: 0}
+      type: 1
+      selectionName: +10
+      description: 
+      price: 0
+      foodScale: 1
+      addCount: 10
+    - icon: {fileID: 0}
+      type: 1
+      selectionName: +15
+      description: 
+      price: 0
+      foodScale: 1
+      addCount: 15

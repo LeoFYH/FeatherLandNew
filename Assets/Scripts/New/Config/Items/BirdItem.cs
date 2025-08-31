@@ -64,6 +64,9 @@ namespace BirdGame
 #endif
         }
         
+        [BoxGroup("content/Info/信息"), LabelText("点击音效")]
+        public AudioClip clickAudio;
+        
         [BoxGroup("content/Info/成长"), LabelText("成长所需成长值")]
         public float totalExp;
         [BoxGroup("content/Info/成长"), LabelText("每次食物的成长值")]

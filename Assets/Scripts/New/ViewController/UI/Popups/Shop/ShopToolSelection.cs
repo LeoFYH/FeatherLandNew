@@ -12,7 +12,7 @@ namespace BirdGame
 
         private int itemId;
         private int selectId;
-        
+
         public void Init(int itemIndex, int selectIndex)
         {
             itemId = itemIndex;
@@ -21,7 +21,8 @@ namespace BirdGame
             //     .selectionName;
             var sp = this.GetModel<IConfigModel>().ShopConfig.tools[itemIndex].selections[selectIndex].icon;
             icon.sprite = sp;
-            icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.1f;
+            if (sp != null)
+                icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.1f;
         }
 
         private void Start()
