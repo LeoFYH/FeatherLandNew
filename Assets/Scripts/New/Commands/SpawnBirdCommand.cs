@@ -66,6 +66,7 @@ namespace BirdGame
                 saveModel.IllustratedData.birds.Add(birdIndex);
                 this.GetSystem<ISaveSystem>().SaveData();
                 this.GetModel<IGameModel>().HasNewBirdIllustrated.Value = true;
+                this.GetSystem<ISteamSystem>().AddBirdUnlocked(birdIndex);
             }
         }
 

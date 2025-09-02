@@ -12,9 +12,11 @@ namespace BirdGame
         public Toggle eggToggle;
         public Toggle decorationToggle;
         public Toggle toolsToggle;
+        public Toggle saleBirdToggle;
         public GameObject eggContent;
         public GameObject decorationContent;
         public GameObject toolsContent;
+        public GameObject saleBirdContent;
         public Image barImage;
         public Sprite eggBar;
         public Sprite normalBar;
@@ -256,6 +258,10 @@ namespace BirdGame
                 if (isOn)
                     barImage.sprite = normalBar;
             });
+            saleBirdToggle.onValueChanged.AddListener(isOn =>
+            {
+                saleBirdContent.SetActive(isOn);
+            });
             
             closeButton.onClick.AddListener(() =>
             {
@@ -266,6 +272,7 @@ namespace BirdGame
             eggContent.SetActive(true);
             decorationContent.SetActive(false);
             toolsContent.SetActive(false);
+            saleBirdContent.SetActive(false);
             barImage.sprite = eggBar;
         }
     }

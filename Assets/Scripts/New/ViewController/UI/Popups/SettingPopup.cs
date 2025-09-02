@@ -33,10 +33,11 @@ namespace BirdGame
         private List<SystemLanguage> languages = new List<SystemLanguage>();
         
 
-               public void onClick()
+        public void onClick()
         {
             // 显示确认对话框（使用简单的确认方式）
             Debug.Log("确认清除存档？这将删除所有游戏数据，包括鸟、金币、设置等。");
+            this.GetSystem<ISteamSystem>().FirstPlayTime();
             // 直接执行清除操作（为了简化，暂时跳过确认对话框）
             ExecuteClearSave();
         }
@@ -364,6 +365,7 @@ namespace BirdGame
             quitButton.onClick.AddListener(() =>
             {
                 this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
+                this.GetSystem<ISteamSystem>().FirstPlayTime();
                 ExitProcess(0);
             });
             

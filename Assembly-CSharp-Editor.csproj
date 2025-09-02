@@ -414,9 +414,6 @@
     <Reference Include="UnityEditor.WindowsStandalone.Extensions">
       <HintPath>E:\WorkSoftwares\Unity\6000.0.35f1\Editor\Data\PlaybackEngines\WindowsStandaloneSupport\UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEditor.iOS.Extensions">
-      <HintPath>E:\WorkSoftwares\Unity\6000.0.35f1\Editor\Data\PlaybackEngines\iOSSupport\UnityEditor.iOS.Extensions.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.VisualScripting.YamlDotNet">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\PackageCache\com.unity.visualscripting@1b53f46e931b\Editor\VisualScripting.Core\Dependencies\YamlDotNet\Unity.VisualScripting.YamlDotNet.dll</HintPath>
     </Reference>
@@ -479,15 +476,6 @@
     </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\PackageCache\com.unity.nuget.mono-cecil@d6f9955a5d5f\Mono.Cecil.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.iOS.Extensions.Xcode">
-      <HintPath>E:\WorkSoftwares\Unity\6000.0.35f1\Editor\Data\PlaybackEngines\iOSSupport\UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.iOS.Extensions.Common">
-      <HintPath>E:\WorkSoftwares\Unity\6000.0.35f1\Editor\Data\PlaybackEngines\iOSSupport\UnityEditor.iOS.Extensions.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.Apple.Extensions.Common">
-      <HintPath>E:\WorkSoftwares\Unity\6000.0.35f1\Editor\Data\PlaybackEngines\iOSSupport\UnityEditor.Apple.Extensions.Common.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>E:\WorkSoftwares\Unity\6000.0.35f1\Editor\Data\UnityReferenceAssemblies\unity-4.8-api\mscorlib.dll</HintPath>
@@ -918,9 +906,6 @@
     <Reference Include="Unity.ResourceManager">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.ResourceManager.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Cinemachine.Editor">
-      <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.Cinemachine.Editor.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.2D.SpriteShape.Runtime">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.2D.SpriteShape.Runtime.dll</HintPath>
     </Reference>
@@ -957,9 +942,6 @@
     <Reference Include="Unity.Multiplayer.Center.Editor">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.Multiplayer.Center.Editor.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Splines">
-      <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.Splines.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.ScriptableBuildPipeline.Editor">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.ScriptableBuildPipeline.Editor.dll</HintPath>
     </Reference>
@@ -968,9 +950,6 @@
     </Reference>
     <Reference Include="Unity.RenderPipelines.GPUDriven.Runtime">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.RenderPipelines.GPUDriven.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Cinemachine">
-      <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.Cinemachine.dll</HintPath>
     </Reference>
     <Reference Include="Unity.InternalAPIEditorBridge.001">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.InternalAPIEditorBridge.001.dll</HintPath>
@@ -1008,9 +987,6 @@
     <Reference Include="Unity.RenderPipelines.Universal.Config.Runtime">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Config.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Splines.Editor">
-      <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.Splines.Editor.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.2D.Aseprite.Common">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.2D.Aseprite.Common.dll</HintPath>
     </Reference>
@@ -1032,14 +1008,14 @@
     <Reference Include="Unity.VisualScripting.Core.Editor">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.VisualScripting.Core.Editor.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.Multiplayer.Center.Common">
+      <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.Multiplayer.Center.Common.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.AI.Navigation.Updater">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.AI.Navigation.Updater.dll</HintPath>
     </Reference>
     <Reference Include="Unity.2D.Tilemap.Extras.Editor">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.2D.Tilemap.Extras.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Multiplayer.Center.Common">
-      <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.Multiplayer.Center.Common.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualScripting.Flow.Editor">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.VisualScripting.Flow.Editor.dll</HintPath>

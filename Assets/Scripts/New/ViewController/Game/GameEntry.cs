@@ -51,6 +51,7 @@ namespace BirdGame
 
         private void Update()
         {
+            this.GetSystem<ISteamSystem>().RunCallbacks();
             
             CheckCursor();
             
@@ -212,6 +213,11 @@ namespace BirdGame
             {
                 this.GetSystem<ICursorSystem>().SetCursorState(CursorState.Default);
             }
+        }
+        
+        void OnApplicationQuit()
+        {
+            this.GetSystem<ISteamSystem>().ShutDown();
         }
     }
 }
