@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a5ca5921b75b4d93a3c385d453e820a4, type: 3}
-  m_Name: Dazui 0
+  m_Name: Kingfisher 0
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -21,9 +21,9 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  preview: {fileID: -8868803461578586678, guid: ece6304512ad5924cb9cc63c61b1056e, type: 3}
-  id: 16
-  prefab: {fileID: 1885250170276666100, guid: a11cc4d4a55fe864a83dc73036637428, type: 3}
+  preview: {fileID: -8868803461578586678, guid: 253a1698493150548a295ed70832704b, type: 3}
+  id: 19
+  prefab: {fileID: 1885250170276666100, guid: c6df62db334a77048af2f67a8c4a4510, type: 3}
   canFly: 1
   canFlyWait: 0
   reality: Rare
@@ -35,8 +35,8 @@ MonoBehaviour:
   clickEarningForFiveTimes: 0
   description: CardinalDescription
   clickAudio: {fileID: 0}
-  totalExp: 2
-  eatExp: 0.5
-  autoExp: 0.5
+  totalExp: 5
+  eatExp: 1
+  autoExp: 0.1
   habitat: CardinalHabitat
   scenePreview: {fileID: 765954583785660313, guid: 2d52a003b346e5e459a7f384b7218040, type: 3}

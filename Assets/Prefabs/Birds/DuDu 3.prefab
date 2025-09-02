@@ -77,7 +77,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 3
-  m_Sprite: {fileID: -8868803461578586678, guid: ece6304512ad5924cb9cc63c61b1056e, type: 3}
+  m_Sprite: {fileID: -855298285791758126, guid: 6cc1a274476f0e44eb221cd3a1d56d2b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 1
   m_FlipY: 0
@@ -98,7 +98,7 @@ Animator:
   m_GameObject: {fileID: 343863069046991755}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 22100000, guid: 4be37a657d836694485270beb0dfc47f, type: 2}
+  m_Controller: {fileID: 22100000, guid: 167ad4b27813b2b47a8a955be5227118, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -123,10 +123,10 @@ GameObject:
   - component: {fileID: 7270674382561921263}
   - component: {fileID: 8962595257972375807}
   - component: {fileID: 4962303595602008656}
-  - component: {fileID: 1326520134291011078}
-  - component: {fileID: -8179423098602663446}
+  - component: {fileID: 9006579693244713170}
+  - component: {fileID: 961384648312521061}
   m_Layer: 0
-  m_Name: Dazui 0
+  m_Name: DuDu 3
   m_TagString: Bird
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -163,8 +163,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   birdIndex: 0
   walkArea: 3
-  BabyBirdSize: 0.6
-  AdultBirdSize: 0.8
+  BabyBirdSize: 0.9
+  AdultBirdSize: 1.1
   BirdEatDistance: 0.2
   BackgroundBirdSize: 0
   nestTrans: {fileID: 0}
@@ -187,7 +187,7 @@ MonoBehaviour:
   desc: Tropical Birds of Australia
   heartPos: {fileID: 7580150105710783560}
   flyInAirStartPosition: {x: 0, y: 4, z: 0}
-  lineRenderer: {fileID: 1326520134291011078}
+  lineRenderer: {fileID: 9006579693244713170}
   clickCount: 1
   totalFavorability: 10
   distance: 0
@@ -197,7 +197,6 @@ MonoBehaviour:
   agent: {fileID: 0}
   originalScale: {x: 0, y: 0, z: 0}
   lastPerspectiveScale: 1
-  animScale: 1
 --- !u!61 &7270674382561921263
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -232,7 +231,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.020652175, y: 0.44044033}
+  m_Offset: {x: 0.07636538, y: 0.3153283}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -242,7 +241,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.6909616, y: 0.88440293}
+  m_Size: {x: 0.6135939, y: 0.6404599}
   m_EdgeRadius: 0
 --- !u!195 &8962595257972375807
 NavMeshAgent:
@@ -293,7 +292,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!120 &1326520134291011078
+--- !u!120 &9006579693244713170
 LineRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 0
@@ -398,7 +397,7 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
---- !u!114 &-8179423098602663446
+--- !u!114 &961384648312521061
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -485,7 +484,7 @@ Transform:
   m_GameObject: {fileID: 7077765267814181376}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.032, y: 0.962, z: 0}
+  m_LocalPosition: {x: -0.07, y: 0.9, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
