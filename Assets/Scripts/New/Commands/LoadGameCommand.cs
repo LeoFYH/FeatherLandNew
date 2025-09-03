@@ -183,10 +183,10 @@ namespace BirdGame
             
             // 检查MusicSettingData是否已加载
             var musicSettingData = this.GetModel<ISaveModel>().MusicSettingData;
-            if (musicSettingData == null)
+            while (musicSettingData == null)
             {
                 Debug.LogError("MusicSettingData未加载，跳过环境音效初始化");
-                yield break;
+                yield return new WaitForFixedUpdate();
             }
             
             // 只初始化环境音效，不播放歌曲

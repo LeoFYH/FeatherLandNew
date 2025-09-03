@@ -46,11 +46,13 @@ namespace BirdGame
 
         public void RunCallbacks()
         {
+            if (!SteamManager.Initialized) return;
             SteamAPI.RunCallbacks();
         }
 
         public void ShutDown()
         {
+            if (!SteamManager.Initialized) return;
             SteamAPI.Shutdown();
         }
 
@@ -67,6 +69,7 @@ namespace BirdGame
 
         public void FirstPlayTime()
         {
+            if (!SteamManager.Initialized) return;
             if(PlayerPrefs.HasKey("UserPlayed"))
                 return;
             int time = (int) (Time.time - timeStart);
