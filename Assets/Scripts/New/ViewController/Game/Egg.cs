@@ -12,6 +12,8 @@ namespace BirdGame
 
         public Sprite[] eggSprites; // 蛋动画的每一帧图片
         public SpriteRenderer spriteRenderer;
+        public GameObject effect1;
+        public GameObject effect2;
         private int currentFrame = 0; // 当前显示的帧索引
         private Tweener anim;
 
@@ -26,6 +28,8 @@ namespace BirdGame
             {
                 Debug.LogError("SpriteRenderer not found on the Egg object!");
             }
+            effect1.SetActive(true);
+            effect2.SetActive(false);
 
             this.RegisterEvent<HideEggEvent>(evt =>
             {
@@ -55,6 +59,11 @@ namespace BirdGame
             if (currentFrame < eggSprites.Length)
             {
                 spriteRenderer.sprite = eggSprites[currentFrame];
+                if (currentFrame == 3)
+                {
+                    effect2.SetActive(true);
+                    effect1.SetActive(false);
+                }
                 currentFrame++;
             }
         }

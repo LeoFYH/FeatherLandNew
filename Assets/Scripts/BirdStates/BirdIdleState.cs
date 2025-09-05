@@ -44,7 +44,7 @@ namespace BirdGame
                 return;
             }
 
-            if (_brid.isSmall)
+            if (_brid.walkArea == 3)
             {
                 if (_brid.currFood == null)
                 {

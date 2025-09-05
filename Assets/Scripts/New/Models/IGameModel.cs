@@ -35,5 +35,6 @@ namespace BirdGame
         public Coroutine StopWatchCoroutine { get; set; }
         public int CurrentSelectedBirdIndex { get; set; }
         public BindableProperty<bool> HasNewBirdIllustrated { get; } = new BindableProperty<bool>();
+        public int EggInfoIndex { get; set; }
     }
 }

@@ -63,7 +63,7 @@ namespace BirdGame
             float time = distance / _brid.moveSpeed;
             DOTween.Sequence().AppendCallback(() =>
             {
-                if (_brid.isSmall)
+                if (_brid.walkArea == 3)
                 {
                     Food food;
                     if (this.GetSystem<IGameSystem>().TryGetUntargetedFood(_brid.transform.position, out food))

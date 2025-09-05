@@ -29,6 +29,7 @@ namespace BirdGame
         TutorialPopup,
         ThanksPopup,
         MapPopup,
+        BuyConfirmPopup
     }
 
     public interface IUISystem : ISystem
@@ -84,6 +85,11 @@ namespace BirdGame
         /// 关闭地图信息
         /// </summary>
         void HideMapInfo();
+
+        void ShowEggInfo();
+
+        void HideEggInfo();
+        void ShowBuyConfirm(Action onConfirm);
     }
 
     public class UISystem : AbstractSystem, IUISystem
@@ -95,6 +101,7 @@ namespace BirdGame
         private Transform popupLayer;
         private GameObject mask;
         private GameObject mapInfo;
+        private GameObject eggInfo;
         
         protected override void OnInit()
         {
@@ -234,6 +241,34 @@ namespace BirdGame
                 GameObject.Destroy(mapInfo);
                 mapInfo = null;
             }
+        }
+
+        public void ShowEggInfo()
+        {
+            if(eggInfo != null)
+                GameObject.Destroy(eggInfo);
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("EggInfo", obj =>
+            {
+                eggInfo = GameObject.Instantiate(obj, popupLayer);
+            });
+        }
+
+        public void HideEggInfo()
+        {
+            if (eggInfo != null)
+            {
+                GameObject.Destroy(eggInfo);
+                eggInfo = null;
+            }
+        }
+
+        public void ShowBuyConfirm(Action onConfirm)
+        {
+            ShowPopup(UIPopup.BuyConfirmPopup, () =>
+            {
+                var popup = popupDic[UIPopup.BuyConfirmPopup] as BuyConfirmPopup;
+                popup.Init(onConfirm);
+            });
         }
     }
 }

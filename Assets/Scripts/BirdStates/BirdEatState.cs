@@ -23,11 +23,11 @@ namespace BirdGame
         public override void OnEnter()
         {
             //_brid.onNearOtherBird = OnNearOtherBird;
-            if (!_brid.isSmall)
-            {
-                DONext();
-                return;
-            }
+            // if (!_brid.isSmall)
+            // {
+            //     DONext();
+            //     return;
+            // }
 
             if (_brid.currFood != null)
             {
@@ -62,11 +62,11 @@ namespace BirdGame
 
         public override void OnUpdate()
         {
-            if (!_brid.isSmall || _brid.currFood == null)
-            {
-                DONext();
-                return;
-            }
+            // if (!_brid.isSmall || _brid.currFood == null)
+            // {
+            //     DONext();
+            //     return;
+            // }
 
             if (!_brid.agent.pathPending && _brid.agent.remainingDistance <= 0.01f)
             {
@@ -144,7 +144,7 @@ namespace BirdGame
                 var conf = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex);
                 float totalExp = conf.totalExp;
                 _brid.currentExp.Value += conf.eatExp;
-                
+                this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
                 // 安全检查：确保birdIndex在有效范围内
                 if (_brid.birdIndex < 0 || _brid.birdIndex >= this.GetModel<IBirdModel>().BirdList.Count)
                 {
@@ -154,7 +154,7 @@ namespace BirdGame
                 }
                 
                
-                if (_brid.currentExp.Value >= totalExp)
+                if (_brid.currentExp.Value >= totalExp && _brid.isSmall)
                 {
                     DOTween.To(v =>
                     {
@@ -165,6 +165,7 @@ namespace BirdGame
                     });
                     this.GetSystem<IAudioSystem>().PlayEffect(EffectType.GrowUp);
                     //_brid.transform.DOScale(_brid.AdultBirdSize, 0.2f);
+                    //this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
                     _brid.isSmall = false;
                 }
 
@@ -198,8 +199,8 @@ namespace BirdGame
 
         private void DONext()
         {
-            if (_brid.isSmall)
-            {
+            // if (_brid.isSmall)
+            // {
                 int random = Random.Range(0, 2);
                 if (random == 0)
                 {
@@ -209,11 +210,11 @@ namespace BirdGame
                 {
                     currMachine.ChangeState<BirdRunState>();
                 }
-            }
-            else
-            {
-                currMachine.ChangeState<BirdIdleState>();
-            }
+            // }
+            // else
+            // {
+            //     currMachine.ChangeState<BirdIdleState>();
+            // }
         }
 
         private void DrawPath()

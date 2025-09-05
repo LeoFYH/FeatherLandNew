@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: UI
   m_GUID: 32d5c64e6de46aa419fd6f497e3d552c
   m_SerializeEntries:
+  - m_GUID: 062832a3415e69f41bdbbecb2f6788d4
+    m_Address: EggInfo
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 072d0007d83f5af47a066211859968c4
     m_Address: TutorialPopup
     m_ReadOnly: 0
@@ -89,6 +94,13 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - prefab
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aa2164250e525d942912f4da13db54c8
+    m_Address: BuyConfirmPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - popup
+    - preload
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: bba37be72f6bbeb4c9fa32cee52dc26d
     m_Address: ShopPopup

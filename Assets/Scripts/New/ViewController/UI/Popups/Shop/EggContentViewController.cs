@@ -45,9 +45,12 @@ namespace BirdGame
                 int price = configModel.ShopConfig.sceneEggs[mapIndex].eggs[gameModel.ShopEggSelectIndex.Value].price;
                 if (price <= this.GetModel<IAccountModel>().Coins.Value)
                 {
-                    this.GetModel<IAccountModel>().Coins.Value -= price;
-                    this.SendCommand<CreateBirdCommand>();
-                    this.GetSystem<IUISystem>().HidePopup(UIPopup.ShopPopup);
+                    this.GetSystem<IUISystem>().ShowBuyConfirm(() =>
+                    {
+                        this.GetModel<IAccountModel>().Coins.Value -= price;
+                        this.SendCommand<CreateBirdCommand>();
+                        this.GetSystem<IUISystem>().HidePopup(UIPopup.ShopPopup);
+                    });
                 }
                 else
                 {

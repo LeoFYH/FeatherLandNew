@@ -217,59 +217,64 @@ namespace BirdGame
                     int price = selectedTool.price;
                     if (price <= this.GetModel<IAccountModel>().Coins.Value)
                     {
-                        // 扣除金币
-                        this.GetModel<IAccountModel>().Coins.Value -= price;
-                        
-                        // 添加到已购买列表
-                        saveModel.AccountData.tools[itemIndex].unlockedList.Add(selectedToolIndex);
+                        this.GetSystem<IUISystem>().ShowBuyConfirm(() =>
+                        {
+                            // 扣除金币
+                            this.GetModel<IAccountModel>().Coins.Value -= price;
 
-                        saveModel.AccountData.tools[itemIndex].equipedId = selectedToolIndex;
-                        // 根据工具类型应用不同的效果
-                        if (toolItem.name.ToLower() == "food")
-                        {
-                            // 设置当前食物类型（立即装备）
-                            string text = this.GetSystem<ILocalizationSystem>().GetString("Purchase successful! Food skins are equipped:");
-                            this.GetSystem<IUISystem>().ShowPrompt($"{text} {selectedTool.selectionName}");
-                            //this.GetSystem<IUISystem>().ShowPrompt($"购买成功！食物皮肤已装备: {selectedTool.selectionName}");
-                        }
-                        else if (toolItem.name.ToLower() == "cursor")
-                        {
-                            // 应用光标类型
-                            string text = this.GetSystem<ILocalizationSystem>().GetString("Purchase successful! Cursor skins are equipped:");
-                            this.GetSystem<IUISystem>().ShowPrompt($"{text} {selectedTool.selectionName}");
-                        }
-                        else if (toolItem.selections[0].type == ToolType.BirdMaxCount)
-                        {
-                            this.GetModel<ISaveModel>().AccountData.addedMaxBirdValue += selectedTool.addCount;
-                            this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
-                            bool initFirst = false;
-                            for (int i = 0; i < selections.Count; i++)
+                            // 添加到已购买列表
+                            saveModel.AccountData.tools[itemIndex].unlockedList.Add(selectedToolIndex);
+
+                            saveModel.AccountData.tools[itemIndex].equipedId = selectedToolIndex;
+                            // 根据工具类型应用不同的效果
+                            if (toolItem.name.ToLower() == "food")
                             {
-                                var toggle = selections[i].GetComponent<Toggle>();
-                                if(saveModel.AccountData.tools[itemIndex].unlockedList.Contains(i))
+                                // 设置当前食物类型（立即装备）
+                                string text = this.GetSystem<ILocalizationSystem>()
+                                    .GetString("Purchase successful! Food skins are equipped:");
+                                this.GetSystem<IUISystem>().ShowPrompt($"{text} {selectedTool.selectionName}");
+                                //this.GetSystem<IUISystem>().ShowPrompt($"购买成功！食物皮肤已装备: {selectedTool.selectionName}");
+                            }
+                            else if (toolItem.name.ToLower() == "cursor")
+                            {
+                                // 应用光标类型
+                                string text = this.GetSystem<ILocalizationSystem>()
+                                    .GetString("Purchase successful! Cursor skins are equipped:");
+                                this.GetSystem<IUISystem>().ShowPrompt($"{text} {selectedTool.selectionName}");
+                            }
+                            else if (toolItem.selections[0].type == ToolType.BirdMaxCount)
+                            {
+                                this.GetModel<ISaveModel>().AccountData.addedMaxBirdValue += selectedTool.addCount;
+                                this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
+                                bool initFirst = false;
+                                for (int i = 0; i < selections.Count; i++)
                                 {
-                                    toggle.enabled = true;
-                                    toggle.graphic.gameObject.SetActive(true);
-                                    continue; 
-                                }
+                                    var toggle = selections[i].GetComponent<Toggle>();
+                                    if (saveModel.AccountData.tools[itemIndex].unlockedList.Contains(i))
+                                    {
+                                        toggle.enabled = true;
+                                        toggle.graphic.gameObject.SetActive(true);
+                                        continue;
+                                    }
 
-                                if (!initFirst)
-                                {
-                                    toggle.enabled = true;
-                                    toggle.graphic.gameObject.SetActive(true);
-                                    initFirst = true;
-                                }
-                                else
-                                {
-                                    toggle.enabled = false;
-                                    toggle.graphic.gameObject.SetActive(false);
+                                    if (!initFirst)
+                                    {
+                                        toggle.enabled = true;
+                                        toggle.graphic.gameObject.SetActive(true);
+                                        initFirst = true;
+                                    }
+                                    else
+                                    {
+                                        toggle.enabled = false;
+                                        toggle.graphic.gameObject.SetActive(false);
+                                    }
                                 }
                             }
-                        }
 
-                        this.GetSystem<ISaveSystem>().SaveData();
-                        UpdateButtonState();
-                        this.GetSystem<IUISystem>().HidePopup(UIPopup.ShopPopup);
+                            this.GetSystem<ISaveSystem>().SaveData();
+                            UpdateButtonState();
+                            this.GetSystem<IUISystem>().HidePopup(UIPopup.ShopPopup);
+                        });
                     }
                     else
                     {

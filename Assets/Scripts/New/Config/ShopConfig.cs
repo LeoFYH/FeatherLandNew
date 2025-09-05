@@ -104,6 +104,8 @@ namespace BirdGame
         public int price;
         [LabelText("开出鸟的数量"), VerticalGroup("content/birds"), InfoBox("开出鸟的数量不能小于或等于0！", InfoMessageType.Error, VisibleIf = "@birdCount<=0")]
         public int birdCount = 3;
+        [LabelText("描述"), VerticalGroup("content/birds"), TextArea]
+        public string description;
         [TableList(ShowIndexLabels = true), VerticalGroup("content/birds"), InfoBox("鸟蛋包含的鸟的列表不能为空！", InfoMessageType.Warning, VisibleIf = "@birds==null||birds.Length==0")]
         public EggBirdItem[] birds;
 

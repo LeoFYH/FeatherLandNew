@@ -108,11 +108,13 @@
     <Compile Include="Assets\Scripts\AnimationTest\AnimationItem.cs" />
     <Compile Include="Assets\Scripts\FSM\StateBase.cs" />
     <Compile Include="Assets\Scripts\New\Events\TomatoOverEvent.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Shop\EggInfo.cs" />
     <Compile Include="Assets\Scripts\New\Commands\ChangeWeatherCommand.cs" />
     <Compile Include="Assets\Scripts\Feather.cs" />
     <Compile Include="Assets\Scripts\New\Systems\ISaveSystem.cs" />
     <Compile Include="Assets\Scripts\New\Events\RefreshSongEvent.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\MouseMenu.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Shop\EggMouseChecker.cs" />
     <Compile Include="Assets\Scripts\Radio\RadioUI.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\ButtonAnim.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Shop\SaleBirdViewController.cs" />
@@ -166,6 +168,7 @@
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Note\DailyViewController.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\TutorialPopup.cs" />
     <Compile Include="Assets\Scripts\New\Config\Items\BirdItem.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\BuyConfirmPopup.cs" />
     <Compile Include="Assets\Scripts\AnimationTest\AddPanel.cs" />
     <Compile Include="Assets\Scripts\New\Events\ChangeLanguageEvent.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\OpenEggAnim.cs" />
