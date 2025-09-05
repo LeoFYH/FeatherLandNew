@@ -282,7 +282,7 @@ namespace BirdGame
                     // 使用OverlapPoint检测鼠标是否在碰撞器内（适用于触发器）
                     if (collider2D.OverlapPoint(worldPosition))
                     {
-                        Debug.Log($"检测到鸟: {bird.name}");
+                        //Debug.Log($"检测到鸟: {bird.name}");
                         return true;
                     }
                 }

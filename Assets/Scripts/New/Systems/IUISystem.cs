@@ -164,6 +164,12 @@ namespace BirdGame
             {
                 this.GetSystem<IAssetSystem>().ReleaseAsset(popup.ToString());
             });
+            
+            // 如果是InfoPopup关闭，发送事件通知鸟恢复材质
+            if (popup == UIPopup.InfoPopup)
+            {
+                this.SendEvent<InfoPopupClosedEvent>(new InfoPopupClosedEvent { popupType = popup });
+            }
         }
 
         public T GetPopup<T>(UIPopup popup) where T : UIBase

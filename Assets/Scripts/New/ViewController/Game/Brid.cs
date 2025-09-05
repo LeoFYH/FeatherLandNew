@@ -81,6 +81,10 @@ namespace BirdGame
         private Collider2D birdCollider;
         private Vector2 originalColliderSize;
         private bool isFlying = false;
+        
+        // 高亮效果相关
+        private Color originalOutlineColor;
+        private bool hasOriginalColor = false;
 
         [ReadOnly]
         public float animScale = 1f;
@@ -110,6 +114,12 @@ namespace BirdGame
             {
                 originalColliderSize = birdCollider.bounds.size;
             }
+            
+            // 保存原始轮廓颜色
+            SaveOriginalOutlineColor();
+            
+            // 监听信息栏关闭事件
+            this.RegisterEvent<InfoPopupClosedEvent>(OnInfoPopupClosed).UnRegisterWhenGameObjectDestroyed(gameObject);
             
             // 动态获取吃饭动画的时长
             if (anim != null && anim.runtimeAnimatorController != null && anim.runtimeAnimatorController.animationClips.Length > 3)
@@ -187,6 +197,7 @@ namespace BirdGame
             // 检测飞行状态并调整碰撞体
             CheckFlyingStateAndAdjustCollider();
             
+            
             if (isEnter)
             {
                 if (Input.GetMouseButtonDown(1))
@@ -199,6 +210,10 @@ namespace BirdGame
 
                     this.GetModel<IGameModel>().CurrentSelectedBirdIndex = birdIndex;
                     this.GetSystem<IUISystem>().ShowPopup(UIPopup.InfoPopup);
+                    
+                    // 先恢复所有鸟的材质颜色，然后设置当前鸟为白色轮廓
+                    RestoreAllBirdsOutlineColor();
+                    SetBirdOutlineToWhite();
                     // if (isSmall)
                     // {
                     //     // UIManager.Instance.ShowInfoPanel(gameObject, smallPrice, title, desc, 0,
@@ -433,6 +448,135 @@ namespace BirdGame
             {
                 // 恢复原始碰撞体大小
                 boxCollider.size = originalColliderSize;
+            }
+        }
+
+        /// <summary>
+        /// 保存原始轮廓颜色
+        /// </summary>
+        private void SaveOriginalOutlineColor()
+        {
+            if (sr == null || sr.material == null) return;
+            
+            Material currentMaterial = sr.material;
+            
+            // 尝试不同的可能属性名称
+            string[] possibleNames = { "_SolidOutline", "_GradientOutline1", "_GradientOutline2" };
+            
+            foreach (string propName in possibleNames)
+            {
+                if (currentMaterial.HasProperty(propName))
+                {
+                    originalOutlineColor = currentMaterial.GetColor(propName);
+                    hasOriginalColor = true;
+                    Debug.Log($"保存原始轮廓颜色: {propName} = {originalOutlineColor}");
+                    break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 设置鸟的轮廓为白色
+        /// </summary>
+        private void SetBirdOutlineToWhite()
+        {
+            if (sr == null)
+            {
+                Debug.LogError("SpriteRenderer为空！");
+                return;
+            }
+
+            Material currentMaterial = sr.material;
+            if (currentMaterial == null)
+            {
+                Debug.LogError("鸟的材质为空！");
+                return;
+            }
+
+            Debug.Log("=== 开始设置鸟的轮廓为白色 ===");
+            Debug.Log($"材质名称: {currentMaterial.name}");
+            Debug.Log($"Shader名称: {currentMaterial.shader.name}");
+            
+            // 尝试不同的可能属性名称
+            string[] possibleNames = { "_SolidOutline", "_GradientOutline1", "_GradientOutline2" };
+            bool foundProperty = false;
+            
+            foreach (string propName in possibleNames)
+            {
+                if (currentMaterial.HasProperty(propName))
+                {
+                    Color currentColor = currentMaterial.GetColor(propName);
+                    Debug.Log($"找到属性 {propName}，当前颜色: {currentColor}");
+                    
+                    currentMaterial.SetColor(propName, Color.white);
+                    Debug.Log($"成功设置 {propName} 为白色");
+                    foundProperty = true;
+                }
+            }
+            
+            if (!foundProperty)
+            {
+                Debug.LogWarning("没有找到任何轮廓颜色属性！");
+                // 打印所有材质属性用于调试
+                Shader shader = currentMaterial.shader;
+                for (int i = 0; i < shader.GetPropertyCount(); i++)
+                {
+                    string propName = shader.GetPropertyName(i);
+                    Debug.Log($"可用属性: {propName}");
+                }
+            }
+            
+            
+        }
+        
+        /// <summary>
+        /// 恢复原始轮廓颜色
+        /// </summary>
+        private void RestoreOriginalOutlineColor()
+        {
+            if (sr == null || sr.material == null || !hasOriginalColor) return;
+            
+            Material currentMaterial = sr.material;
+            string[] possibleNames = { "_SolidOutline", "_GradientOutline1", "_GradientOutline2" };
+            
+            foreach (string propName in possibleNames)
+            {
+                if (currentMaterial.HasProperty(propName))
+                {
+                    currentMaterial.SetColor(propName, originalOutlineColor);
+                    Debug.Log($"恢复 {propName} 为原始颜色: {originalOutlineColor}");
+                    break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 恢复所有鸟的材质颜色
+        /// </summary>
+        private void RestoreAllBirdsOutlineColor()
+        {
+            GameObject[] birds = GameObject.FindGameObjectsWithTag("Bird");
+            foreach (var bird in birds)
+            {
+                if (bird != null)
+                {
+                    Brid birdScript = bird.GetComponent<Brid>();
+                    if (birdScript != null)
+                    {
+                        birdScript.RestoreOriginalOutlineColor();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 信息栏关闭时恢复材质颜色
+        /// </summary>
+        private void OnInfoPopupClosed(InfoPopupClosedEvent evt)
+        {
+            if (evt.popupType == UIPopup.InfoPopup)
+            {
+                RestoreOriginalOutlineColor();
             }
         }
 

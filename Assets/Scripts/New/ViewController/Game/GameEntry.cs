@@ -194,7 +194,7 @@ namespace BirdGame
             // 调试信息
             if (isCoverBird)
             {
-                Debug.Log("检测到鸟，设置cursor为Click状态");
+                //Debug.Log("检测到鸟，设置cursor为Click状态");
             }
             
             if (isCoverUI)
