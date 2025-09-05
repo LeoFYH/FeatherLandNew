@@ -29,6 +29,13 @@ namespace BirdGame
             //     return;
             // }
 
+            // Check if the current food is null or destroyed before entering eat state
+            if (_brid.currFood == null)
+            {
+                DONext();
+                return;
+            }
+
             if (_brid.currFood != null)
             {
                 _brid.currFood.isTargeted = true;
@@ -62,11 +69,12 @@ namespace BirdGame
 
         public override void OnUpdate()
         {
-            // if (!_brid.isSmall || _brid.currFood == null)
-            // {
-            //     DONext();
-            //     return;
-            // }
+            // Check if the current food is null or destroyed
+            if (_brid.currFood == null)
+            {
+                DONext();
+                return;
+            }
 
             if (!_brid.agent.pathPending && _brid.agent.remainingDistance <= 0.01f)
             {
@@ -81,6 +89,13 @@ namespace BirdGame
             }
             else
             {
+                // Additional null check before accessing transform
+                if (_brid.currFood == null)
+                {
+                    DONext();
+                    return;
+                }
+
                 var endPath = _brid.transform.position;
                 if (_brid.agent.path.corners.Length > 1)
                 {
@@ -130,6 +145,15 @@ namespace BirdGame
 
         private void EatFood()
         {
+            // Check if the food still exists before accessing its transform
+            if (_brid.currFood == null)
+            {
+                // Food was destroyed, exit eating state
+                _brid.anim.SetBool("Eat", false);
+                currMachine.ChangeState<BirdIdleState>();
+                return;
+            }
+
             dirX = _brid.currFood.transform.position.x - _brid.transform.position.x;
             _brid.sr.flipX = dirX >= 0;
             if (eatFoodTimer < _brid.eatFoodTime)

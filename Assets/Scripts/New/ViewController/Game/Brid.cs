@@ -66,6 +66,9 @@ namespace BirdGame
         private float petTime = 0;
         private float lastClickTime = 0; // 添加最后点击时间记录
         private float clickInterval = 0.2f; // 点击间隔时间
+        public bool isBeingPetted = false; // 是否正在被抚摸
+        public float lastPetTime = 0; // 最后抚摸时间
+        public float idleLockDuration = 1f; // 抚摸后锁定idle状态的时间（秒）
         public NavMeshAgent agent;
         public Action onNearOtherBird;
 
@@ -179,7 +182,7 @@ namespace BirdGame
 
                 if (Input.GetMouseButtonDown(0))
                 {
-                    if (_stateMachine.CurrentState == typeof(BirdIdleState) || _stateMachine.CurrentState == typeof(BirdRunState))
+                    if (_stateMachine.CurrentState == typeof(BirdIdleState) || _stateMachine.CurrentState == typeof(BirdRunState)||_stateMachine.CurrentState == typeof(BirdEatState))
                     {
                         // 检查是否达到点击间隔时间
                         if (Time.time - lastClickTime >= clickInterval)
@@ -196,8 +199,28 @@ namespace BirdGame
                                 currentFavorability.Value++;
                             }
 
+                            // 设置被抚摸标志和记录抚摸时间
+                            isBeingPetted = true;
+                            lastPetTime = Time.time;
+                            
+                            // 如果当前是跑步状态，切换到idle状态
                             if (_stateMachine.CurrentState == typeof(BirdRunState))
                             {
+                                agent.isStopped = true;
+                                agent.velocity = Vector3.zero;
+                                _stateMachine.ChangeState<BirdIdleState>();
+                            }
+                            // 如果当前是吃东西状态，直接处理抚摸
+                            else if (_stateMachine.CurrentState == typeof(BirdEatState))
+                            {
+                                agent.isStopped = true;
+                                agent.velocity = Vector3.zero;
+                                if (currFood != null)
+                                {
+                                    currFood.UntargetFood();
+                                    currFood = null;
+                                }
+                                anim.SetBool("Eat", false);
                                 _stateMachine.ChangeState<BirdIdleState>();
                             }
 

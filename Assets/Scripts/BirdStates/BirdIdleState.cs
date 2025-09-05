@@ -26,6 +26,9 @@ namespace BirdGame
             if (!_brid.agent.enabled)
                 _brid.agent.enabled = true;
 
+            // 重置被抚摸标志
+            _brid.isBeingPetted = false;
+
             coroutine = _brid.StartCoroutine(WaitForNext(time));
             if(!_brid.isSmall)
             {
@@ -42,6 +45,13 @@ namespace BirdGame
             if (isLicking)
             {
                 return;
+            }
+
+            // 检查是否在抚摸后的锁定期间
+            float timeSinceLastPet = Time.time - _brid.lastPetTime;
+            if (timeSinceLastPet < _brid.idleLockDuration)
+            {
+                return; // 在锁定期间，不检测食物，保持idle状态
             }
 
             if (_brid.walkArea == 3)
