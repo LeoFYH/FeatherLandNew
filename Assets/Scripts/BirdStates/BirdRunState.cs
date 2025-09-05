@@ -22,7 +22,6 @@ namespace BirdGame
             _brid.onNearOtherBird = OnNearOtherBird;
             if (!_brid.agent.enabled)
                 _brid.agent.enabled = true;
-            _brid.isAte = false;
             // Release any existing food target when entering run state
             if (_brid.currFood != null)
             {

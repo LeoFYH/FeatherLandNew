@@ -22,7 +22,7 @@ namespace BirdGame
             y = transform.position.y;
             spriteRenderer = GetComponent<SpriteRenderer>();
             StartCoroutine(DelayedStart());
-            StartCoroutine(nameof(DestroyDelay));
+            //StartCoroutine(nameof(DestroyDelay));
         }
 
         public void UntargetFood()
@@ -31,7 +31,7 @@ namespace BirdGame
             {
                 isTargeted = false;
                 isDisabling = false;
-                StartCoroutine(nameof(DestroyDelay));
+                //StartCoroutine(nameof(DestroyDelay));
             }
         }
 

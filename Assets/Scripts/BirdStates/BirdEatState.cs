@@ -33,8 +33,7 @@ namespace BirdGame
             {
                 _brid.currFood.isTargeted = true;
             }
-
-            _brid.isAte = true;
+            
             _brid.agent.SetDestination(_brid.currFood.transform.position);
             var endPath = _brid.transform.position;
             if (_brid.agent.path.corners.Length > 1)

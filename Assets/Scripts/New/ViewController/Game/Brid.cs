@@ -59,12 +59,6 @@ namespace BirdGame
         public float eatFoodTime = 1;
 
         bool isEnter;
-
-        /// <summary>
-        /// 是否已经吃过米粒
-        /// </summary>
-        public bool isAte = false;
-
         public Food currFood;
 
         private StateMachine _stateMachine;
@@ -185,7 +179,7 @@ namespace BirdGame
 
                 if (Input.GetMouseButtonDown(0))
                 {
-                    if (_stateMachine.CurrentState == typeof(BirdIdleState))
+                    if (_stateMachine.CurrentState == typeof(BirdIdleState) || _stateMachine.CurrentState == typeof(BirdRunState))
                     {
                         // 检查是否达到点击间隔时间
                         if (Time.time - lastClickTime >= clickInterval)
@@ -200,6 +194,11 @@ namespace BirdGame
                             if (currentFavorability.Value < totalFavorability && !isSmall)
                             {
                                 currentFavorability.Value++;
+                            }
+
+                            if (_stateMachine.CurrentState == typeof(BirdRunState))
+                            {
+                                _stateMachine.ChangeState<BirdIdleState>();
                             }
 
                             this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Stroke);

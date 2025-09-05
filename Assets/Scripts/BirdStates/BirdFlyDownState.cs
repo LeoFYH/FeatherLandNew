@@ -56,7 +56,7 @@ namespace BirdGame
                     _brid.anim.SetBool("Fly", false);
                     //_brid.anim.Play("Landing");
                 });
-                anim.AppendInterval(2f);
+                //anim.AppendInterval(2f);
                 anim.OnComplete(() =>
                 {
                     _brid.agent.enabled = true;

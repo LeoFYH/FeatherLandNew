@@ -27,10 +27,13 @@ namespace BirdGame
                 _brid.agent.enabled = true;
 
             coroutine = _brid.StartCoroutine(WaitForNext(time));
-            DOTween.Sequence().AppendCallback(() => { 
+            if(!_brid.isSmall)
+            {
+                DOTween.Sequence().AppendCallback(() => { 
                 isLicking = true; // 标记开始舔毛
                 _brid.anim.SetTrigger("Licking"); 
             }).SetDelay(lickingTime);
+            }
         }
 
         public override void OnUpdate()
@@ -41,7 +44,7 @@ namespace BirdGame
                 return;
             }
 
-            if (_brid.isSmall && !_brid.isAte)
+            if (_brid.isSmall)
             {
                 if (_brid.currFood == null)
                 {
