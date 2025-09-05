@@ -47,6 +47,14 @@ namespace BirdGame
                 return;
             }
 
+            // 检查是否应该跟随鼠标（优先级最高）
+            if (_brid.shouldFollowMouse)
+            {
+                Debug.Log("IdleState: 检测到跟随鼠标标志，切换到RunState");
+                currMachine.ChangeState<BirdRunState>();
+                return;
+            }
+
             // 检查是否在抚摸后的锁定期间
             float timeSinceLastPet = Time.time - _brid.lastPetTime;
             if (timeSinceLastPet < _brid.idleLockDuration)

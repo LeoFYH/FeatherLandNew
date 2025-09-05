@@ -69,6 +69,8 @@ namespace BirdGame
         public bool isBeingPetted = false; // 是否正在被抚摸
         public float lastPetTime = 0; // 最后抚摸时间
         public float idleLockDuration = 1f; // 抚摸后锁定idle状态的时间（秒）
+        private float continuousPetStartTime = 0; // 连续抚摸开始时间
+        public bool shouldFollowMouse = false; // 是否应该跟随鼠标
         public NavMeshAgent agent;
         public Action onNearOtherBird;
 
@@ -148,6 +150,24 @@ namespace BirdGame
         public void OnMouseExit()
         {
             isEnter = false;
+            
+            // 检查是否连续抚摸超过3秒
+            if (continuousPetStartTime > 0)
+            {
+                float continuousPetDuration = Time.time - continuousPetStartTime;
+                if (continuousPetDuration >= 0.3f)
+                {
+                    // 设置跟随鼠标标志
+                    shouldFollowMouse = true;
+                    Debug.Log("连续抚摸超过1秒，准备跟随鼠标！");
+                }
+                
+                // 重置连续抚摸计时
+                continuousPetStartTime = 0;
+            }
+            
+            // 重置被抚摸状态
+            isBeingPetted = false;
         }
 
         void Update()
@@ -203,6 +223,12 @@ namespace BirdGame
                             isBeingPetted = true;
                             lastPetTime = Time.time;
                             
+                            // 开始或继续连续抚摸计时
+                            if (continuousPetStartTime == 0)
+                            {
+                                continuousPetStartTime = Time.time;
+                            }
+                            
                             // 如果当前是跑步状态，切换到idle状态
                             if (_stateMachine.CurrentState == typeof(BirdRunState))
                             {
@@ -241,6 +267,13 @@ namespace BirdGame
             }
 
             _stateMachine.OnUpdate();
+
+            // 检查是否应该跟随鼠标（在任何状态下都可以触发）
+            if (shouldFollowMouse)
+            {
+                Debug.Log("Brid: 检测到跟随鼠标标志，强制切换到RunState");
+                _stateMachine.ChangeState<BirdRunState>();
+            }
 
             // 统一处理走路动画 - 只要在移动就播放走路动画
             if (agent != null && agent.enabled)

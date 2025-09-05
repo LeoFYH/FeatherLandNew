@@ -11,6 +11,9 @@ namespace BirdGame
         private Brid _brid;
         private Vector3 target;
         private NavMeshPath currentPath = new NavMeshPath();
+        private bool isFollowingMouse = false;
+        private float followMouseStartTime = 0;
+        private float followMouseDuration = 8f; // 跟随时间延长到8秒
 
         public BirdRunState(StateMachine machine) : base(machine)
         {
@@ -27,6 +30,16 @@ namespace BirdGame
             {
                 _brid.currFood.isTargeted = false;
                 _brid.currFood = null;
+            }
+
+            // 检查是否应该跟随鼠标
+            if (_brid.shouldFollowMouse)
+            {
+                isFollowingMouse = true;
+                followMouseStartTime = Time.time;
+                _brid.shouldFollowMouse = false; // 重置标志
+                Debug.Log("RunState: 开始跟随鼠标！");
+                return; // 不设置随机目标，直接跟随鼠标
             }
 
             //Vector2 currentPos = _brid.transform.position;
@@ -81,6 +94,49 @@ namespace BirdGame
 
         public override void OnUpdate()
         {
+            // 处理跟随鼠标逻辑
+            if (isFollowingMouse)
+            {
+                float followDuration = Time.time - followMouseStartTime;
+                if (followDuration >= followMouseDuration)
+                {
+                    // 跟随时间结束，切换到idle状态
+                    isFollowingMouse = false;
+                    currMachine.ChangeState<BirdIdleState>();
+                    Debug.Log("跟随鼠标结束");
+                    return;
+                }
+                else
+                {
+                    // 跟随鼠标移动
+                    Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    mouseWorldPos.z = _brid.transform.position.z; // 保持Z轴不变
+                    
+                    _brid.agent.SetDestination(mouseWorldPos);
+                    _brid.agent.isStopped = false;
+                    
+                    // 根据移动方向设置sprite朝向
+                    if (Mathf.Abs(_brid.agent.velocity.x) > 0.001f)
+                    {
+                        _brid.sr.flipX = _brid.agent.velocity.x >= 0;
+                    }
+                    
+                    _brid.anim.SetFloat("MoveSpeed", 1);
+                    
+                    // 跟随时冒爱心（每0.5秒一次）
+                    if (Mathf.FloorToInt(followDuration * 2) != Mathf.FloorToInt((followDuration - Time.deltaTime) * 2))
+                    {
+                        this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("Heart", obj =>
+                        {
+                            GameObject.Instantiate(obj, _brid.heartPos);
+                        });
+                    }
+                    
+                    return;
+                }
+            }
+
+            // 正常的跑步逻辑
             if (!_brid.agent.pathPending && _brid.agent.remainingDistance <= 0.01f)
             {
                 _brid.agent.isStopped = true;
