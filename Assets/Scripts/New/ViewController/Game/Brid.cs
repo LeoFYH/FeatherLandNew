@@ -76,6 +76,11 @@ namespace BirdGame
 
         public Vector3 originalScale;
         public float lastPerspectiveScale = 1f;
+        
+        // 飞行状态碰撞体调整相关
+        private Collider2D birdCollider;
+        private Vector2 originalColliderSize;
+        private bool isFlying = false;
 
         [ReadOnly]
         public float animScale = 1f;
@@ -98,6 +103,13 @@ namespace BirdGame
             originalPos = transform.position;
             anim = GetComponentInChildren<Animator>();
             sr = GetComponentInChildren<SpriteRenderer>();
+            
+            // 初始化碰撞体
+            birdCollider = GetComponent<Collider2D>();
+            if (birdCollider != null)
+            {
+                originalColliderSize = birdCollider.bounds.size;
+            }
             
             // 动态获取吃饭动画的时长
             if (anim != null && anim.runtimeAnimatorController != null && anim.runtimeAnimatorController.animationClips.Length > 3)
@@ -172,6 +184,9 @@ namespace BirdGame
 
         void Update()
         {
+            // 检测飞行状态并调整碰撞体
+            CheckFlyingStateAndAdjustCollider();
+            
             if (isEnter)
             {
                 if (Input.GetMouseButtonDown(1))
@@ -361,6 +376,63 @@ namespace BirdGame
                 int index = this.GetModel<IBirdModel>().BirdList[birdIndex].birdType;
                 int income = this.GetModel<IConfigModel>().BirdConfig.GetBird(index, mapIndex).eraningForSmall;
                 this.GetModel<IAccountModel>().Coins.Value += income;
+            }
+        }
+
+        /// <summary>
+        /// 检测飞行状态并调整碰撞体大小，让飞行中的鸟更容易被点击
+        /// </summary>
+        private void CheckFlyingStateAndAdjustCollider()
+        {
+            if (birdCollider == null) return;
+            
+            // 检测当前是否在飞行状态
+            bool currentlyFlying = _stateMachine.CurrentState == typeof(BirdFlyState) || 
+                                 _stateMachine.CurrentState == typeof(BirdFlyHorizontalState) || 
+                                 _stateMachine.CurrentState == typeof(BirdFlyDownState) ||
+                                 _stateMachine.CurrentState == typeof(BirdFlyWaitState);
+            
+            // 如果飞行状态发生变化
+            if (currentlyFlying != isFlying)
+            {
+                isFlying = currentlyFlying;
+                
+                if (isFlying)
+                {
+                    // 进入飞行状态，增大碰撞体
+                    AdjustColliderForFlying(true);
+                }
+                else
+                {
+                    // 退出飞行状态，恢复原始碰撞体
+                    AdjustColliderForFlying(false);
+                }
+            }
+        }
+        
+        /// <summary>
+        /// 调整碰撞体大小以适应飞行状态
+        /// </summary>
+        /// <param name="isFlying">是否在飞行</param>
+        private void AdjustColliderForFlying(bool isFlying)
+        {
+            if (birdCollider == null || !(birdCollider is BoxCollider2D)) return;
+            
+            BoxCollider2D boxCollider = birdCollider as BoxCollider2D;
+            
+            if (isFlying)
+            {
+                // 飞行时增大碰撞体，让点击更容易
+                // 根据当前scale计算合适的碰撞体大小
+                float currentScale = transform.localScale.x;
+                float scaleMultiplier = Mathf.Max(2.5f, 1.0f / currentScale); // 至少2倍，或者根据scale反向调整
+                
+                boxCollider.size = originalColliderSize * scaleMultiplier;
+            }
+            else
+            {
+                // 恢复原始碰撞体大小
+                boxCollider.size = originalColliderSize;
             }
         }
 
