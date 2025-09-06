@@ -69,7 +69,10 @@ namespace BirdGame
 
         public override void OnUpdate()
         {
+<<<<<<< Updated upstream
             // Check if the current food is null or destroyed
+=======
+>>>>>>> Stashed changes
             if (_brid.currFood == null)
             {
                 DONext();

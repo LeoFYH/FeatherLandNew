@@ -172,41 +172,23 @@ namespace BirdGame
         private IEnumerator TriggerEnvironmentAudioAfterConfigLoad()
         {
             yield return new WaitForSeconds(1f); // 增加等待时间，确保所有系统初始化完成
-            
-            // 检查SaveSystem是否已初始化
-            var saveSystem = this.GetSystem<ISaveSystem>();
-            if (saveSystem == null)
-            {
-                Debug.LogError("SaveSystem未初始化，跳过环境音效初始化");
-                yield break;
-            }
-            
+
             // 检查MusicSettingData是否已加载
-            var musicSettingData = this.GetModel<ISaveModel>().MusicSettingData;
-            while (musicSettingData == null)
+            while (this.GetModel<ISaveModel>().MusicSettingData == null)
             {
-                Debug.LogError("MusicSettingData未加载，跳过环境音效初始化");
+                //Debug.LogError("MusicSettingData未加载，跳过环境音效初始化");
                 yield return new WaitForFixedUpdate();
             }
             
-            // 只初始化环境音效，不播放歌曲
-            var audioSystem = this.GetSystem<IAudioSystem>();
-            if (audioSystem != null)
+            try
             {
-                try
-                {
-                    // 初始化环境音效（Bird音效0.5音量，其他0音量）
-                    audioSystem.InitEnvironments();
-                    Debug.Log("🌍 环境音效初始化完成！");
-                }
-                catch (System.Exception e)
-                {
-                    Debug.LogError($"环境音效初始化失败: {e.Message}");
-                }
+                // 初始化环境音效（Bird音效0.5音量，其他0音量）
+                this.GetSystem<IAudioSystem>().InitEnvironments();
+                Debug.Log("🌍 环境音效初始化完成！");
             }
-            else
+            catch (System.Exception e)
             {
-                Debug.LogError("AudioSystem未初始化，跳过环境音效初始化");
+                Debug.LogError($"环境音效初始化失败: {e.Message}");
             }
         }
     }

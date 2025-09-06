@@ -1115,6 +1115,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+<<<<<<< Updated upstream
     <ProjectReference Include="Unity.RenderPipelines.Universal.2D.Runtime.csproj" />
     <ProjectReference Include="Unity.InputSystem.ForUI.csproj" />
     <ProjectReference Include="Unity.Addressables.Editor.csproj" />
@@ -1218,5 +1219,55 @@
     <ProjectCapability Remove="ReferenceManagerCOM" />
     <ProjectCapability Remove="AssemblyReferences" />
     <ProjectCapability Remove="ReferenceManagerAssemblies" />
+=======
+    <ProjectReference Include="UniTask.Linq.csproj">
+      <Project>{41a4e458-3cbb-d21b-d356-953591dd7b23}</Project>
+      <Name>UniTask.Linq</Name>
+    </ProjectReference>
+    <ProjectReference Include="Sirenix.OdinInspector.Modules.Unity.Addressables.csproj">
+      <Project>{c691f609-ca61-0059-bbcc-5b7b1bf822bd}</Project>
+      <Name>Sirenix.OdinInspector.Modules.Unity.Addressables</Name>
+    </ProjectReference>
+    <ProjectReference Include="UniTask.csproj">
+      <Project>{284f92be-a5cf-41c4-cfdb-57c4f72929df}</Project>
+      <Name>UniTask</Name>
+    </ProjectReference>
+    <ProjectReference Include="Sirenix.OdinInspector.Modules.UnityMathematics.csproj">
+      <Project>{19718430-10c0-0b49-e5cc-311edcfb9240}</Project>
+      <Name>Sirenix.OdinInspector.Modules.UnityMathematics</Name>
+    </ProjectReference>
+    <ProjectReference Include="UniTask.Addressables.csproj">
+      <Project>{592d1615-0f7d-adeb-87c5-4a0f6b648eef}</Project>
+      <Name>UniTask.Addressables</Name>
+    </ProjectReference>
+    <ProjectReference Include="OutlineFx.csproj">
+      <Project>{2557f7de-ae87-021b-4743-f327da383575}</Project>
+      <Name>OutlineFx</Name>
+    </ProjectReference>
+    <ProjectReference Include="UniTask.DOTween.csproj">
+      <Project>{0e4850d4-5945-bf03-fde3-ad5a1c86124e}</Project>
+      <Name>UniTask.DOTween</Name>
+    </ProjectReference>
+    <ProjectReference Include="com.rlabrecque.steamworks.net.csproj">
+      <Project>{977a3219-b48c-1985-c854-85de54f85d0b}</Project>
+      <Name>com.rlabrecque.steamworks.net</Name>
+    </ProjectReference>
+    <ProjectReference Include="QFramework.csproj">
+      <Project>{9a4751c1-5c84-604f-65fc-023e59c2b792}</Project>
+      <Name>QFramework</Name>
+    </ProjectReference>
+    <ProjectReference Include="OutlineFx.Editor.csproj">
+      <Project>{9b31ebd6-b604-5d9a-6fc2-2838a6cf6df1}</Project>
+      <Name>OutlineFx.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="UniTask.TextMeshPro.csproj">
+      <Project>{4fee49ee-b4b3-100a-ffa3-54e1fb013905}</Project>
+      <Name>UniTask.TextMeshPro</Name>
+    </ProjectReference>
+    <ProjectReference Include="com.rlabrecque.steamworks.net.editor.csproj">
+      <Project>{ebf1d67e-a1fd-c462-e04e-c698b16ffe9d}</Project>
+      <Name>com.rlabrecque.steamworks.net.editor</Name>
+    </ProjectReference>
+>>>>>>> Stashed changes
   </ItemGroup>
 </Project>
