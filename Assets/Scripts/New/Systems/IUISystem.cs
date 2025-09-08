@@ -54,6 +54,8 @@ namespace BirdGame
         /// </summary>
         /// <param name="popup"></param>
         void HidePopup(UIPopup popup);
+
+        void HideAllPopups();
         /// <summary>
         /// 获取Popup对象
         /// </summary>
@@ -170,6 +172,18 @@ namespace BirdGame
             {
                 this.SendEvent<InfoPopupClosedEvent>(new InfoPopupClosedEvent { popupType = popup });
             }
+        }
+
+        public void HideAllPopups()
+        {
+            foreach (var pop in popupDic)
+            {
+                pop.Value.OnHidePanel(() =>
+                {
+                    this.GetSystem<IAssetSystem>().ReleaseAsset(pop.Key.ToString());
+                });
+            }
+            popupDic.Clear();
         }
 
         public T GetPopup<T>(UIPopup popup) where T : UIBase

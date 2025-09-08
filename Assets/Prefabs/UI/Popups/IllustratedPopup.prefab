@@ -147,8 +147,9 @@ GameObject:
   - component: {fileID: 1607568807168944303}
   - component: {fileID: 5902837218650075263}
   - component: {fileID: 8065276808563481348}
+  - component: {fileID: 6688413675065809541}
   m_Layer: 0
-  m_Name: BirdPreview
+  m_Name: Bird
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -211,6 +212,28 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!95 &6688413675065809541
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 687341234450790639}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: ed066f423c10e3746a281605488eeed2, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &907027321030818416
 GameObject:
   m_ObjectHideFlags: 0
@@ -751,6 +774,7 @@ MonoBehaviour:
   sceneView: {fileID: 243585170140230712}
   skinContent: {fileID: 1970663820620278410}
   skinPrefab: {fileID: 5566325955820234992, guid: 462778da0d73eb747bb36af5e4301747, type: 3}
+  animator: {fileID: 6688413675065809541}
   barTransform: {fileID: 1067855532331404398}
 --- !u!1 &1986834853005911148
 GameObject:

@@ -22,6 +22,7 @@ namespace BirdGame
         public Image sceneView;
         public Transform skinContent;
         public GameObject skinPrefab;
+        public Animator animator;
 
         [Header("点击外部关闭设置")]
         public Transform barTransform;  // Bar对象，用于检测点击区域
@@ -207,7 +208,10 @@ namespace BirdGame
             int classIndex;
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             var birdInfo = this.GetModel<IConfigModel>().BirdConfig.GetBird(index, mapIndex, out classIndex);
-            birdPreview.sprite = birdInfo.preview;
+            animator.Play("Idle " + birdInfo.id);
+            // animator.runtimeAnimatorController.animationClips[0] = birdInfo.idleClip;
+            // Debug.Log(animator.runtimeAnimatorController.animationClips[0]);
+            //birdPreview.sprite = birdInfo.preview;
             birdPreview.GetComponent<RectTransform>().sizeDelta = birdInfo.preview.rect.size * 0.2f;
             if (!this.GetModel<ISaveModel>().IllustratedData.birds.Contains(index))
             {

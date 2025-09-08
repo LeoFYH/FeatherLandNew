@@ -200,11 +200,15 @@ namespace BirdGame
             {
                 scheduleBar.SetActive(true);
                 diaryBar.SetActive(false);
+                scheduleToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-645.6f, 411.2f);
+                diaryToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-410.8f, 396.9f);
             });
             diaryToggle.onClick.AddListener(() =>
             {
                 scheduleBar.SetActive(false);
                 diaryBar.SetActive(true);
+                scheduleToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-645.6f, 396.9f);
+                diaryToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-410.8f, 411.2f);
             });
             
             // 设置day text，只显示保存的自定义文本，如果没有保存过则为空
@@ -236,6 +240,8 @@ namespace BirdGame
             
             diaryBar.SetActive(true);
             scheduleBar.SetActive(false);
+            scheduleToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-645.6f, 396.9f);
+            diaryToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-410.8f, 411.2f);
         }
         
         /// <summary>
@@ -297,11 +303,6 @@ namespace BirdGame
         public string GetCurrentDayText()
         {
             return dayText != null ? dayText.text : "";
-        }
-        
-        private void OnDestroy()
-        {
-            this.GetSystem<ISaveSystem>().SaveData();
         }
     }
 }

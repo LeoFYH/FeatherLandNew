@@ -30,8 +30,8 @@ namespace BirdGame
             startButton.onClick.AddListener(() =>
             {
                 item.TimerCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(StartTimer());
-                startButton.gameObject.SetActive(false);
-                stopButton.gameObject.SetActive(true);
+                startButton.interactable = false;
+                stopButton.interactable = true;
                 this.GetModel<IClockModel>().TimerType = TimerType.StopWatch;
                 this.SendCommand<StopOtherTimerCommand>();
             });
@@ -40,8 +40,8 @@ namespace BirdGame
                 if (item.TimerCoroutine != null)
                     this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
                 item.TimerCoroutine = null;
-                startButton.gameObject.SetActive(true);
-                stopButton.gameObject.SetActive(false);
+                startButton.interactable = true;
+                stopButton.interactable = false;
 
                 this.GetModel<IClockModel>().TimerType = TimerType.None;
                 this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
@@ -54,8 +54,8 @@ namespace BirdGame
                 if (item.TimerCoroutine != null)
                     this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
                 item.TimerCoroutine = null;
-                startButton.gameObject.SetActive(true);
-                stopButton.gameObject.SetActive(false);
+                startButton.interactable = true;
+                stopButton.interactable = false;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
             item.Hours.Register(v =>
@@ -75,14 +75,14 @@ namespace BirdGame
             minuteText.text = string.Format("{0:00}", item.Minutes.Value);
             secondText.text = string.Format("{0:00}", item.Seconds.Value);
             
-            startButton.gameObject.SetActive(item.TimerCoroutine == null);
-            stopButton.gameObject.SetActive(item.TimerCoroutine != null);
+            startButton.interactable = item.TimerCoroutine == null;
+            stopButton.interactable = item.TimerCoroutine != null;
         }
 
         private void OnEnable()
         {
-            startButton.gameObject.SetActive(this.GetModel<IClockModel>().StopWatchItem.TimerCoroutine == null);
-            stopButton.gameObject.SetActive(this.GetModel<IClockModel>().StopWatchItem.TimerCoroutine != null);
+            startButton.interactable = this.GetModel<IClockModel>().StopWatchItem.TimerCoroutine == null;
+            stopButton.interactable = this.GetModel<IClockModel>().StopWatchItem.TimerCoroutine != null;
         }
 
         private IEnumerator StartTimer()

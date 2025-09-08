@@ -388,7 +388,6 @@ namespace BirdGame
             {
                 // 保存设置
                 this.GetModel<ISaveModel>().SettingData.screenMode = id;
-                this.GetSystem<ISaveSystem>().SaveData();
                 
                 if (id == 0)
                 {
@@ -407,7 +406,6 @@ namespace BirdGame
                 }
 
                 this.GetModel<ISaveModel>().SettingData.screenMode = id;
-                this.GetSystem<ISaveSystem>().SaveData();
             });
             languageDropdown.onValueChanged.AddListener(index =>
             {

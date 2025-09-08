@@ -86,10 +86,10 @@ namespace BirdGame
             var listeners = new List<IUnRegister>();
 
             // 监听食物计数变化
-            listeners.Add(birdData.bird.currentExp.Register(_ => SyncBirdDataToSave()));
+            //listeners.Add(birdData.bird.currentExp.Register(_ => SyncBirdDataToSave()));
 
             // 监听好感度变化
-            listeners.Add(birdData.bird.currentFavorability.Register(_ => SyncBirdDataToSave()));
+            //listeners.Add(birdData.bird.currentFavorability.Register(_ => SyncBirdDataToSave()));
 
             // 存储监听器引用，以便后续清理
             birdListeners[birdIndex] = listeners;

@@ -55,6 +55,9 @@ namespace BirdGame
             
             CheckCursor();
             
+            if(Input.GetKeyDown(KeyCode.Escape))
+                this.GetSystem<IUISystem>().HideAllPopups();
+            
             if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
             {
                 // 检查是否点击到UI元素
@@ -217,6 +220,7 @@ namespace BirdGame
         
         void OnApplicationQuit()
         {
+            this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
             this.GetSystem<ISteamSystem>().ShutDown();
         }
     }

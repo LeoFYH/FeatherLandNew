@@ -20,6 +20,8 @@ namespace BirdGame
         public bool canFly = true;
         [VerticalGroup("content/Info"), LabelText("是否能飞行等待")]
         public bool canFlyWait = true;
+        [VerticalGroup("content/Info"), LabelText("Idle动画")]
+        public AnimationClip idleClip;
         [VerticalGroup("content/Info"), BoxGroup("content/Info/信息"), LabelText("稀有度"), ValueDropdown("rarityInfo"), GUIColor("realityColor"), OnValueChanged("OnRealityValueChanged")]
         public string reality;
         private Color32 realityColor = Color.white;

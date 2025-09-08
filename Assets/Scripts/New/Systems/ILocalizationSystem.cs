@@ -76,7 +76,6 @@ namespace BirdGame
                 return;
             //改变当前语言存档
             this.GetModel<ISaveModel>().SettingData.gameLanguage = language;
-            this.GetSystem<ISaveSystem>().SaveData();
             //通知所有界面切换语言显示
             this.SendEvent<ChangeLanguageEvent>();
         }

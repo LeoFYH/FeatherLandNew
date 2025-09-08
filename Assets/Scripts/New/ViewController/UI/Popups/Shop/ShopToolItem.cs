@@ -245,7 +245,7 @@ namespace BirdGame
                             else if (toolItem.selections[0].type == ToolType.BirdMaxCount)
                             {
                                 this.GetModel<ISaveModel>().AccountData.addedMaxBirdValue += selectedTool.addCount;
-                                this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
+                                //this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
                                 bool initFirst = false;
                                 for (int i = 0; i < selections.Count; i++)
                                 {
@@ -270,8 +270,7 @@ namespace BirdGame
                                     }
                                 }
                             }
-
-                            this.GetSystem<ISaveSystem>().SaveData();
+                            
                             UpdateButtonState();
                             this.GetSystem<IUISystem>().HidePopup(UIPopup.ShopPopup);
                         });

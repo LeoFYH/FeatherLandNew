@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 100882814476004598}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.14, y: -0.18, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.2, y: 0.2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -76,12 +76,12 @@ SpriteRenderer:
   m_SortingLayerID: -202900907
   m_SortingLayer: 1
   m_SortingOrder: 16
-  m_Sprite: {fileID: 21300000, guid: e7cc1616c9eb86248b98ecfd88510009, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5c4b60df351372242b21b0b013f97557, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.78, y: 0.99}
+  m_Size: {x: 3.76, y: 4.39}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -137,13 +137,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   eggSprites:
-  - {fileID: 21300000, guid: e7cc1616c9eb86248b98ecfd88510009, type: 3}
-  - {fileID: 21300000, guid: d818d52271321824e8f3999190b2410a, type: 3}
-  - {fileID: 21300000, guid: 64bb7e61e19a66447a42085de1c0eb72, type: 3}
-  - {fileID: 21300000, guid: c35fc221ae87589428f939ec43c82c44, type: 3}
-  - {fileID: 21300000, guid: ac4307d96cebf5d4c94ce22aa4f2d018, type: 3}
-  - {fileID: 21300000, guid: d61bb4c4e67ba3c47a541a10cede6874, type: 3}
-  - {fileID: 21300000, guid: d163857abe875b646ad376f75f86981c, type: 3}
+  - {fileID: 21300000, guid: 5c4b60df351372242b21b0b013f97557, type: 3}
+  - {fileID: 21300000, guid: f7b703ca7b74eb24ca99bf95944801fd, type: 3}
+  - {fileID: 21300000, guid: ebf4265e6e6f37c4bae5ea1f25ae8428, type: 3}
+  - {fileID: 21300000, guid: 2576cbabdbce3ec4ebe8704343d2bc40, type: 3}
+  - {fileID: 21300000, guid: 1e2f3dce9343f5244b6881b158a2a99e, type: 3}
   spriteRenderer: {fileID: 8641895144709943338}
   effect1: {fileID: 406376635277754614}
   effect2: {fileID: 7113994344422696998}

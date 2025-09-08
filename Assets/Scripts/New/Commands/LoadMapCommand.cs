@@ -16,8 +16,6 @@ namespace BirdGame
 
         protected override void OnExecute()
         {
-            //保存当前的场景鸟的信息并清除场景中的鸟
-            this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
             //清除当前场景的鸟
             this.GetSystem<IBirdSystem>().ClearAllBirds();
             //显示加载界面
@@ -35,7 +33,6 @@ namespace BirdGame
         {
             //更新当前地图数据
             this.GetModel<ISaveModel>().BirdInfoData.currentMap = mapIndex;
-            this.GetSystem<ISaveSystem>().SaveData();
             //加载新地图的鸟的信息
             this.GetSystem<IBirdSystem>().GenerateBirdsFromSave();
             this.GetSystem<IGameSystem>().CreateDecorations();

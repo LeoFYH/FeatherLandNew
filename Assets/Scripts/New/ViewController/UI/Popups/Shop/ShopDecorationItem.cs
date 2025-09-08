@@ -62,7 +62,6 @@ namespace BirdGame
                                 accountData.sceneDecorationInfos[mapIndex].decorations[id].count);
                             accountData.sceneDecorationInfos[mapIndex].decorations[id].count++;
                             accountData.sceneDecorationInfos[mapIndex].decorations[id].position.Add(Vector3.zero);
-                            this.GetSystem<ISaveSystem>().SaveData();
                             string text = this.GetSystem<ILocalizationSystem>()
                                 .GetString("Purchase successful! Left-click to place the ornament");
                             this.GetSystem<IUISystem>().ShowPrompt(text);
@@ -76,7 +75,6 @@ namespace BirdGame
                                 accountData.sceneDecorationInfos[mapIndex].decorations[id].count);
                             accountData.sceneDecorationInfos[mapIndex].decorations[id].count++;
                             accountData.sceneDecorationInfos[mapIndex].decorations[id].position.Add(Vector3.zero);
-                            this.GetSystem<ISaveSystem>().SaveData();
                             string text = this.GetSystem<ILocalizationSystem>()
                                 .GetString("Purchase successful! The ornament has been placed in the designated place");
                             this.GetSystem<IUISystem>().ShowPrompt(text);

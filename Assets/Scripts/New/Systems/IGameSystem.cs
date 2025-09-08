@@ -496,7 +496,6 @@ namespace BirdGame
             {
                 accountData.sceneDecorationInfos[mapIndex].decorations[decorationId].count = 0;
             }
-            this.GetSystem<ISaveSystem>().SaveData();
             Debug.Log($"销毁装饰品 {decorationId}，剩余数量: {accountData.sceneDecorationInfos[mapIndex].decorations[decorationId].count}");
         }
 
@@ -523,7 +522,6 @@ namespace BirdGame
                 Debug.Log("index:" + currentIndex);
                 accountData.sceneDecorationInfos[mapIndex].decorations[currentPlacingDecorationId].position[currentIndex] =
                     currentPlacingDecoration.transform.position;
-                this.GetSystem<ISaveSystem>().SaveData();
                 // 清空当前放置的装饰品
                 currentPlacingDecoration = null;
                 currentPlacingDecorationId = -1;
@@ -615,7 +613,6 @@ namespace BirdGame
                     return;
                 }
                 this.GetModel<ISaveModel>().AccountData.coins = v;
-                this.GetSystem<ISaveSystem>().SaveData();
             });
         }
 

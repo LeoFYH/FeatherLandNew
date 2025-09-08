@@ -242,10 +242,5 @@ namespace BirdGame
             environmentButton.gameObject.SetActive(true);
             musicButton.gameObject.SetActive(false);
         }
-
-        private void OnDestroy()
-        {
-            this.GetSystem<ISaveSystem>().SaveData();
-        }
     }
 }

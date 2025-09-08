@@ -126,8 +126,8 @@ namespace BirdGame
                 downButtons[i].interactable = !isTiming;
             }
 
-            startButton.gameObject.SetActive(!isTiming);
-            stopButton.gameObject.SetActive(isTiming);
+            startButton.interactable = !isTiming;
+            stopButton.interactable = isTiming;
             refreshButton.interactable = !isTiming;
         }
 
