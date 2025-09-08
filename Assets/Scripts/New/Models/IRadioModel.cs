@@ -10,6 +10,10 @@ namespace BirdGame
         BindableProperty<bool> PlayingSong { get; }
         BindableProperty<float> SongProgress { get; }
         BindableProperty<float> Volume { get; }
+        BindableProperty<bool> Random { get; }
+        BindableProperty<bool> Loop { get; }
+        BindableProperty<float> TotalTime { get; }
+        BindableProperty<float> CurrentTime { get; }
         List<BindableProperty<float>> EnvironmentVolumes { get; }
     }
 
@@ -24,6 +28,10 @@ namespace BirdGame
         public BindableProperty<bool> PlayingSong { get; } = new BindableProperty<bool>(false);
         public BindableProperty<float> SongProgress { get; } = new BindableProperty<float>(0f);
         public BindableProperty<float> Volume { get; } = new BindableProperty<float>(0.5f);
+        public BindableProperty<bool> Random { get; } = new BindableProperty<bool>();
+        public BindableProperty<bool> Loop { get; } = new BindableProperty<bool>();
+        public BindableProperty<float> TotalTime { get; } = new BindableProperty<float>();
+        public BindableProperty<float> CurrentTime { get; } = new BindableProperty<float>();
         public List<BindableProperty<float>> EnvironmentVolumes { get; } = new List<BindableProperty<float>>();
     }
 }

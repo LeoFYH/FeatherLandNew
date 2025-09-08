@@ -15,6 +15,10 @@ namespace BirdGame
         public Button nextButton;
         public Button playButton;
         public Button pauseButton;
+        public Toggle random;
+        public Toggle loop;
+        public TextMeshProUGUI totalTime;
+        public TextMeshProUGUI currentTime;
         public TextMeshProUGUI songNameText;
 
         public Transform content;
@@ -37,6 +41,18 @@ namespace BirdGame
                 progressSlider.value = v;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             progressSlider.value = radioModel.SongProgress.Value;
+            
+            random.isOn = this.GetModel<IRadioModel>().Random.Value;
+            random.onValueChanged.AddListener(isOn =>
+            {
+                this.GetModel<IRadioModel>().Random.Value = isOn;
+            });
+
+            loop.isOn = !this.GetModel<IRadioModel>().Loop.Value;
+            loop.onValueChanged.AddListener(isOn =>
+            {
+                this.GetModel<IRadioModel>().Loop.Value = !isOn;
+            });
             
             previousButton.onClick.AddListener(() =>
             {
@@ -61,6 +77,21 @@ namespace BirdGame
                 playButton.gameObject.SetActive(true);
                 pauseButton.gameObject.SetActive(false);
             });
+
+            radioModel.TotalTime.Register(v =>
+            {
+                int totalSeconds = (int)v;
+                totalTime.text = string.Format("{0:00}:{1:00}", totalSeconds / 60, totalSeconds % 60);
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            int total = (int)radioModel.TotalTime.Value;
+            totalTime.text = string.Format("{0:00}:{1:00}", total / 60, total % 60);
+            radioModel.CurrentTime.Register(v =>
+            {
+                int totalSeconds = (int)v;
+                currentTime.text = string.Format("{0:00}:{1:00}", totalSeconds / 60, totalSeconds % 60);
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            total = (int)radioModel.CurrentTime.Value;
+            currentTime.text =string.Format("{0:00}:{1:00}", total / 60, total % 60);
 
             radioModel.PlayingSong.Register(v =>
             {
