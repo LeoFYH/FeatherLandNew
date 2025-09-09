@@ -23,6 +23,7 @@ namespace BirdGame
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             var item = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[mapIndex].decorations[index];
             icon.sprite = item.icon;
+            icon.GetComponent<RectTransform>().sizeDelta = icon.sprite.rect.size * item.iconScale;
             nameText.SetKey(item.name);
             descriptionText.SetKey(item.description);
             priceText.text = item.price.ToString();

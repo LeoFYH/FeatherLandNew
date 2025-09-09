@@ -204,6 +204,8 @@ namespace BirdGame
         public int price;
         [LabelText("大小"), VerticalGroup("Icon/Info"), Range(0.01f, 2f)]
         public float scale = 1f;
+        [LabelText("Icon大小"), VerticalGroup("Icon/Info"), Range(0.01f, 1f)]
+        public float iconScale = 0.5f;
         [LabelText("最大购买数量"), VerticalGroup("Icon/Info"), InfoBox("设置为0表示无限制", InfoMessageType.Info), OnValueChanged("OnCountValueChanged")]
         public int maxQuantity = 0;
         [LabelText("场景Sprite"), VerticalGroup("Icon/Info")]
