@@ -47,7 +47,8 @@ namespace BirdGame
 
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             // 更新birdList
-            saveModel.BirdInfoData.mapBirds[mapIndex].birdList.Clear();
+            if (mapIndex < saveModel.BirdInfoData.mapBirds.Count)
+                saveModel.BirdInfoData.mapBirds[mapIndex].birdList.Clear();
             foreach (var birdData in birdModel.BirdList)
             {
                 if (birdData.bird == null) continue;

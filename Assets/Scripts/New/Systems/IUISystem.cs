@@ -165,10 +165,7 @@ namespace BirdGame
 
             var obj = popupDic[popup];
             popupDic.Remove(popup);
-            obj.OnHidePanel(() =>
-            {
-                this.GetSystem<IAssetSystem>().ReleaseAsset(popup.ToString());
-            });
+            obj.OnHidePanel();
             
             // 如果是InfoPopup关闭，发送事件通知鸟恢复材质
             if (popup == UIPopup.InfoPopup)
