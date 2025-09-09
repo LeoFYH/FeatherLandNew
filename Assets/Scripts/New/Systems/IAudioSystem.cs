@@ -33,6 +33,8 @@ namespace BirdGame
         /// </summary>
         void NextSong();
 
+        void SetAudioProgress(float value);
+
         void PlayEffect(EffectType type);
         void PlayBirdEffect(int birdIndex);
         
@@ -173,6 +175,14 @@ namespace BirdGame
             }
 
             PlaySong();
+        }
+
+        public void SetAudioProgress(float value)
+        {
+            if(radioAudio.clip == null)
+                return;
+            float time = radioAudio.clip.length * value;
+            radioAudio.time = time;
         }
 
         private IEnumerator CheckForSongEnd()

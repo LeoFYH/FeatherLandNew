@@ -468,7 +468,11 @@ namespace BirdGame
                 collider.size = spriteRenderer.sprite.bounds.size;
                 
                 // 设置固定位置
-                decoration.transform.position = decorationItem.fixedPosition;
+                if (index < decorationItem.fixedPositions.Length)
+                {
+                    Debug.LogWarning("设置位置");
+                    decoration.transform.position = decorationItem.fixedPositions[index];
+                }
 
                 currentIndex = index;
                 

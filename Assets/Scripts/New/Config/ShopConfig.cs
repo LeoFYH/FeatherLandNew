@@ -204,7 +204,7 @@ namespace BirdGame
         public int price;
         [LabelText("大小"), VerticalGroup("Icon/Info"), Range(0.01f, 2f)]
         public float scale = 1f;
-        [LabelText("最大购买数量"), VerticalGroup("Icon/Info"), InfoBox("设置为0表示无限制", InfoMessageType.Info)]
+        [LabelText("最大购买数量"), VerticalGroup("Icon/Info"), InfoBox("设置为0表示无限制", InfoMessageType.Info), OnValueChanged("OnCountValueChanged")]
         public int maxQuantity = 0;
         [LabelText("场景Sprite"), VerticalGroup("Icon/Info")]
         [PreviewField(50, ObjectFieldAlignment.Left)]
@@ -214,10 +214,25 @@ namespace BirdGame
         public DecorationType decorationType = DecorationType.Draggable;
         [LabelText("固定位置"), VerticalGroup("Icon/Info")]
         [ShowIf("@decorationType == DecorationType.Fixed")]
-        public Vector3 fixedPosition = Vector3.zero;
-        
+        public Vector3[] fixedPositions; 
         [LabelText("是否显示"), VerticalGroup("Icon/Info"), InfoBox("取消勾选后，该装饰物不会出现在游戏商店中")]
         public bool isVisible = true;
+
+        private void OnCountValueChanged()
+        {
+            if (decorationType == DecorationType.Fixed)
+            {
+                var newVecs = new Vector3[maxQuantity];
+                for (int i = 0; i < newVecs.Length; i++)
+                {
+                    if (i >= fixedPositions.Length)
+                        break;
+                    newVecs[i] = fixedPositions[i];
+                }
+
+                fixedPositions = newVecs;
+            }
+        }
     }
 
     public enum DecorationType

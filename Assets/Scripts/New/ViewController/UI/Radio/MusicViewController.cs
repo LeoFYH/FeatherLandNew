@@ -42,6 +42,11 @@ namespace BirdGame
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             progressSlider.value = radioModel.SongProgress.Value;
             
+            progressSlider.onValueChanged.AddListener(v =>
+            {
+                this.GetSystem<IAudioSystem>().SetAudioProgress(v);
+            });
+            
             random.isOn = this.GetModel<IRadioModel>().Random.Value;
             random.onValueChanged.AddListener(isOn =>
             {

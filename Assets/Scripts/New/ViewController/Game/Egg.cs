@@ -1,3 +1,4 @@
+using System.Collections;
 using DG.Tweening;
 using QFramework;
 using Sirenix.OdinInspector;
@@ -16,6 +17,7 @@ namespace BirdGame
         public GameObject effect2;
         private int currentFrame = 0; // 当前显示的帧索引
         private Tweener anim;
+        private int clickCount = 0;
 
         public void SetEggIndex(int index)
         {
@@ -43,15 +45,36 @@ namespace BirdGame
 
         public void OnClick()
         {
+            if(clickCount >= 3)
+                return;
+            
             anim?.Kill();
             anim = spriteRenderer.transform.DOShakeScale(0.2f, 0.05f, 50, 180f);
-            //spriteRenderer.transform.DOShakePosition(0.2f, 0.5f);
-            PlayNextFrame();
-
-            if (currentFrame >= eggSprites.Length)
+            clickCount++;
+            if (clickCount >= 3)
             {
-                SpawnBird();
+                StartCoroutine(OpenEgg());
             }
+
+            // PlayNextFrame();
+            //
+            // if (currentFrame >= eggSprites.Length)
+            // {
+            //     SpawnBird();
+            // }
+        }
+
+        private IEnumerator OpenEgg()
+        {
+            effect2.SetActive(true);
+            effect1.SetActive(false);
+            while (currentFrame < eggSprites.Length)
+            {
+                PlayNextFrame();
+                yield return new WaitForSeconds(0.1f);
+            }
+            
+            SpawnBird();
         }
 
         private void PlayNextFrame()
@@ -59,11 +82,6 @@ namespace BirdGame
             if (currentFrame < eggSprites.Length)
             {
                 spriteRenderer.sprite = eggSprites[currentFrame];
-                if (currentFrame == 3)
-                {
-                    effect2.SetActive(true);
-                    effect1.SetActive(false);
-                }
                 currentFrame++;
             }
         }

@@ -74,7 +74,14 @@ namespace BirdGame
                             this.GetSystem<IGameSystem>().CreateFixedDecoration(id,
                                 accountData.sceneDecorationInfos[mapIndex].decorations[id].count);
                             accountData.sceneDecorationInfos[mapIndex].decorations[id].count++;
-                            accountData.sceneDecorationInfos[mapIndex].decorations[id].position.Add(Vector3.zero);
+                            var decorationItem = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[mapIndex].decorations[id];
+                            Vector3 pos = Vector3.zero;
+                            int index = accountData.sceneDecorationInfos[mapIndex].decorations[id].count - 1;
+                            if (decorationItem.fixedPositions.Length > index)
+                            {
+                                pos = decorationItem.fixedPositions[index];
+                            }
+                            accountData.sceneDecorationInfos[mapIndex].decorations[id].position.Add(pos);
                             string text = this.GetSystem<ILocalizationSystem>()
                                 .GetString("Purchase successful! The ornament has been placed in the designated place");
                             this.GetSystem<IUISystem>().ShowPrompt(text);
