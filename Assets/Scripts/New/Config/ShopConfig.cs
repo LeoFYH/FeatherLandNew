@@ -217,6 +217,8 @@ namespace BirdGame
         public Vector3[] fixedPositions; 
         [LabelText("是否显示"), VerticalGroup("Icon/Info"), InfoBox("取消勾选后，该装饰物不会出现在游戏商店中")]
         public bool isVisible = true;
+        [LabelText("示意图"), VerticalGroup("Icon/Info")]
+        public Sprite preview;
 
         private void OnCountValueChanged()
         {

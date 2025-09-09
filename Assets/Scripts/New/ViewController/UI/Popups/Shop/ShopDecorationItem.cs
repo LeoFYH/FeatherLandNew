@@ -2,11 +2,12 @@
 using QFramework;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace BirdGame
 {
-    public class ShopDecorationItem : ViewControllerBase
+    public class ShopDecorationItem : ViewControllerBase, IPointerEnterHandler, IPointerExitHandler
     {
         public Image icon;
         public LocalizationText nameText;
@@ -95,6 +96,16 @@ namespace BirdGame
                     this.GetSystem<IUISystem>().ShowPrompt(text);
                 }
             });
+        }
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            this.GetSystem<IUISystem>().ShowDecorationInfo(id);
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            this.GetSystem<IUISystem>().HideDecorationInfo();
         }
     }
 }

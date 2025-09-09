@@ -91,6 +91,13 @@ namespace BirdGame
 
         void Start()
         {
+            this.RegisterEvent<SwitchWeatherEvent>(evt =>
+            {
+                var ani = DOTween.Sequence();
+                ani.Append(sr.DOColor(Color.black, 0.5f));
+                ani.Append(sr.DOColor(Color.white, 0.5f));
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            
             lineRenderer.startColor = new Color(0, 1, 0, 0); // 绿色，透明度为0
             lineRenderer.endColor = new Color(0, 1, 0, 0); // 绿色，透明度为0
             // Initialize walkable area and basic components

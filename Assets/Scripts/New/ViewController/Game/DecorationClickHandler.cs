@@ -1,3 +1,5 @@
+using System;
+using DG.Tweening;
 using QFramework;
 using UnityEngine;
 
@@ -8,10 +10,24 @@ namespace BirdGame
         private int decorationId;
         public int decorationIndex;
 
+        private SpriteRenderer sr;
+
         public void Initialize(int id, int index)
         {
             decorationId = id;
             decorationIndex = index;
+        }
+
+        private void Start()
+        {
+            this.RegisterEvent<SwitchWeatherEvent>(evt =>
+            {
+                if (sr == null)
+                    sr = GetComponentInChildren<SpriteRenderer>();
+                var ani = DOTween.Sequence();
+                ani.Append(sr.DOColor(Color.black, 0.5f));
+                ani.Append(sr.DOColor(Color.white, 0.5f));
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
         }
 
         private void OnMouseOver()

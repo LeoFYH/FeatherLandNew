@@ -91,6 +91,8 @@ namespace BirdGame
         void ShowEggInfo();
 
         void HideEggInfo();
+        void ShowDecorationInfo(int index);
+        void HideDecorationInfo();
         void ShowBuyConfirm(Action onConfirm);
     }
 
@@ -104,6 +106,7 @@ namespace BirdGame
         private GameObject mask;
         private GameObject mapInfo;
         private GameObject eggInfo;
+        private GameObject decorationInfo;
         
         protected override void OnInit()
         {
@@ -279,6 +282,26 @@ namespace BirdGame
             {
                 GameObject.Destroy(eggInfo);
                 eggInfo = null;
+            }
+        }
+
+        public void ShowDecorationInfo(int index)
+        {
+            if(decorationInfo != null)
+                GameObject.Destroy(decorationInfo);
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("DecorationInfo", obj =>
+            {
+                decorationInfo = GameObject.Instantiate(obj, popupLayer);
+                decorationInfo.GetComponent<DecorationInfoPopup>().Init(index);
+            });
+        }
+
+        public void HideDecorationInfo()
+        {
+            if (decorationInfo != null)
+            {
+                GameObject.Destroy(decorationInfo);
+                decorationInfo = null;
             }
         }
 

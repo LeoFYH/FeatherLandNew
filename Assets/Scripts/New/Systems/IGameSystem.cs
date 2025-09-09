@@ -459,6 +459,7 @@ namespace BirdGame
                 // 添加 SpriteRenderer 组件
                 SpriteRenderer spriteRenderer = decoration.AddComponent<SpriteRenderer>();
                 spriteRenderer.sprite = spriteToUse;  // 设置 Sprite
+                spriteRenderer.sortingOrder = 3;
                 
                 // 设置大小
                 decoration.transform.localScale = Vector3.one * decorationItem.scale;
@@ -566,6 +567,7 @@ namespace BirdGame
                     // 添加 SpriteRenderer 组件
                     SpriteRenderer spriteRenderer = decoration.AddComponent<SpriteRenderer>();
                     spriteRenderer.sprite = spriteToUse; // 设置 Sprite
+                    spriteRenderer.sortingOrder = 3;
 
                     // 设置大小
                     decoration.transform.localScale = Vector3.one * decorationItem.scale;
@@ -575,7 +577,8 @@ namespace BirdGame
                     collider.size = spriteRenderer.sprite.bounds.size;
 
                     // 添加拖拽组件
-                    decoration.AddComponent<DecorationDrag>();
+                    if (decorationItem.decorationType == DecorationType.Draggable)
+                        decoration.AddComponent<DecorationDrag>();
 
                     // 添加点击检测组件
                     DecorationClickHandler clickHandler = decoration.AddComponent<DecorationClickHandler>();
