@@ -10,6 +10,7 @@ namespace BirdGame
         public LocalizationText text;
 
         private RectTransform thisRect;
+        private bool isActive = true;
 
         private void Start()
         {
@@ -25,10 +26,18 @@ namespace BirdGame
             text.SetKey(key);
             SetPos();
         }
+        
+        public void SetActive(bool active)
+        {
+            isActive = active;
+        }
 
         private void Update()
         {
-            SetPos();
+            if (isActive)
+            {
+                SetPos();
+            }
         }
         
         private void SetPos()

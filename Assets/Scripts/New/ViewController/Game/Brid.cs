@@ -184,7 +184,7 @@ namespace BirdGame
             if (continuousPetStartTime > 0)
             {
                 float continuousPetDuration = Time.time - continuousPetStartTime;
-                if (continuousPetDuration >= 0.3f)
+                if (continuousPetDuration >= 1f)
                 {
                     // 设置跟随鼠标标志
                     shouldFollowMouse = true;

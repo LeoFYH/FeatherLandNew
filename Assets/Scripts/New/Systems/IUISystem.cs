@@ -277,6 +277,13 @@ namespace BirdGame
         {
             if (eggInfo != null)
             {
+                // 立即禁用Update跟随，防止继续跟随鼠标
+                var popup = eggInfo.GetComponent<EggInfo>();
+                if (popup != null)
+                {
+                    popup.SetActive(false);
+                }
+                
                 GameObject.Destroy(eggInfo);
                 eggInfo = null;
             }
@@ -297,6 +304,13 @@ namespace BirdGame
         {
             if (decorationInfo != null)
             {
+                // 立即禁用Update跟随，防止继续跟随鼠标
+                var popup = decorationInfo.GetComponent<DecorationInfoPopup>();
+                if (popup != null)
+                {
+                    popup.SetActive(false);
+                }
+                
                 GameObject.Destroy(decorationInfo);
                 decorationInfo = null;
             }

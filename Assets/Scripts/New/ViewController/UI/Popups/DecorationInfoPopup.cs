@@ -11,12 +11,18 @@ namespace BirdGame
         public Image icon;
 
         private RectTransform thisRect;
+        private bool isActive = true;
         
         public void Init(int index)
         {
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             var config = this.GetModel<IConfigModel>().ShopConfig;
             icon.sprite = config.sceneDecorations[mapIndex].decorations[index].preview;
+        }
+        
+        public void SetActive(bool active)
+        {
+            isActive = active;
         }
 
         private void Start()
@@ -27,7 +33,10 @@ namespace BirdGame
 
         private void Update()
         {
-            SetPos();
+            if (isActive)
+            {
+                SetPos();
+            }
         }
 
         private void SetPos()
