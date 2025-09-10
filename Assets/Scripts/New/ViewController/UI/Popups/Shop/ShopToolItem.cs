@@ -52,7 +52,17 @@ namespace BirdGame
                 icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.3f;
             itemName.SetKey(item.name);
             selectName.text = item.selections[gameModel.SelectedToolDic[index].Value].selectionName;
-            description.SetKey(item.selections[gameModel.SelectedToolDic[index].Value].description);
+            
+            // 优先使用descriptionKey，如果没有设置则使用description
+            var selectedTool = item.selections[gameModel.SelectedToolDic[index].Value];
+            if (!string.IsNullOrEmpty(selectedTool.descriptionKey))
+            {
+                description.SetKey(selectedTool.descriptionKey);
+            }
+            else
+            {
+                description.SetKey(selectedTool.description);
+            }
             if (item.selections[0].type == ToolType.Food)
             {
                 bool isInitialPurchased = saveModel.AccountData.tools[itemIndex].unlockedList
@@ -134,11 +144,20 @@ namespace BirdGame
                     icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.3f;
                 selectName.text = item.selections[v].selectionName;
                 selectName.text = item.selections[v].selectionName;
-                description.SetKey(item.selections[v].description);
+                
+                // 优先使用descriptionKey，如果没有设置则使用description
+                var selectedTool = item.selections[v];
+                if (!string.IsNullOrEmpty(selectedTool.descriptionKey))
+                {
+                    description.SetKey(selectedTool.descriptionKey);
+                }
+                else
+                {
+                    description.SetKey(selectedTool.description);
+                }
                 if (item.selections[0].type == ToolType.Food)
                 {
                     // 检查食物状态，决定显示内容
-                    var selectedTool = item.selections[v];
                     bool isPurchased = saveModel.AccountData.tools[index].unlockedList.Contains(v);
                     bool isEquipped = saveModel.AccountData.tools[index].equipedId == v;
 
@@ -160,7 +179,6 @@ namespace BirdGame
                 }
                 else if(item.selections[0].type == ToolType.BirdMaxCount)
                 {
-                    var selectedTool = item.selections[v];
                     bool isPurchased = saveModel.AccountData.tools[index].unlockedList.Contains(v);
                     if (isPurchased)
                     {

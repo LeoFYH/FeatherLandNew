@@ -20,6 +20,12 @@ namespace BirdGame
         public Image barImage;
         public Sprite eggBar;
         public Sprite normalBar;
+        
+        // 标签文本组件
+        public LocalizationText eggToggleText;
+        public LocalizationText decorationToggleText;
+        public LocalizationText toolsToggleText;
+        public LocalizationText saleBirdToggleText;
 
         [Header("点击外部关闭设置")]
         public Transform contentTransform;  // 主要内容区域，用于检测点击区域
@@ -221,6 +227,16 @@ namespace BirdGame
 
         private void Start()
         {
+            // 设置标签文本的本地化key
+            if (eggToggleText != null)
+                eggToggleText.SetKey("Egg");
+            if (decorationToggleText != null)
+                decorationToggleText.SetKey("Decoration");
+            if (toolsToggleText != null)
+                toolsToggleText.SetKey("Tools");
+            if (saleBirdToggleText != null)
+                saleBirdToggleText.SetKey("SaleBird");
+            
             // buyButton.onClick.AddListener(() =>
             // {
             //     if (this.GetModel<IBirdModel>().UnopenEggs > 0)
