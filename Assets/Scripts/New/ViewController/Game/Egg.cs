@@ -17,11 +17,35 @@ namespace BirdGame
         public GameObject effect2;
         private int currentFrame = 0; // 当前显示的帧索引
         private Tweener anim;
+        private Tweener floatAnim; // 浮动动画
         private int clickCount = 0;
 
         public void SetEggIndex(int index)
         {
             EggItemIndex = index;
+        }
+
+        /// <summary>
+        /// 开始缓慢的上下浮动动画
+        /// </summary>
+        private void StartFloatingAnimation()
+        {
+            // 停止之前的浮动动画
+            floatAnim?.Kill();
+            
+            // 为每个蛋创建轻微不同的动画参数
+            float baseDuration = 2f;
+            float durationVariation = Random.Range(-0.3f, 0.3f); // 轻微变化动画时长
+            float finalDuration = baseDuration + durationVariation;
+            
+            // 根据蛋的索引创建轻微的相位差
+            float phaseOffset = EggItemIndex * 0.3f; // 每个蛋偏移0.3秒的相位
+            
+            // 创建缓慢的上下浮动动画
+            floatAnim = transform.DOMoveY(transform.position.y + 0.3f, finalDuration)
+                .SetEase(Ease.InOutSine)
+                .SetLoops(-1, LoopType.Yoyo) // 无限循环，来回摆动
+                .SetDelay(phaseOffset); // 设置轻微的延迟
         }
 
         private void Start()
@@ -32,6 +56,9 @@ namespace BirdGame
             }
             effect1.SetActive(true);
             effect2.SetActive(false);
+
+            // 开始缓慢的上下浮动动画
+            StartFloatingAnimation();
 
             this.RegisterEvent<HideEggEvent>(evt =>
             {
@@ -68,10 +95,24 @@ namespace BirdGame
         {
             effect2.SetActive(true);
             effect1.SetActive(false);
+            
+            // 停止effect1的粒子特效
+            if (effect1 != null)
+            {
+                var particleSystem1 = effect1.GetComponent<ParticleSystem>();
+                if (particleSystem1 != null)
+                {
+                    particleSystem1.Stop();
+                }
+            }
+            
             while (currentFrame < eggSprites.Length)
             {
                 PlayNextFrame();
-                yield return new WaitForSeconds(0.1f);
+                
+                // 从第7帧开始播放速度变慢
+                float frameDelay = currentFrame >= 7 ? 0.1f : 0.07f;
+                yield return new WaitForSeconds(frameDelay);
             }
             
             SpawnBird();
@@ -89,6 +130,26 @@ namespace BirdGame
         private void OnDestroy()
         {
             anim?.Kill();
+            floatAnim?.Kill(); // 停止浮动动画
+            
+            // 停止所有粒子特效
+            if (effect1 != null)
+            {
+                var particleSystem1 = effect1.GetComponent<ParticleSystem>();
+                if (particleSystem1 != null)
+                {
+                    particleSystem1.Stop();
+                }
+            }
+            
+            if (effect2 != null)
+            {
+                var particleSystem2 = effect2.GetComponent<ParticleSystem>();
+                if (particleSystem2 != null)
+                {
+                    particleSystem2.Stop();
+                }
+            }
         }
 
         private void SpawnBird()
