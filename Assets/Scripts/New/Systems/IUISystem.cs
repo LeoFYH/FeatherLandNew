@@ -124,8 +124,15 @@ namespace BirdGame
             currentPanel = panel;
             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>(panel.ToString(), obj =>
             {
-                currentPanelObject = GameObject.Instantiate(obj, panelLayer).GetComponent<UIBase>();
-                currentPanelObject.OnShowPanel();
+                if (obj != null)
+                {
+                    currentPanelObject = GameObject.Instantiate(obj, panelLayer).GetComponent<UIBase>();
+                    currentPanelObject.OnShowPanel();
+                }
+                else
+                {
+                    Debug.LogError($"Failed to load panel asset: {panel}");
+                }
             });
         }
 
@@ -148,10 +155,17 @@ namespace BirdGame
 
             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>(popup.ToString(), obj =>
             {
-                var pop = GameObject.Instantiate(obj, popupLayer).GetComponent<UIBase>();
-                pop.OnShowPanel();
-                popupDic.Add(popup, pop);
-                onComplete?.Invoke();
+                if (obj != null)
+                {
+                    var pop = GameObject.Instantiate(obj, popupLayer).GetComponent<UIBase>();
+                    pop.OnShowPanel();
+                    popupDic.Add(popup, pop);
+                    onComplete?.Invoke();
+                }
+                else
+                {
+                    Debug.LogError($"Failed to load popup asset: {popup}");
+                }
             });
         }
 
@@ -249,8 +263,15 @@ namespace BirdGame
                 GameObject.Destroy(mapInfo);
             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("MapInfo", obj =>
             {
-                mapInfo = GameObject.Instantiate(obj, popupLayer);
-                mapInfo.GetComponent<MapInfo>().Init(mapIndex);
+                if (obj != null)
+                {
+                    mapInfo = GameObject.Instantiate(obj, popupLayer);
+                    mapInfo.GetComponent<MapInfo>().Init(mapIndex);
+                }
+                else
+                {
+                    Debug.LogError("Failed to load MapInfo asset");
+                }
             });
         }
 
@@ -269,7 +290,14 @@ namespace BirdGame
                 GameObject.Destroy(eggInfo);
             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("EggInfo", obj =>
             {
-                eggInfo = GameObject.Instantiate(obj, popupLayer);
+                if (obj != null)
+                {
+                    eggInfo = GameObject.Instantiate(obj, popupLayer);
+                }
+                else
+                {
+                    Debug.LogError("Failed to load EggInfo asset");
+                }
             });
         }
 
@@ -295,8 +323,15 @@ namespace BirdGame
                 GameObject.Destroy(decorationInfo);
             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("DecorationInfo", obj =>
             {
-                decorationInfo = GameObject.Instantiate(obj, popupLayer);
-                decorationInfo.GetComponent<DecorationInfoPopup>().Init(index);
+                if (obj != null)
+                {
+                    decorationInfo = GameObject.Instantiate(obj, popupLayer);
+                    decorationInfo.GetComponent<DecorationInfoPopup>().Init(index);
+                }
+                else
+                {
+                    Debug.LogError("Failed to load DecorationInfo asset");
+                }
             });
         }
 
