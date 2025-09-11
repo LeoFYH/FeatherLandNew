@@ -249,6 +249,8 @@ namespace BirdGame
                 GameObject.Destroy(mapInfo);
             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("MapInfo", obj =>
             {
+                if(obj == null)
+                    return;
                 mapInfo = GameObject.Instantiate(obj, popupLayer);
                 mapInfo.GetComponent<MapInfo>().Init(mapIndex);
             });
