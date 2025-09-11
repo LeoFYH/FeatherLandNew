@@ -252,6 +252,8 @@ namespace BirdGame
     {
         [LabelText("名称"), VerticalGroup("Tool")]
         public string name;
+        [LabelText("是否显示"), VerticalGroup("Tool"), InfoBox("取消勾选后，该工具不会出现在游戏商店中")]
+        public bool isVisible = true;
         [TableList(ShowIndexLabels = true), VerticalGroup("Tool")]
         public ToolSelection[] selections;
     }
@@ -265,14 +267,49 @@ namespace BirdGame
         public ToolType type;
         [LabelText("名称"), HorizontalGroup("Content"), VerticalGroup("Content/Info")]
         public string selectionName;
-        [LabelText("描述"), HorizontalGroup("Content"), VerticalGroup("Content/Info")]
+        [LabelText("描述"), HorizontalGroup("Content"), VerticalGroup("Content/Info"), TextArea]
         public string description;
+        [LabelText("描述的key"), HorizontalGroup("Content"), VerticalGroup("Content/Info"), TextArea]
+        public string descriptionKey;
+        [LabelText("添加描述key到本地化配置"), HorizontalGroup("Content"), VerticalGroup("Content/Info"), Button("添加Key"), GUIColor("buttonColor")]
+        private void OnAddDescriptionKey()
+        {
+#if UNITY_EDITOR
+            if (string.IsNullOrEmpty(descriptionKey))
+            {
+                UnityEditor.EditorUtility.DisplayDialog("警告", "描述key不能为空", "ok");
+                return;
+            }
+
+            var config = UnityEditor.AssetDatabase.LoadAssetAtPath<LocalizationConfig>("Assets/Prefabs/Config/LocalizationConfig.asset");
+            if (config == null)
+            {
+                UnityEditor.EditorUtility.DisplayDialog("错误", "未找到本地化配置文件", "ok");
+                return;
+            }
+            
+            foreach (var language in config.languageDic)
+            {
+                if (language.Value.words.ContainsKey(descriptionKey))
+                {
+                    UnityEditor.EditorUtility.DisplayDialog("警告", $"本地化配置中已经存在key: {descriptionKey}", "ok");
+                    return;
+                }
+                language.Value.words.Add(descriptionKey, new Pattern());
+            }
+            UnityEditor.EditorUtility.SetDirty(config);
+            UnityEditor.AssetDatabase.SaveAssets();
+            UnityEditor.EditorUtility.DisplayDialog("提示", $"key[{descriptionKey}]已添加,请在本地化配置中配置语言翻译！", "ok");
+#endif
+        }
         [LabelText("价格"), HorizontalGroup("Content"), VerticalGroup("Content/Info")]
         public int price;
         [LabelText("食物大小"), HorizontalGroup("Content"), VerticalGroup("Content/Info"), Range(0.01f, 5f), ShowIf("@type==ToolType.Food")]
         public float foodScale = 1f;
         [LabelText("增加鸟的容量大小"), HorizontalGroup("Content"), VerticalGroup("Content/Info"), ShowIf("@type==ToolType.BirdMaxCount")]
         public int addCount;
+        
+        private Color32 buttonColor = Color.green;
     }
 
     public enum ToolType

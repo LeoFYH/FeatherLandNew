@@ -61,7 +61,9 @@ namespace BirdGame
             }
             else
             {
-                Debug.LogError("资源加载失败!");
+                Debug.LogError($"资源加载失败: {assetName}");
+                onProgress?.Invoke(1f);
+                onCompleted?.Invoke(default(T)); // 传递默认值，让UI层处理
             }
         }
 
