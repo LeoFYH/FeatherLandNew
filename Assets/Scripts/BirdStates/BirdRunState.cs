@@ -94,7 +94,7 @@ namespace BirdGame
 
         public override void OnUpdate()
         {
-            if (_brid.anim.GetCurrentAnimatorStateInfo(0).IsName("Stroke"))
+            if (_brid.anim.GetCurrentAnimatorStateInfo(0).IsName("Stroke") && !isFollowingMouse)
             {
                 currMachine.ChangeState<BirdIdleState>();
                 return;
