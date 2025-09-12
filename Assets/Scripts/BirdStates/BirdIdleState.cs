@@ -94,7 +94,12 @@ namespace BirdGame
             {
                 return;
             }
-            
+
+            if (_brid.anim.GetCurrentAnimatorStateInfo(0).IsName("Stroke"))
+            {
+                return;
+            }
+
             // 安全检查：确保birdIndex在有效范围内
             if (_brid.birdIndex < 0 || _brid.birdIndex >= this.GetModel<IBirdModel>().BirdList.Count)
             {
