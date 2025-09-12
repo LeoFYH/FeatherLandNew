@@ -69,6 +69,12 @@ namespace BirdGame
 
         public override void OnUpdate()
         {
+            if (_brid.anim.GetCurrentAnimatorStateInfo(0).IsName("Stroke"))
+            {
+                currMachine.ChangeState<BirdIdleState>();
+                return;
+            }
+            
             if (_brid.currFood == null)
             {
                 DONext();

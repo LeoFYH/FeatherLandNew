@@ -30,12 +30,13 @@ namespace BirdGame
             _brid.isBeingPetted = false;
 
             coroutine = _brid.StartCoroutine(WaitForNext(time));
-            if(!_brid.isSmall)
+            if (!_brid.isSmall)
             {
-                DOTween.Sequence().AppendCallback(() => { 
-                isLicking = true; // 标记开始舔毛
-                _brid.anim.SetTrigger("Licking"); 
-            }).SetDelay(lickingTime);
+                DOTween.Sequence().AppendCallback(() =>
+                {
+                    isLicking = true; // 标记开始舔毛
+                    _brid.anim.SetTrigger("Licking");
+                }).SetDelay(lickingTime);
             }
         }
 

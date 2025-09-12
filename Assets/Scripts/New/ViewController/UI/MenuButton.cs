@@ -14,8 +14,8 @@ namespace BirdGame
             // 判断如果是地图按钮，显示开发提示
             if (popup == UIPopup.MapPopup)
             {
-                //ShowDevelopingTip();
-                this.GetSystem<IUISystem>().ShowPopup(popup);
+                ShowDevelopingTip();
+                //this.GetSystem<IUISystem>().ShowPopup(popup);
             }
             else
             {
