@@ -41,13 +41,52 @@ namespace BirdGame
         {
             var config = this.GetModel<IConfigModel>().LocalizationConfig;
             var currentLanguage = this.GetModel<ISaveModel>().SettingData.gameLanguage;
+            
+            // 检查配置是否已加载
+            if (config == null)
+            {
+                Debug.LogError("LocalizationConfig 尚未加载完成！返回key: " + key);
+                return key;
+            }
+            
+            // 检查语言字典是否为空
+            if (config.languageDic == null || config.languageDic.Count == 0)
+            {
+                Debug.LogError("LocalizationConfig.languageDic 为空！返回key: " + key);
+                return key;
+            }
+            
+            // 检查当前语言是否在配置中存在
+            if (!config.languageDic.ContainsKey(currentLanguage))
+            {
+                Debug.LogWarning($"语言 {currentLanguage} 不在本地化配置中，尝试回退到英文");
+                currentLanguage = SystemLanguage.English;
+                
+                // 如果英文也不存在，返回key本身
+                if (!config.languageDic.ContainsKey(currentLanguage))
+                {
+                    Debug.LogError($"英文配置也不存在！返回key: {key}");
+                    return key;
+                }
+            }
+            
+            // 检查key是否存在
             if (!config.languageDic[currentLanguage].words.ContainsKey(key))
             {
                 Debug.LogWarning($"不存在key[{key}]对应的翻译，请在本地化配置中增加！");
-                return string.Empty;
+                return key; // 返回key本身而不是空字符串
             }
 
-            return config.languageDic[currentLanguage].words[key].text;
+            string text = config.languageDic[currentLanguage].words[key].text;
+            
+            // 如果翻译文本为空，返回key本身
+            if (string.IsNullOrEmpty(text))
+            {
+                Debug.LogWarning($"key[{key}]的翻译文本为空，返回key本身");
+                return key;
+            }
+            
+            return text;
         }
 
         public Sprite GetSprite(string key)

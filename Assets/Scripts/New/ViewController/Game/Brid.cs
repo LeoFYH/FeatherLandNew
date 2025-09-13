@@ -289,8 +289,7 @@ namespace BirdGame
 
                             this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Stroke);
                             this.GetSystem<IAudioSystem>().PlayBirdEffect(index);
-                            if(!anim.GetCurrentAnimatorStateInfo(0).IsName("Stroke"))
-                                anim.SetTrigger("Stroke");
+                            anim.SetTrigger("Stroke");
                             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("Heart", obj =>
                             {
                                 GameObject.Instantiate(obj, heartPos);

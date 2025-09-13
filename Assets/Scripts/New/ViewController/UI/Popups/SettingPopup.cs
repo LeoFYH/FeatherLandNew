@@ -469,11 +469,14 @@ namespace BirdGame
             }
 
             var currentLanguage = this.GetModel<ISaveModel>().SettingData.gameLanguage;
+            Debug.Log($"存档中的语言设置: {currentLanguage}");
+            Debug.Log($"本地化配置支持的语言: {string.Join(", ", languages)}");
+            
             if (!languages.Contains(currentLanguage))
             {
                 languageDropdown.value = 0;
                 this.GetSystem<ILocalizationSystem>().ChangeLanguage(languages[0]);
-                Debug.Log("存档中选中的语言不在本地化配置列表！默认英文设置。");
+                Debug.Log($"存档中选中的语言 {currentLanguage} 不在本地化配置列表中！强制设置为 {languages[0]}");
                 return;
             }
             int index = languages.IndexOf(currentLanguage);
