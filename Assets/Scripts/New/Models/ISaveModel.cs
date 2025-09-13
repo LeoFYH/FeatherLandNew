@@ -83,42 +83,9 @@ namespace BirdGame
         {
             screenMode = 2;
             Debug.Log($"当前Windows系统语言: {Application.systemLanguage}");
-            gameLanguage = GetSupportedLanguage(Application.systemLanguage);
-            Debug.Log($"最终设置的游戏语言: {gameLanguage}");
-        }
-        
-        /// <summary>
-        /// 获取支持的语言，如果不支持则回退到英文
-        /// </summary>
-        /// <param name="systemLanguage">系统语言</param>
-        /// <returns>支持的语言</returns>
-        private SystemLanguage GetSupportedLanguage(SystemLanguage systemLanguage)
-        {
-            // 支持的语言列表
-            SystemLanguage[] supportedLanguages = {
-                SystemLanguage.English,
-                SystemLanguage.Chinese,
-                SystemLanguage.ChineseSimplified,
-                SystemLanguage.ChineseTraditional,
-                SystemLanguage.Japanese,
-                SystemLanguage.Korean,
-                SystemLanguage.French,
-                SystemLanguage.German,
-                SystemLanguage.Spanish
-            };
-            
-            // 检查系统语言是否在支持列表中
-            foreach (var supportedLang in supportedLanguages)
-            {
-                if (systemLanguage == supportedLang)
-                {
-                    return systemLanguage;
-                }
-            }
-            
-            // 如果不支持，回退到英文
-            Debug.LogWarning($"系统语言 {systemLanguage} 不受支持，回退到英文");
-            return SystemLanguage.English;
+            // 强制使用英文，忽略系统语言
+            gameLanguage = SystemLanguage.English;
+            Debug.Log($"强制设置的游戏语言: {gameLanguage}");
         }
     }
 
