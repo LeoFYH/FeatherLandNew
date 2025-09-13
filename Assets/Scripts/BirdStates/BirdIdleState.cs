@@ -139,7 +139,15 @@ namespace BirdGame
                     }
                     else
                     {
-                        currMachine.ChangeState<BirdFlyHorizontalState>();
+                        if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyHorizontal)
+                        {
+                            currMachine.ChangeState<BirdRunState>();
+                        }
+                        else
+                        {
+                            currMachine.ChangeState<BirdFlyHorizontalState>();
+                        }
+                        //currMachine.ChangeState<BirdFlyHorizontalState>();
                     }
                 }
                 else
@@ -156,7 +164,14 @@ namespace BirdGame
                     }
                     else
                     {
-                        currMachine.ChangeState<BirdFlyHorizontalState>();
+                        if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyHorizontal)
+                        {
+                            currMachine.ChangeState<BirdFlyState>();
+                        }
+                        else
+                        {
+                            currMachine.ChangeState<BirdFlyHorizontalState>();
+                        }
                     }
                 }
             }
@@ -169,6 +184,14 @@ namespace BirdGame
                 }
                 else
                 {
+                    if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyHorizontal)
+                    {
+                        currMachine.ChangeState<BirdRunState>();
+                    }
+                    else
+                    {
+                        currMachine.ChangeState<BirdFlyHorizontalState>();
+                    }
                     currMachine.ChangeState<BirdFlyHorizontalState>();
                 }
             }

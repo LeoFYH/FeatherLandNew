@@ -228,7 +228,15 @@ namespace BirdGame
                 }
                 else
                 {
-                    currMachine.ChangeState<BirdFlyHorizontalState>();
+                    if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyHorizontal)
+                    {
+                        currMachine.ChangeState<BirdIdleState>();
+                    }
+                    else
+                    {
+                        currMachine.ChangeState<BirdFlyHorizontalState>();
+                    }
+                    //currMachine.ChangeState<BirdFlyHorizontalState>();
                 }
             }
             else
