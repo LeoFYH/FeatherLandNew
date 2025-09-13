@@ -82,7 +82,10 @@ namespace BirdGame
         public SettingData()
         {
             screenMode = 2;
-            gameLanguage = Application.systemLanguage;
+            Debug.Log($"当前Windows系统语言: {Application.systemLanguage}");
+            // 强制使用英文，忽略系统语言
+            gameLanguage = SystemLanguage.English;
+            Debug.Log($"强制设置的游戏语言: {gameLanguage}");
         }
     }
 
