@@ -110,8 +110,25 @@ namespace BirdGame
         
         protected override void OnInit()
         {
-            panelLayer = GameObject.Find("UIRoot/PanelLayer").transform;
-            popupLayer = GameObject.Find("UIRoot/PopupLayer").transform;
+            var panelLayerObj = GameObject.Find("UIRoot/PanelLayer");
+            if (panelLayerObj != null)
+            {
+                panelLayer = panelLayerObj.transform;
+            }
+            else
+            {
+                Debug.LogError("未找到UIRoot/PanelLayer，请检查场景设置");
+            }
+
+            var popupLayerObj = GameObject.Find("UIRoot/PopupLayer");
+            if (popupLayerObj != null)
+            {
+                popupLayer = popupLayerObj.transform;
+            }
+            else
+            {
+                Debug.LogError("未找到UIRoot/PopupLayer，请检查场景设置");
+            }
         }
 
         public void ShowPanel(UIPanel panel)
@@ -148,7 +165,25 @@ namespace BirdGame
 
             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>(popup.ToString(), obj =>
             {
+                if (obj == null)
+                {
+                    Debug.LogError($"无法加载弹窗预制体: {popup.ToString()}，请检查Addressables配置");
+                    return;
+                }
+
+                if (popupLayer == null)
+                {
+                    Debug.LogError("PopupLayer未找到，请检查场景中是否存在UIRoot/PopupLayer");
+                    return;
+                }
+
                 var pop = GameObject.Instantiate(obj, popupLayer).GetComponent<UIBase>();
+                if (pop == null)
+                {
+                    Debug.LogError($"预制体 {popup.ToString()} 缺少UIBase组件");
+                    return;
+                }
+
                 pop.OnShowPanel();
                 popupDic.Add(popup, pop);
                 onComplete?.Invoke();
