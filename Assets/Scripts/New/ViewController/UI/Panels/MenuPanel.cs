@@ -49,44 +49,129 @@ namespace BirdGame
 
         private void Start()
         {
+            Debug.Log("MenuPanel Start方法开始执行");
+            Debug.Log($"MenuPanel GameObject名称: {gameObject.name}");
+            Debug.Log($"MenuPanel 激活状态: {gameObject.activeInHierarchy}");
+            
             var uiSystem = this.GetSystem<IUISystem>();
-            toDoButton.onClick.AddListener(() =>
+            if (uiSystem == null)
             {
-                uiSystem.ShowPopup(UIPopup.NotePopup);
-            });
+                Debug.LogError("无法获取IUISystem，请检查系统初始化");
+                return;
+            }
+            Debug.Log("IUISystem获取成功");
             
-            radioButton.onClick.AddListener(() =>
+            if (toDoButton != null)
             {
-                uiSystem.ShowPopup(UIPopup.RadioPopup);
-            });
+                Debug.Log($"绑定toDoButton事件 - 按钮名称: {toDoButton.name}, 激活状态: {toDoButton.gameObject.activeInHierarchy}");
+                toDoButton.onClick.AddListener(() =>
+                {
+                    Debug.Log("toDoButton被点击");
+                    uiSystem.ShowPopup(UIPopup.NotePopup);
+                });
+            }
+            else
+            {
+                Debug.LogWarning("toDoButton未分配");
+            }
             
-            settingButton.onClick.AddListener(() =>
+            if (radioButton != null)
             {
-                uiSystem.ShowPopup(UIPopup.SettingPopup);
-            });
+                Debug.Log("绑定radioButton事件");
+                radioButton.onClick.AddListener(() =>
+                {
+                    Debug.Log("radioButton被点击");
+                    uiSystem.ShowPopup(UIPopup.RadioPopup);
+                });
+            }
+            else
+            {
+                Debug.LogWarning("radioButton未分配");
+            }
             
-            shopButton.onClick.AddListener(() =>
+            if (settingButton != null)
             {
-                uiSystem.ShowPopup(UIPopup.ShopPopup);
-            });
+                Debug.Log($"绑定settingButton事件 - 按钮名称: {settingButton.name}, 激活状态: {settingButton.gameObject.activeInHierarchy}");
+                settingButton.onClick.AddListener(() =>
+                {
+                    Debug.Log("设置按钮被点击，尝试打开设置弹窗");
+                    uiSystem.ShowPopup(UIPopup.SettingPopup);
+                });
+            }
+            else
+            {
+                Debug.LogError("设置按钮未分配，请检查MenuPanel预制体");
+            }
             
-            tomatoButton.onClick.AddListener(() =>
+            if (shopButton != null)
             {
-                uiSystem.ShowPopup(UIPopup.ClockPopup);
-            });
+                Debug.Log("绑定shopButton事件");
+                shopButton.onClick.AddListener(() =>
+                {
+                    Debug.Log("shopButton被点击");
+                    uiSystem.ShowPopup(UIPopup.ShopPopup);
+                });
+            }
+            else
+            {
+                Debug.LogWarning("shopButton未分配");
+            }
             
-            illustratedButton.onClick.AddListener(() =>
+            if (tomatoButton != null)
             {
-                uiSystem.ShowPopup(UIPopup.IllustratedPopup);
-            });
-            illustratedButton1.onClick.AddListener(() =>
+                Debug.Log("绑定tomatoButton事件");
+                tomatoButton.onClick.AddListener(() =>
+                {
+                    Debug.Log("tomatoButton被点击");
+                    uiSystem.ShowPopup(UIPopup.ClockPopup);
+                });
+            }
+            else
             {
-                uiSystem.ShowPopup(UIPopup.IllustratedPopup);
-            });
-            mapButton.onClick.AddListener(() =>
+                Debug.LogWarning("tomatoButton未分配");
+            }
+            
+            if (illustratedButton != null)
             {
-                
-            });
+                Debug.Log("绑定illustratedButton事件");
+                illustratedButton.onClick.AddListener(() =>
+                {
+                    Debug.Log("illustratedButton被点击");
+                    uiSystem.ShowPopup(UIPopup.IllustratedPopup);
+                });
+            }
+            else
+            {
+                Debug.LogWarning("illustratedButton未分配");
+            }
+            
+            if (illustratedButton1 != null)
+            {
+                Debug.Log("绑定illustratedButton1事件");
+                illustratedButton1.onClick.AddListener(() =>
+                {
+                    Debug.Log("illustratedButton1被点击");
+                    uiSystem.ShowPopup(UIPopup.IllustratedPopup);
+                });
+            }
+            else
+            {
+                Debug.LogWarning("illustratedButton1未分配");
+            }
+            
+            if (mapButton != null)
+            {
+                Debug.Log("绑定mapButton事件");
+                mapButton.onClick.AddListener(() =>
+                {
+                    Debug.Log("mapButton被点击");
+                    
+                });
+            }
+            else
+            {
+                Debug.LogWarning("mapButton未分配");
+            }
             
             // 外部链接按钮点击事件
             if (externalLinkButton != null)

@@ -43,6 +43,11 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
     [ShowIf("useRectTransform", false)]
     public float detectionRange = 1f;  // 检测范围
     
+    [LabelText("自动调整检测范围")]
+    [Tooltip("根据对象大小自动调整检测范围")]
+    [ShowIf("useRectTransform", false)]
+    public bool autoAdjustDetectionRange = true;  // 自动调整检测范围
+    
     [LabelText("显示调试信息")]
     [ShowIf("useRectTransform", false)]
     public bool showDebugInfo = false;  // 是否显示调试信息
@@ -329,16 +334,20 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
             
             if (collider2D != null)
             {
-                // 2D碰撞器检测 - 使用射线检测
-                RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, Mathf.Infinity);
+                // 2D碰撞器检测 - 使用正确的2D射线检测
+                Vector2 rayOrigin2D = new Vector2(ray.origin.x, ray.origin.y);
+                Vector2 rayDirection2D = new Vector2(ray.direction.x, ray.direction.y);
+                RaycastHit2D hit = Physics2D.Raycast(rayOrigin2D, rayDirection2D, Mathf.Infinity);
                 if (hit.collider != null && hit.collider == collider2D)
                 {
                     return true;
                 }
                 
                 // 备用方法：直接检测鼠标位置是否在碰撞器内
-                Vector3 worldPosition = mainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, -mainCamera.transform.position.z));
-                return collider2D.OverlapPoint(worldPosition);
+                float distanceToObject = Vector3.Distance(mainCamera.transform.position, buttonTransform.position);
+                Vector3 worldPosition = mainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, distanceToObject));
+                Vector2 worldPosition2D = new Vector2(worldPosition.x, worldPosition.y);
+                return collider2D.OverlapPoint(worldPosition2D);
             }
             else if (collider3D != null)
             {
@@ -352,15 +361,30 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
                 }
                 
                 // 备用方法：检测鼠标位置是否在碰撞器边界内
-                Vector3 worldPosition = mainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, Vector3.Distance(mainCamera.transform.position, buttonTransform.position)));
+                float distanceToObject = Vector3.Distance(mainCamera.transform.position, buttonTransform.position);
+                Vector3 worldPosition = mainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, distanceToObject));
                 return collider3D.bounds.Contains(worldPosition);
             }
             else
             {
-                // 如果没有碰撞器，使用简单的距离检测
-                Vector3 worldPosition = mainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, Vector3.Distance(mainCamera.transform.position, buttonTransform.position)));
-                float distance = Vector2.Distance(worldPosition, buttonTransform.position);
-                return distance < detectionRange; // 使用可配置的检测范围
+                // 如果没有碰撞器，使用改进的距离检测
+                float distanceToObject = Vector3.Distance(mainCamera.transform.position, buttonTransform.position);
+                Vector3 worldPosition = mainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, distanceToObject));
+                float distance = Vector2.Distance(new Vector2(worldPosition.x, worldPosition.y), new Vector2(buttonTransform.position.x, buttonTransform.position.y));
+                
+                // 计算智能检测范围
+                float smartDetectionRange = detectionRange;
+                if (autoAdjustDetectionRange)
+                {
+                    // 根据对象大小自动调整检测范围
+                    float objectScale = Mathf.Max(buttonTransform.localScale.x, buttonTransform.localScale.y);
+                    smartDetectionRange = Mathf.Max(detectionRange, objectScale * 0.5f);
+                }
+                
+                // 确保最小检测范围
+                smartDetectionRange = Mathf.Max(smartDetectionRange, 0.5f);
+                
+                return distance < smartDetectionRange;
             }
         }
         
@@ -592,6 +616,22 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
     public float GetDetectionRange()
     {
         return detectionRange;
+    }
+    
+    /// <summary>
+    /// 设置是否自动调整检测范围
+    /// </summary>
+    public void SetAutoAdjustDetectionRange(bool autoAdjust)
+    {
+        autoAdjustDetectionRange = autoAdjust;
+    }
+    
+    /// <summary>
+    /// 获取是否自动调整检测范围
+    /// </summary>
+    public bool GetAutoAdjustDetectionRange()
+    {
+        return autoAdjustDetectionRange;
     }
     
 #if UNITY_EDITOR
