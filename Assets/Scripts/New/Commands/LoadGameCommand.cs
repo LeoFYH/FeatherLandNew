@@ -105,6 +105,8 @@ namespace BirdGame
 
         private void OnAllLoaded()
         {
+            this.SendCommand<FixLanguageCommand>();
+            
             // 根据存档生成鸟
             this.GetSystem<IBirdSystem>().GenerateBirdsFromSave();
                 

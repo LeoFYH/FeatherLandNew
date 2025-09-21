@@ -17,14 +17,8 @@ namespace BirdGame
             // 支持的语言列表
             SystemLanguage[] supportedLanguages = {
                 SystemLanguage.English,
-                SystemLanguage.Chinese,
                 SystemLanguage.ChineseSimplified,
                 SystemLanguage.ChineseTraditional,
-                SystemLanguage.Japanese,
-                SystemLanguage.Korean,
-                SystemLanguage.French,
-                SystemLanguage.German,
-                SystemLanguage.Spanish
             };
             
             // 检查当前语言是否支持
