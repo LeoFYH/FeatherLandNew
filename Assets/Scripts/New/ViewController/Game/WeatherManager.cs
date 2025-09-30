@@ -33,8 +33,7 @@ namespace BirdGame
 
         private void Start()
         {
-            if (uiGroup == null)
-                uiGroup = GameObject.Find("UIRoot").GetComponent<CanvasGroup>();
+            uiGroup = this.GetModel<IGameModel>().UiGroup;
             this.RegisterEvent<SwitchWeatherEvent>(evt =>
             {
                 int index = evt.index;

@@ -105,6 +105,8 @@ namespace BirdGame
 
         private void OnAllLoaded()
         {
+            this.GetModel<IGameModel>().IsGameLoaded = true;
+            
             this.SendCommand<FixLanguageCommand>();
             
             // 根据存档生成鸟

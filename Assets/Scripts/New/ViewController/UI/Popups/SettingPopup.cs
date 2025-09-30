@@ -386,9 +386,6 @@ namespace BirdGame
             
             screenDropdown.onValueChanged.AddListener(id =>
             {
-                // 保存设置
-                this.GetModel<ISaveModel>().SettingData.screenMode = id;
-                
                 if (id == 0)
                 {
                     this.GetUtility<IFullScreenUtility>().WindowedMode();
@@ -404,6 +401,11 @@ namespace BirdGame
                     this.GetUtility<IFullScreenUtility>().FullscreenMode();
                     Debug.Log("FullscreenMode");
                 }
+                else if (id == 3)
+                {
+                    this.SendCommand<EnterDesktopCommand>();
+                    return;
+                }
 
                 this.GetModel<ISaveModel>().SettingData.screenMode = id;
             });
@@ -417,6 +419,7 @@ namespace BirdGame
                 screenDropdown.options[0].text = this.GetSystem<ILocalizationSystem>().GetString("Windowed");
                 screenDropdown.options[1].text = this.GetSystem<ILocalizationSystem>().GetString("Wallpaper");
                 screenDropdown.options[2].text = this.GetSystem<ILocalizationSystem>().GetString("Full Screen");
+                screenDropdown.options[3].text = this.GetSystem<ILocalizationSystem>().GetString("Desktop");
                 screenDropdown.RefreshShownValue();
                 int count = languages.Count;
                 for (int i = 0; i < count; i++)
@@ -446,6 +449,12 @@ namespace BirdGame
                 image = itemSprite
             });
             value = this.GetSystem<ILocalizationSystem>().GetString("Full Screen");
+            screenDropdown.options.Add(new TMPro.TMP_Dropdown.OptionData()
+            {
+                text = value,
+                image = itemSprite
+            });
+            value = this.GetSystem<ILocalizationSystem>().GetString("Desktop");
             screenDropdown.options.Add(new TMPro.TMP_Dropdown.OptionData()
             {
                 text = value,

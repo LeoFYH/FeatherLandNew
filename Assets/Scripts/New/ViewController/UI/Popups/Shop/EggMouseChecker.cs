@@ -14,5 +14,10 @@ namespace BirdGame
         {
             this.GetSystem<IUISystem>().HideEggInfo();
         }
+        
+        private void OnDisable()
+        {
+            this.GetSystem<IUISystem>().HideEggInfo();
+        }
     }
 }

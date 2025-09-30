@@ -20,6 +20,11 @@ namespace BirdGame
 
         private void Start()
         {
+            this.RegisterEvent<ClearDecorationsEvent>(evt =>
+            {
+                Destroy(gameObject);
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            
             this.RegisterEvent<SwitchWeatherEvent>(evt =>
             {
                 if (sr == null)

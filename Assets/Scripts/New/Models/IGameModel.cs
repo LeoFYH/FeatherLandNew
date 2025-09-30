@@ -15,6 +15,8 @@ namespace BirdGame
         /// 是否有新的图鉴更新
         /// </summary>
         BindableProperty<bool> HasNewBirdIllustrated { get; }
+        bool IsGameLoaded { get; set; }
+        CanvasGroup UiGroup { get; set; }
     }
 
     public class GameModel : AbstractModel, IGameModel
@@ -35,6 +37,8 @@ namespace BirdGame
         public Coroutine StopWatchCoroutine { get; set; }
         public int CurrentSelectedBirdIndex { get; set; }
         public BindableProperty<bool> HasNewBirdIllustrated { get; } = new BindableProperty<bool>();
+        public bool IsGameLoaded { get; set; }
+        public CanvasGroup UiGroup { get; set; }
         public int EggInfoIndex { get; set; }
     }
 }

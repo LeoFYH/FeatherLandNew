@@ -16,6 +16,7 @@ namespace BirdGame
             this.RegisterModel<IGameModel>(new GameModel());
             this.RegisterModel<IClockModel>(new ClockModel());
             this.RegisterModel<ILoadingModel>(new LoadingModel());
+            this.RegisterModel<IDesktopBirdModel>(new DesktopBirdModel());
             
             this.RegisterSystem<IMonoSystem>(new MonoSystem());
             this.RegisterSystem<IAssetSystem>(new AssetSystem());

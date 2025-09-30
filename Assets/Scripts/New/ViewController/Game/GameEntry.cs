@@ -6,6 +6,8 @@ namespace BirdGame
 {
     public class GameEntry : ViewControllerBase
     {
+        public Action onUpdate;
+        
         private void Start()
         {
             // 延迟一帧来确保所有系统都已初始化
@@ -51,6 +53,7 @@ namespace BirdGame
 
         private void Update()
         {
+            onUpdate?.Invoke();
             this.GetSystem<ISteamSystem>().RunCallbacks();
             
             CheckCursor();
