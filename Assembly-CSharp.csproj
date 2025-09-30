@@ -77,6 +77,7 @@
     <Compile Include="Assets\Scripts\New\Events\RefreshNoteIndexEvent.cs" />
     <Compile Include="Assets\Scripts\Notebook\NotebookUI.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\HoverScaleControl.cs" />
+    <Compile Include="Assets\Scripts\New\Models\IDesktopBirdModel.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\ButtonAnimSp.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\EggMask.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\SettingPopup.cs" />
@@ -125,10 +126,13 @@
     <Compile Include="Assets\Scripts\New\Events\HideWeatherContentEvent.cs" />
     <Compile Include="Assets\Scripts\Managers\UIManager.cs" />
     <Compile Include="Assets\Scripts\New\Commands\StopOtherTimerCommand.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\InputProxy.cs" />
     <Compile Include="Assets\Scripts\New\Events\TimerOverEvent.cs" />
     <Compile Include="Assets\Scripts\New\Systems\IGameSystem.cs" />
+    <Compile Include="Assets\Scripts\New\Events\ClearDecorationsEvent.cs" />
     <Compile Include="Assets\Scripts\New\Config\CursorConfig.cs" />
     <Compile Include="Assets\Scripts\BirdStates\BirdEatState.cs" />
+    <Compile Include="Assets\Scripts\New\Commands\EnterDesktopCommand.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\AlertPopup.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\DesktopViewController.cs" />
     <Compile Include="Assets\Scripts\New\Config\ShopConfig.cs" />
@@ -155,6 +159,8 @@
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\NotePopup.cs" />
     <Compile Include="Assets\Scripts\New\Systems\ISceneSystem.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Shop\ShopToolItem.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\Game\ForceTransparency.cs" />
+    <Compile Include="Assets\Scripts\New\Events\InitMainSceneEvent.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Radio\MusicItem.cs" />
     <Compile Include="Assets\Scripts\New\Systems\IAudioSystem.cs" />
     <Compile Include="Assets\Scripts\New\Events\PlayMusicEvent.cs" />
@@ -168,14 +174,17 @@
     <Compile Include="Assets\Scripts\New\ViewController\UI\Radio\MusicViewController.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\MenuButton.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Note\DailyViewController.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\ClickEventDetector.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\TutorialPopup.cs" />
     <Compile Include="Assets\Scripts\New\Config\Items\BirdItem.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\BuyConfirmPopup.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\ExitPopup.cs" />
     <Compile Include="Assets\Scripts\AnimationTest\AddPanel.cs" />
     <Compile Include="Assets\Scripts\New\Events\ChangeLanguageEvent.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\OpenEggAnim.cs" />
     <Compile Include="Assets\Scripts\New\Events\StopTimerEvent.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\ToggleImage.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\Game\UIRaycastClickThroughController.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\DecorationFollowMouse.cs" />
     <Compile Include="Assets\Scripts\New\Systems\IDesktopSystem.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\Brid.cs" />
@@ -183,7 +192,7 @@
     <Compile Include="Assets\Scripts\FSM\StateMachine.cs" />
     <Compile Include="Assets\Scripts\New\Events\ChangeTimeViewEvent.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\GameEntry.cs" />
-    <Compile Include="Assets\Scripts\New\ViewController\UI\ExitPopup.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\Game\ExitButton.cs" />
     <Compile Include="Assets\Scripts\UI\NumPanel.cs" />
     <Compile Include="Assets\Scripts\New\Models\IAccountModel.cs" />
     <Compile Include="Assets\Scripts\New\Commands\SpawnBirdCommand.cs" />
@@ -201,6 +210,7 @@
     <Compile Include="Assets\Scripts\PomodoroTimer.cs" />
     <Compile Include="Assets\SpritePivotEditor\Demo\Scripts\Player.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\BagChecker.cs" />
+    <Compile Include="Assets\Scripts\New\Commands\LeaveDesktopCommand.cs" />
     <Compile Include="Assets\Scripts\Heart.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Shop\ShopEggItem.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\Test.cs" />
