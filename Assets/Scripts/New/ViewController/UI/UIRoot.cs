@@ -1,5 +1,4 @@
-﻿using System;
-using QFramework;
+﻿using QFramework;
 
 namespace BirdGame
 {
@@ -8,6 +7,7 @@ namespace BirdGame
         private void Start()
         {
             this.GetSystem<IUISystem>().ShowPanel(UIPanel.LoadingPanel);
+            DontDestroyOnLoad(gameObject);
         }
     }
 }

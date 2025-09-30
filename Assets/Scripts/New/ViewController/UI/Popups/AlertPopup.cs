@@ -25,11 +25,13 @@ namespace BirdGame
                 alertText.SetKey("Time to work!");
             }
             
-            closeButton.onClick.AddListener(() =>
-            {
-                this.GetSystem<IAudioSystem>().StopAlert();
-                this.GetSystem<IUISystem>().HidePopup(UIPopup.AlertPopup);
-            });
+            closeButton.onClick.AddListener(OnCloseClick);
+        }
+
+        public void OnCloseClick()
+        {
+            this.GetSystem<IAudioSystem>().StopAlert();
+            this.GetSystem<IUISystem>().HidePopup(UIPopup.AlertPopup);
         }
     }
 }

@@ -94,6 +94,7 @@ namespace BirdGame
             {
                 return;
             }
+            
 
             if (_brid.anim.GetCurrentAnimatorStateInfo(0).IsName("Stroke"))
             {
@@ -102,6 +103,12 @@ namespace BirdGame
                     Debug.Log("IdleState: 检测到跟随鼠标标志，切换到RunState");
                     currMachine.ChangeState<BirdRunState>();
                 }
+                return;
+            }
+
+            if (_brid.isDesktopBird)
+            {
+                currMachine.ChangeState<BirdRunState>();
                 return;
             }
 

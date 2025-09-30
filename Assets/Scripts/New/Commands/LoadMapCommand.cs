@@ -1,4 +1,6 @@
-﻿using QFramework;
+﻿using DG.Tweening;
+using QFramework;
+using UnityEngine;
 
 namespace BirdGame
 {
@@ -17,11 +19,14 @@ namespace BirdGame
         protected override void OnExecute()
         {
             //清除当前场景的鸟
+            this.GetModel<IDesktopBirdModel>().DesktopBirds.Clear();
+          
             this.GetSystem<IBirdSystem>().ClearAllBirds();
+
+            this.SendEvent<ClearDecorationsEvent>();
             //显示加载界面
             this.GetModel<ILoadingModel>().LoadingText.Value = "Loading Scene";
             this.GetModel<ILoadingModel>().Progress.Value = 0;
-            this.GetSystem<IUISystem>().ShowPanel(UIPanel.LoadingPanel);
             //加载新的地图
             this.GetSystem<ISceneSystem>().LoadScene(mapIndex, progress =>
             {
@@ -38,6 +43,10 @@ namespace BirdGame
             this.GetSystem<IGameSystem>().CreateDecorations();
             //展示MenuPanel
             this.GetSystem<IUISystem>().ShowPanel(UIPanel.MenuPanel);
+            DOTween.Sequence().AppendCallback(() =>
+            {
+                this.GetSystem<IGameSystem>().SendEvent<EnableHoverScaleEvent>();
+            }).SetDelay(0.2f);
         }
     }
 }

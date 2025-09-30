@@ -203,7 +203,13 @@ namespace BirdGame
                 currMachine.ChangeState<BirdIdleState>();
                 return;
             }
-            
+
+            if (_brid.isDesktopBird)
+            {
+                currMachine.ChangeState<BirdRunState>();
+                return;
+            }
+
             int birdIndex = this.GetModel<IBirdModel>().BirdList[_brid.birdIndex].birdType;
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFly)

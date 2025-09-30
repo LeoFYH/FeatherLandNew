@@ -52,6 +52,7 @@ namespace BirdGame
 
                 birditem.dataList.RemoveAt(0);
                 int index = this.GetModel<IBirdModel>().BirdList.IndexOf(data);
+                
                 this.GetModel<IBirdModel>().RemoveBird(index);
             }
         }

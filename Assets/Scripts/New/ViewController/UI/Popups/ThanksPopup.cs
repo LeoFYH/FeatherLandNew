@@ -1,4 +1,5 @@
 ﻿using QFramework;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace BirdGame
@@ -16,6 +17,7 @@ namespace BirdGame
                 //     this.GetModel<ISaveModel>().SettingData.isShowedTutorial = true;
                 //     this.GetSystem<ISaveSystem>().SaveData();
                 // }
+                Debug.Log("Show");
                 this.GetSystem<IUISystem>().ShowPopup(UIPopup.TutorialPopup);
                 this.GetSystem<IUISystem>().HidePopup(UIPopup.ThanksPopup);
             });

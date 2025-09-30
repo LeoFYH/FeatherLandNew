@@ -181,6 +181,8 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
     
     void Update()
     {
+        if (disabled) return;
+        
         // 检测鼠标是否真的在按钮上
         bool mouseIsOverButton = IsMouseOverButton();
         
@@ -218,6 +220,21 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         
         mouseWasOverButton = mouseIsOverButton;
         
+        // 处理鼠标点击事件（独立于tooltip逻辑）
+        if (isHovering && Input.GetMouseButtonDown(0) && !disabled)
+        {
+            Debug.Log($"[{gameObject.name}] 鼠标点击检测到，触发onClick事件");
+            try
+            {
+                onClick?.Invoke();
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"[{gameObject.name}] onClick事件执行失败: {ex.Message}");
+            }
+        }
+
+        // 处理tooltip显示逻辑
         if (showTooltip && isHovering)
         {
             hoverTimer += Time.deltaTime;
@@ -228,11 +245,6 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
                 UpdateTooltipPosition();
                 UpdateTooltipText();
                //Debug.Log("显示悬浮提示: " + hoverText);
-            }
-
-            if (Input.GetMouseButtonDown(0) && !disabled)
-            {
-                onClick?.Invoke();
             }
             onMouseEnter?.Invoke();
         }
@@ -297,19 +309,24 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         if (useRectTransform)
         {
             // 使用RectTransform检测（适用于UI元素）
-            // 检查鼠标是否在UI元素上
-            if (!EventSystem.current.IsPointerOverGameObject())
-                return false;
-                
             RectTransform buttonRect = GetComponent<RectTransform>();
             if (buttonRect == null) return false;
             
-            // 将鼠标位置转换为按钮的本地坐标
+            // 在壁纸模式下，EventSystem.current.IsPointerOverGameObject() 可能不可靠
+            // 直接使用RectTransformUtility进行检测
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 buttonRect, mousePosition, null, out Vector2 localPoint))
             {
                 // 检查点击是否在按钮区域内
-                return buttonRect.rect.Contains(localPoint);
+                bool isOver = buttonRect.rect.Contains(localPoint);
+                
+                // 添加调试信息
+                if (isOver)
+                {
+                    Debug.Log($"[{gameObject.name}] 鼠标在按钮区域内: {localPoint}, 按钮区域: {buttonRect.rect}");
+                }
+                
+                return isOver;
             }
         }
         else
@@ -690,4 +707,26 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         }
     }
 #endif
+    
+    /// <summary>
+    /// 强制点击检测（用于壁纸模式）
+    /// </summary>
+    public void ForceClickCheck()
+    {
+        if (disabled) return;
+        
+        try
+        {
+            bool mouseIsOverButton = IsMouseOverButton();
+            if (mouseIsOverButton && Input.GetMouseButtonDown(0))
+            {
+                Debug.Log($"[{gameObject.name}] 强制点击检测 - 触发onClick事件");
+                onClick?.Invoke();
+            }
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"[{gameObject.name}] 强制点击检测失败: {ex.Message}");
+        }
+    }
 }

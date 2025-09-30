@@ -21,6 +21,7 @@ namespace BirdGame
         public TextMeshProUGUI incomeText;
         public TextMeshProUGUI priceText;
         public TMP_InputField cutomName;
+        public Button addtoDesktop;
 
         [Header("点击外部关闭设置")]
         public Transform contentTransform;  // 主要内容区域，用于检测点击区域
@@ -283,12 +284,22 @@ namespace BirdGame
                 UpdateBirdNameText();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
+            
             int index = this.GetModel<IGameModel>().CurrentSelectedBirdIndex;
             var data = this.GetModel<IBirdModel>().BirdList[index];
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             var birdConf = this.GetModel<IConfigModel>().BirdConfig.GetBird(data.birdType, mapIndex);
             icon.sprite = birdConf.preview;
-            
+            addtoDesktop.onClick.AddListener(() =>
+            {
+                if (!data.isAddedToDesktop)
+                {
+                    data.isAddedToDesktop = true;
+                }
+
+                addtoDesktop.gameObject.SetActive(false);
+            });
+            addtoDesktop.gameObject.SetActive(!data.isAddedToDesktop);
             // 初始化鸟名称文本和字体
             UpdateBirdNameText();
             
