@@ -1,4 +1,5 @@
-﻿using QFramework;
+﻿using System;
+using QFramework;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -49,6 +50,11 @@ namespace BirdGame
                 return;
             isEnter = false;
             Debug.Log("Exit");
+            this.GetSystem<IUISystem>().HideMapInfo();
+        }
+
+        private void OnDisable()
+        {
             this.GetSystem<IUISystem>().HideMapInfo();
         }
     }

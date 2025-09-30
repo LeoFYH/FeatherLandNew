@@ -11,17 +11,17 @@ namespace BirdGame
         {
             Debug.Log("Click");
             
-            // 判断如果是地图按钮，显示开发提示
-            if (popup == UIPopup.MapPopup)
-            {
-                ShowDevelopingTip();
-                //this.GetSystem<IUISystem>().ShowPopup(popup);
-            }
-            else
-            {
+            // // 判断如果是地图按钮，显示开发提示
+            // if (popup == UIPopup.MapPopup)
+            // {
+            //     ShowDevelopingTip();
+            //     //this.GetSystem<IUISystem>().ShowPopup(popup);
+            // }
+            // else
+            // {
                 // 其他按钮保持原来的弹窗功能
                 this.GetSystem<IUISystem>().ShowPopup(popup);
-            }
+            //}
         }
         
         public void ShowDevelopingTip()

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using QFramework;
 using UnityEngine;
 
@@ -16,6 +17,8 @@ namespace BirdGame
         void StopCoroutine(IEnumerator routine);
         void StopCoroutine(Coroutine coroutine);
         void StopAllCoroutines();
+        void RegisterUpdate(Action onUpdate);
+        void UnRegisterUpdate(Action onUpdate);
     }
 
     public class MonoSystem : AbstractSystem, IMonoSystem
@@ -61,6 +64,18 @@ namespace BirdGame
         public void StopAllCoroutines()
         {
             gameEntry.StopAllCoroutines();
+        }
+
+        public void RegisterUpdate(Action onUpdate)
+        {
+            gameEntry.onUpdate += onUpdate;
+        }
+
+        public void UnRegisterUpdate(Action onUpdate)
+        {
+            if(gameEntry.onUpdate == null)
+                return;
+            gameEntry.onUpdate -= onUpdate;
         }
     }
 }

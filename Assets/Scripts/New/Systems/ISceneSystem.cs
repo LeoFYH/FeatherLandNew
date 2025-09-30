@@ -37,6 +37,7 @@ namespace BirdGame
                 HideCurrentScene();
                 currentScene = GameObject.Instantiate(obj);
                 sceneName = $"Scene{index}";
+                Debug.Log("场景加载完成");
                 onComplete?.Invoke();
             }, onProgress);
         }

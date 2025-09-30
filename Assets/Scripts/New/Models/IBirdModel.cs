@@ -51,9 +51,9 @@ namespace BirdGame
             
             // 清理鸟的监听器
             this.GetSystem<IBirdSystem>().CleanupBirdListener(index);
-            
             BirdList.RemoveAt(index);
-            GameObject.Destroy(data.bird.gameObject);
+            if (data.bird.gameObject != null)
+                GameObject.Destroy(data.bird.gameObject);
             data = null;
             for (int i = index; i < BirdList.Count; i++)
             {
@@ -66,6 +66,7 @@ namespace BirdGame
     {
         public int birdType;
         public Brid bird;
+        public bool isAddedToDesktop;
         public string customName; // 自定义名称
     }
 }

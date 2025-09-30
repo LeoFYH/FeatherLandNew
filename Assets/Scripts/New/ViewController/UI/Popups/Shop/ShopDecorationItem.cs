@@ -108,5 +108,10 @@ namespace BirdGame
         {
             this.GetSystem<IUISystem>().HideDecorationInfo();
         }
+        
+        private void OnDisable()
+        {
+            this.GetSystem<IUISystem>().HideDecorationInfo();
+        }
     }
 }

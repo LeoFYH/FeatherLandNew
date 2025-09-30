@@ -110,7 +110,9 @@ namespace BirdGame
         
         protected override void OnInit()
         {
-            var panelLayerObj = GameObject.Find("UIRoot/PanelLayer");
+            var uiRoot = GameObject.Instantiate(Resources.Load<GameObject>("UIRoot"));
+            this.GetModel<IGameModel>().UiGroup = uiRoot.GetComponent<CanvasGroup>();
+            var panelLayerObj = uiRoot.transform.Find("PanelLayer");
             if (panelLayerObj != null)
             {
                 panelLayer = panelLayerObj.transform;
@@ -120,7 +122,7 @@ namespace BirdGame
                 Debug.LogError("未找到UIRoot/PanelLayer，请检查场景设置");
             }
 
-            var popupLayerObj = GameObject.Find("UIRoot/PopupLayer");
+            var popupLayerObj = uiRoot.transform.Find("PopupLayer");
             if (popupLayerObj != null)
             {
                 popupLayer = popupLayerObj.transform;
@@ -141,6 +143,8 @@ namespace BirdGame
             currentPanel = panel;
             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>(panel.ToString(), obj =>
             {
+                if(obj == null)
+                    return;
                 currentPanelObject = GameObject.Instantiate(obj, panelLayer).GetComponent<UIBase>();
                 currentPanelObject.OnShowPanel();
             });
@@ -148,8 +152,12 @@ namespace BirdGame
 
         public void HidePanel(UIPanel panel)
         {
-            if(currentPanel == UIPanel.None || currentPanelObject == null)
+            if (currentPanel == UIPanel.None || currentPanelObject == null)
+            {
+                Debug.Log(currentPanel.ToString() + " " + currentPanelObject);
                 return;
+            }
+            currentPanel = UIPanel.None;
             currentPanelObject.OnHidePanel(() =>
             {
                 this.GetSystem<IAssetSystem>().ReleaseAsset(panel.ToString());

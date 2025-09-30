@@ -18,16 +18,20 @@ namespace BirdGame
 
         private void Start()
         {
-            closeButton.onClick.AddListener(() =>
-            {
-                this.GetSystem<IUISystem>().HidePopup(UIPopup.BuyConfirmPopup);
-            });
+            closeButton.onClick.AddListener(OnCloseClick);
             
-            buyButton.onClick.AddListener(() =>
-            {
-                onConfirm?.Invoke();
-                this.GetSystem<IUISystem>().HidePopup(UIPopup.BuyConfirmPopup);
-            });
+            buyButton.onClick.AddListener(OnBuyClick);
+        }
+
+        public void OnCloseClick()
+        {
+            this.GetSystem<IUISystem>().HidePopup(UIPopup.BuyConfirmPopup);
+        }
+
+        public void OnBuyClick()
+        {
+            onConfirm?.Invoke();
+            this.GetSystem<IUISystem>().HidePopup(UIPopup.BuyConfirmPopup);
         }
     }
 }

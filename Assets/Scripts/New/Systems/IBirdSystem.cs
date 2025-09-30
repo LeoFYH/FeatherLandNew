@@ -139,6 +139,7 @@ namespace BirdGame
         /// </summary>
         public void GenerateBirdsFromSave()
         {
+            Debug.Log("加载鸟");
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
 
             if (saveModel.BirdInfoData.mapBirds == null)
@@ -228,6 +229,7 @@ namespace BirdGame
         /// </summary>
         private void GenerateBirdFromSaveData(SerializableBirdData savedBirdData)
         {
+            Debug.Log("加载鸟: " + savedBirdData.birdType);
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             // 从BirdConfig获取鸟的预制体
             var configModel = this.GetModel<IConfigModel>();

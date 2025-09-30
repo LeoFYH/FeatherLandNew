@@ -88,6 +88,7 @@ namespace BirdGame
             {
                 radioAudio.loop = v;
             });
+            GameObject.DontDestroyOnLoad(obj);
         }
 
         public void PlaySong()
