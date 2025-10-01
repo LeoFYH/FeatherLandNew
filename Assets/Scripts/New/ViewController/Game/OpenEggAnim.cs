@@ -45,7 +45,8 @@ namespace BirdGame
             nameText.ForceMeshUpdate();
             
             string rarity = config.GetBird(index, mapIndex).reality;
-            nameText.color = config.colorSettings[rarity];
+            if (config.colorSettings.TryGetValue(rarity, out var setting))
+                nameText.color = setting;
         }
 
         public void OnAnimComplete()

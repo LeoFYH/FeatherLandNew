@@ -22,7 +22,8 @@ namespace BirdGame
         [Header("Baby Bird Size")] public float BabyBirdSize = 0.01f;
 
         [Header("Adult Bird Size")] public float AdultBirdSize = 0.12f;
-        [Header("Bird Ead Distance")] public float BirdEatDistance = 0.35f;
+        [Header("Bird Eat DistanceX")] public float BirdEatDistance = 0.35f;
+        [Header("Bird Eat DistanceY")] public float BirdEatDistanceY = 0f;
 
         [Header("Background Bird Size")] public float BackgroundBirdSize;
         public Transform nestTrans;

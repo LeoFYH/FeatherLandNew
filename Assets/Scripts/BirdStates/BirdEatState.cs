@@ -59,7 +59,7 @@ namespace BirdGame
                 dirX >= 0
                     ? -_brid.BirdEatDistance * _brid.BabyBirdSize
                     : _brid.BirdEatDistance * _brid.BabyBirdSize,
-                0f,
+                _brid.BirdEatDistanceY,
                 0
             );
             _brid.agent.SetDestination(eatPosition);
@@ -115,7 +115,7 @@ namespace BirdGame
                     dirX >= 0
                         ? -_brid.BirdEatDistance * _brid.BabyBirdSize
                         : _brid.BirdEatDistance * _brid.BabyBirdSize,
-                    0f,
+                    _brid.BirdEatDistanceY,
                     0
                 );
                 _brid.agent.SetDestination(eatPosition);
