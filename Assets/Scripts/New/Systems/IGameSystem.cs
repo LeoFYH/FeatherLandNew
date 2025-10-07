@@ -414,6 +414,10 @@ namespace BirdGame
                 // 添加 SpriteRenderer 组件
                 SpriteRenderer spriteRenderer = decoration.AddComponent<SpriteRenderer>();
                 spriteRenderer.sprite = spriteToUse;  // 设置 Sprite
+                spriteRenderer.spriteSortPoint = SpriteSortPoint.Pivot;
+
+                if (!decorationItem.isGround)
+                    decoration.AddComponent<DepthMask>();
                 
                 // 设置大小
                 decoration.transform.localScale = Vector3.one * decorationItem.scale;
@@ -461,6 +465,9 @@ namespace BirdGame
                 spriteRenderer.sprite = spriteToUse;  // 设置 Sprite
                 spriteRenderer.sortingOrder = 3;
                 spriteRenderer.spriteSortPoint = SpriteSortPoint.Pivot;
+                
+                if (!decorationItem.isGround)
+                    decoration.AddComponent<DepthMask>();
                 
                 // 设置大小
                 decoration.transform.localScale = Vector3.one * decorationItem.scale;
@@ -570,6 +577,8 @@ namespace BirdGame
                     spriteRenderer.sprite = spriteToUse; // 设置 Sprite
                     spriteRenderer.sortingOrder = 3;
                     spriteRenderer.spriteSortPoint = SpriteSortPoint.Pivot;
+                    if (!decorationItem.isGround)
+                        decoration.AddComponent<DepthMask>();
 
                     // 设置大小
                     decoration.transform.localScale = Vector3.one * decorationItem.scale;

@@ -216,7 +216,9 @@ namespace BirdGame
         public DecorationType decorationType = DecorationType.Draggable;
         [LabelText("固定位置"), VerticalGroup("Icon/Info")]
         [ShowIf("@decorationType == DecorationType.Fixed")]
-        public Vector3[] fixedPositions; 
+        public Vector3[] fixedPositions;
+        [VerticalGroup("Icon/Info")]
+        public bool isGround = false;
         [LabelText("是否显示"), VerticalGroup("Icon/Info"), InfoBox("取消勾选后，该装饰物不会出现在游戏商店中")]
         public bool isVisible = true;
         [LabelText("示意图"), VerticalGroup("Icon/Info")]

@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using AOT;
+using DG.Tweening;
 using QFramework;
 using UnityEngine;
 using UnityEngine.InputSystem.UI;
@@ -36,13 +38,16 @@ namespace BirdGame
         private static extern IntPtr GetParent(IntPtr hWnd);
 
         [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        [DllImport("user32.dll", SetLastError = true)]
         private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter,
             int X, int Y, int cx, int cy, uint uFlags);
 
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern IntPtr SendMessageTimeout(IntPtr hWnd, uint Msg, 
-            IntPtr wParam, IntPtr lParam, uint fuFlags, uint uTimeout, out IntPtr lpdwResult);
-
+        // 获取系统参数（用于获取任务栏区域）
         [DllImport("user32.dll")]
         private static extern bool SystemParametersInfo(uint uiAction, uint uiParam, out RECT pvParam, uint fWinIni);
 
@@ -64,29 +69,17 @@ namespace BirdGame
         [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr", SetLastError = true)]
         private static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
-        [DllImport("user32.dll")]
-        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-        [DllImport("user32.dll")]
-        private static extern bool UpdateWindow(IntPtr hWnd);
-
-        [DllImport("shcore.dll")]
-        private static extern int SetProcessDpiAwareness(PROCESS_DPI_AWARENESS awareness);
-        // 设置窗口父容器
-        [DllImport("user32.dll")]
-        private static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
-
         // ---------------- constants ----------------
         private const uint WS_OVERLAPPEDWINDOW = 0x00CF0000;
         private const uint WS_POPUP = 0x80000000;
         private const uint WS_VISIBLE = 0x10000000;
+        private const uint WS_CAPTION = 0x00C00000;
+        private const uint WS_THICKFRAME = 0x00040000;
 
         private const int GWL_STYLE = -16;
         private const int GWL_EXSTYLE = -20;
 
         private const int SW_SHOW = 5;
-        private const int SW_SHOWMAXIMIZED = 3;
-        private const int SW_RESTORE = 9;
 
         private static readonly IntPtr HWND_BOTTOM = new IntPtr(1);
         private static readonly IntPtr HWND_TOP = new IntPtr(0);
@@ -95,52 +88,128 @@ namespace BirdGame
 
         // 扩展样式：工具窗口（不在任务栏显示）
         private const int WS_EX_TOOLWINDOW = 0x00000080;
+
+        // 扩展样式：应用程序窗口（在任务栏显示）
         private const int WS_EX_APPWINDOW = 0x00040000;
+
+        // 扩展样式：透明窗口（鼠标事件穿透）
+        private const int WS_EX_TRANSPARENT = 0x00000020;
+
+        // 扩展样式：分层窗口（支持透明度）
         private const int WS_EX_LAYERED = 0x00080000;
 
-        // SetWindowPos标志
+        // SetWindowPos标志：更新窗口边框
         private const uint SWP_FRAMECHANGED = 0x0020;
-        private const uint SWP_SHOWWINDOW = 0x0040;
-        private const uint SWP_NOSIZE = 0x0001;
-        private const uint SWP_NOMOVE = 0x0002;
-        private const uint SWP_NOZORDER = 0x0004;
-        private const uint SWP_NOACTIVATE = 0x0010;
 
-        // 发送消息超时标志
-        private const uint SMTO_NORMAL = 0x0000;
-        private const uint SMTO_ABORTIFHUNG = 0x0002;
+        // SetWindowPos标志：显示窗口
+        private const uint SWP_SHOWWINDOW = 0x0040;
+        
+        private const int SWP_NOZORDER = 0x0004;
+        
+        private const int SWP_NOSIZE = 0x0001;
+        private const int SWP_NOMOVE = 0x0002;
+        private const int SWP_NOREDRAW = 0x0008;
+        private const int SWP_NOACTIVATE = 0x0010;
+        private const int SWP_HIDEWINDOW = 0x0080;
+        private const int SWP_NOOWNERZORDER = 0x0200;
+        private const int SWP_NOSENDCHANGING = 0x0400;
 
         // ---------------- members ----------------
-        private IntPtr unityWindowHandle;
+        private int workAreaWidth;
+        private int workAreaHeight;
+        private IntPtr windowHandle;
         private bool isWallpaperMode = false;
         private IntPtr originalParent = IntPtr.Zero;
-        private IntPtr originalWindowStyle = IntPtr.Zero;
-        private IntPtr originalExWindowStyle = IntPtr.Zero;
+        private IntPtr originalStyle = IntPtr.Zero;
+        private IntPtr originalExStyle = IntPtr.Zero;
+
+        private Process overlayProcess;
 
         // ---------------- wrappers ----------------
-        private static int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong)
+        private static IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex)
         {
             return IntPtr.Size == 8
-                ? SetWindowLong32(hWnd, nIndex, dwNewLong)
-                : SetWindowLong32(hWnd, nIndex, dwNewLong);
+                ? GetWindowLongPtr64(hWnd, nIndex)
+                : new IntPtr(GetWindowLong32(hWnd, nIndex));
         }
 
-        private static int GetWindowLong(IntPtr hWnd, int nIndex)
+        private static IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr newLong)
         {
             return IntPtr.Size == 8
-                ? GetWindowLong32(hWnd, nIndex)
-                : GetWindowLong32(hWnd, nIndex);
+                ? SetWindowLongPtr64(hWnd, nIndex, newLong)
+                : new IntPtr(SetWindowLong32(hWnd, nIndex, newLong.ToInt32()));
         }
 
+        /// <summary>
+        /// Unity窗口句柄
+        /// </summary>
+        private IntPtr unityWindowHandle;
+
+        /// <summary>
+        /// 原始窗口样式（用于退出时恢复）
+        /// </summary>
+        private IntPtr originalWindowStyle;
+
+        /// <summary>
+        /// 原始窗口扩展样式（用于退出时恢复）
+        /// </summary>
+        private IntPtr originalExWindowStyle;
+
+        #region Windows API 导入
+
+        // 设置窗口样式（GWL_STYLE/GWL_EXSTYLE等）
+        [DllImport("user32.dll")]
+        private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        // 获取窗口当前样式
+        [DllImport("user32.dll")]
+        private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+        // 枚举所有顶级窗口
+        [DllImport("user32.dll")]
+        private static extern bool EnumWindows(EnumWindowsProc enumProc, IntPtr lParam);
+
+        // 设置进程DPI感知
+        [DllImport("shcore.dll")]
+        private static extern int SetProcessDpiAwareness(PROCESS_DPI_AWARENESS awareness);
+
+        #endregion
+
+        #region 窗口样式与消息常量
+
+        // Windows消息常量
+        private const uint WM_USER = 0x0400;
+
+        #endregion
+
+        #region 委托与结构体
+
+        // 枚举窗口的回调委托
+        private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+
+        // 窗口矩形区域结构体
         [StructLayout(LayoutKind.Sequential)]
         private struct RECT
         {
-            public int Left;
-            public int Top;
-            public int Right;
-            public int Bottom;
+            public int Left; // 左边界
+            public int Top; // 上边界
+            public int Right; // 右边界
+            public int Bottom; // 下边界
         }
 
+        // 显示器信息结构体
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        private struct MONITORINFO
+        {
+            public int cbSize; // 结构体大小
+            public RECT rcMonitor; // 显示器整体区域
+            public RECT rcWork; // 显示器工作区域（不含任务栏）
+            public uint dwFlags; // 显示器标志
+        }
+
+        [Tooltip("目标显示设备索引（多显示器时使用）")] public int targetDisplay = 0;
+
+        // DPI感知级别枚举
         private enum PROCESS_DPI_AWARENESS
         {
             PROCESS_DPI_UNAWARE = 0,
@@ -148,364 +217,325 @@ namespace BirdGame
             PROCESS_PER_MONITOR_DPI_AWARE = 2
         }
 
-        // ---------------- IL2CPP兼容的桌面层级查找 ----------------
-        
-        /// <summary>
-        /// IL2CPP兼容的桌面背景窗口查找（不使用EnumWindows）
-        /// </summary>
-        private IntPtr FindDesktopBackgroundWindow()
+        #endregion
+
+        // ---------------- constructor ----------------
+        public FullScreenUtility()
         {
-            IntPtr hProgman = FindWindow("Progman", "Program Manager");
-            
-            if (hProgman != IntPtr.Zero)
-            {
-                Debug.Log("找到 Progman 窗口: " + hProgman.ToString("X"));
-                
-                // 方法1：直接使用 Progman（适用于大多数情况）
-                IntPtr testWorkerW = FindWindowEx(hProgman, IntPtr.Zero, "WorkerW", null);
-                if (testWorkerW != IntPtr.Zero)
-                {
-                    Debug.Log("在 Progman 下找到 WorkerW: " + testWorkerW.ToString("X"));
-                    return testWorkerW;
-                }
-
-                // 方法2：发送 0x052C 消息强制创建 WorkerW 背景窗口（Win11兼容）
-                IntPtr result;
-                SendMessageTimeout(hProgman, 0x052C, IntPtr.Zero, IntPtr.Zero, 
-                    SMTO_NORMAL, 1000, out result);
-
-                // 方法3：直接查找所有WorkerW窗口，找到空的那个（IL2CPP兼容）
-                IntPtr workerW = IntPtr.Zero;
-                IntPtr temp = IntPtr.Zero;
-                
-                // 最多查找10个WorkerW窗口
-                for (int i = 0; i < 10; i++)
-                {
-                    temp = FindWindowEx(IntPtr.Zero, temp, "WorkerW", null);
-                    if (temp == IntPtr.Zero) break;
-
-                    if (temp != hProgman)
-                    {
-                        // 检查这个WorkerW是否包含SHELLDLL_DefView
-                        IntPtr defView = FindWindowEx(temp, IntPtr.Zero, "SHELLDLL_DefView", null);
-                        if (defView == IntPtr.Zero)
-                        {
-                            workerW = temp;
-                            Debug.Log("找到空的 WorkerW 窗口: " + workerW.ToString("X"));
-                            break;
-                        }
-                    }
-                }
-
-                if (workerW != IntPtr.Zero)
-                {
-                    return workerW;
-                }
-
-                // 方法4：查找包含SHELLDLL_DefView的WorkerW，然后找它的兄弟窗口
-                IntPtr defViewParent = FindWindowEx(IntPtr.Zero, IntPtr.Zero, "WorkerW", null);
-                while (defViewParent != IntPtr.Zero)
-                {
-                    IntPtr defView = FindWindowEx(defViewParent, IntPtr.Zero, "SHELLDLL_DefView", null);
-                    if (defView != IntPtr.Zero)
-                    {
-                        // 找到包含图标的WorkerW，找它的兄弟
-                        IntPtr sibling = FindWindowEx(IntPtr.Zero, defViewParent, "WorkerW", null);
-                        if (sibling != IntPtr.Zero)
-                        {
-                            Debug.Log("通过兄弟关系找到 WorkerW: " + sibling.ToString("X"));
-                            return sibling;
-                        }
-                        break;
-                    }
-                    defViewParent = FindWindowEx(IntPtr.Zero, defViewParent, "WorkerW", null);
-                }
-            }
-
-            // 最终回退：使用 Progman
-            Debug.Log("使用 Progman 作为桌面容器");
-            return hProgman;
+            windowHandle = IntPtr.Zero;
+            originalStyle = IntPtr.Zero;
+            originalExStyle = IntPtr.Zero;
+            SetProcessDpiAwareness();
         }
 
-        /// <summary>
-        /// 安全的窗口样式设置（IL2CPP兼容）
-        /// </summary>
-        private void SetWindowStylesForWallpaperMode()
+        private void InitializeWindowHandle()
         {
-            try
+            if (windowHandle == IntPtr.Zero)
             {
-                // 在主线程中执行窗口操作
-                if (UnityEngine.Object.FindObjectOfType<UnityEngine.EventSystems.EventSystem>() == null)
+                // 用窗口标题找 Unity 窗口
+                windowHandle = FindWindow(null, Application.productName);
+                if (windowHandle != IntPtr.Zero)
                 {
-                    Debug.LogWarning("不在主线程中设置窗口样式，可能不稳定");
+                    originalStyle = GetWindowLongPtr(windowHandle, GWL_STYLE);
+                    originalExStyle = GetWindowLongPtr(windowHandle, GWL_EXSTYLE);
+                    Debug.Log($"Init hWnd={windowHandle}, style={originalStyle}, exStyle={originalExStyle}");
                 }
-
-                // 获取当前样式
-                int currentStyle = GetWindowLong(unityWindowHandle, GWL_STYLE);
-                int currentExStyle = GetWindowLong(unityWindowHandle, GWL_EXSTYLE);
-
-                // 保存原始样式（如果尚未保存）
-                if (originalWindowStyle == IntPtr.Zero)
-                    originalWindowStyle = (IntPtr)currentStyle;
-                if (originalExWindowStyle == IntPtr.Zero)
-                    originalExWindowStyle = (IntPtr)currentExStyle;
-
-                Debug.Log($"原始样式: {currentStyle:X}, 原始扩展样式: {currentExStyle:X}");
-
-                // 设置新样式（避免使用复杂的位运算）
-                int newStyle = currentStyle;
-                // 移除标题栏和边框
-                newStyle &= ~0x00C00000; // WS_CAPTION
-                newStyle &= ~0x00080000; // WS_SYSMENU  
-                newStyle &= ~0x00040000; // WS_THICKFRAME
-                newStyle &= ~0x00020000; // WS_MINIMIZEBOX
-                // 添加必要样式
-                newStyle |= 0x10000000;  // WS_VISIBLE
-                newStyle |= unchecked((int)0x80000000); // WS_POPUP
-
-                // 设置扩展样式
-                int newExStyle = currentExStyle;
-                newExStyle |= WS_EX_TOOLWINDOW;  // 工具窗口，不在任务栏显示
-                newExStyle |= WS_EX_LAYERED;     // 分层窗口
-                newExStyle &= ~WS_EX_APPWINDOW;  // 移除应用窗口样式
-
-                // 应用样式
-                SetWindowLong(unityWindowHandle, GWL_STYLE, newStyle);
-                SetWindowLong(unityWindowHandle, GWL_EXSTYLE, newExStyle);
-
-                Debug.Log($"新样式: {newStyle:X}, 新扩展样式: {newExStyle:X}");
-                Debug.Log("窗口样式设置完成");
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"设置窗口样式失败: {e.Message}");
-            }
-        }
-
-        /// <summary>
-        /// 强制刷新窗口显示
-        /// </summary>
-        private void ForceWindowRefresh()
-        {
-            try
-            {
-                // 多次刷新确保窗口显示
-                ShowWindow(unityWindowHandle, SW_SHOW);
-                UpdateWindow(unityWindowHandle);
-                
-                // 设置到最底层
-                SetWindowPos(unityWindowHandle, HWND_BOTTOM, 0, 0, 0, 0,
-                    SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE | SWP_SHOWWINDOW);
-                
-                // 再次刷新
-                ShowWindow(unityWindowHandle, SW_SHOW);
-                UpdateWindow(unityWindowHandle);
-
-                Debug.Log("窗口强制刷新完成");
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"窗口刷新失败: {e.Message}");
+                else
+                {
+                    Debug.LogWarning("InitializeWindowHandle: FindWindow failed");
+                }
             }
         }
 
         // ---------------- main methods ----------------
-        public bool EnableWallpaperMode => isWallpaperMode;
+        public bool EnableWallpaperMode
+        {
+            get { return isWallpaperMode; }
+        }
 
+        /// <summary>
+        /// 进入壁纸模式：将窗口嵌入桌面背景层
+        /// </summary>
         public void WallpaperMode()
         {
-            if (isWallpaperMode)
-            {
-                Debug.LogWarning("已经在壁纸模式中");
-                return;
-            }
-
+#if !UNITY_EDITOR
             try
             {
+                // 获取Unity窗口句柄（根据PlayerSettings中的产品名称查找）
                 unityWindowHandle = FindWindow(null, Application.productName);
-                Debug.Log($"查找Unity窗口: {Application.productName}, 句柄: {unityWindowHandle.ToString("X")}");
+                Debug.Log("当前应用窗口名称：" + Application.productName);
 
+                // 句柄获取失败处理
                 if (unityWindowHandle == IntPtr.Zero)
                 {
-                    Debug.LogError("无法获取Unity窗口句柄！");
+                    Debug.LogError("无法获取Unity窗口句柄！请检查Player Settings中的Product Name是否正确");
                     return;
                 }
 
-                // 保存原始状态
+                // 避免重复进入或句柄无效
+                if (isWallpaperMode || unityWindowHandle == IntPtr.Zero)
+                    return;
+                // 保存原始窗口状态（用于退出时恢复）
                 originalParent = GetParent(unityWindowHandle);
-                Debug.Log($"原始父窗口: {originalParent.ToString("X")}");
-                
-                // 设置DPI感知
-                SetProcessDpiAwareness();
+                originalWindowStyle = (IntPtr)GetWindowLong(unityWindowHandle, GWL_STYLE);
+                originalExWindowStyle = (IntPtr)GetWindowLong(unityWindowHandle, GWL_EXSTYLE);
 
-                // 查找桌面背景窗口
-                IntPtr wallpaperWorkerW = FindDesktopBackgroundWindow();
-                
-                if (wallpaperWorkerW == IntPtr.Zero)
+                RestoreOriginalState();
+                // 找到桌面窗口容器（兼容Win10/11）
+                IntPtr hProgman = FindWindow("Progman", "Program Manager");
+                // 向ProgMan发送消息，确保Win11能正确找到WorkerW
+                SendMessage(hProgman, 0x052C, new IntPtr(13), new IntPtr(1));
+                IntPtr workerW = FindWorkerWWithIconsVisible(hProgman);
+                Debug.Log(workerW.ToString("X"));
+
+                // 找不到WorkerW窗口时退出
+                if (workerW == IntPtr.Zero)
                 {
-                    Debug.LogError("找不到桌面背景窗口！");
+                    Debug.LogError("找不到WorkerW窗口（桌面背景容器）");
                     return;
                 }
 
-                Debug.Log($"找到桌面背景窗口: {wallpaperWorkerW.ToString("X")}");
+                // 调整窗口样式：移除标题栏和边框
+                int newStyle = GetWindowLong(unityWindowHandle, GWL_STYLE);
+                newStyle &= ~(0x00C00000 | 0x00080000); // 移除标题栏和边框
+                newStyle |= 0x10000000; // 添加WS_VISIBLE确保可见
+                SetWindowLong(unityWindowHandle, GWL_STYLE, newStyle);
 
-                // 设置窗口样式
-                SetWindowStylesForWallpaperMode();
+                // 调整扩展样式：设置为工具窗口，支持分层
+                int newExStyle = GetWindowLong(unityWindowHandle, GWL_EXSTYLE);
+                newExStyle |= WS_EX_TOOLWINDOW | WS_EX_LAYERED;
+                newExStyle &= ~WS_EX_APPWINDOW;
+                newExStyle &= ~WS_EX_TRANSPARENT;
+                SetWindowLong(unityWindowHandle, GWL_EXSTYLE, newExStyle);
 
-                // 将Unity窗口设置为桌面背景窗口的子窗口
-                IntPtr setParentResult = SetParent(unityWindowHandle, wallpaperWorkerW);
-                Debug.Log($"SetParent结果: {setParentResult.ToString("X")}");
+                // 将Unity窗口设置为WorkerW的子窗口（嵌入桌面）
+                SetParent(unityWindowHandle, workerW);
 
-                // 获取工作区域并调整窗口大小
-                Rect workArea = GetScreenWorkingArea(0);
-                Debug.Log($"工作区域: {workArea.x}, {workArea.y}, {workArea.width}, {workArea.height}");
+                // 获取目标显示器工作区并调整窗口大小
+                var workingArea = GetScreenWorkingArea(targetDisplay);
+                SetWindowPos(unityWindowHandle, HWND_BOTTOM,
+                    (int)workingArea.x, (int)workingArea.y,
+                    (int)workingArea.width, (int)workingArea.height,
+                    SWP_FRAMECHANGED | SWP_SHOWWINDOW);
 
-                // 设置窗口位置和大小
-                bool setPosResult = SetWindowPos(unityWindowHandle, HWND_BOTTOM,
-                    (int)workArea.x, (int)workArea.y,
-                    (int)workArea.width, (int)workArea.height,
-                    SWP_FRAMECHANGED | SWP_SHOWWINDOW | SWP_NOACTIVATE);
-
-                Debug.Log($"SetWindowPos结果: {setPosResult}");
-
-                // 强制刷新窗口显示
-                ForceWindowRefresh();
-
-                // 设置Unity全屏状态
-                Screen.fullScreen = true;
+                // 辅助设置：全屏显示并显示光标
+                SetFullscreen(true);
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
 
-                // 额外延迟刷新
-                System.Threading.Thread.Sleep(100);
-                ForceWindowRefresh();
-
+                // 更新状态标记
                 isWallpaperMode = true;
-                Debug.Log($"壁纸模式激活成功！工作区域: {workArea.width}x{workArea.height}");
+                Debug.Log("壁纸模式激活：窗口已嵌入桌面");
             }
             catch (Exception e)
             {
                 Debug.LogError($"进入壁纸模式失败: {e.Message}");
-                RestoreOriginalState();
             }
+#endif
         }
 
-        public void FullscreenMode()
-        {
-            RestoreOriginalState();
-            
-            if (unityWindowHandle != IntPtr.Zero)
-            {
-                int style = 0x10000000 | unchecked((int)0x80000000); // WS_VISIBLE | WS_POPUP
-                SetWindowLong(unityWindowHandle, GWL_STYLE, style);
-
-                int screenW = GetSystemMetrics(0);
-                int screenH = GetSystemMetrics(1);
-
-                SetWindowPos(unityWindowHandle, HWND_TOP, 0, 0, screenW, screenH, 
-                    SWP_FRAMECHANGED | SWP_SHOWWINDOW);
-
-                Screen.fullScreen = true;
-                Debug.Log($"全屏模式 {screenW}x{screenH}");
-            }
-        }
-
-        public void WindowedMode()
-        {
-            RestoreOriginalState();
-            
-            if (unityWindowHandle != IntPtr.Zero)
-            {
-                int style = unchecked((int)(0x00CF0000 | 0x10000000)); // WS_OVERLAPPEDWINDOW | WS_VISIBLE
-                SetWindowLong(unityWindowHandle, GWL_STYLE, style);
-
-                int screenW = GetSystemMetrics(0);
-                int screenH = GetSystemMetrics(1);
-
-                int w = (int)(screenW * 0.8f);
-                int h = (int)(screenH * 0.8f);
-                int x = (screenW - w) / 2;
-                int y = (screenH - h) / 2;
-
-                SetWindowPos(unityWindowHandle, HWND_TOP, x, y, w, h, 
-                    SWP_FRAMECHANGED | SWP_SHOWWINDOW);
-
-                Screen.fullScreen = false;
-                Debug.Log($"窗口模式 {w}x{h}");
-            }
-        }
-
-        public bool IsWallpaperModeActive() => isWallpaperMode;
-
-        public bool IsRunningAsAdministrator()
-        {
-            try
-            {
-                using (Process process = Process.GetCurrentProcess())
-                {
-                    return process.SessionId != 0;
-                }
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        public bool RequestAdministratorPrivileges()
-        {
-            Debug.LogWarning("需要管理员权限才能修改桌面层级");
-            return false;
-        }
-
+        /// <summary>
+        /// 获取指定显示器的工作区（排除任务栏）
+        /// </summary>
         private Rect GetScreenWorkingArea(int displayIndex)
         {
+            // 校验显示器索引
+            if (displayIndex < 0 || displayIndex >= Display.displays.Length)
+                displayIndex = 0;
+
+            // 获取目标显示器
+            Display targetDisplay = Display.displays[displayIndex];
+
+            // 获取工作区（排除任务栏）
             SystemParametersInfo(SPI_GETWORKAREA, 0, out RECT workArea, 0);
+
+            // 计算工作区宽高
             int width = workArea.Right - workArea.Left;
             int height = workArea.Bottom - workArea.Top;
+
             return new Rect(workArea.Left, workArea.Top, width, height);
         }
 
+        /// <summary>
+        /// 设置进程DPI感知（解决高分辨率屏幕适配问题）
+        /// </summary>
         private void SetProcessDpiAwareness()
         {
             try
             {
+                // 设置为每监视器DPI感知（兼容Win10/11）
                 SetProcessDpiAwareness(PROCESS_DPI_AWARENESS.PROCESS_PER_MONITOR_DPI_AWARE);
             }
             catch
             {
-                Debug.LogWarning("当前系统不支持PROCESS_PER_MONITOR_DPI_AWARE");
+                // 兼容不支持该API的系统
+                Debug.LogWarning("当前系统不支持PROCESS_PER_MONITOR_DPI_AWARE，将使用默认DPI设置");
             }
         }
 
+        /// <summary>
+        /// 设置全屏状态
+        /// </summary>
+        private void SetFullscreen(bool fullscreen)
+        {
+            Screen.fullScreen = fullscreen;
+        }
+
+        // 修复：使用静态字段来存储查找结果
+        private static IntPtr foundWorkerW = IntPtr.Zero;
+
+        /// <summary>
+        /// 查找包含桌面图标的WorkerW窗口（兼容Win10/11）
+        /// </summary>
+        private IntPtr FindWorkerWWithIconsVisible(IntPtr progman)
+        {
+            foundWorkerW = IntPtr.Zero;
+
+            // 使用静态方法而不是实例方法
+            EnumWindows(EnumWindowsCallback, IntPtr.Zero);
+
+            // 极端情况处理：直接查找第一个WorkerW
+            if (foundWorkerW == IntPtr.Zero)
+            {
+                foundWorkerW = FindWindowEx(progman, IntPtr.Zero, "WorkerW", null);
+            }
+
+            return foundWorkerW;
+        }
+
+        // 修复：使用静态方法作为回调
+        [MonoPInvokeCallback(typeof(EnumWindowsProc))]
+        private static bool EnumWindowsCallback(IntPtr hwnd, IntPtr lParam)
+        {
+            // 查找包含SHELLDLL_DefView控件的窗口（管理桌面图标）
+            if (FindWindowEx(hwnd, IntPtr.Zero, "SHELLDLL_DefView", null) != IntPtr.Zero)
+            {
+                // 获取同级的WorkerW窗口（桌面背景容器）
+                foundWorkerW = FindWindowEx(IntPtr.Zero, hwnd, "WorkerW", null);
+            }
+
+            // 找到后停止枚举
+            return foundWorkerW == IntPtr.Zero;
+        }
+
+        public void FullscreenMode()
+        {
+            InitializeWindowHandle();
+            if (isWallpaperMode) RestoreOriginalState();
+
+            int style = unchecked((int)(WS_POPUP | WS_VISIBLE));
+            SetWindowLongPtr(windowHandle, GWL_STYLE, new IntPtr(style));
+
+            int screenW = GetSystemMetrics(0);
+            int screenH = GetSystemMetrics(1);
+
+            SetWindowPos(windowHandle, HWND_TOP, 0, 0, screenW, screenH, SWP_SHOWWINDOW);
+
+            workAreaWidth = screenW;
+            workAreaHeight = screenH;
+            isWallpaperMode = false;
+            Debug.Log($"全屏模式 {screenW}x{screenH}");
+        }
+
+        public void WindowedMode()
+        {
+            InitializeWindowHandle();
+            if (isWallpaperMode) RestoreOriginalState();
+
+            int style = unchecked((int)(WS_OVERLAPPEDWINDOW | WS_VISIBLE));
+            SetWindowLongPtr(windowHandle, GWL_STYLE, new IntPtr(style));
+
+            int screenW = GetSystemMetrics(0);
+            int screenH = GetSystemMetrics(1);
+
+            int w = (int)(screenW * 0.8f);
+            int h = (int)(screenH * 0.8f);
+            int x = (screenW - w) / 2;
+            int y = (screenH - h) / 2;
+
+            SetWindowPos(windowHandle, HWND_TOP, x, y, w, h, SWP_SHOWWINDOW);
+
+            workAreaWidth = w;
+            workAreaHeight = h;
+            isWallpaperMode = false;
+            Debug.Log($"窗口模式 {w}x{h}");
+        }
+
+        public bool IsWallpaperModeActive() => isWallpaperMode;
+        public bool IsRunningAsAdministrator() => false;
+        public bool RequestAdministratorPrivileges() => false;
+
         public void RestoreOriginalState()
         {
-            if (!isWallpaperMode || unityWindowHandle == IntPtr.Zero)
+            // // 避免重复退出或句柄无效
+            // if (!isWallpaperMode || unityWindowHandle == IntPtr.Zero)
+            //     return;
+            //
+            // try
+            // {
+            //     // 恢复原始父窗口
+            //     SetParent(unityWindowHandle, originalParent);
+            //
+            //     // 恢复原始窗口样式
+            //     SetWindowLong(unityWindowHandle, GWL_STYLE, (int)originalWindowStyle);
+            //     SetWindowLong(unityWindowHandle, GWL_EXSTYLE, (int)originalExWindowStyle);
+            //
+            //     // 恢复窗口位置和大小
+            //     SetWindowPos(unityWindowHandle, IntPtr.Zero, 0, 0, 0, 0,
+            //         0x0002 | 0x0001 | 0x0004 | 0x0020); // SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED
+            //
+            //     // 更新状态标记
+            //     isWallpaperMode = false;
+            //     Debug.Log("已退出壁纸模式：窗口状态已恢复");
+            // }
+            // catch (Exception e)
+            // {
+            //     Debug.LogError($"退出壁纸模式失败: {e.Message}");
+            // }
+            
+            if (unityWindowHandle == IntPtr.Zero)
                 return;
 
             try
             {
-                Debug.Log("开始恢复原始状态...");
+                // 恢复原始父窗口（如果有的话）
+                if (originalParent != IntPtr.Zero)
+                    SetParent(unityWindowHandle, originalParent);
 
-                // 恢复父窗口
-                SetParent(unityWindowHandle, originalParent);
-
-                // 恢复原始样式
+                // 如果保存的原始样式有效就恢复，否则强制重置为正常窗口
                 if (originalWindowStyle != IntPtr.Zero)
+                {
                     SetWindowLong(unityWindowHandle, GWL_STYLE, (int)originalWindowStyle);
-                if (originalExWindowStyle != IntPtr.Zero)
-                    SetWindowLong(unityWindowHandle, GWL_EXSTYLE, (int)originalExWindowStyle);
+                }
+                else
+                {
+                    int style = GetWindowLong(unityWindowHandle, GWL_STYLE);
+                    style |= unchecked((int)(WS_OVERLAPPEDWINDOW | WS_VISIBLE));
+                    SetWindowLong(unityWindowHandle, GWL_STYLE, style);
+                }
 
-                // 刷新窗口
+                if (originalExWindowStyle != IntPtr.Zero)
+                {
+                    SetWindowLong(unityWindowHandle, GWL_EXSTYLE, (int)originalExWindowStyle);
+                }
+                else
+                {
+                    int exStyle = GetWindowLong(unityWindowHandle, GWL_EXSTYLE);
+                    // 去掉透明、分层、工具窗口
+                    exStyle &= ~WS_EX_LAYERED;
+                    exStyle &= ~WS_EX_TRANSPARENT;
+                    exStyle &= ~WS_EX_TOOLWINDOW;
+                    // 确保能出现在任务栏
+                    exStyle |= WS_EX_APPWINDOW;
+                    SetWindowLong(unityWindowHandle, GWL_EXSTYLE, exStyle);
+                }
+
+                // 强制刷新窗口样式
                 SetWindowPos(unityWindowHandle, IntPtr.Zero, 0, 0, 0, 0,
                     SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
-                // 显示窗口
-                ShowWindow(unityWindowHandle, SW_RESTORE);
-                UpdateWindow(unityWindowHandle);
-
                 isWallpaperMode = false;
-                Debug.Log("已退出壁纸模式");
+                Debug.Log("已退出壁纸模式：窗口状态已恢复");
             }
             catch (Exception e)
             {
@@ -515,18 +545,17 @@ namespace BirdGame
 
         ~FullScreenUtility()
         {
-            if (isWallpaperMode)
-                RestoreOriginalState();
+            if (isWallpaperMode) RestoreOriginalState();
         }
 #else
         // 非 Windows 平台
-        public bool EnableWallpaperMode => false;
         public void WallpaperMode() { Debug.LogWarning("桌面模式仅在 Windows 平台支持"); }
+        public void RestoreOriginalState() { Debug.LogWarning("壁纸模式仅在 Windows 平台支持"); }
         public void FullscreenMode() { Debug.LogWarning("全屏模式仅在 Windows 平台支持"); }
         public void WindowedMode() { Debug.LogWarning("窗口模式仅在 Windows 平台支持"); }
-        public bool IsWallpaperModeActive() => false;
-        public bool IsRunningAsAdministrator() => false;
-        public bool RequestAdministratorPrivileges() => false;
+        public bool IsWallpaperModeActive() { return false; }
+        public bool IsRunningAsAdministrator() { return false; }
+        public bool RequestAdministratorPrivileges() { return false; }
 #endif
     }
 }

@@ -89,6 +89,7 @@ namespace BirdGame
                     _brid.anim.SetBool("IsTakeOff", true);
                     _brid.anim.SetBool("Fly", true);
                     _brid.agent.enabled = false;
+                    _brid.sr.sortingOrder = 5;
                     // 角度合适，直接斜着飞向目标
                     _brid.sr.flipX = target.x > _brid.transform.position.x;
 
