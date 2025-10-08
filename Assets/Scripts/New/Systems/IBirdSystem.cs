@@ -144,7 +144,13 @@ namespace BirdGame
 
             if (saveModel.BirdInfoData.mapBirds == null)
                 saveModel.BirdInfoData.mapBirds = new List<MapBirdList>();
-            while (saveModel.BirdInfoData.mapBirds.Count <= mapIndex)
+            if (saveModel.BirdInfoData.mapBirds.Count <= mapIndex && mapIndex != 0)
+            {
+                Debug.LogError("该地图未解锁");
+                return;
+            }
+
+            if (mapIndex == 0 && saveModel.BirdInfoData.mapBirds.Count == 0)
             {
                 saveModel.BirdInfoData.mapBirds.Add(new MapBirdList());
             }

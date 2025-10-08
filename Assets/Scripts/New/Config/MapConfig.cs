@@ -18,5 +18,7 @@ namespace BirdGame
         public string mapName;
         [PreviewField, HideLabel]
         public Sprite mapPreview;
+        [LabelText("售价")]
+        public int cost;
     }
 }

@@ -10,7 +10,9 @@ namespace BirdGame
     public class MapItem : ViewControllerBase, IPointerEnterHandler, IPointerExitHandler
     {
         public TextMeshProUGUI mapText;
-
+        public GameObject priceObject;
+        public TextMeshProUGUI priceText;
+        
         private Button thisButton;
         private int mapIndex;
         private bool isEnter;
@@ -30,11 +32,67 @@ namespace BirdGame
                 {
                     return;
                 }
-                this.SendCommand(new LoadMapCommand(mapIndex));
-                this.GetSystem<IUISystem>().HidePopup(UIPopup.MapPopup);
+
+                if (mapIndex == 0)
+                {
+                    LoadMap();
+                    return;
+                }
+
+                if (this.GetModel<ISaveModel>().BirdInfoData.mapBirds.Count < mapIndex)
+                {
+                    return;
+                }
+
+                if (this.GetModel<ISaveModel>().BirdInfoData.mapBirds.Count == mapIndex)
+                {
+                    if (this.GetModel<IConfigModel>().MapConfig.maps[mapIndex].cost <=
+                        this.GetModel<ISaveModel>().AccountData.coins)
+                    {
+                        this.GetSystem<IUISystem>().ShowBuyConfirm(() =>
+                        {
+                            this.GetModel<ISaveModel>().AccountData.coins -=
+                                this.GetModel<IConfigModel>().MapConfig.maps[mapIndex].cost;
+                            this.GetModel<ISaveModel>().BirdInfoData.mapBirds.Add(new MapBirdList());
+                            this.GetSystem<ISaveSystem>().SaveData();
+                            LoadMap();
+                        });
+                    }
+                    else
+                    {
+                        string text = this.GetSystem<ILocalizationSystem>().GetString("Insufficient coins");
+                        this.GetSystem<IUISystem>().ShowPrompt(text);
+                    }
+
+                    return;
+                }
+                
+                LoadMap();
             });
+            if (mapIndex == 0)
+            {
+                priceObject.SetActive(false);
+            }
+            else if (this.GetModel<ISaveModel>().BirdInfoData.mapBirds.Count <= mapIndex)
+            {
+                priceObject.SetActive(true);
+                if (this.GetModel<ISaveModel>().BirdInfoData.mapBirds.Count == mapIndex)
+                    priceText.text = this.GetModel<IConfigModel>().MapConfig.maps[mapIndex].cost.ToString();
+                else if (this.GetModel<ISaveModel>().BirdInfoData.mapBirds.Count < mapIndex)
+                    priceText.text = "locked";
+            }
+            else
+            {
+                priceObject.SetActive(false);
+            }
         }
-        
+
+        private void LoadMap()
+        {
+            this.SendCommand(new LoadMapCommand(mapIndex));
+            this.GetSystem<IUISystem>().HidePopup(UIPopup.MapPopup);
+        }
+
         public void OnPointerEnter(PointerEventData eventData)
         {
             if(isEnter)
