@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using BirdGame;
 using DG.Tweening;
 using QFramework;
@@ -48,6 +49,7 @@ namespace BirdGame
         public Transform heartPos;
         public Vector3 flyInAirStartPosition; // 横向飞行的起始位置
         public LineRenderer lineRenderer;
+        public List<DepthMask> maskList = new List<DepthMask>();
 
         [Header("Click count for following mouse movement")]
         public int clickCount = 5;

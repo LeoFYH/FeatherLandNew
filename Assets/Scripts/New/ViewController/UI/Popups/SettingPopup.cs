@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using QFramework;
@@ -24,15 +25,21 @@ namespace BirdGame
         public Button tutorialButton;
         public Button clearSaveButton; // 添加清除存档按钮
         public Sprite itemSprite;
-
-        [Header("点击外部关闭设置")]
-        public Transform contentTransform;  // 主要内容区域，用于检测点击区域
-        [Header("功能设置")]
-        public bool enableClickOutsideToClose = true;  // 是否启用点击外部关闭功能
+        public Sprite[] dropSps;
 
         private List<SystemLanguage> languages = new List<SystemLanguage>();
+        private bool isScreenExpend = false;
+        private bool isLanguageExpend = false;
+        private float moveHeight = 0;
+        private float deleteY;
+        private float tutorailY;
+        private float quitY;
+        private float languageY;
+        private RectTransform deleteRect;
+        private RectTransform tutorialRect;
+        private RectTransform quitRect;
+        private RectTransform languageRect;
         
-
         public void onClick()
         {
             // 显示确认对话框（使用简单的确认方式）
@@ -146,214 +153,19 @@ namespace BirdGame
                 #endif
             #endif
         }
-        
-
-
-        void Update()
-        {
-            // 只有在启用点击外部关闭功能时才检测
-            if (enableClickOutsideToClose)
-            {
-                // 检测鼠标点击
-                if (Input.GetMouseButtonDown(0))
-                {
-                    CheckClickOutside();
-                }
-            }
-        }
-        
-        /// <summary>
-        /// 检测是否点击了SettingPopup外部区域
-        /// </summary>
-        private void CheckClickOutside()
-        {
-            // 检查是否点击了UI元素
-            if (!EventSystem.current.IsPointerOverGameObject())
-            {
-                // 没有点击UI元素，关闭SettingPopup
-                this.GetSystem<IUISystem>().HidePopup(UIPopup.SettingPopup);
-                return;
-            }
-            
-            // 获取鼠标位置
-            Vector2 mousePosition = Input.mousePosition;
-            
-            // 检查是否点击了主要内容区域
-            if (contentTransform != null)
-            {
-                RectTransform contentRect = contentTransform.GetComponent<RectTransform>();
-                if (contentRect != null)
-                {
-                    // 将鼠标位置转换为内容区域的本地坐标
-                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                        contentRect, mousePosition, null, out Vector2 localPoint))
-                    {
-                        // 检查点击是否在内容区域内
-                        if (contentRect.rect.Contains(localPoint))
-                        {
-                            // 点击在内容区域内，不关闭
-                            return;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                // 如果contentTransform未设置，使用当前GameObject作为默认检测区域
-                RectTransform selfRect = GetComponent<RectTransform>();
-                if (selfRect != null)
-                {
-                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                        selfRect, mousePosition, null, out Vector2 localPoint))
-                    {
-                        if (selfRect.rect.Contains(localPoint))
-                        {
-                            // 点击在当前区域内，不关闭
-                            return;
-                        }
-                    }
-                }
-            }
-            
-            // 检查是否点击了关闭按钮
-            if (closeButton != null)
-            {
-                RectTransform closeRect = closeButton.GetComponent<RectTransform>();
-                if (closeRect != null)
-                {
-                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                        closeRect, mousePosition, null, out Vector2 localPoint))
-                    {
-                        if (closeRect.rect.Contains(localPoint))
-                        {
-                            // 点击了关闭按钮，不在这里处理
-                            return;
-                        }
-                    }
-                }
-            }
-            
-            // 检查是否点击了退出按钮
-            if (quitButton != null)
-            {
-                RectTransform quitRect = quitButton.GetComponent<RectTransform>();
-                if (quitRect != null)
-                {
-                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                        quitRect, mousePosition, null, out Vector2 localPoint))
-                    {
-                        if (quitRect.rect.Contains(localPoint))
-                        {
-                            // 点击了退出按钮，不关闭
-                            return;
-                        }
-                    }
-                }
-            }
-            
-            // 检查是否点击了清除存档按钮
-            if (clearSaveButton != null)
-            {
-                RectTransform clearSaveRect = clearSaveButton.GetComponent<RectTransform>();
-                if (clearSaveRect != null)
-                {
-                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                        clearSaveRect, mousePosition, null, out Vector2 localPoint))
-                    {
-                        if (clearSaveRect.rect.Contains(localPoint))
-                        {
-                            // 点击了清除存档按钮，不关闭
-                            return;
-                        }
-                    }
-                }
-            }
-            
-            // 检查是否点击了下拉菜单
-            if (screenDropdown != null)
-            {
-                RectTransform screenRect = screenDropdown.GetComponent<RectTransform>();
-                if (screenRect != null)
-                {
-                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                        screenRect, mousePosition, null, out Vector2 localPoint))
-                    {
-                        if (screenRect.rect.Contains(localPoint))
-                        {
-                            // 点击了下拉菜单，不关闭
-                            return;
-                        }
-                    }
-                }
-            }
-            
-            if (languageDropdown != null)
-            {
-                RectTransform languageRect = languageDropdown.GetComponent<RectTransform>();
-                if (languageRect != null)
-                {
-                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                        languageRect, mousePosition, null, out Vector2 localPoint))
-                    {
-                        if (languageRect.rect.Contains(localPoint))
-                        {
-                            // 点击了下拉菜单，不关闭
-                            return;
-                        }
-                    }
-                }
-            }
-            
-            // 检查是否点击了子UI元素（如下拉菜单的选项等）
-            if (screenDropdown != null && screenDropdown.IsExpanded)
-            {
-                // 如果屏幕模式下拉菜单是展开的，检查是否点击了其中的元素
-                if (IsClickInChildUI(screenDropdown.gameObject, mousePosition))
-                {
-                    return;
-                }
-            }
-            
-            if (languageDropdown != null && languageDropdown.IsExpanded)
-            {
-                // 如果语言下拉菜单是展开的，检查是否点击了其中的元素
-                if (IsClickInChildUI(languageDropdown.gameObject, mousePosition))
-                {
-                    return;
-                }
-            }
-            
-            // 点击了UI元素但不在SettingPopup区域内，关闭SettingPopup
-            this.GetSystem<IUISystem>().HidePopup(UIPopup.SettingPopup);
-        }
-        
-        /// <summary>
-        /// 检查是否点击了指定GameObject的子UI元素
-        /// </summary>
-        private bool IsClickInChildUI(GameObject parent, Vector2 mousePosition)
-        {
-            // 获取所有子UI元素
-            RectTransform[] childRects = parent.GetComponentsInChildren<RectTransform>();
-            
-            foreach (var childRect in childRects)
-            {
-                if (childRect.gameObject == parent) continue; // 跳过父对象本身
-                
-                if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                    childRect, mousePosition, null, out Vector2 localPoint))
-                {
-                    if (childRect.rect.Contains(localPoint))
-                    {
-                        return true;
-                    }
-                }
-            }
-            
-            return false;
-        }
 
         private void Start()
         {
+            deleteRect = clearSaveButton.GetComponent<RectTransform>();
+            tutorialRect = tutorialButton.GetComponent<RectTransform>();
+            quitRect = quitButton.GetComponent<RectTransform>();
+            languageRect = languageDropdown.GetComponent<RectTransform>();
+
+            deleteY = deleteRect.anchoredPosition.y;
+            tutorailY = tutorialRect.anchoredPosition.y;
+            quitY = quitRect.anchoredPosition.y;
+            languageY = languageRect.anchoredPosition.y;
+            
             closeButton.onClick.AddListener(() =>
             {
                 this.GetSystem<IUISystem>().HidePopup(UIPopup.SettingPopup);
@@ -413,6 +225,8 @@ namespace BirdGame
             {
                 this.GetSystem<ILocalizationSystem>().ChangeLanguage(languages[index]);
             });
+            screenDropdown.GetComponent<Image>().sprite = dropSps[0];
+            languageDropdown.GetComponent<Image>().sprite = dropSps[0];
 
             this.RegisterEvent<ChangeLanguageEvent>(evt =>
             {
@@ -429,6 +243,48 @@ namespace BirdGame
                 }
                 languageDropdown.RefreshShownValue();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+        }
+
+        private void Update()
+        {
+            moveHeight = 0;
+            
+            if (!isScreenExpend && screenDropdown.IsExpanded)
+            {
+                isScreenExpend = true;
+                screenDropdown.GetComponent<Image>().sprite = dropSps[1];
+            }
+            else if (isScreenExpend && !screenDropdown.IsExpanded)
+            {
+                isScreenExpend = false;
+                screenDropdown.GetComponent<Image>().sprite = dropSps[0];
+            }
+
+            if (!isLanguageExpend && languageDropdown.IsExpanded)
+            {
+                isLanguageExpend = true;
+                languageDropdown.GetComponent<Image>().sprite = dropSps[1];
+            }
+            else if (isLanguageExpend && !languageDropdown.IsExpanded)
+            {
+                isLanguageExpend = false;
+                languageDropdown.GetComponent<Image>().sprite = dropSps[0];
+            }
+
+            if (isScreenExpend)
+            {
+                languageRect.anchoredPosition = new Vector2(0, languageY - 306);
+            }
+            else
+            {
+                languageRect.anchoredPosition = new Vector2(0, languageY);
+            }
+
+            moveHeight = (isScreenExpend ? 306 : 0) + (isLanguageExpend ? 570 : 0);
+
+            deleteRect.anchoredPosition = new Vector2(0, deleteY - moveHeight);
+            tutorialRect.anchoredPosition = new Vector2(0, tutorailY - moveHeight);
+            quitRect.anchoredPosition = new Vector2(0, quitY - moveHeight);
         }
 
         private void InitializeScreenDropdown()

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using QFramework;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ namespace BirdGame
         private SpriteRenderer tentRenderer;
 
         // 用于缓存所有需要参与遮挡的角色
-        private List<SpriteRenderer> characterList = new List<SpriteRenderer>();
+        private List<Brid> characterList = new List<Brid>();
 
         void Awake()
         {
@@ -29,22 +30,39 @@ namespace BirdGame
             foreach (var playerRenderer in characterList)
             {
                 if (playerRenderer == null) continue;
-                
-                if(playerRenderer.sortingOrder != 2 && playerRenderer.sortingOrder != 3 && playerRenderer.sortingOrder != 4)
-                    return;
-
                 Vector2 playerFoot = playerRenderer.transform.position;
 
                 // 判断角色脚底是否在帐篷遮挡区域内
                 if (poly.OverlapPoint(playerFoot))
                 {
-                    // 角色在帐篷后面
-                    playerRenderer.sortingOrder = tentRenderer.sortingOrder - 1;
+                    if (!playerRenderer.maskList.Contains(this))
+                    {
+                        playerRenderer.maskList.Add(this);
+                        playerRenderer.sr.sortingOrder = tentRenderer.sortingOrder - 1;
+                    }
                 }
                 else
                 {
-                    // 角色在帐篷前面
-                    playerRenderer.sortingOrder = tentRenderer.sortingOrder + 1;
+                    if (playerRenderer.maskList.Contains(this))
+                    {
+                        playerRenderer.maskList.Remove(this);
+                        if (playerRenderer.maskList.Count == 0)
+                            playerRenderer.sr.sortingOrder = tentRenderer.sortingOrder + 1;
+                    }
+                }
+            }
+        }
+
+        private void OnDestroy()
+        {
+            RefreshCharacters();
+            foreach (var playerRenderer in characterList)
+            {
+                if (playerRenderer.maskList.Contains(this))
+                {
+                    playerRenderer.maskList.Remove(this);
+                    if (playerRenderer.maskList.Count == 0)
+                        playerRenderer.sr.sortingOrder = tentRenderer.sortingOrder + 1;
                 }
             }
         }
@@ -57,7 +75,7 @@ namespace BirdGame
 
             foreach (var bird in this.GetModel<IBirdModel>().BirdList)
             {
-                characterList.Add(bird.bird.sr);
+                characterList.Add(bird.bird);
             }
         }
     }
