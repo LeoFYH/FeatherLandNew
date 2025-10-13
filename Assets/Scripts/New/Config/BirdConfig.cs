@@ -119,7 +119,7 @@ namespace BirdGame
                         return bird;
                 }
             }
-            Debug.LogError($"没有找到id为{birdId}的鸟的配置!");
+            Debug.Log($"没有找到id为{birdId}的鸟的配置!");
             return null;
         }
 

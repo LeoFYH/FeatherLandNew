@@ -150,7 +150,9 @@ namespace BirdGame
             var config = AssetDatabase.LoadAssetAtPath<BirdConfig>("Assets/Prefabs/Config/BirdConfig.asset");
             int mapIndex = AssetDatabase.LoadAssetAtPath<ShopConfig>("Assets/Prefabs/Config/ShopConfig.asset")
                 .MapIndex();
-            preview = config.GetBird(birdType, mapIndex).preview.texture;
+            var bird = config.GetBird(birdType, mapIndex);
+            if (bird != null)
+                preview = bird.preview.texture;
 #endif
         }
 
