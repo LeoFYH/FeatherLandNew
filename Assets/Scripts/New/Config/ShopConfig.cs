@@ -198,6 +198,8 @@ namespace BirdGame
         public Sprite icon;
         [LabelText("名称"), HorizontalGroup("Icon"), VerticalGroup("Icon/Info")]
         public string name;
+        [VerticalGroup("Icon/Info")]
+        public GameObject prefab;
         [LabelText("描述"), VerticalGroup("Icon/Info")]
         public string description;
         [LabelText("价格"), VerticalGroup("Icon/Info")]
@@ -211,11 +213,7 @@ namespace BirdGame
         [LabelText("场景Sprite"), VerticalGroup("Icon/Info")]
         [PreviewField(50, ObjectFieldAlignment.Left)]
         public Sprite sceneSprite;
-        [LabelText("装饰品类型"), VerticalGroup("Icon/Info")]
-        [InfoBox("可拖拽：购买后跟随鼠标放置\n固定类：直接放置在指定位置")]
-        public DecorationType decorationType = DecorationType.Draggable;
         [LabelText("固定位置"), VerticalGroup("Icon/Info")]
-        [ShowIf("@decorationType == DecorationType.Fixed")]
         public Vector3[] fixedPositions;
         [VerticalGroup("Icon/Info")]
         public bool isGround = false;
@@ -226,18 +224,17 @@ namespace BirdGame
 
         private void OnCountValueChanged()
         {
-            if (decorationType == DecorationType.Fixed)
-            {
-                var newVecs = new Vector3[maxQuantity];
-                for (int i = 0; i < newVecs.Length; i++)
-                {
-                    if (i >= fixedPositions.Length)
-                        break;
-                    newVecs[i] = fixedPositions[i];
-                }
 
-                fixedPositions = newVecs;
+            var newVecs = new Vector3[maxQuantity];
+            for (int i = 0; i < newVecs.Length; i++)
+            {
+                if (i >= fixedPositions.Length)
+                    break;
+                newVecs[i] = fixedPositions[i];
             }
+
+            fixedPositions = newVecs;
+
         }
     }
 

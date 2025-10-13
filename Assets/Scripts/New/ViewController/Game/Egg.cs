@@ -10,6 +10,7 @@ namespace BirdGame
     {
         [ShowInInspector, ReadOnly]
         public int EggItemIndex { get; private set; }
+        public int BirdIndex { get; private set; }
 
         public Sprite[] eggSprites; // 蛋动画的每一帧图片
         public SpriteRenderer spriteRenderer;
@@ -19,10 +20,18 @@ namespace BirdGame
         private Tweener anim;
         private Tweener floatAnim; // 浮动动画
         private int clickCount = 0;
+        private bool isSetBird;
 
         public void SetEggIndex(int index)
         {
             EggItemIndex = index;
+            isSetBird = false;
+        }
+
+        public void SetBirdIndex(int index)
+        {
+            BirdIndex = index;
+            isSetBird = true;
         }
 
         /// <summary>
@@ -154,7 +163,10 @@ namespace BirdGame
 
         private void SpawnBird()
         {
-            this.SendCommand(new SpawnBirdCommand(EggItemIndex));
+            if(isSetBird)
+                this.SendCommand(new SpawnBirdCommand(BirdIndex, isSetBird));
+            else
+                this.SendCommand(new SpawnBirdCommand(EggItemIndex, isSetBird));
             // 销毁当前蛋对象
             Destroy(gameObject);
         }

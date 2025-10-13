@@ -451,49 +451,57 @@ namespace BirdGame
         {
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             var decorationItem = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[mapIndex].decorations[decorationId];
-            
-            // 优先使用场景Sprite，如果没有则使用icon
-            Sprite spriteToUse = decorationItem.sceneSprite != null ? decorationItem.sceneSprite : decorationItem.icon;
-            
-            if (spriteToUse != null)
+            var decoration = GameObject.Instantiate(decorationItem.prefab);
+            if (index < decorationItem.fixedPositions.Length)
             {
-                // 创建一个 GameObject 来承载 Sprite
-                GameObject decoration = new GameObject("FixedDecoration");
-                
-                // 添加 SpriteRenderer 组件
-                SpriteRenderer spriteRenderer = decoration.AddComponent<SpriteRenderer>();
-                spriteRenderer.sprite = spriteToUse;  // 设置 Sprite
-                spriteRenderer.sortingOrder = 3;
-                spriteRenderer.spriteSortPoint = SpriteSortPoint.Pivot;
-                
-                if (!decorationItem.isGround)
-                    decoration.AddComponent<DepthMask>();
-                
-                // 设置大小
-                decoration.transform.localScale = Vector3.one * decorationItem.scale;
-                
-                // 添加碰撞器用于点击检测
-                BoxCollider2D collider = decoration.AddComponent<BoxCollider2D>();
-                collider.size = spriteRenderer.sprite.bounds.size;
-                
-                // 设置固定位置
-                if (index < decorationItem.fixedPositions.Length)
-                {
-                    Debug.LogWarning("设置位置");
-                    decoration.transform.position = decorationItem.fixedPositions[index];
-                }
-
-                currentIndex = index;
-                
-                // 添加点击检测组件
-                DecorationClickHandler clickHandler = decoration.AddComponent<DecorationClickHandler>();
-                
-                clickHandler.Initialize(decorationId, currentIndex);
+                Debug.LogWarning("设置位置");
+                decoration.transform.position = decorationItem.fixedPositions[index];
             }
-            else
-            {
-                Debug.LogWarning($"Decoration {decorationId} 的 icon 和 sceneSprite 都为空！");
-            }
+            currentIndex = index;
+            DecorationClickHandler clickHandler = decoration.GetComponentInChildren<DecorationClickHandler>();
+            clickHandler.Initialize(decorationId, currentIndex);
+            // // 优先使用场景Sprite，如果没有则使用icon
+            // Sprite spriteToUse = decorationItem.sceneSprite != null ? decorationItem.sceneSprite : decorationItem.icon;
+            //
+            // if (spriteToUse != null)
+            // {
+            //     // 创建一个 GameObject 来承载 Sprite
+            //     GameObject decoration = new GameObject("FixedDecoration");
+            //     
+            //     // 添加 SpriteRenderer 组件
+            //     SpriteRenderer spriteRenderer = decoration.AddComponent<SpriteRenderer>();
+            //     spriteRenderer.sprite = spriteToUse;  // 设置 Sprite
+            //     spriteRenderer.sortingOrder = 3;
+            //     spriteRenderer.spriteSortPoint = SpriteSortPoint.Pivot;
+            //     
+            //     if (!decorationItem.isGround)
+            //         decoration.AddComponent<DepthMask>();
+            //     
+            //     // 设置大小
+            //     decoration.transform.localScale = Vector3.one * decorationItem.scale;
+            //     
+            //     // 添加碰撞器用于点击检测
+            //     BoxCollider2D collider = decoration.AddComponent<BoxCollider2D>();
+            //     collider.size = spriteRenderer.sprite.bounds.size;
+            //     
+            //     // 设置固定位置
+            //     if (index < decorationItem.fixedPositions.Length)
+            //     {
+            //         Debug.LogWarning("设置位置");
+            //         decoration.transform.position = decorationItem.fixedPositions[index];
+            //     }
+            //
+            //     currentIndex = index;
+            //     
+            //     // 添加点击检测组件
+            //     DecorationClickHandler clickHandler = decoration.AddComponent<DecorationClickHandler>();
+            //     
+            //     clickHandler.Initialize(decorationId, currentIndex);
+            // }
+            // else
+            // {
+            //     Debug.LogWarning($"Decoration {decorationId} 的 icon 和 sceneSprite 都为空！");
+            // }
         }
 
         public void DestroyDecoration(int decorationId, int index, GameObject decorationObject)
@@ -567,32 +575,33 @@ namespace BirdGame
                 {
                     var decorationItem = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[mapIndex].decorations[i];
                     // 创建一个 GameObject 来承载 Sprite
-                    GameObject decoration = new GameObject("Decoration");
-                    Sprite spriteToUse = decorationItem.sceneSprite != null
-                        ? decorationItem.sceneSprite
-                        : decorationItem.icon;
-
-                    // 添加 SpriteRenderer 组件
-                    SpriteRenderer spriteRenderer = decoration.AddComponent<SpriteRenderer>();
-                    spriteRenderer.sprite = spriteToUse; // 设置 Sprite
-                    spriteRenderer.sortingOrder = 3;
-                    spriteRenderer.spriteSortPoint = SpriteSortPoint.Pivot;
-                    if (!decorationItem.isGround)
-                        decoration.AddComponent<DepthMask>();
-
-                    // 设置大小
-                    decoration.transform.localScale = Vector3.one * decorationItem.scale;
-
-                    // 添加碰撞器用于点击检测
-                    BoxCollider2D collider = decoration.AddComponent<BoxCollider2D>();
-                    collider.size = spriteRenderer.sprite.bounds.size;
-
-                    // 添加拖拽组件
-                    if (decorationItem.decorationType == DecorationType.Draggable)
-                        decoration.AddComponent<DecorationDrag>();
-
-                    // 添加点击检测组件
-                    DecorationClickHandler clickHandler = decoration.AddComponent<DecorationClickHandler>();
+                    // GameObject decoration = new GameObject("Decoration");
+                    // Sprite spriteToUse = decorationItem.sceneSprite != null
+                    //     ? decorationItem.sceneSprite
+                    //     : decorationItem.icon;
+                    //
+                    // // 添加 SpriteRenderer 组件
+                    // SpriteRenderer spriteRenderer = decoration.AddComponent<SpriteRenderer>();
+                    // spriteRenderer.sprite = spriteToUse; // 设置 Sprite
+                    // spriteRenderer.sortingOrder = 3;
+                    // spriteRenderer.spriteSortPoint = SpriteSortPoint.Pivot;
+                    // if (!decorationItem.isGround)
+                    //     decoration.AddComponent<DepthMask>();
+                    //
+                    // // 设置大小
+                    // decoration.transform.localScale = Vector3.one * decorationItem.scale;
+                    //
+                    // // 添加碰撞器用于点击检测
+                    // BoxCollider2D collider = decoration.AddComponent<BoxCollider2D>();
+                    // collider.size = spriteRenderer.sprite.bounds.size;
+                    //
+                    // // 添加点击检测组件
+                    // DecorationClickHandler clickHandler = decoration.AddComponent<DecorationClickHandler>();
+                    // clickHandler.Initialize(i, j);
+                    
+                    var decoration = GameObject.Instantiate(decorationItem.prefab);
+                    
+                    DecorationClickHandler clickHandler = decoration.GetComponentInChildren<DecorationClickHandler>();
                     clickHandler.Initialize(i, j);
                     if (accountData.sceneDecorationInfos[mapIndex].decorations[i].position.Count <= j)
                     {

@@ -177,6 +177,7 @@ namespace BirdGame
                 groundCover2.transform.localScale = Vector3.one * weather.foreCover2.scale;
             });
             anim10.Append(groundCover2.DOColor(Color.white, 0.5f));
+            
 
             // 创建一个主序列来协调所有动画
             var mainSequence = DOTween.Sequence();
@@ -193,6 +194,19 @@ namespace BirdGame
             mainSequence.Join(anim8);
             mainSequence.Join(anim9);
             mainSequence.Join(anim10);
+            foreach (var item in weather.others)
+            {
+                var anim11 = DOTween.Sequence();
+                anim11.Append(item.renderer.DOColor(Color.black, 0.5f));
+                anim11.AppendCallback(() =>
+                {
+                    item.renderer.sprite = item.item.sprite;
+                    item.renderer.transform.localScale = Vector3.one * item.item.scale;
+                });
+                anim11.Append(item.renderer.DOColor(Color.white, 0.5f));
+                mainSequence.Join(anim11);
+            }
+            
             
             // 添加其他元素的动画
             for (int i = 0; i < others.Length; i++)
@@ -225,6 +239,7 @@ namespace BirdGame
         public SpriteItem foreCover1;
         public SpriteItem foreCover2;
         public SpriteItem foregroundGrass;
+        public OtherItem[] others;
         public Color32 birdColor;
 
         [Serializable]
@@ -241,6 +256,13 @@ namespace BirdGame
     {
         [PreviewField]
         public Sprite sprite;
-        public float scale = 1f;
+        public float scale = 0.5f;
+    }
+
+    [Serializable]
+    public class OtherItem
+    {
+        public SpriteRenderer renderer;
+        public SpriteItem item;
     }
 }

@@ -120,12 +120,12 @@ TextureImporter:
     buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
-    textureFormat: -1
+    textureFormat: 29
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
-    overridden: 0
+    overridden: 1
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
@@ -137,19 +137,85 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 258
-        y: 738
+        y: 736
         width: 1192
-        height: 1623
+        height: 1627
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: bc7464e1e46eb8890800000000000000
-      internalID: -7454611534991964213
+      spriteID: 99869eadb1c14be4d9410186f5db085c
+      internalID: -686183872
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u5927\u4ED9\u4EBA\u638C_3"
+      rect:
+        serializedVersion: 2
+        x: 716
+        y: 446
+        width: 53
+        height: 50
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5d52def9e4e7ec94b941c8164b9abef4
+      internalID: 45173340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u5927\u4ED9\u4EBA\u638C_4"
+      rect:
+        serializedVersion: 2
+        x: 1066
+        y: 404
+        width: 53
+        height: 60
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7ce23b8058d2c944a824a7c986f47ada
+      internalID: -783200524
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u5927\u4ED9\u4EBA\u638C_5"
+      rect:
+        serializedVersion: 2
+        x: 1056
+        y: 396
+        width: 25
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ab35ce9708e86d24a99666f2901d6823
+      internalID: -120913255
       vertices: []
       indices: 
       edges: []
@@ -168,7 +234,12 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
+      "\u5927\u4ED9\u4EBA\u638C_0": -686183872
       "\u5927\u4ED9\u4EBA\u638C_1": -1804637100
+      "\u5927\u4ED9\u4EBA\u638C_2": -712349480
+      "\u5927\u4ED9\u4EBA\u638C_3": 45173340
+      "\u5927\u4ED9\u4EBA\u638C_4": -783200524
+      "\u5927\u4ED9\u4EBA\u638C_5": -120913255
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

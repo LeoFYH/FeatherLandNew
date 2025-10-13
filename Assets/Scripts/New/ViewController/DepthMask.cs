@@ -30,6 +30,7 @@ namespace BirdGame
             foreach (var playerRenderer in characterList)
             {
                 if (playerRenderer == null) continue;
+                if(playerRenderer.isFlying) continue;
                 Vector2 playerFoot = playerRenderer.transform.position;
 
                 // 判断角色脚底是否在帐篷遮挡区域内
@@ -61,7 +62,7 @@ namespace BirdGame
                 if (playerRenderer.maskList.Contains(this))
                 {
                     playerRenderer.maskList.Remove(this);
-                    if (playerRenderer.maskList.Count == 0)
+                    if (playerRenderer?.maskList.Count == 0)
                         playerRenderer.sr.sortingOrder = tentRenderer.sortingOrder + 1;
                 }
             }

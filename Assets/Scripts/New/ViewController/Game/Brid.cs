@@ -83,7 +83,7 @@ namespace BirdGame
         // 飞行状态碰撞体调整相关
         private Collider2D birdCollider;
         private Vector2 originalColliderSize;
-        private bool isFlying = false;
+        public bool isFlying = false;
         
         // 高亮效果相关
         private Color originalOutlineColor;
@@ -157,6 +157,7 @@ namespace BirdGame
             _stateMachine.AddState(new BirdFlyWaitState(_stateMachine));
             _stateMachine.AddState(new BirdFlyDownState(_stateMachine));
             _stateMachine.AddState(new BirdFlyHorizontalState(_stateMachine));
+            _stateMachine.AddState(new BirdHatchingEggState(_stateMachine));
             startTimer = Time.time;
 
             transform.localScale = Vector3.one * BabyBirdSize;
@@ -206,7 +207,7 @@ namespace BirdGame
 
         void Update()
         {
-            if (!isDesktopBird)
+            if (!isDesktopBird && maskList.Count == 0)
             {
                 // 检测飞行状态并调整碰撞体
                 CheckFlyingStateAndAdjustCollider();

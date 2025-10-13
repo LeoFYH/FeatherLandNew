@@ -10,16 +10,21 @@ namespace BirdGame
     public class SpawnBirdCommand : AbstractCommand
     {
         private int eggIndex;
+        private bool isBird;
         
-        public SpawnBirdCommand(int index)
+        public SpawnBirdCommand(int index, bool isSetBird)
         {
             eggIndex = index;
+            isBird = isSetBird;
         }
         
         protected override void OnExecute()
         {
-            
-            int val = RandomGetBirdIndex();
+            int val = 0;//RandomGetBirdIndex();
+            if (isBird)
+                val = eggIndex;
+            else
+                val = RandomGetBirdIndex();
             CheckIllustratedUpdate(val);
             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("OpenEggAnim", obj =>
             {

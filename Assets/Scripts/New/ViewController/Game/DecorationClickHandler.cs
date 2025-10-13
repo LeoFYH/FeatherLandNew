@@ -22,7 +22,7 @@ namespace BirdGame
         {
             this.RegisterEvent<ClearDecorationsEvent>(evt =>
             {
-                Destroy(gameObject);
+                Destroy(transform.parent.gameObject);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
             this.RegisterEvent<SwitchWeatherEvent>(evt =>
@@ -54,7 +54,7 @@ namespace BirdGame
         {
             // 调用游戏系统的销毁方法
             //this.GetSystem<IGameSystem>().DestroyDecoration(decorationId, gameObject);
-            this.GetSystem<IUISystem>().ShowMouseMenu(decorationId, decorationIndex, gameObject);
+            this.GetSystem<IUISystem>().ShowMouseMenu(decorationId, decorationIndex, transform.parent.gameObject);
         }
     }
 } 

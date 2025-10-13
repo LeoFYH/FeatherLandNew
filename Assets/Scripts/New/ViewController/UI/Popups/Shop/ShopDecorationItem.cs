@@ -56,39 +56,41 @@ namespace BirdGame
                         // 扣除金币
                         this.GetModel<IAccountModel>().Coins.Value -= price;
 
-                        // 根据装饰品类型执行不同的购买逻辑
-                        if (item.decorationType == DecorationType.Draggable)
+                        // // 根据装饰品类型执行不同的购买逻辑
+                        // if (item.decorationType == DecorationType.Draggable)
+                        // {
+                        //     // 可拖拽类型：创建跟随鼠标的装饰品
+                        //     this.GetSystem<IGameSystem>().CreateDecoration(id,
+                        //         accountData.sceneDecorationInfos[mapIndex].decorations[id].count);
+                        //     accountData.sceneDecorationInfos[mapIndex].decorations[id].count++;
+                        //     accountData.sceneDecorationInfos[mapIndex].decorations[id].position.Add(Vector3.zero);
+                        //     string text = this.GetSystem<ILocalizationSystem>()
+                        //         .GetString("Purchase successful! Left-click to place the ornament");
+                        //     this.GetSystem<IUISystem>().ShowPrompt(text);
+                        //     //this.GetSystem<IUISystem>().ShowPrompt("购买成功！点击左键放置装饰品");
+                        //     this.GetSystem<IUISystem>().HidePopup(UIPopup.ShopPopup);
+                        // }
+                        // else if (item.decorationType == DecorationType.Fixed)
+                        // {
+                        // 固定类型：直接放置在指定位置
+                        this.GetSystem<IGameSystem>().CreateFixedDecoration(id,
+                            accountData.sceneDecorationInfos[mapIndex].decorations[id].count);
+                        accountData.sceneDecorationInfos[mapIndex].decorations[id].count++;
+                        var decorationItem = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[mapIndex]
+                            .decorations[id];
+                        Vector3 pos = Vector3.zero;
+                        int index = accountData.sceneDecorationInfos[mapIndex].decorations[id].count - 1;
+                        if (decorationItem.fixedPositions.Length > index)
                         {
-                            // 可拖拽类型：创建跟随鼠标的装饰品
-                            this.GetSystem<IGameSystem>().CreateDecoration(id,
-                                accountData.sceneDecorationInfos[mapIndex].decorations[id].count);
-                            accountData.sceneDecorationInfos[mapIndex].decorations[id].count++;
-                            accountData.sceneDecorationInfos[mapIndex].decorations[id].position.Add(Vector3.zero);
-                            string text = this.GetSystem<ILocalizationSystem>()
-                                .GetString("Purchase successful! Left-click to place the ornament");
-                            this.GetSystem<IUISystem>().ShowPrompt(text);
-                            //this.GetSystem<IUISystem>().ShowPrompt("购买成功！点击左键放置装饰品");
-                            this.GetSystem<IUISystem>().HidePopup(UIPopup.ShopPopup);
+                            pos = decorationItem.fixedPositions[index];
                         }
-                        else if (item.decorationType == DecorationType.Fixed)
-                        {
-                            // 固定类型：直接放置在指定位置
-                            this.GetSystem<IGameSystem>().CreateFixedDecoration(id,
-                                accountData.sceneDecorationInfos[mapIndex].decorations[id].count);
-                            accountData.sceneDecorationInfos[mapIndex].decorations[id].count++;
-                            var decorationItem = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[mapIndex].decorations[id];
-                            Vector3 pos = Vector3.zero;
-                            int index = accountData.sceneDecorationInfos[mapIndex].decorations[id].count - 1;
-                            if (decorationItem.fixedPositions.Length > index)
-                            {
-                                pos = decorationItem.fixedPositions[index];
-                            }
-                            accountData.sceneDecorationInfos[mapIndex].decorations[id].position.Add(pos);
-                            string text = this.GetSystem<ILocalizationSystem>()
-                                .GetString("Purchase successful! The ornament has been placed in the designated place");
-                            this.GetSystem<IUISystem>().ShowPrompt(text);
-                            //this.GetSystem<IUISystem>().ShowPrompt("购买成功！装饰品已放置在指定位置");
-                        }
+
+                        accountData.sceneDecorationInfos[mapIndex].decorations[id].position.Add(pos);
+                        string text = this.GetSystem<ILocalizationSystem>()
+                            .GetString("Purchase successful! The ornament has been placed in the designated place");
+                        this.GetSystem<IUISystem>().ShowPrompt(text);
+                        //this.GetSystem<IUISystem>().ShowPrompt("购买成功！装饰品已放置在指定位置");
+
                     });
                 }
                 else
