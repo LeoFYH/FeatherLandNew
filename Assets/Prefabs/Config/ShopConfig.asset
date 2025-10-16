@@ -21,8 +21,6 @@ MonoBehaviour:
       birdCount: 3
       description: EggDescription_0_0
       birds:
-      - birdType: 1
-        probability: 0.5
       - birdType: 0
         probability: 0.5
       - birdType: 13
@@ -33,6 +31,8 @@ MonoBehaviour:
         probability: 0.572
       - birdType: 3
         probability: 0.494
+      - birdType: 39
+        probability: 0.5
     - eggSp: {fileID: 710238443548197888, guid: 1170092e8fa8e1142a7e347132e8ea45, type: 3}
       price: 700
       birdCount: 3
@@ -44,16 +44,10 @@ MonoBehaviour:
         probability: 0.3
       - birdType: 5
         probability: 0.3
-      - birdType: 14
-        probability: 0.25
-      - birdType: 2
-        probability: 0.2
       - birdType: 7
         probability: 0.2
       - birdType: 8
         probability: 0.2
-      - birdType: 15
-        probability: 0.1
       - birdType: 12
         probability: 0.1
       - birdType: 0
@@ -88,6 +82,8 @@ MonoBehaviour:
         probability: 0.3
       - birdType: 11
         probability: 0.3
+      - birdType: 39
+        probability: 0.5
   - eggs:
     - eggSp: {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
       price: 0

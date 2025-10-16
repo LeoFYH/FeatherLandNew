@@ -169,6 +169,11 @@ namespace BirdGame
                 int index = 0;
                 foreach (var bird in config.sceneBirds[mapIndex].birdClasses[i].birds)
                 {
+                    if (config.sceneBirds[mapIndex].birdClasses[i] == null || bird == null)
+                    {
+                        Debug.Log($"{config.sceneBirds[mapIndex].birdClasses[i].birdName} {index}为空！");
+                        continue;
+                    }
                     list.Add(config.sceneBirds[mapIndex].birdClasses[i].birdName + index, bird.id);
                     index++;
                 }
