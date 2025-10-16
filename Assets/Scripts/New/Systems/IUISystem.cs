@@ -95,6 +95,7 @@ namespace BirdGame
         void ShowDecorationInfo(int index);
         void HideDecorationInfo();
         void ShowBuyConfirm(Action onConfirm);
+        void ShowBuyConfirm(string price, Action onConfirm);
     }
 
     public class UISystem : AbstractSystem, IUISystem
@@ -354,6 +355,15 @@ namespace BirdGame
             {
                 var popup = popupDic[UIPopup.BuyConfirmPopup] as BuyConfirmPopup;
                 popup.Init(onConfirm);
+            });
+        }
+
+        public void ShowBuyConfirm(string price, Action onConfirm)
+        {
+            ShowPopup(UIPopup.BuyConfirmPopup, () =>
+            {
+                var popup = popupDic[UIPopup.BuyConfirmPopup] as BuyConfirmPopup;
+                popup.Init(price, onConfirm);
             });
         }
     }

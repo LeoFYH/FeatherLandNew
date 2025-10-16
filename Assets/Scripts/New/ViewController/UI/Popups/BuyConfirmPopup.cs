@@ -1,5 +1,6 @@
 ﻿using System;
 using QFramework;
+using TMPro;
 using UnityEngine.UI;
 
 namespace BirdGame
@@ -13,6 +14,12 @@ namespace BirdGame
 
         public void Init(Action onConfirmHandle)
         {
+            onConfirm = onConfirmHandle;
+        }
+        
+        public void Init(string price, Action onConfirmHandle)
+        {
+            buyButton.GetComponentInChildren<TextMeshProUGUI>().text = price;
             onConfirm = onConfirmHandle;
         }
 

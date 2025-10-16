@@ -21,8 +21,7 @@ namespace BirdGame
             for (int i = 0; i < config.maps.Length; i++)
             {
                 var item = GameObject.Instantiate(itemPrefab, content).GetComponent<MapItem>();
-                item.Init(i);
-                
+                item.Init(i, config.maps[i].uiPosition);
             }
         }
     }

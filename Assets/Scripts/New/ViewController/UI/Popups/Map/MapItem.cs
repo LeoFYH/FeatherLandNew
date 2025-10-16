@@ -17,10 +17,11 @@ namespace BirdGame
         private int mapIndex;
         private bool isEnter;
         
-        public void Init(int index)
+        public void Init(int index, Vector2 position)
         {
             mapIndex = index;
             mapText.text = this.GetModel<IConfigModel>().MapConfig.maps[index].mapName;
+            GetComponent<RectTransform>().anchoredPosition = position;
         }
 
         private void Start()
@@ -49,7 +50,8 @@ namespace BirdGame
                     if (this.GetModel<IConfigModel>().MapConfig.maps[mapIndex].cost <=
                         this.GetModel<ISaveModel>().AccountData.coins)
                     {
-                        this.GetSystem<IUISystem>().ShowBuyConfirm(() =>
+                        string price = this.GetModel<IConfigModel>().MapConfig.maps[mapIndex].cost.ToString();
+                        this.GetSystem<IUISystem>().ShowBuyConfirm(price, () =>
                         {
                             this.GetModel<ISaveModel>().AccountData.coins -=
                                 this.GetModel<IConfigModel>().MapConfig.maps[mapIndex].cost;
