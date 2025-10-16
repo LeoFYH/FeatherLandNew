@@ -1,7 +1,9 @@
 ﻿using System;
+using DG.Tweening;
 using QFramework;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace BirdGame
 {
@@ -10,8 +12,10 @@ namespace BirdGame
         public Transform enterPos;
         public Transform endPos;
         public Transform createPos;
-        public GameObject waitingUI;
+        public Transform exitPos;
         public TextMeshProUGUI waitingText;
+        public Image progressFill;
+        public Button finishedButton;
 
         private IGameModel gameModel;
         
@@ -19,12 +23,25 @@ namespace BirdGame
         {
             gameModel = this.GetModel<IGameModel>(); 
             gameModel.CurrentTent = this;
-            waitingText.text = $"{gameModel.HatchingBirds.Count}/2";
-        }
-
-        private void Update()
-        {
-            waitingText.text = $"{gameModel.HatchingBirds.Count}/2";
+            waitingText.text = $"{gameModel.EnteredBirds.Value}/2";
+            gameModel.EnteredBirds.Register(v =>
+            {
+                waitingText.text = $"{v}/2";
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            progressFill.fillAmount = gameModel.HatchingProgress.Value;
+            gameModel.HatchingProgress.Register(v =>
+            {
+                progressFill.fillAmount = v > 1 ? 1f : v;
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            finishedButton.gameObject.SetActive(false);
+            gameModel.IsHatchingFinished.Register(v =>
+            {
+                finishedButton.gameObject.SetActive(v);
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            finishedButton.onClick.AddListener(() =>
+            {
+                this.GetSystem<IUISystem>().ShowPopup(UIPopup.HatchingBirdPopup);
+            });
         }
     }
 }

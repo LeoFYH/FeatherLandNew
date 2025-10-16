@@ -19,6 +19,10 @@ namespace BirdGame
         CanvasGroup UiGroup { get; set; }
         TentViewController CurrentTent { get; set; }
         List<int> HatchingBirds { get; set; }
+        BindableProperty<int> EnteredBirds { get; }
+        BindableProperty<float> HatchingProgress { get; }
+        BindableProperty<bool> IsHatchingFinished { get; }
+        int CurrentHatchingBirdIndex { get; set; }
     }
 
     public class GameModel : AbstractModel, IGameModel
@@ -43,6 +47,10 @@ namespace BirdGame
         public CanvasGroup UiGroup { get; set; }
         public TentViewController CurrentTent { get; set; }
         public List<int> HatchingBirds { get; set; } = new List<int>();
+        public BindableProperty<int> EnteredBirds { get; } = new BindableProperty<int>();
+        public BindableProperty<float> HatchingProgress { get; } = new BindableProperty<float>();
+        public BindableProperty<bool> IsHatchingFinished { get; } = new BindableProperty<bool>();
+        public int CurrentHatchingBirdIndex { get; set; } = -1;
         public int EggInfoIndex { get; set; }
     }
 }

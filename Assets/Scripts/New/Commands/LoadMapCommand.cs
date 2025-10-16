@@ -18,6 +18,13 @@ namespace BirdGame
 
         protected override void OnExecute()
         {
+            var gameModel = this.GetModel<IGameModel>();
+            gameModel.CurrentTent = null;
+            gameModel.EnteredBirds.Value = 0;
+            gameModel.IsHatchingFinished.Value = false;
+            gameModel.HatchingProgress.Value = 0;
+            gameModel.HatchingBirds.Clear();
+            
             //清除当前场景的鸟
             this.GetModel<IDesktopBirdModel>().DesktopBirds.Clear();
           

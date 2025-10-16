@@ -36,10 +36,10 @@ namespace BirdGame
                 // 判断角色脚底是否在帐篷遮挡区域内
                 if (poly.OverlapPoint(playerFoot))
                 {
-                    if (!playerRenderer.maskList.Contains(this))
+                    if (!playerRenderer.maskList.Contains(this) && playerRenderer.sr != null)
                     {
                         playerRenderer.maskList.Add(this);
-                        playerRenderer.sr.sortingOrder = tentRenderer.sortingOrder - 1;
+                        playerRenderer.sr.sortingOrder = 3;
                     }
                 }
                 else

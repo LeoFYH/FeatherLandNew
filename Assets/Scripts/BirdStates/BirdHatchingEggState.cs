@@ -1,4 +1,5 @@
-﻿using QFramework;
+﻿using DG.Tweening;
+using QFramework;
 using UnityEngine;
 
 namespace BirdGame
@@ -9,6 +10,7 @@ namespace BirdGame
         private float dirX;
         private bool isEnter = false;
         private bool isEnd = false;
+        private bool isExit = false;
         private float startTime;
         private float totalTime = 10f;
         
@@ -19,7 +21,7 @@ namespace BirdGame
 
         public override void OnEnter()
         {
-            if (this.GetModel<IGameModel>().CurrentTent == null || this.GetModel<IGameModel>().HatchingBirds.Count >= 2)
+            if (this.GetModel<IGameModel>().CurrentTent == null || this.GetModel<IGameModel>().HatchingBirds.Count >= 2 || this.GetModel<IGameModel>().CurrentHatchingBirdIndex != -1 || _brid.walkArea != 3)
             {
                 DONext();
                 return;
@@ -43,7 +45,7 @@ namespace BirdGame
             {
                 if (!isEnter)
                 {
-                    Debug.Log("Enter");
+                    Debug.Log("Enter" + this.GetModel<IGameModel>().HatchingBirds.Count);
                     isEnter = true;
                     var target = this.GetModel<IGameModel>().CurrentTent.endPos.position;
                     if (_brid.agent.SetDestination(target))
@@ -64,28 +66,41 @@ namespace BirdGame
                     _brid.agent.velocity = Vector3.zero;
                     _brid.lineRenderer.positionCount = 0;
                     startTime = 0;
+                    this.GetModel<IGameModel>().EnteredBirds.Value++;
                 }
-                else
+                else if(!isExit)
                 {
-                    if (this.GetModel<IGameModel>().HatchingBirds.Count == 2)
+                    if (this.GetModel<IGameModel>().EnteredBirds.Value == 2)
                     {
                         startTime += Time.deltaTime;
+                        this.GetModel<IGameModel>().HatchingProgress.Value = startTime / totalTime;
                         if (startTime >= totalTime)
                         {
-                            if (this.GetModel<IGameModel>().HatchingBirds[0] == _brid.birdIndex)
+                            if (this.GetModel<IGameModel>().HatchingBirds.Count == 2 &&
+                                this.GetModel<IGameModel>().HatchingBirds[0] == _brid.birdIndex)
                             {
-                                CreateEgg();
+                                //CreateEgg();
+                                this.GetModel<IGameModel>().CurrentHatchingBirdIndex = _brid.birdIndex;
                                 this.GetModel<IGameModel>().HatchingBirds.Clear();
+                                this.GetModel<IGameModel>().HatchingProgress.Value = 0;
+                                this.GetModel<IGameModel>().IsHatchingFinished.Value = true;
                             }
-                            currMachine.ChangeState<BirdRunState>();
+
+                            ExitTent();
+                            isExit = true;
                             return;
                         }
+
                         return;
                     }
                     else
                     {
                         startTime = 0;
                     }
+                }
+                else
+                {
+                    currMachine.ChangeState<BirdRunState>();
                 }
             }
             else
@@ -98,7 +113,23 @@ namespace BirdGame
         public override void OnExit()
         {
         }
-        
+
+        private void ExitTent()
+        {
+            Debug.Log("Exit");
+            _brid.agent.isStopped = false;
+            this.GetModel<IGameModel>().HatchingProgress.Value = 0;
+            var target = this.GetModel<IGameModel>().CurrentTent.exitPos.position;
+            if (_brid.agent.SetDestination(target))
+            {
+                _brid.agent.isStopped = false;
+            }
+            else
+            {
+                Debug.LogError("目标超出渲染地面范围！");
+            }
+        }
+
         private void DONext()
         {
             int random = Random.Range(0, 2);
@@ -112,16 +143,6 @@ namespace BirdGame
             }
         }
 
-        private void CreateEgg()
-        {
-            this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("Egg", obj =>
-            {
-                GameObject go = GameObject.Instantiate(obj);
-                go.GetComponent<Egg>().SetBirdIndex(this.GetModel<IBirdModel>().BirdList[_brid.birdIndex].birdType);
-                go.transform.position = this.GetModel<IGameModel>().CurrentTent.createPos.position;
-            });
-            this.GetSystem<IUISystem>().ShowMask();
-            this.GetSystem<IGameSystem>().SendEvent<DisableButtonEvent>();
-        }
+        
     }
 }
