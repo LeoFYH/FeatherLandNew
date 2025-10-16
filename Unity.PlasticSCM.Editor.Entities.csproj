@@ -19,7 +19,7 @@
     <RootNamespace></RootNamespace>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>Unity.Mathematics.Editor</AssemblyName>
+    <AssemblyName>Unity.PlasticSCM.Editor.Entities</AssemblyName>
     <TargetFramework>netstandard2.1</TargetFramework>
     <BaseDirectory>.</BaseDirectory>
   </PropertyGroup>
@@ -32,7 +32,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>0169;USG0001</NoWarn>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -41,7 +41,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>0169;USG0001</NoWarn>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <NoStandardLibraries>true</NoStandardLibraries>
@@ -64,13 +64,11 @@
     <Analyzer Include="D:\unity\6000.0.58f2\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Library\PackageCache\com.unity.mathematics@8017b507cc74\Unity.Mathematics.Editor\QuaternionDrawer.cs" />
-    <Compile Include="Library\PackageCache\com.unity.mathematics@8017b507cc74\Unity.Mathematics.Editor\MatrixDrawer.cs" />
-    <Compile Include="Library\PackageCache\com.unity.mathematics@8017b507cc74\Unity.Mathematics.Editor\PrimitiveVectorDrawer.cs" />
-    <Compile Include="Library\PackageCache\com.unity.mathematics@8017b507cc74\Unity.Mathematics.Editor\PostNormalizedVectorDrawer.cs" />
+    <Compile Include="Library\PackageCache\com.unity.collab-proxy@ab839cc7d2ad\Editor\Entities\GetSubScenePathFromInstance.cs" />
+    <Compile Include="Library\PackageCache\com.unity.collab-proxy@ab839cc7d2ad\Editor\Entities\HierarchyExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Library\PackageCache\com.unity.mathematics@8017b507cc74\Unity.Mathematics.Editor\Unity.Mathematics.Editor.asmdef" />
+    <None Include="Library\PackageCache\com.unity.collab-proxy@ab839cc7d2ad\Editor\Entities\Unity.PlasticSCM.Editor.Entities.asmdef" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -1147,7 +1145,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Unity.Mathematics.csproj" />
+    <ProjectReference Include="Unity.PlasticSCM.Editor.csproj" />
     <ProjectReference Include="UnityEditor.UI.csproj" />
     <ProjectReference Include="UnityEngine.UI.csproj" />
     <ProjectReference Include="UnityEngine.TestRunner.csproj" />

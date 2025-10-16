@@ -101,46 +101,46 @@ namespace BirdGame
             }
 
             // 处理跟随鼠标逻辑
-            if (isFollowingMouse)
-            {
-                float followDuration = Time.time - followMouseStartTime;
-                if (followDuration >= followMouseDuration)
-                {
-                    // 跟随时间结束，切换到idle状态
-                    isFollowingMouse = false;
-                    currMachine.ChangeState<BirdIdleState>();
-                    Debug.Log("跟随鼠标结束");
-                    return;
-                }
-                else
-                {
-                    // 跟随鼠标移动
-                    Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                    mouseWorldPos.z = _brid.transform.position.z; // 保持Z轴不变
+            // if (isFollowingMouse)
+            // {
+            //     float followDuration = Time.time - followMouseStartTime;
+            //     if (followDuration >= followMouseDuration)
+            //     {
+            //         // 跟随时间结束，切换到idle状态
+            //         isFollowingMouse = false;
+            //         currMachine.ChangeState<BirdIdleState>();
+            //         Debug.Log("跟随鼠标结束");
+            //         return;
+            //     }
+            //     else
+            //     {
+            //         // 跟随鼠标移动
+            //         Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            //         mouseWorldPos.z = _brid.transform.position.z; // 保持Z轴不变
                     
-                    _brid.agent.SetDestination(mouseWorldPos);
-                    _brid.agent.isStopped = false;
+            //         _brid.agent.SetDestination(mouseWorldPos);
+            //         _brid.agent.isStopped = false;
                     
-                    // 根据移动方向设置sprite朝向
-                    if (Mathf.Abs(_brid.agent.velocity.x) > 0.001f)
-                    {
-                        _brid.sr.flipX = _brid.agent.velocity.x >= 0;
-                    }
+            //         // 根据移动方向设置sprite朝向
+            //         if (Mathf.Abs(_brid.agent.velocity.x) > 0.001f)
+            //         {
+            //             _brid.sr.flipX = _brid.agent.velocity.x >= 0;
+            //         }
                     
-                    _brid.anim.SetFloat("MoveSpeed", 1);
+            //         _brid.anim.SetFloat("MoveSpeed", 1);
                     
-                    // 跟随时冒爱心（每0.5秒一次）
-                    if (Mathf.FloorToInt(followDuration * 2) != Mathf.FloorToInt((followDuration - Time.deltaTime) * 2))
-                    {
-                        this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("Heart", obj =>
-                        {
-                            GameObject.Instantiate(obj, _brid.heartPos);
-                        });
-                    }
+            //         // 跟随时冒爱心（每0.5秒一次）
+            //         if (Mathf.FloorToInt(followDuration * 2) != Mathf.FloorToInt((followDuration - Time.deltaTime) * 2))
+            //         {
+            //             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("Heart", obj =>
+            //             {
+            //                 GameObject.Instantiate(obj, _brid.heartPos);
+            //             });
+            //         }
                     
-                    return;
-                }
-            }
+            //         return;
+            //     }
+            // }
 
             // 正常的跑步逻辑
             if (!_brid.agent.pathPending && _brid.agent.remainingDistance <= 0.01f)
