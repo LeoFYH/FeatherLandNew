@@ -13,12 +13,15 @@ MonoBehaviour:
   m_Name: MapConfig
   m_EditorClassIdentifier: 
   maps:
-  - mapName: Map1
+  - mapName: Forest
     mapPreview: {fileID: 765954583785660313, guid: 2d52a003b346e5e459a7f384b7218040, type: 3}
     cost: 0
-  - mapName: Map2
-    mapPreview: {fileID: 765954583785660313, guid: 2d52a003b346e5e459a7f384b7218040, type: 3}
+    uiPosition: {x: 0, y: 0}
+  - mapName: Mountain
+    mapPreview: {fileID: 21300000, guid: ae5c9646e1d198e4e8436ace216e9f36, type: 3}
     cost: 0
-  - mapName: Map3
-    mapPreview: {fileID: 765954583785660313, guid: 2d52a003b346e5e459a7f384b7218040, type: 3}
+    uiPosition: {x: 0, y: 0}
+  - mapName: Dessert
+    mapPreview: {fileID: 4813417214287935668, guid: 5bdb6adf24e26644aa2e51e588dac56d, type: 3}
     cost: 0
+    uiPosition: {x: 0, y: 0}

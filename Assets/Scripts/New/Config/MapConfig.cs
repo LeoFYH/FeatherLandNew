@@ -20,5 +20,7 @@ namespace BirdGame
         public Sprite mapPreview;
         [LabelText("售价")]
         public int cost;
+        [LabelText("UI位置")]
+        public Vector2 uiPosition;
     }
 }

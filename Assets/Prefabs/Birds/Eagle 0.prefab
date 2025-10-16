@@ -28,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.07, y: 0.07, z: 1}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1885250170276666101}
@@ -189,6 +189,7 @@ MonoBehaviour:
   heartPos: {fileID: 7580150105710783560}
   flyInAirStartPosition: {x: 0, y: 4, z: 0}
   lineRenderer: {fileID: 1326520134291011078}
+  maskList: []
   clickCount: 1
   totalFavorability: 10
   distance: 0
@@ -201,6 +202,7 @@ MonoBehaviour:
   agent: {fileID: 0}
   originalScale: {x: 0, y: 0, z: 0}
   lastPerspectiveScale: 1
+  isFlying: 0
   animScale: 1
   isDesktopBird: 0
 --- !u!61 &7270674382561921263
