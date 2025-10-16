@@ -28,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.07, y: 0.07, z: 1}
+  m_LocalScale: {x: 0.09, y: 0.09, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1885250170276666101}
@@ -77,7 +77,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 3
-  m_Sprite: {fileID: 604338284027519978, guid: 863783531d669704d805341e3937d3cb, type: 3}
+  m_Sprite: {fileID: -855298285791758126, guid: 673c39e42bc5d3243ae808516c93efcb, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 1
   m_FlipY: 0
@@ -98,7 +98,7 @@ Animator:
   m_GameObject: {fileID: 343863069046991755}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 22100000, guid: 6d04d009b7143f24189db65206da5706, type: 2}
+  m_Controller: {fileID: 22100000, guid: fd2fe265b2002304abb32373767c2adf, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -124,9 +124,9 @@ GameObject:
   - component: {fileID: 8962595257972375807}
   - component: {fileID: 4962303595602008656}
   - component: {fileID: 1326520134291011078}
-  - component: {fileID: -8179423098602663446}
+  - component: {fileID: 5436467666063207720}
   m_Layer: 0
-  m_Name: Hui 1
+  m_Name: Namaqua Dove 1
   m_TagString: Bird
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -165,7 +165,8 @@ MonoBehaviour:
   walkArea: 3
   BabyBirdSize: 0.6
   AdultBirdSize: 0.8
-  BirdEatDistance: 0.2
+  BirdEatDistance: 0.32
+  BirdEatDistanceY: 0
   BackgroundBirdSize: 0
   nestTrans: {fileID: 0}
   originalPos: {x: 0, y: 0, z: 0}
@@ -188,6 +189,7 @@ MonoBehaviour:
   heartPos: {fileID: 7580150105710783560}
   flyInAirStartPosition: {x: 0, y: 4, z: 0}
   lineRenderer: {fileID: 1326520134291011078}
+  maskList: []
   clickCount: 1
   totalFavorability: 10
   distance: 0
@@ -200,7 +202,9 @@ MonoBehaviour:
   agent: {fileID: 0}
   originalScale: {x: 0, y: 0, z: 0}
   lastPerspectiveScale: 1
+  isFlying: 0
   animScale: 1
+  isDesktopBird: 0
 --- !u!61 &7270674382561921263
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -235,7 +239,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.020652175, y: 0.44044033}
+  m_Offset: {x: 0.007135302, y: 0.43709242}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -245,7 +249,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.6909616, y: 0.88440293}
+  m_Size: {x: 0.71799535, y: 0.87512887}
   m_EdgeRadius: 0
 --- !u!195 &8962595257972375807
 NavMeshAgent:
@@ -401,7 +405,7 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
---- !u!114 &-8179423098602663446
+--- !u!114 &5436467666063207720
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
