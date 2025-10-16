@@ -12,7 +12,7 @@ namespace BirdGame
         public Transform enterPos;
         public Transform endPos;
         public Transform createPos;
-        public Transform exitPos;
+        public Transform[] exitPoses;
         public TextMeshProUGUI waitingText;
         public Image progressFill;
         public Button finishedButton;

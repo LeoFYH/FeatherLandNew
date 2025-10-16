@@ -84,9 +84,13 @@ namespace BirdGame
                                 this.GetModel<IGameModel>().HatchingBirds.Clear();
                                 this.GetModel<IGameModel>().HatchingProgress.Value = 0;
                                 this.GetModel<IGameModel>().IsHatchingFinished.Value = true;
+                                ExitTent(0);
+                            }
+                            else
+                            { 
+                                ExitTent(1);
                             }
 
-                            ExitTent();
                             isExit = true;
                             return;
                         }
@@ -114,12 +118,12 @@ namespace BirdGame
         {
         }
 
-        private void ExitTent()
+        private void ExitTent(int index)
         {
             Debug.Log("Exit");
             _brid.agent.isStopped = false;
             this.GetModel<IGameModel>().HatchingProgress.Value = 0;
-            var target = this.GetModel<IGameModel>().CurrentTent.exitPos.position;
+            var target = this.GetModel<IGameModel>().CurrentTent.exitPoses[index].position;
             if (_brid.agent.SetDestination(target))
             {
                 _brid.agent.isStopped = false;

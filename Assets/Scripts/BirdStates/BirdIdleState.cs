@@ -216,7 +216,7 @@ namespace BirdGame
                     {
                         currMachine.ChangeState<BirdFlyHorizontalState>();
                     }
-                    currMachine.ChangeState<BirdFlyHorizontalState>();
+                    //currMachine.ChangeState<BirdFlyHorizontalState>();
                 }
             }
         }
