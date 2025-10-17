@@ -1,6 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using System.Text;
+using TMPro;
+using AOT;
 
 /// <summary>
 /// 壁纸模式控制器：负责将Unity窗口嵌入桌面作为动态壁纸，并管理模式切换
@@ -118,8 +121,6 @@ public class WallpaperModeController : MonoBehaviour
 
     // SetWindowPos标志：显示窗口
     private const uint SWP_SHOWWINDOW = 0x0040;
-    private const uint SWP_NOSIZE = 0x0001;
-    private const uint SWP_NOMOVE = 0x0002;
 
     // 窗口Z轴顺序：置于最底层
     private static readonly IntPtr HWND_BOTTOM = new IntPtr(1);
@@ -165,6 +166,9 @@ public class WallpaperModeController : MonoBehaviour
         PROCESS_PER_MONITOR_DPI_AWARE = 2
     }
     #endregion
+
+    // 修复IL2CPP：使用静态字段来存储查找结果
+    private static IntPtr foundWorkerW = IntPtr.Zero;
 
     private void Awake()
     {
@@ -230,7 +234,6 @@ public class WallpaperModeController : MonoBehaviour
             // 向ProgMan发送消息，确保Win11能正确找到WorkerW
             SendMessage(hProgman, 0x052C, new IntPtr(13), new IntPtr(1));
             IntPtr workerW = FindWorkerWWithIconsVisible(hProgman);
-            Debug.Log(workerW.ToString("X"));
 
             // 找不到WorkerW窗口时退出
             if (workerW == IntPtr.Zero)
@@ -282,28 +285,35 @@ public class WallpaperModeController : MonoBehaviour
     /// </summary>
     private IntPtr FindWorkerWWithIconsVisible(IntPtr progman)
     {
-        IntPtr workerW = IntPtr.Zero;
+        foundWorkerW = IntPtr.Zero;
 
-        // 枚举所有顶级窗口
-        EnumWindows((hwnd, lParam) =>
-        {
-            // 查找包含SHELLDLL_DefView控件的窗口（管理桌面图标）
-            if (FindWindowEx(hwnd, IntPtr.Zero, "SHELLDLL_DefView", null) != IntPtr.Zero)
-            {
-                // 获取同级的WorkerW窗口（桌面背景容器）
-                workerW = FindWindowEx(IntPtr.Zero, hwnd, "WorkerW", null);
-            }
-            // 找到后停止枚举
-            return workerW == IntPtr.Zero;
-        }, IntPtr.Zero);
+        // 使用静态方法而不是lambda表达式（IL2CPP兼容）
+        EnumWindows(EnumWindowsCallback, IntPtr.Zero);
 
         // 极端情况处理：直接查找第一个WorkerW
-        if (workerW == IntPtr.Zero)
+        if (foundWorkerW == IntPtr.Zero)
         {
-            workerW = FindWindowEx(progman, IntPtr.Zero, "WorkerW", null);
+            foundWorkerW = FindWindowEx(progman, IntPtr.Zero, "WorkerW", null);
         }
 
-        return workerW;
+        return foundWorkerW;
+    }
+
+    /// <summary>
+    /// EnumWindows的静态回调方法（IL2CPP兼容）
+    /// </summary>
+    [MonoPInvokeCallback(typeof(EnumWindowsProc))]
+    private static bool EnumWindowsCallback(IntPtr hwnd, IntPtr lParam)
+    {
+        // 查找包含SHELLDLL_DefView控件的窗口（管理桌面图标）
+        if (FindWindowEx(hwnd, IntPtr.Zero, "SHELLDLL_DefView", null) != IntPtr.Zero)
+        {
+            // 获取同级的WorkerW窗口（桌面背景容器）
+            foundWorkerW = FindWindowEx(IntPtr.Zero, hwnd, "WorkerW", null);
+        }
+
+        // 找到后停止枚举
+        return foundWorkerW == IntPtr.Zero;
     }
 
     /// <summary>
