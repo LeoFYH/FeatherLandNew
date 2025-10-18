@@ -18,13 +18,15 @@ public class NavigationManager : MonoBehaviour
     public float radius = 10f;
     public int maxTries = 30;
     public PolygonCollider2D[] areas;
-
+    public GameObject[] notWalkAreas;
+    
+    private NavMeshSurface surface;
     private Dictionary<int, WalkableArea> colliderDic = new Dictionary<int, WalkableArea>();
 
     private void Awake()
     {
         _instance = this;
-        
+        surface = GetComponent<NavMeshSurface>();
         for (int i = 0; i < areas.Length; i++)
         {
             var modifier = areas[i].GetComponent<NavMeshModifier>();
@@ -48,6 +50,32 @@ public class NavigationManager : MonoBehaviour
 
         return colliderDic[area];
     }
+
+    public void EnalbeNotWalk(int index)
+    {
+        if (notWalkAreas == null || notWalkAreas.Length <= index)
+        {
+            Debug.Log("禁行区域超出索引！");
+            return;
+        }
+        notWalkAreas[index].SetActive(true);
+        surface.RemoveData();
+        surface.BuildNavMesh();
+    }
+
+    public void DisableNotWalk(int index)
+    {
+        if (notWalkAreas == null || notWalkAreas.Length <= index)
+        {
+            Debug.Log("禁行区域超出索引！");
+            return;
+        }
+        notWalkAreas[index].SetActive(false);
+        surface.RemoveData();
+        surface.BuildNavMesh();
+    }
+    
+    
 
     public bool IsPointInNavMeshArea(int area, Vector3 position)
     {

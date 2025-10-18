@@ -11,8 +11,6 @@ GameObject:
   - component: {fileID: 2392277963759149304}
   - component: {fileID: 1788447028003223345}
   - component: {fileID: 1303708942967069434}
-  - component: {fileID: 4787940429737598132}
-  - component: {fileID: 2857144079744158179}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Decoration
@@ -103,76 +101,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   decorationIndex: 0
---- !u!60 &4787940429737598132
-PolygonCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 391988422139600286}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.155}
-    oldSize: {x: 9.3, y: 5.75}
-    newSize: {x: 5.54, y: 5.86}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: 3.5303621, y: 0.08491063}
-      - {x: 4.3951664, y: 0.04837203}
-      - {x: 2.5792105, y: 4.135829}
-      - {x: 1.0180528, y: 4.129876}
-      - {x: -0.97436285, y: 4.2306337}
-      - {x: -1.6664295, y: 4.360423}
-      - {x: -2.3367558, y: 3.214552}
-      - {x: -4.165098, y: 0.19923419}
-      - {x: -3.425495, y: 0.04035604}
-      - {x: -0.090043, y: -0.7077193}
-      - {x: 2.0959034, y: -0.04892704}
-  m_UseDelaunayMesh: 0
---- !u!114 &2857144079744158179
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 391988422139600286}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dda9c074696d41dea2b28bf3a10e6704, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &783301965737399768
 GameObject:
   m_ObjectHideFlags: 0
@@ -316,6 +244,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2009568976145928268}
   - component: {fileID: 5613375902227111113}
+  - component: {fileID: 8312397845111938999}
   m_Layer: 0
   m_Name: Decoration 0
   m_TagString: Untagged
@@ -366,6 +295,19 @@ MonoBehaviour:
   waitingText: {fileID: 6979273475746039856}
   progressFill: {fileID: 6702163543680741019}
   finishedButton: {fileID: 7305997335781685459}
+--- !u!114 &8312397845111938999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3012990827443070192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e7b12167b7b43e199ad04d957758cc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  notWalkableIndex: 0
 --- !u!1 &3399968892424376433
 GameObject:
   m_ObjectHideFlags: 0

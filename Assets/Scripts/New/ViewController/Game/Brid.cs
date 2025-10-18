@@ -116,6 +116,13 @@ namespace BirdGame
             agent.autoBraking = false; // 禁用自动减速
             agent.stoppingDistance = 0f; // 零停止距离
             
+            agent.areaMask = agent.areaMask = (1 << NavMesh.GetAreaFromName("Walkable")) | 
+                                              (1 << NavMesh.GetAreaFromName("Ground")) |
+                                              (1 << NavMesh.GetAreaFromName("LeftArea")) |
+                                              (1 << NavMesh.GetAreaFromName("Rock1")) |
+                                              (1 << NavMesh.GetAreaFromName("Rock2")) |
+                                              (1 << NavMesh.GetAreaFromName("RightArea"));
+            
             originalPos = transform.position;
             anim = GetComponentInChildren<Animator>();
             sr = GetComponentInChildren<SpriteRenderer>();

@@ -56,7 +56,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1536d60d51475f34b82d8112ea67bb7b, type: 2}
+  - {fileID: 2100000, guid: 101a309229cab07409a8aa1bd34d334d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -166,6 +166,7 @@ MonoBehaviour:
   BabyBirdSize: 0.6
   AdultBirdSize: 0.8
   BirdEatDistance: 0.2
+  BirdEatDistanceY: 0
   BackgroundBirdSize: 0
   nestTrans: {fileID: 0}
   originalPos: {x: 0, y: 0, z: 0}
@@ -188,6 +189,7 @@ MonoBehaviour:
   heartPos: {fileID: 7580150105710783560}
   flyInAirStartPosition: {x: 0, y: 4, z: 0}
   lineRenderer: {fileID: 1326520134291011078}
+  maskList: []
   clickCount: 1
   totalFavorability: 10
   distance: 0
@@ -200,7 +202,9 @@ MonoBehaviour:
   agent: {fileID: 0}
   originalScale: {x: 0, y: 0, z: 0}
   lastPerspectiveScale: 1
+  isFlying: 0
   animScale: 1
+  isDesktopBird: 0
 --- !u!61 &7270674382561921263
 BoxCollider2D:
   m_ObjectHideFlags: 0

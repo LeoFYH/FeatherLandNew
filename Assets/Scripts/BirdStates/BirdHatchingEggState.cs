@@ -1,6 +1,7 @@
 ﻿using DG.Tweening;
 using QFramework;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace BirdGame
 {
@@ -21,6 +22,8 @@ namespace BirdGame
 
         public override void OnEnter()
         {
+            int areaToAdd = NavMesh.GetAreaFromName("Limit");
+            _brid.agent.areaMask |= (1 << areaToAdd);
             if (this.GetModel<IGameModel>().CurrentTent == null || this.GetModel<IGameModel>().HatchingBirds.Count >= 2 || this.GetModel<IGameModel>().CurrentHatchingBirdIndex != -1 || _brid.walkArea != 3)
             {
                 DONext();
@@ -116,6 +119,8 @@ namespace BirdGame
 
         public override void OnExit()
         {
+            int areaToRemove = NavMesh.GetAreaFromName("Limit");
+            _brid.agent.areaMask &= ~(1 << areaToRemove);
         }
 
         private void ExitTent(int index)
