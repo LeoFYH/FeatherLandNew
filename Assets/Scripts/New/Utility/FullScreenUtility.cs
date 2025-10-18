@@ -259,22 +259,23 @@ namespace BirdGame
         public void WallpaperMode()
         {
 #if !UNITY_EDITOR
+            // 获取Unity窗口句柄（根据PlayerSettings中的产品名称查找）
+            unityWindowHandle = FindWindow(null, Application.productName);
+            Debug.Log("当前应用窗口名称：" + Application.productName);
+
+            // 句柄获取失败处理
+            if (unityWindowHandle == IntPtr.Zero)
+            {
+                Debug.LogError("无法获取Unity窗口句柄！请检查Player Settings中的Product Name是否正确");
+                return;
+            }
+
+            // 避免重复进入或句柄无效
+            if (isWallpaperMode || unityWindowHandle == IntPtr.Zero)
+                return;
+
             try
             {
-                // 获取Unity窗口句柄（根据PlayerSettings中的产品名称查找）
-                unityWindowHandle = FindWindow(null, Application.productName);
-                Debug.Log("当前应用窗口名称：" + Application.productName);
-
-                // 句柄获取失败处理
-                if (unityWindowHandle == IntPtr.Zero)
-                {
-                    Debug.LogError("无法获取Unity窗口句柄！请检查Player Settings中的Product Name是否正确");
-                    return;
-                }
-
-                // 避免重复进入或句柄无效
-                if (isWallpaperMode || unityWindowHandle == IntPtr.Zero)
-                    return;
                 // 保存原始窗口状态（用于退出时恢复）
                 originalParent = GetParent(unityWindowHandle);
                 originalWindowStyle = (IntPtr)GetWindowLong(unityWindowHandle, GWL_STYLE);
@@ -286,7 +287,6 @@ namespace BirdGame
                 // 向ProgMan发送消息，确保Win11能正确找到WorkerW
                 SendMessage(hProgman, 0x052C, new IntPtr(13), new IntPtr(1));
                 IntPtr workerW = FindWorkerWWithIconsVisible(hProgman);
-                Debug.Log(workerW.ToString("X"));
 
                 // 找不到WorkerW窗口时退出
                 if (workerW == IntPtr.Zero)
@@ -391,7 +391,7 @@ namespace BirdGame
         {
             foundWorkerW = IntPtr.Zero;
 
-            // 使用静态方法而不是实例方法
+            // 使用静态方法而不是lambda表达式（IL2CPP兼容）
             EnumWindows(EnumWindowsCallback, IntPtr.Zero);
 
             // 极端情况处理：直接查找第一个WorkerW
@@ -403,7 +403,9 @@ namespace BirdGame
             return foundWorkerW;
         }
 
-        // 修复：使用静态方法作为回调
+        /// <summary>
+        /// EnumWindows的静态回调方法（IL2CPP兼容）
+        /// </summary>
         [MonoPInvokeCallback(typeof(EnumWindowsProc))]
         private static bool EnumWindowsCallback(IntPtr hwnd, IntPtr lParam)
         {

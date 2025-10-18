@@ -31,8 +31,6 @@ MonoBehaviour:
         probability: 0.572
       - birdType: 3
         probability: 0.494
-      - birdType: 39
-        probability: 0.5
     - eggSp: {fileID: 710238443548197888, guid: 1170092e8fa8e1142a7e347132e8ea45, type: 3}
       price: 700
       birdCount: 3
@@ -50,8 +48,8 @@ MonoBehaviour:
         probability: 0.2
       - birdType: 12
         probability: 0.1
-      - birdType: 0
-        probability: 0.493
+      - birdType: 14
+        probability: 0.5
     - eggSp: {fileID: 2219571566158466069, guid: 066d2d923c5b99944aa6d9ca568d816f, type: 3}
       price: 1200
       birdCount: 4
@@ -71,6 +69,8 @@ MonoBehaviour:
         probability: 0.2
       - birdType: 17
         probability: 0.8
+      - birdType: 26
+        probability: 0.5
     - eggSp: {fileID: -8002347335681798773, guid: 3983a1dbff14cd040915f5a365b4942e, type: 3}
       price: 2000
       birdCount: 4
@@ -84,9 +84,11 @@ MonoBehaviour:
         probability: 0.3
       - birdType: 39
         probability: 0.5
+      - birdType: 38
+        probability: 0.5
   - eggs:
     - eggSp: {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
-      price: 0
+      price: 1000
       birdCount: 3
       description: 
       birds:
@@ -95,7 +97,7 @@ MonoBehaviour:
       - birdType: 18
         probability: 0.5
     - eggSp: {fileID: 710238443548197888, guid: 1170092e8fa8e1142a7e347132e8ea45, type: 3}
-      price: 0
+      price: 2000
       birdCount: 3
       description: 
       birds:
@@ -105,7 +107,7 @@ MonoBehaviour:
         probability: 0.5
   - eggs:
     - eggSp: {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
-      price: 0
+      price: 1500
       birdCount: 3
       description: 
       birds:

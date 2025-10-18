@@ -40,10 +40,10 @@ namespace BirdGame
                     Debug.Log("启动时设置为窗口模式");
                     break;
                 case 1:
-                    this.GetUtility<IFullScreenUtility>().WallpaperMode();
+                    // this.GetUtility<IFullScreenUtility>().WallpaperMode();
+                    // WallpaperModeController.ins.EnterWallpaperMode();
                     Debug.Log("启动时设置为壁纸模式");
                     break;
-                case 2:
                 default:
                     this.GetUtility<IFullScreenUtility>().FullscreenMode();
                     Debug.Log("启动时设置为全屏模式");
