@@ -213,21 +213,37 @@ namespace BirdGame
             // Debug.Log(animator.runtimeAnimatorController.animationClips[0]);
             //birdPreview.sprite = birdInfo.preview;
             birdPreview.GetComponent<RectTransform>().sizeDelta = birdInfo.preview.rect.size * 0.2f;
-            if (!this.GetModel<ISaveModel>().IllustratedData.birds.Contains(index))
+            
+            bool isUnlocked = this.GetModel<ISaveModel>().IllustratedData.birds.Contains(index);
+            
+            if (!isUnlocked)
             {
+                // 未解锁：图片变黑，隐藏信息
                 birdPreview.color = Color.black;
+                birdNameText.text = "";
+                rarityText.ThisText.text = "";
+                earningText.text = "";
+                priceText.text = "";
+                descriptionText.ThisText.text = "";
+                habitatText.ThisText.text = "";
             }
             else
             {
+                // 已解锁：显示完整信息
                 birdPreview.color = Color.white;
+                
+                // 更新鸟类名称（支持本地化）
+                UpdateBirdNameText();
+                
+                rarityText.SetKey(birdInfo.reality);
+                if (this.GetModel<IConfigModel>().BirdConfig.colorSettings.ContainsKey(birdInfo.reality))
+                    rarityText.ThisText.color = this.GetModel<IConfigModel>().BirdConfig.colorSettings[birdInfo.reality];
+                earningText.text = birdInfo.eraningForBig.ToString();
+                priceText.text = birdInfo.priceForBig.ToString();
+                descriptionText.SetKey(birdInfo.description);
+                habitatText.SetKey(birdInfo.habitat);
             }
-            rarityText.SetKey(birdInfo.reality);
-            if (this.GetModel<IConfigModel>().BirdConfig.colorSettings.ContainsKey(birdInfo.reality))
-                rarityText.ThisText.color = this.GetModel<IConfigModel>().BirdConfig.colorSettings[birdInfo.reality];
-            earningText.text = birdInfo.eraningForBig.ToString();
-            priceText.text = birdInfo.priceForBig.ToString();
-            descriptionText.SetKey(birdInfo.description);
-            habitatText.SetKey(birdInfo.habitat);
+            
             sceneView.sprite = this.GetModel<IConfigModel>().BirdConfig.sceneBirds[mapIndex].birdClasses[classIndex].birds[0].scenePreview;
         }
     }
