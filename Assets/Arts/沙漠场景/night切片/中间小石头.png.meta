@@ -5,6 +5,9 @@ TextureImporter:
   - first:
       213: -3326038129072120702
     second: "\u4E2D\u95F4\u5C0F\u77F3\u5934_0"
+  - first:
+      213: -6791959170903556051
+    second: "\u4E2D\u95F4\u5C0F\u77F3\u5934_1"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -87,12 +90,12 @@ TextureImporter:
     buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
-    textureFormat: 29
+    textureFormat: -1
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
-    overridden: 1
+    overridden: 0
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
@@ -103,10 +106,10 @@ TextureImporter:
       name: "\u4E2D\u95F4\u5C0F\u77F3\u5934_0"
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 151
-        height: 72
+        x: 9
+        y: 351
+        width: 199
+        height: 82
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -121,11 +124,33 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: "\u4E2D\u95F4\u5C0F\u77F3\u5934_1"
+      rect:
+        serializedVersion: 2
+        x: 1485
+        y: 0
+        width: 153
+        height: 73
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2046519e1d1eb1a0800000000000000
+      internalID: -6791959170903556051
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 765f13776284cc8449b88cc572325b45
+    spriteID: 7ecdd435a081e404589b3a8af589771a
     internalID: 0
     vertices: []
     indices: 
@@ -136,6 +161,7 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       "\u4E2D\u95F4\u5C0F\u77F3\u5934_0": -3326038129072120702
+      "\u4E2D\u95F4\u5C0F\u77F3\u5934_1": -6791959170903556051
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -84,7 +84,17 @@ namespace BirdGame
             this.GetModel<IGameModel>().WeatherIndex.Value = index;
             currentIndex = index;
             var weather = weathers[index];
-            
+
+            var other = transform.Find("Others");
+            if (other != null)
+            {
+                var sr = other.GetComponentsInChildren<SpriteRenderer>();
+                foreach (var sp in sr)
+                {
+                    sp.color = Color.black;
+                }
+            }
+
             var anim0 = DOTween.Sequence();
             anim0.Append(background.DOColor(Color.black, 0.5f));
             anim0.AppendCallback(() =>

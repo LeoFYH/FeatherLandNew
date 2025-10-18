@@ -140,6 +140,7 @@ MonoBehaviour:
   animTime: 0.1
   useRectTransform: 1
   detectionRange: 1
+  autoAdjustDetectionRange: 1
   showDebugInfo: 0
   localizationKey: 
   useLocalization: 0
@@ -350,6 +351,7 @@ MonoBehaviour:
   animTime: 0.1
   useRectTransform: 1
   detectionRange: 1
+  autoAdjustDetectionRange: 1
   showDebugInfo: 0
   localizationKey: SHOPKEY
   useLocalization: 1
@@ -557,6 +559,7 @@ MonoBehaviour:
   animTime: 0.1
   useRectTransform: 1
   detectionRange: 1
+  autoAdjustDetectionRange: 1
   showDebugInfo: 0
   localizationKey: NewBookKEY
   useLocalization: 1
@@ -880,6 +883,7 @@ MonoBehaviour:
   animTime: 0.1
   useRectTransform: 1
   detectionRange: 1
+  autoAdjustDetectionRange: 1
   showDebugInfo: 0
   localizationKey: 
   useLocalization: 0
@@ -1267,6 +1271,7 @@ MonoBehaviour:
   animTime: 0.1
   useRectTransform: 1
   detectionRange: 1
+  autoAdjustDetectionRange: 1
   showDebugInfo: 0
   localizationKey: BOOKKEY
   useLocalization: 1
@@ -1585,7 +1590,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1831,6 +1836,7 @@ MonoBehaviour:
   animTime: 0.1
   useRectTransform: 1
   detectionRange: 1
+  autoAdjustDetectionRange: 1
   showDebugInfo: 0
   localizationKey: 
   useLocalization: 0
@@ -2104,6 +2110,7 @@ MonoBehaviour:
   animTime: 0.1
   useRectTransform: 1
   detectionRange: 1
+  autoAdjustDetectionRange: 1
   showDebugInfo: 0
   localizationKey: 
   useLocalization: 0
@@ -2275,6 +2282,7 @@ MonoBehaviour:
   animTime: 0.1
   useRectTransform: 1
   detectionRange: 1
+  autoAdjustDetectionRange: 1
   showDebugInfo: 0
   localizationKey: SHOPKEY
   useLocalization: 1
@@ -2570,6 +2578,7 @@ MonoBehaviour:
   animTime: 0.1
   useRectTransform: 1
   detectionRange: 1
+  autoAdjustDetectionRange: 1
   showDebugInfo: 0
   localizationKey: 
   useLocalization: 0
@@ -2769,6 +2778,7 @@ MonoBehaviour:
   animTime: 0.1
   useRectTransform: 1
   detectionRange: 1
+  autoAdjustDetectionRange: 1
   showDebugInfo: 0
   localizationKey: 
   useLocalization: 0
@@ -2978,6 +2988,7 @@ MonoBehaviour:
   animTime: 0.1
   useRectTransform: 1
   detectionRange: 1
+  autoAdjustDetectionRange: 1
   showDebugInfo: 0
   localizationKey: RADIOKEY
   useLocalization: 1
@@ -3149,6 +3160,7 @@ MonoBehaviour:
   animTime: 0.1
   useRectTransform: 1
   detectionRange: 1
+  autoAdjustDetectionRange: 1
   showDebugInfo: 0
   localizationKey: MAPKEY
   useLocalization: 1
@@ -3519,7 +3531,7 @@ RectTransform:
   m_GameObject: {fileID: 5562198773057195409}
   m_LocalRotation: {x: -0, y: -0, z: -0.23460792, w: 0.9720901}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.2228243, y: 2.2228243, z: 2.2228243}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2853281876282325676}
@@ -3527,7 +3539,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -23.2, y: -0.5}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 222.2824, y: 222.2824}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &817803118626710501
 CanvasRenderer:
@@ -3551,7 +3563,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -3998,6 +4010,7 @@ MonoBehaviour:
   animTime: 0.1
   useRectTransform: 1
   detectionRange: 1
+  autoAdjustDetectionRange: 1
   showDebugInfo: 0
   localizationKey: SETTINGKEY
   useLocalization: 1
@@ -4719,6 +4732,7 @@ MonoBehaviour:
   animTime: 0.1
   useRectTransform: 1
   detectionRange: 1
+  autoAdjustDetectionRange: 1
   showDebugInfo: 0
   localizationKey: WeatherButton
   useLocalization: 1
@@ -4801,7 +4815,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -5018,6 +5032,7 @@ MonoBehaviour:
   animTime: 0.1
   useRectTransform: 1
   detectionRange: 1
+  autoAdjustDetectionRange: 1
   showDebugInfo: 0
   localizationKey: 
   useLocalization: 0
@@ -5194,7 +5209,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -5360,6 +5375,7 @@ MonoBehaviour:
   animTime: 0.1
   useRectTransform: 1
   detectionRange: 1
+  autoAdjustDetectionRange: 1
   showDebugInfo: 0
   localizationKey: NOTEBOOKKEY
   useLocalization: 1
@@ -5965,6 +5981,7 @@ MonoBehaviour:
   animTime: 0.1
   useRectTransform: 1
   detectionRange: 1
+  autoAdjustDetectionRange: 1
   showDebugInfo: 0
   localizationKey: TIMERKEY
   useLocalization: 1

@@ -331,6 +331,11 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         }
         else
         {
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                return false;
+            }
+            
             // 使用Transform检测（适用于GameObject）
             Transform buttonTransform = transform;
             if (buttonTransform == null) return false;
@@ -503,6 +508,7 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         tooltipText.fontSize = fontSize;
         tooltipText.fontStyle = fontStyle;
         tooltipText.alignment = TextAlignmentOptions.Center;
+        tooltipText.raycastTarget = false;
         
         // 使用本地化系统的字体
         if (localizationSystem != null)
@@ -541,6 +547,11 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         }
         else
         {
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                return;
+            }
+            
             // 使用Transform获取位置（适用于GameObject）
             Transform buttonTransform = transform;
             if (buttonTransform == null) return;
