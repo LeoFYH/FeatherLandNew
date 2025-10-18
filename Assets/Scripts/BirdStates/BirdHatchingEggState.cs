@@ -30,6 +30,20 @@ namespace BirdGame
                 return;
             }
             
+            // 检查品种：如果帐篷里已经有一只鸟，检查品种是否相同
+            if (this.GetModel<IGameModel>().HatchingBirds.Count == 1)
+            {
+                int firstBirdIndex = this.GetModel<IGameModel>().HatchingBirds[0];
+                int firstBirdType = this.GetModel<IBirdModel>().BirdList[firstBirdIndex].birdType;
+                int currentBirdType = this.GetModel<IBirdModel>().BirdList[_brid.birdIndex].birdType;
+                
+                if (firstBirdType != currentBirdType)
+                {
+                    DONext();
+                    return;
+                }
+            }
+            
             this.GetModel<IGameModel>().HatchingBirds.Add(_brid.birdIndex);
             var target = this.GetModel<IGameModel>().CurrentTent.enterPos.position;
             if (_brid.agent.SetDestination(target))

@@ -214,11 +214,6 @@ namespace BirdGame
                     this.GetUtility<IFullScreenUtility>().FullscreenMode();
                     Debug.Log("FullscreenMode");
                 }
-                else if (id == 3)
-                {
-                    this.SendCommand<EnterDesktopCommand>();
-                    return;
-                }
 
                 this.GetModel<ISaveModel>().SettingData.screenMode = id;
             });
@@ -234,7 +229,6 @@ namespace BirdGame
                 screenDropdown.options[0].text = this.GetSystem<ILocalizationSystem>().GetString("Windowed");
                 screenDropdown.options[1].text = this.GetSystem<ILocalizationSystem>().GetString("Wallpaper");
                 screenDropdown.options[2].text = this.GetSystem<ILocalizationSystem>().GetString("Full Screen");
-                screenDropdown.options[3].text = this.GetSystem<ILocalizationSystem>().GetString("Desktop");
                 screenDropdown.RefreshShownValue();
                 int count = languages.Count;
                 for (int i = 0; i < count; i++)
@@ -274,14 +268,14 @@ namespace BirdGame
 
             if (isScreenExpend)
             {
-                languageRect.anchoredPosition = new Vector2(0, languageY - 306);
+                languageRect.anchoredPosition = new Vector2(0, languageY - 204);
             }
             else
             {
                 languageRect.anchoredPosition = new Vector2(0, languageY);
             }
 
-            moveHeight = (isScreenExpend ? 306 : 0) + (isLanguageExpend ? 570 : 0);
+            moveHeight = (isScreenExpend ? 204 : 0) + (isLanguageExpend ? 570 : 0);
 
             deleteRect.anchoredPosition = new Vector2(0, deleteY - moveHeight);
             tutorialRect.anchoredPosition = new Vector2(0, tutorailY - moveHeight);
@@ -311,14 +305,13 @@ namespace BirdGame
                 text = value,
                 image = itemSprite
             });
-            value = this.GetSystem<ILocalizationSystem>().GetString("Desktop");
-            screenDropdown.options.Add(new TMPro.TMP_Dropdown.OptionData()
-            {
-                text = value,
-                image = itemSprite
-            });
             // 从保存的设置中加载屏幕模式，如果没有保存过则默认为全屏模式
             int savedScreenMode = this.GetModel<ISaveModel>().SettingData.screenMode;
+            // 如果保存的模式是Desktop(3)，则改为全屏模式(2)
+            if (savedScreenMode >= 3)
+            {
+                savedScreenMode = 2;
+            }
             screenDropdown.value = savedScreenMode;
         }
 
