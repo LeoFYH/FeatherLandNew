@@ -9,7 +9,7 @@ namespace BirdGame
     {
         private Brid _brid;
         private float dirX;
-        private bool isEnter = false;
+        private int currentPathIndex = 0; // 当前路径点索引
         private bool isEnd = false;
         private bool isExit = false;
         private float startTime;
@@ -45,33 +45,32 @@ namespace BirdGame
             }
             
             this.GetModel<IGameModel>().HatchingBirds.Add(_brid.birdIndex);
-            var target = this.GetModel<IGameModel>().CurrentTent.enterPos.position;
-            if (_brid.agent.SetDestination(target))
-            {
-                _brid.agent.isStopped = false;
-            }
-            else
-            {
-                Debug.LogError("目标超出渲染地面范围！");
-            }
+            
+            // 开始从第一个点进入
+            currentPathIndex = 0;
+            _brid.agent.SetDestination(this.GetModel<IGameModel>().CurrentTent.enterPoses[0].position);
+            _brid.agent.isStopped = false;
         }
 
         public override void OnUpdate()
         {
             if (!_brid.agent.pathPending && _brid.agent.remainingDistance <= 0.01f)
             {
-                if (!isEnter)
+                var tent = this.GetModel<IGameModel>().CurrentTent;
+                
+                // 依次经过所有enterPos点，然后到endPos 规定路径
+                if (currentPathIndex < tent.enterPoses.Length)
                 {
-                    Debug.Log("Enter" + this.GetModel<IGameModel>().HatchingBirds.Count);
-                    isEnter = true;
-                    var target = this.GetModel<IGameModel>().CurrentTent.endPos.position;
-                    if (_brid.agent.SetDestination(target))
+                    currentPathIndex++;
+                    if (currentPathIndex < tent.enterPoses.Length)
                     {
+                        _brid.agent.SetDestination(tent.enterPoses[currentPathIndex].position);
                         _brid.agent.isStopped = false;
                     }
                     else
                     {
-                        Debug.LogError("目标超出渲染地面范围！");
+                        _brid.agent.SetDestination(tent.endPos.position);
+                        _brid.agent.isStopped = false;
                     }
                     return;
                 }

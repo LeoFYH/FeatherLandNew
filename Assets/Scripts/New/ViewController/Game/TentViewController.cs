@@ -9,7 +9,7 @@ namespace BirdGame
 {
     public class TentViewController : ViewControllerBase
     {
-        public Transform enterPos;
+        public Transform[] enterPoses; 
         public Transform endPos;
         public Transform createPos;
         public Transform[] exitPoses;
