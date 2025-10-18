@@ -260,6 +260,12 @@ namespace BirdGame
         public void PlaySong(int index)
         {
             radioModel.SongIndex = index;
+            // 强制触发PlayingSong状态更新，确保UI同步
+            bool wasPlaying = radioModel.PlayingSong.Value;
+            if (wasPlaying)
+            {
+                radioModel.PlayingSong.Value = false;
+            }
             PlaySong();
         }
 

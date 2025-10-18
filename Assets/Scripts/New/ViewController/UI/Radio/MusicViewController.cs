@@ -47,6 +47,13 @@ namespace BirdGame
                 this.GetSystem<IAudioSystem>().SetAudioProgress(v);
             });
             
+            // 监听从列表点击歌曲的事件
+            this.RegisterEvent<SongChangedFromListEvent>(evt =>
+            {
+                playButton.gameObject.SetActive(false);
+                pauseButton.gameObject.SetActive(true);
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            
             random.isOn = this.GetModel<IRadioModel>().Random.Value;
             random.onValueChanged.AddListener(isOn =>
             {
@@ -62,11 +69,15 @@ namespace BirdGame
             previousButton.onClick.AddListener(() =>
             {
                 this.GetSystem<IAudioSystem>().PreviousSong();
+                playButton.gameObject.SetActive(false);
+                pauseButton.gameObject.SetActive(true);
             });
             
             nextButton.onClick.AddListener(() =>
             {
                 this.GetSystem<IAudioSystem>().NextSong();
+                playButton.gameObject.SetActive(false);
+                pauseButton.gameObject.SetActive(true);
             });
             
             playButton.onClick.AddListener(() =>
@@ -113,7 +124,7 @@ namespace BirdGame
                     playTween = playAnim.DOLocalRotate(Vector3.zero, 0.3f).OnComplete(() =>
                     {
                         // 使用独立的时间缩放，不受游戏时间缩放影响
-                        rollTween = roll.DOLocalRotate(new Vector3(0, 0, 360), 5f, RotateMode.FastBeyond360)
+                        rollTween = roll.DOLocalRotate(new Vector3(0, 0, -360), 5f, RotateMode.FastBeyond360)
                             .SetEase(Ease.Linear)
                             .SetLoops(-1)
                             .SetUpdate(true); // 使用独立更新，不受时间缩放影响
@@ -134,7 +145,7 @@ namespace BirdGame
                 playTween = playAnim.DOLocalRotate(Vector3.zero, 0.3f).OnComplete(() =>
                 {
                     // 使用独立的时间缩放，不受游戏时间缩放影响
-                    rollTween = roll.DOLocalRotate(new Vector3(0, 0, 360), 5f, RotateMode.FastBeyond360)
+                    rollTween = roll.DOLocalRotate(new Vector3(0, 0, -360), 5f, RotateMode.FastBeyond360)
                         .SetEase(Ease.Linear)
                         .SetLoops(-1)
                         .SetUpdate(true); // 使用独立更新，不受时间缩放影响
