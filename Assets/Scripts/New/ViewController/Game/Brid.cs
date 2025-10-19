@@ -71,6 +71,8 @@ namespace BirdGame
         private float clickInterval = 0.2f; // 点击间隔时间
         public bool isBeingPetted = false; // 是否正在被抚摸
         public float lastPetTime = 0; // 最后抚摸时间
+        public float lastEatTime = 0; // 最后进食时间
+        public float eatWaitDuration = 0; // 进食后等待时间（随机0-3秒）
         public float idleLockDuration = 1f; // 抚摸后锁定idle状态的时间（秒）
         private float continuousPetStartTime = 0; // 连续抚摸开始时间
         public bool shouldFollowMouse = false; // 是否应该跟随鼠标

@@ -205,6 +205,10 @@ namespace BirdGame
 
                 _brid.anim.SetBool("Eat", false);
                 
+                // 设置吃完食物后的随机等待时间（0-3秒）
+                _brid.lastEatTime = Time.time;
+                _brid.eatWaitDuration = Random.Range(1f, 1.5f);
+                
                 // 吃完后直接切换到Idle状态，防止动画和行为混乱
                 currMachine.ChangeState<BirdIdleState>();
             }

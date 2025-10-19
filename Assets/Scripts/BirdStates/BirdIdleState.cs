@@ -63,6 +63,17 @@ namespace BirdGame
                 return; // 在锁定期间，不检测食物，保持idle状态
             }
 
+            // 检查是否在进食后的等待期间（随机0-3秒）
+            // 如果鸟从未吃过食物（lastEatTime为0），则不需要等待
+            if (_brid.lastEatTime > 0)
+            {
+                float timeSinceLastEat = Time.time - _brid.lastEatTime;
+                if (timeSinceLastEat < _brid.eatWaitDuration)
+                {
+                    return; // 在进食等待期间，不检测食物，保持idle状态
+                }
+            }
+
             if (_brid.walkArea == 3)
             {
                 if (_brid.currFood == null)
