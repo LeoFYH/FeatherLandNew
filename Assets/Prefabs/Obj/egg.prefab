@@ -216,9 +216,11 @@ MonoBehaviour:
   animTime: 0.1
   useRectTransform: 0
   detectionRange: 1
+  autoAdjustDetectionRange: 1
   showDebugInfo: 1
   localizationKey: 
   useLocalization: 0
+  checkUIRaycast: 0
   onClick:
     m_PersistentCalls:
       m_Calls:

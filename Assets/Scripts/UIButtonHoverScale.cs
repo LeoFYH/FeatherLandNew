@@ -58,6 +58,7 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
     [LabelText("使用本地化")]
     public bool useLocalization = true;  // 是否使用本地化，默认开启
 
+    public bool checkUIRaycast = true;
     public OnClickAction onClick;
     public OnMouseEnterAction onMouseEnter;
     public OnMouseEnterAction onMouseExit;
@@ -331,7 +332,7 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         }
         else
         {
-            if (EventSystem.current.IsPointerOverGameObject())
+            if (checkUIRaycast && EventSystem.current.IsPointerOverGameObject())
             {
                 return false;
             }
@@ -547,7 +548,7 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         }
         else
         {
-            if (EventSystem.current.IsPointerOverGameObject())
+            if (checkUIRaycast && EventSystem.current.IsPointerOverGameObject())
             {
                 return;
             }
