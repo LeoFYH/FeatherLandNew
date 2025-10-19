@@ -9,7 +9,7 @@ namespace BirdGame
 {
     public class TentViewController : ViewControllerBase
     {
-        public Transform enterPos;
+        public Transform[] enterPoses; 
         public Transform endPos;
         public Transform createPos;
         public Transform[] exitPoses;
@@ -40,8 +40,25 @@ namespace BirdGame
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             finishedButton.onClick.AddListener(() =>
             {
-                this.GetSystem<IUISystem>().ShowPopup(UIPopup.HatchingBirdPopup);
+                //this.GetSystem<IUISystem>().ShowPopup(UIPopup.HatchingBirdPopup);
+                CreateEgg();
             });
+        }
+
+          private void CreateEgg()
+        {
+            int birdIndex = this.GetModel<IGameModel>().CurrentHatchingBirdIndex;
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("Egg", obj =>
+            {
+                GameObject go = GameObject.Instantiate(obj);
+                go.GetComponent<Egg>().SetBirdIndex(this.GetModel<IBirdModel>().BirdList[birdIndex].birdType);
+                go.transform.position = Vector3.zero;
+                this.GetModel<IGameModel>().CurrentHatchingBirdIndex = -1;
+                this.GetModel<IGameModel>().EnteredBirds.Value = 0;
+                this.GetModel<IGameModel>().IsHatchingFinished.Value = false;
+            });
+            this.GetSystem<IUISystem>().ShowMask();
+            this.GetSystem<IGameSystem>().SendEvent<DisableButtonEvent>();
         }
     }
 }
