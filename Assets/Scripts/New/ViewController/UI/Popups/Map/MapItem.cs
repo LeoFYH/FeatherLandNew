@@ -22,6 +22,26 @@ namespace BirdGame
             mapIndex = index;
             mapText.text = this.GetModel<IConfigModel>().MapConfig.maps[index].mapName;
             GetComponent<RectTransform>().anchoredPosition = position;
+            
+            // 依次解锁显示逻辑：
+            var saveModel = this.GetModel<ISaveModel>();
+            int purchasedMapCount = saveModel.BirdInfoData.mapBirds.Count;
+            
+            if (mapIndex == 0)
+            {
+                // 第一个地图始终显示
+                gameObject.SetActive(true);
+            }
+            else if (mapIndex <= purchasedMapCount)
+            {
+                // 当前地图已购买，显示
+                gameObject.SetActive(true);
+            }
+            else
+            {
+                // 前一个地图未购买，隐藏当前地图图标
+                gameObject.SetActive(false);
+            }
         }
 
         private void Start()

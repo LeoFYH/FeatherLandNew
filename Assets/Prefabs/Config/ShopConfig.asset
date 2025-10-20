@@ -88,26 +88,46 @@ MonoBehaviour:
         probability: 0.5
   - eggs:
     - eggSp: {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
-      price: 1000
+      price: 0
       birdCount: 3
       description: 
       birds:
-      - birdType: 20
-        probability: 1
       - birdType: 18
         probability: 0.5
+      - birdType: 44
+        probability: 0.5
     - eggSp: {fileID: 710238443548197888, guid: 1170092e8fa8e1142a7e347132e8ea45, type: 3}
-      price: 2000
+      price: 0
       birdCount: 3
       description: 
       birds:
-      - birdType: 40
+      - birdType: 44
+        probability: 0.5
+      - birdType: 42
         probability: 0.5
       - birdType: 41
         probability: 0.5
+    - eggSp: {fileID: 2219571566158466069, guid: 066d2d923c5b99944aa6d9ca568d816f, type: 3}
+      price: 0
+      birdCount: 3
+      description: 
+      birds:
+      - birdType: 43
+        probability: 0.5
+      - birdType: 41
+        probability: 0.5
+      - birdType: 40
+        probability: 0.5
+    - eggSp: {fileID: -8002347335681798773, guid: 3983a1dbff14cd040915f5a365b4942e, type: 3}
+      price: 0
+      birdCount: 3
+      description: 
+      birds:
+      - birdType: 46
+        probability: 0.5
   - eggs:
     - eggSp: {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
-      price: 1500
+      price: 0
       birdCount: 3
       description: 
       birds:
@@ -119,6 +139,21 @@ MonoBehaviour:
         probability: 0.5
       - birdType: 37
         probability: 0.5
+    - eggSp: {fileID: 710238443548197888, guid: 1170092e8fa8e1142a7e347132e8ea45, type: 3}
+      price: 0
+      birdCount: 3
+      description: 
+      birds: []
+    - eggSp: {fileID: 2219571566158466069, guid: 066d2d923c5b99944aa6d9ca568d816f, type: 3}
+      price: 0
+      birdCount: 3
+      description: 
+      birds: []
+    - eggSp: {fileID: -8002347335681798773, guid: 3983a1dbff14cd040915f5a365b4942e, type: 3}
+      price: 0
+      birdCount: 3
+      description: 
+      birds: []
   sceneDecorations:
   - decorations:
     - icon: {fileID: 21300000, guid: e9d52e55e18fd6d41bd00d03f25be2aa, type: 3}
@@ -127,7 +162,7 @@ MonoBehaviour:
       description: 
       price: 1000
       scale: 0.3
-      iconScale: 0.2
+      iconScale: 0.8
       maxQuantity: 1
       sceneSprite: {fileID: 21300000, guid: e9d52e55e18fd6d41bd00d03f25be2aa, type: 3}
       fixedPositions:
@@ -141,7 +176,7 @@ MonoBehaviour:
       description: 222222222
       price: 1000
       scale: 0.5
-      iconScale: 0.2
+      iconScale: 0.8
       maxQuantity: 1
       sceneSprite: {fileID: 21300000, guid: c93ed47603d0bd3408834d2122774f2b, type: 3}
       fixedPositions:
@@ -155,7 +190,7 @@ MonoBehaviour:
       description: 11111111111
       price: 500
       scale: 0.2
-      iconScale: 0.13
+      iconScale: 0.5
       maxQuantity: 2
       sceneSprite: {fileID: 21300000, guid: d5d1ad1d2cdb1974891da5b43ec0d45a, type: 3}
       fixedPositions:
@@ -170,7 +205,7 @@ MonoBehaviour:
       description: 
       price: 0
       scale: 0.5
-      iconScale: 0.3
+      iconScale: 1
       maxQuantity: 1
       sceneSprite: {fileID: 2689972777894202174, guid: 712afaa5b2578144e9c0f98eddba4083, type: 3}
       fixedPositions:
@@ -184,7 +219,7 @@ MonoBehaviour:
       description: 
       price: 0
       scale: 0.5
-      iconScale: 0.3
+      iconScale: 0.8
       maxQuantity: 1
       sceneSprite: {fileID: 5640074446529624515, guid: 9efacdbf502db7d469774f28435ecd67, type: 3}
       fixedPositions:
@@ -199,7 +234,7 @@ MonoBehaviour:
       description: 
       price: 0
       scale: 0.5
-      iconScale: 0.3
+      iconScale: 0.6
       maxQuantity: 1
       sceneSprite: {fileID: 21300000, guid: 6ecc79e55459078409f056c5379c6643, type: 3}
       fixedPositions:
@@ -213,7 +248,7 @@ MonoBehaviour:
       description: 
       price: 0
       scale: 0.5
-      iconScale: 0.3
+      iconScale: 0.987
       maxQuantity: 1
       sceneSprite: {fileID: 21300000, guid: f7f4e60f33d752d4f9f4af14cce23c35, type: 3}
       fixedPositions:
@@ -227,7 +262,7 @@ MonoBehaviour:
       description: 
       price: 0
       scale: 0.5
-      iconScale: 0.3
+      iconScale: 0.5
       maxQuantity: 1
       sceneSprite: {fileID: 21300000, guid: 73b6246cb4c7f9447a67ce1553764fbc, type: 3}
       fixedPositions:
@@ -241,7 +276,7 @@ MonoBehaviour:
       description: 
       price: 0
       scale: 0.5
-      iconScale: 0.2
+      iconScale: 0.38
       maxQuantity: 1
       sceneSprite: {fileID: 21300000, guid: f586a57a0ab00f94293fecf4dec37f16, type: 3}
       fixedPositions:
@@ -277,14 +312,6 @@ MonoBehaviour:
       descriptionKey: BeanKey
       price: 300
       foodScale: 0.06
-      addCount: 0
-    - icon: {fileID: 21300000, guid: 70afe432c14bafc4094c86c400ebb7a1, type: 3}
-      type: 0
-      selectionName: Rice
-      description: Just rice
-      descriptionKey: RiceKey
-      price: 200
-      foodScale: 0.08
       addCount: 0
   - name: Bird Max Count
     isVisible: 0
