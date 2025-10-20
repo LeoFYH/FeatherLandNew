@@ -28,6 +28,8 @@ namespace BirdGame
         /// </summary>
         /// <param name="language"></param>
         void ChangeLanguage(SystemLanguage language);
+
+        SystemLanguage CurrentLanguage();
     }
 
     public class LocalizationSystem : AbstractSystem, ILocalizationSystem
@@ -117,6 +119,11 @@ namespace BirdGame
             this.GetModel<ISaveModel>().SettingData.gameLanguage = language;
             //通知所有界面切换语言显示
             this.SendEvent<ChangeLanguageEvent>();
+        }
+
+        public SystemLanguage CurrentLanguage()
+        {
+            return this.GetModel<ISaveModel>().SettingData.gameLanguage;
         }
     }
 }

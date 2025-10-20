@@ -21,12 +21,20 @@ namespace BirdGame
                 loadingModel.Progress.Value = v;
             }, () =>
             {
-                loadingModel.LoadingText.Value = "Loading Radio Config.";
-                this.GetSystem<IAssetSystem>().LoadAssetAsync<RadioConfig>("RadioConfig", OnRadioConfigComplete,
-                    progress =>
+                this.GetSystem<IAssetSystem>().LoadAssetAsync<Material>("BirdMaterial", mat => {
                     {
-                        OnProgress("Loading Radio Config", progress / configCount);
-                    });
+                        this.GetModel<IBirdModel>().BirdMaterial = mat;
+                        mat.color = Color.white;
+                        loadingModel.LoadingText.Value = "Loading Radio Config.";
+                        this.GetSystem<IAssetSystem>().LoadAssetAsync<RadioConfig>("RadioConfig", OnRadioConfigComplete,
+                            progress =>
+                            {
+                                OnProgress("Loading Radio Config", progress / configCount);
+                            });
+                    }
+                });
+                
+               
             }));
         }
 

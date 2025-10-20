@@ -103,6 +103,7 @@ namespace BirdGame
                 ani.Append(sr.DOColor(Color.white, 0.5f));
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
+            
             lineRenderer.startColor = new Color(0, 1, 0, 0); // 绿色，透明度为0
             lineRenderer.endColor = new Color(0, 1, 0, 0); // 绿色，透明度为0
             // Initialize walkable area and basic components
@@ -126,7 +127,13 @@ namespace BirdGame
             originalPos = transform.position;
             anim = GetComponentInChildren<Animator>();
             sr = GetComponentInChildren<SpriteRenderer>();
-            
+            //sr.sharedMaterial = this.GetModel<IBirdModel>().BirdMaterial;
+            //sr.SetMaterials(new List<Material>(){this.GetModel<IBirdModel>().BirdMaterial});
+            sr.material.color = this.GetModel<IBirdModel>().BirdColor.Value;
+            this.GetModel<IBirdModel>().BirdColor.Register(v =>
+            {
+                sr.material.color = v;
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
             // 初始化碰撞体
             birdCollider = GetComponent<Collider2D>();
             if (birdCollider != null)

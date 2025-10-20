@@ -44,6 +44,7 @@ namespace BirdGame
             {
                 data.bookList[currentNoteIndex].noteText = text;
             });
+            
             deleteButton.onClick.AddListener(() =>
             {
                 if(items.Count <= 1)
@@ -86,5 +87,6 @@ namespace BirdGame
             items[0].thisToggle.isOn = true;
             noteInput.text = data.bookList[currentNoteIndex].noteText;
         }
+        
     }
 }

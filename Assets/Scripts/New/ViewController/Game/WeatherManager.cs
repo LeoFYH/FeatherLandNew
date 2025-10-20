@@ -24,15 +24,16 @@ namespace BirdGame
         public SpriteRenderer groundCover1;
         public SpriteRenderer groundCover2;
         public SpriteRenderer foregroundGrass;
-        public Material birdMaterial;
         public Weather[] weathers;
         public CanvasGroup uiGroup;
         public SpriteRenderer[] others;
+        private Material birdMaterial;
 
         private int currentIndex = -1;
 
         private void Start()
         {
+            birdMaterial = this.GetModel<IBirdModel>().BirdMaterial;
             uiGroup = this.GetModel<IGameModel>().UiGroup;
             this.RegisterEvent<SwitchWeatherEvent>(evt =>
             {
@@ -233,7 +234,11 @@ namespace BirdGame
                 Debug.Log("天气切换完成");
             });
         }
-        
+
+        private void Update()
+        {
+            this.GetModel<IBirdModel>().BirdColor.Value = birdMaterial.color;
+        }
     }
 
     [Serializable]
