@@ -34,6 +34,7 @@ namespace BirdGame
     {
         protected override void OnInit()
         {
+            
         }
 
         private Dictionary<string, AsyncOperationHandle> HandleDic { get; } = new Dictionary<string, AsyncOperationHandle>();

@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.U2D;
 
 namespace BirdGame
 {
@@ -11,30 +12,28 @@ namespace BirdGame
     public class LoadGameCommand : AbstractCommand
     {
         private const float configCount = 5f;
-        
+
         protected override void OnExecute()
         {
             var loadingModel = this.GetModel<ILoadingModel>();
+
+
             this.GetSystem<IMonoSystem>().StartCoroutine(this.GetSystem<IAssetSystem>().PreloadEssentialAssets(v =>
             {
                 loadingModel.LoadingText.Value = "Loading Assets.";
                 loadingModel.Progress.Value = v;
             }, () =>
             {
-                this.GetSystem<IAssetSystem>().LoadAssetAsync<Material>("BirdMaterial", mat => {
+                this.GetSystem<IAssetSystem>().LoadAssetAsync<Material>("BirdMaterial", mat =>
+                {
                     {
                         this.GetModel<IBirdModel>().BirdMaterial = mat;
                         mat.color = Color.white;
                         loadingModel.LoadingText.Value = "Loading Radio Config.";
                         this.GetSystem<IAssetSystem>().LoadAssetAsync<RadioConfig>("RadioConfig", OnRadioConfigComplete,
-                            progress =>
-                            {
-                                OnProgress("Loading Radio Config", progress / configCount);
-                            });
+                            progress => { OnProgress("Loading Radio Config", progress / configCount); });
                     }
                 });
-                
-               
             }));
         }
 

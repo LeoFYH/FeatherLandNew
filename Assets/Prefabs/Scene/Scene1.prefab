@@ -557,6 +557,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: MAPKEY
   useLocalization: 1
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls:
@@ -1402,6 +1403,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: NewBookKey
   useLocalization: 1
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls:
@@ -1737,6 +1739,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: TIMERKEY
   useLocalization: 1
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls:
@@ -2735,6 +2738,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: RADIOKEY
   useLocalization: 1
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls:
@@ -2906,7 +2910,6 @@ MonoBehaviour:
   groundCover1: {fileID: 2667518622007916963}
   groundCover2: {fileID: 3900149790839404592}
   foregroundGrass: {fileID: 8665284266660803308}
-  birdMaterial: {fileID: 2100000, guid: 101a309229cab07409a8aa1bd34d334d, type: 2}
   weathers:
   - weatherName: "\u767D\u5929"
     background:
@@ -4100,6 +4103,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: NOTEBOOKKEY
   useLocalization: 1
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls:
@@ -4375,6 +4379,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: 
   useLocalization: 0
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls:
@@ -4918,6 +4923,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: SETTINGKEY
   useLocalization: 1
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls:
