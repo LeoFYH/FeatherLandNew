@@ -166,7 +166,7 @@ MonoBehaviour:
   BabyBirdSize: 0.6
   AdultBirdSize: 0.8
   BirdEatDistance: 0.24
-  BirdEatDistanceY: 0
+  BirdEatDistanceY: -0.02
   BackgroundBirdSize: 0
   nestTrans: {fileID: 0}
   originalPos: {x: 0, y: 0, z: 0}
@@ -197,6 +197,8 @@ MonoBehaviour:
   currFood: {fileID: 0}
   isBeingPetted: 0
   lastPetTime: 0
+  lastEatTime: 0
+  eatWaitDuration: 0
   idleLockDuration: 1
   shouldFollowMouse: 0
   agent: {fileID: 0}
@@ -426,6 +428,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: 
   useLocalization: 0
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls: []

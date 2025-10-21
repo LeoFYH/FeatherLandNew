@@ -5,15 +5,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.rlabrecque.steamworks.n
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniTask", "UniTask.csproj", "{284f92be-a5cf-41c4-cfdb-57c4f72929df}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor", "Assembly-CSharp-Editor.csproj", "{6aa5095e-8997-1e3f-e6e0-aa93631a9814}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniTask.Linq", "UniTask.Linq.csproj", "{41a4e458-3cbb-d21b-d356-953591dd7b23}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{5d547ebc-b890-caab-510d-640e22dc442b}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor", "Assembly-CSharp-Editor.csproj", "{6aa5095e-8997-1e3f-e6e0-aa93631a9814}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniTask.Addressables", "UniTask.Addressables.csproj", "{592d1615-0f7d-adeb-87c5-4a0f6b648eef}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor-firstpass", "Assembly-CSharp-Editor-firstpass.csproj", "{beb9e657-c796-fbc1-54ed-b795c12ad57a}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rewired_Windows_Functions", "Rewired_Windows_Functions.csproj", "{2ed67319-c260-4fe5-6f80-1222e46ff22b}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-firstpass", "Assembly-CSharp-firstpass.csproj", "{f2b751c8-607b-3d36-e088-31b9ac6d438c}"
 EndProject
@@ -44,16 +46,18 @@ Global
 		{977a3219-b48c-1985-c854-85de54f85d0b}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{284f92be-a5cf-41c4-cfdb-57c4f72929df}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{284f92be-a5cf-41c4-cfdb-57c4f72929df}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6aa5095e-8997-1e3f-e6e0-aa93631a9814}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6aa5095e-8997-1e3f-e6e0-aa93631a9814}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41a4e458-3cbb-d21b-d356-953591dd7b23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{41a4e458-3cbb-d21b-d356-953591dd7b23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5d547ebc-b890-caab-510d-640e22dc442b}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5d547ebc-b890-caab-510d-640e22dc442b}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6aa5095e-8997-1e3f-e6e0-aa93631a9814}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6aa5095e-8997-1e3f-e6e0-aa93631a9814}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{592d1615-0f7d-adeb-87c5-4a0f6b648eef}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{592d1615-0f7d-adeb-87c5-4a0f6b648eef}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{beb9e657-c796-fbc1-54ed-b795c12ad57a}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{beb9e657-c796-fbc1-54ed-b795c12ad57a}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2ed67319-c260-4fe5-6f80-1222e46ff22b}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2ed67319-c260-4fe5-6f80-1222e46ff22b}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{f2b751c8-607b-3d36-e088-31b9ac6d438c}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{f2b751c8-607b-3d36-e088-31b9ac6d438c}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4fee49ee-b4b3-100a-ffa3-54e1fb013905}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
