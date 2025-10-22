@@ -144,6 +144,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: 
   useLocalization: 0
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls: []
@@ -321,19 +322,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 707723388593710286}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &8092427179851522614
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -355,6 +344,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: SHOPKEY
   useLocalization: 1
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls: []
@@ -563,6 +553,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: NewBookKEY
   useLocalization: 1
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls: []
@@ -887,6 +878,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: 
   useLocalization: 0
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls: []
@@ -1275,6 +1267,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: BOOKKEY
   useLocalization: 1
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls: []
@@ -1840,6 +1833,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: 
   useLocalization: 0
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls: []
@@ -2114,6 +2108,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: 
   useLocalization: 0
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls: []
@@ -2286,6 +2281,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: SHOPKEY
   useLocalization: 1
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls: []
@@ -2582,6 +2578,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: 
   useLocalization: 0
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls: []
@@ -2782,6 +2779,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: 
   useLocalization: 0
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls: []
@@ -2992,6 +2990,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: RADIOKEY
   useLocalization: 1
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls: []
@@ -3164,6 +3163,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: MAPKEY
   useLocalization: 1
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls: []
@@ -4014,6 +4014,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: SETTINGKEY
   useLocalization: 1
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls: []
@@ -4736,6 +4737,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: WeatherButton
   useLocalization: 1
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls: []
@@ -5036,6 +5038,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: 
   useLocalization: 0
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls: []
@@ -5379,6 +5382,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: NOTEBOOKKEY
   useLocalization: 1
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls: []
@@ -5985,6 +5989,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: TIMERKEY
   useLocalization: 1
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls: []

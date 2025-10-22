@@ -261,6 +261,7 @@ namespace BirdGame
             rect.anchorMin = Vector2.zero;
             rect.anchoredPosition = Vector2.zero;
             rect.sizeDelta = Vector2.zero;
+            rect.localScale = Vector3.one;
         }
 
         public void HideMask()
