@@ -96,6 +96,8 @@ MonoBehaviour:
         probability: 0.5
       - birdType: 44
         probability: 0.5
+      - birdType: 42
+        probability: 0.5
     - eggSp: {fileID: 710238443548197888, guid: 1170092e8fa8e1142a7e347132e8ea45, type: 3}
       price: 0
       birdCount: 3
@@ -143,17 +145,35 @@ MonoBehaviour:
       price: 0
       birdCount: 3
       description: 
-      birds: []
+      birds:
+      - birdType: 54
+        probability: 0.5
+      - birdType: 49
+        probability: 0.5
+      - birdType: 48
+        probability: 0.5
     - eggSp: {fileID: 2219571566158466069, guid: 066d2d923c5b99944aa6d9ca568d816f, type: 3}
       price: 0
       birdCount: 3
       description: 
-      birds: []
+      birds:
+      - birdType: 51
+        probability: 0.5
+      - birdType: 53
+        probability: 0.5
+      - birdType: 50
+        probability: 0.5
     - eggSp: {fileID: -8002347335681798773, guid: 3983a1dbff14cd040915f5a365b4942e, type: 3}
       price: 0
       birdCount: 3
       description: 
-      birds: []
+      birds:
+      - birdType: 51
+        probability: 0.5
+      - birdType: 54
+        probability: 0.5
+      - birdType: 50
+        probability: 0.5
   sceneDecorations:
   - decorations:
     - icon: {fileID: 21300000, guid: e9d52e55e18fd6d41bd00d03f25be2aa, type: 3}
