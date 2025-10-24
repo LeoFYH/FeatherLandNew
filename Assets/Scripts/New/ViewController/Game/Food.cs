@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using BirdGame;
 using UnityEngine;
 using DG.Tweening;
 using QFramework;
@@ -22,6 +20,10 @@ namespace BirdGame
             y = transform.position.y;
             spriteRenderer = GetComponent<SpriteRenderer>();
             StartCoroutine(DelayedStart());
+            this.RegisterEvent<ClearFoodEvent>(evt =>
+            {
+                this.GetSystem<IGameSystem>().RecycleFood(this);
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
             //StartCoroutine(nameof(DestroyDelay));
         }
 

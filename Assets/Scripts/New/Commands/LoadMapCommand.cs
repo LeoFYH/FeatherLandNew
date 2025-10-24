@@ -18,6 +18,7 @@ namespace BirdGame
 
         protected override void OnExecute()
         {
+            this.SendEvent<ClearFoodEvent>();
             var gameModel = this.GetModel<IGameModel>();
             gameModel.CurrentTent = null;
             gameModel.EnteredBirds.Value = 0;
