@@ -118,6 +118,7 @@ namespace BirdGame
                     if (bird == null)
                     {
                         Debug.Log(sceneBirds[mapIndex].birdClasses[i].birdName + "有空项！");
+                        continue;
                     }
                     if (bird.id == birdId)
                         return bird;
