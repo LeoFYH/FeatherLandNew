@@ -115,6 +115,10 @@ namespace BirdGame
             {
                 foreach (var bird in sceneBirds[mapIndex].birdClasses[i].birds)
                 {
+                    if (bird == null)
+                    {
+                        Debug.Log(sceneBirds[mapIndex].birdClasses[i].birdName + "有空项！");
+                    }
                     if (bird.id == birdId)
                         return bird;
                 }
