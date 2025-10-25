@@ -26,7 +26,7 @@ MonoBehaviour:
   prefab: {fileID: 1885250170276666100, guid: ecf345b9c31c7e04bb175028688a0b27, type: 3}
   canFly: 1
   canFlyWait: 0
-  idleClip: {fileID: 7400000, guid: 8f27a00fbd2c9e449b2538679a21651b, type: 2}
+  canFlyHorizontal: 1
   reality: Rare
   eraningForSmall: 2
   eraningForBig: 4
@@ -34,7 +34,7 @@ MonoBehaviour:
   priceForBig: 40
   clickEarning: 3
   clickEarningForFiveTimes: 0
-  description: CardinalDescription
+  description: Turtledove Description
   clickAudio: {fileID: 0}
   totalExp: 5
   eatExp: 1
