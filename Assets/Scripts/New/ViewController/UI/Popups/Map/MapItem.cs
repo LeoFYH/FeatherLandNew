@@ -67,6 +67,12 @@ namespace BirdGame
 
                 if (this.GetModel<ISaveModel>().BirdInfoData.mapBirds.Count == mapIndex)
                 {
+                    // 检查地图是否可购买
+                    if (!this.GetModel<IConfigModel>().MapConfig.maps[mapIndex].purchasable)
+                    {
+                        return; // 如果不可购买，直接返回，不执行任何操作
+                    }
+                    
                     if (this.GetModel<IConfigModel>().MapConfig.maps[mapIndex].cost <=
                         this.GetModel<ISaveModel>().AccountData.coins)
                     {

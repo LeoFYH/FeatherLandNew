@@ -22,5 +22,7 @@ namespace BirdGame
         public int cost;
         [LabelText("UI位置")]
         public Vector2 uiPosition;
+        [LabelText("可购买")]
+        public bool purchasable = true;
     }
 }
