@@ -153,18 +153,94 @@ namespace BirdGame
                 currMachine.ChangeState<BirdRunState>();
                 return;
             }
-            else if (this.GetModel<IBirdModel>().FlyPositions.Count > 0)
+            else
             {
-                // 检查是否能飞行等待
-                if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyWait)
+                // 长大的鸟优先选择飞行动作
+                bool canFlyWait = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyWait;
+                bool canFlyHorizontal = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyHorizontal;
+                bool hasFlyPositions = this.GetModel<IBirdModel>().FlyPositions.Count > 0;
+                
+                // 优先选择飞行动作的逻辑
+                if (hasFlyPositions && canFlyWait)
                 {
-                    // 如果不能飞行等待，只进行远处飞行
+                    // 如果有飞行位置且支持飞行等待，优先飞到树上
+                    currMachine.ChangeState<BirdFlyState>();
+                    return;
+                }
+                else if (canFlyHorizontal)
+                {
+                    // 如果支持水平飞行，优先选择水平飞行
+                    currMachine.ChangeState<BirdFlyHorizontalState>();
+                    return;
+                }
+                // 如果都不支持飞行，则使用备选的随机逻辑
+                
+                // 原有的飞行选择逻辑（作为备选）
+                if (this.GetModel<IBirdModel>().FlyPositions.Count > 0)
+                {
+                    // 检查是否能飞行等待
+                    if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyWait)
+                    {
+                        // 如果不能飞行等待，只进行远处飞行
+                        int index = Random.Range(0, 3);
+                        if (index == 0)
+                        {
+                            currMachine.ChangeState<BirdRunState>();
+                        }
+                        else if(index == 1)
+                        {
+                            if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyHorizontal)
+                            {
+                                currMachine.ChangeState<BirdRunState>();
+                            }
+                            else
+                            {
+                                currMachine.ChangeState<BirdFlyHorizontalState>();
+                            }
+                            //currMachine.ChangeState<BirdFlyHorizontalState>();
+                        }
+                        else
+                        {
+                            currMachine.ChangeState<BirdHatchingEggState>();
+                        }
+                    }
+                    else
+                    {
+                        // 如果可以飞行等待，正常选择飞行方式
+                        int index = Random.Range(0, 4);
+                        if (index == 0)
+                        {
+                            currMachine.ChangeState<BirdRunState>();
+                        }
+                        else if (index == 1)
+                        {
+                            currMachine.ChangeState<BirdFlyState>();
+                        }
+                        else if(index == 2)
+                        {
+                            if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyHorizontal)
+                            {
+                                currMachine.ChangeState<BirdFlyState>();
+                            }
+                            else
+                            {
+                                currMachine.ChangeState<BirdFlyHorizontalState>();
+                            }
+                        }
+                        else
+                        {
+                            currMachine.ChangeState<BirdHatchingEggState>();
+                        }
+                    }
+                }
+                else //基本不会触发
+                {
                     int index = Random.Range(0, 3);
                     if (index == 0)
                     {
                         currMachine.ChangeState<BirdRunState>();
                     }
-                    else if(index == 1)
+                    else
                     {
                         if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyHorizontal)
                         {
@@ -176,58 +252,6 @@ namespace BirdGame
                         }
                         //currMachine.ChangeState<BirdFlyHorizontalState>();
                     }
-                    else
-                    {
-                        currMachine.ChangeState<BirdHatchingEggState>();
-                    }
-                }
-                else
-                {
-                    // 如果可以飞行等待，正常选择飞行方式
-                    int index = Random.Range(0, 4);
-                    if (index == 0)
-                    {
-                        currMachine.ChangeState<BirdRunState>();
-                    }
-                    else if (index == 1)
-                    {
-                        currMachine.ChangeState<BirdFlyState>();
-                    }
-                    else if(index == 2)
-                    {
-                        if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyHorizontal)
-                        {
-                            currMachine.ChangeState<BirdFlyState>();
-                        }
-                        else
-                        {
-                            currMachine.ChangeState<BirdFlyHorizontalState>();
-                        }
-                    }
-                    else
-                    {
-                        currMachine.ChangeState<BirdHatchingEggState>();
-                    }
-                }
-            }
-            else //基本不会触发
-            {
-                int index = Random.Range(0, 3);
-                if (index == 0)
-                {
-                    currMachine.ChangeState<BirdRunState>();
-                }
-                else
-                {
-                    if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyHorizontal)
-                    {
-                        currMachine.ChangeState<BirdRunState>();
-                    }
-                    else
-                    {
-                        currMachine.ChangeState<BirdFlyHorizontalState>();
-                    }
-                    //currMachine.ChangeState<BirdFlyHorizontalState>();
                 }
             }
         }

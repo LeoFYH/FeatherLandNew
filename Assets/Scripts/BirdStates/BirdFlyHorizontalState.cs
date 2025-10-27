@@ -18,6 +18,14 @@ namespace BirdGame
 
         public override void OnEnter()
         {
+            // 安全检查：确保 flyInAirStartPosition 已设置
+            if (_brid.flyInAirStartPosition == Vector3.zero)
+            {
+                Debug.LogWarning("BirdFlyHorizontalState: flyInAirStartPosition 未设置，切换到 Idle 状态");
+                currMachine.ChangeState<BirdIdleState>();
+                return;
+            }
+
             _brid.agent.enabled = false;
             // 随机误差后的飞行高度
             float flyY = _brid.flyInAirStartPosition.y + Random.Range(-2f, 2f);
