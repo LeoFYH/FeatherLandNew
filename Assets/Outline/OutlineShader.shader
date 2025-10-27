@@ -84,7 +84,7 @@ Shader "Sprites/OutlineShader"
                 
                 // Otherwise, check if we should draw an outline
                 // Calculate texel size for sampling neighbors
-                float2 pixelSize = _MainTex_TexelSize.xy * _OutlineWidth;
+                float2 pixelSize = _MainTex_TexelSize.xy * _OutlineWidth*60;
                 
                 // Sample 8 directions around the current pixel
                 float outline = 0.0;

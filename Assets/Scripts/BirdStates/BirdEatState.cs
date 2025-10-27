@@ -23,22 +23,39 @@ namespace BirdGame
         public override void OnEnter()
         {
             //_brid.onNearOtherBird = OnNearOtherBird;
-            // if (!_brid.isSmall)
-            // {
-            //     DONext();
-            //     return;
-            // }
-
-            // Check if the current food is null or destroyed before entering eat state
-            if (_brid.currFood == null)
+            
+            // 成鸟绝对不能吃东西，立即退出
+            if (!_brid.isSmall)
             {
-                DONext();
-                return;
-            }
-
-            if (_brid.currFood != null)
-            {
-                _brid.currFood.isTargeted = true;
+                // 获取鸟的配置信息
+                int birdIndex = this.GetModel<IBirdModel>().BirdList[_brid.birdIndex].birdType;
+                int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+                
+                bool canFlyWait = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyWait;
+                bool canFlyHorizontal = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyHorizontal;
+                bool hasFlyPositions = this.GetModel<IBirdModel>().FlyPositions.Count > 0;
+                
+                // 优先选择飞行动作的逻辑
+                
+                if(!canFlyWait && !canFlyHorizontal)
+                {
+                    currMachine.ChangeState<BirdIdleState>();
+                    return;
+                }
+                
+                if (hasFlyPositions && canFlyWait)
+                {
+                    // 如果有飞行位置且支持飞行等待，优先飞到树上
+                    currMachine.ChangeState<BirdFlyState>();
+                    return;
+                }
+                else if (canFlyHorizontal)
+                {
+                    // 如果支持水平飞行，优先选择水平飞行
+                    currMachine.ChangeState<BirdFlyHorizontalState>();
+                    return;
+                }
+                
             }
             
             _brid.agent.SetDestination(_brid.currFood.transform.position);

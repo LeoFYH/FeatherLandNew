@@ -84,7 +84,10 @@ namespace BirdGame
                         // if(random == 1) // 10个数中随机到1时去吃食物
                         // {
                         _brid.currFood = food;
-                        currMachine.ChangeState<BirdEatState>();
+                        if(_brid.isSmall)
+                            currMachine.ChangeState<BirdEatState>();
+                        else
+                            currMachine.ChangeState<BirdRunState>();
                         //}
                     }
                 }
@@ -161,6 +164,7 @@ namespace BirdGame
                 bool hasFlyPositions = this.GetModel<IBirdModel>().FlyPositions.Count > 0;
                 
                 // 优先选择飞行动作的逻辑
+                
                 if (hasFlyPositions && canFlyWait)
                 {
                     // 如果有飞行位置且支持飞行等待，优先飞到树上
