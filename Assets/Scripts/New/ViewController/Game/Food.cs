@@ -24,7 +24,23 @@ namespace BirdGame
             {
                 this.GetSystem<IGameSystem>().RecycleFood(this);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
-            //StartCoroutine(nameof(DestroyDelay));
+            // 启动8秒后自动消失的检测
+            StartCoroutine(nameof(AutoDestroyIfUntargeted));
+        }
+        
+        /// <summary>
+        /// 如果食物没有被 target 超过 8 秒，自动消失
+        /// </summary>
+        private IEnumerator AutoDestroyIfUntargeted()
+        {
+            yield return new WaitForSeconds(8f);
+            
+            // 8秒后检查是否还被 target
+            if (!isTargeted && !isDisabling)
+            {
+                // 启动淡出效果
+                StartCoroutine(nameof(DestroyDelay));
+            }
         }
 
         public void UntargetFood()
