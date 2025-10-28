@@ -26,17 +26,17 @@ namespace BirdGame
         public string reality;
         private Color32 realityColor = Color.white;
         [BoxGroup("content/Info/信息"), LabelText("每分钟收入(幼鸟)")]
-        public int eraningForSmall;
+        public float eraningForSmall;
         [BoxGroup("content/Info/信息"), LabelText("每分钟收入(成鸟)")]
-        public int eraningForBig;
+        public float eraningForBig;
         [BoxGroup("content/Info/信息"), LabelText("价格(小)")]
-        public int priceForSmall;
+        public float priceForSmall;
         [BoxGroup("content/Info/信息"), LabelText("价格(大)")]
-        public int priceForBig;
+        public float priceForBig;
         [BoxGroup("content/Info/信息"), LabelText("点击收益)")]
-        public int clickEarning = 1;
+        public float clickEarning = 1;
         [BoxGroup("content/Info/信息"), LabelText("点击5次后的额外收益)")]
-        public int clickEarningForFiveTimes = 3;
+        public float clickEarningForFiveTimes = 3;
         [BoxGroup("content/Info/信息"), LabelText("描述的key"), TextArea]
         public string description;
         [BoxGroup("content/Info/信息"), Button("添加描述(key)到本地化配置"), GUIColor("buttonColor")]
