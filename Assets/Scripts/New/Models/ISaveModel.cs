@@ -43,7 +43,7 @@ namespace BirdGame
     [Serializable]
     public class AccountData : SavableData
     {
-        public int coins = 600;
+        public float coins = 600;
         public List<SceneDecorationInfo> sceneDecorationInfos = new List<SceneDecorationInfo>();
         public List<ToolInfo> tools = new List<ToolInfo>();
         public int addedMaxBirdValue = 0;

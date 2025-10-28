@@ -28,7 +28,7 @@ namespace BirdGame
         [Header("功能设置")]
         public bool enableClickOutsideToClose = true;  // 是否启用点击外部关闭功能
 
-        private int price;
+        private float price;
         
         void Update()
         {
