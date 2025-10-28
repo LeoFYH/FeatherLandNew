@@ -7,7 +7,7 @@ namespace BirdGame
         /// <summary>
         /// 游戏货币
         /// </summary>
-        BindableProperty<int> Coins { get; }
+        BindableProperty<float> Coins { get; }
     }
 
     public class AccountModel : AbstractModel, IAccountModel
@@ -16,6 +16,6 @@ namespace BirdGame
         {
         }
 
-        public BindableProperty<int> Coins { get; } = new BindableProperty<int>(600);
+        public BindableProperty<float> Coins { get; } = new BindableProperty<float>(600f);
     }
 }
