@@ -32,8 +32,8 @@ namespace BirdGame
                 this.GetModel<IGameModel>().IsHatchingFinished.Value = false;
                 this.GetSystem<IUISystem>().HidePopup(UIPopup.HatchingBirdPopup);
             });
-            this.GetSystem<IUISystem>().ShowMask();
-            this.GetSystem<IGameSystem>().SendEvent<DisableButtonEvent>();
+            // this.GetSystem<IUISystem>().ShowMask();
+            // this.GetSystem<IGameSystem>().SendEvent<DisableButtonEvent>();
         }
     }
 }

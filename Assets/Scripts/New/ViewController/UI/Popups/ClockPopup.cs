@@ -27,7 +27,7 @@ namespace BirdGame
             if (enableClickOutsideToClose)
             {
                 // 检测鼠标点击
-                if (Input.GetMouseButtonDown(0))
+                if (Input.GetMouseButtonDown(0) || SimpleMouseForwarder.leftButtonDown)
                 {
                     CheckClickOutside();
                 }

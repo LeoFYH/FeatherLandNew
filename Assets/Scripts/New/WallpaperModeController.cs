@@ -12,6 +12,7 @@ using AOT;
 public class WallpaperModeController : MonoBehaviour
 {
     public static WallpaperModeController ins;
+    public GameObject mouseForwarder;
 
     [Header("壁纸模式设置")]
     [Tooltip("是否启用全屏模式")]
@@ -205,7 +206,7 @@ public class WallpaperModeController : MonoBehaviour
     /// </summary>
     public void EnterWallpaperMode()
     {
-        Debug.LogError("11111111111");
+        mouseForwarder.SetActive(true);
 
         // 获取Unity窗口句柄（根据PlayerSettings中的产品名称查找）
         unityWindowHandle = FindWindow(null, Application.productName);

@@ -114,7 +114,7 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
     private TextMeshProUGUI tooltipText;
     private Image backgroundImage;
     private Canvas canvas;
-    private bool isHovering = false;
+    public bool isHovering = false;
     private float hoverTimer = 0f;
     private bool disabled;
     
@@ -222,7 +222,7 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         mouseWasOverButton = mouseIsOverButton;
         
         // 处理鼠标点击事件（独立于tooltip逻辑）
-        if (isHovering && Input.GetMouseButtonDown(0) && !disabled)
+        if (isHovering && (Input.GetMouseButtonDown(0) || SimpleMouseForwarder.leftButtonDown) && !disabled)
         {
             Debug.Log($"[{gameObject.name}] 鼠标点击检测到，触发onClick事件");
             try
@@ -730,7 +730,7 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         try
         {
             bool mouseIsOverButton = IsMouseOverButton();
-            if (mouseIsOverButton && Input.GetMouseButtonDown(0))
+            if (mouseIsOverButton && (Input.GetMouseButtonDown(0) || SimpleMouseForwarder.leftButtonDown))
             {
                 Debug.Log($"[{gameObject.name}] 强制点击检测 - 触发onClick事件");
                 onClick?.Invoke();

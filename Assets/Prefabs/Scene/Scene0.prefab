@@ -655,6 +655,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: MAPKEY
   useLocalization: 1
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls:
@@ -685,6 +686,7 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
+  isHovering: 0
 --- !u!114 &5610323581579128474
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1313,6 +1315,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: NewBookKey
   useLocalization: 1
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls:
@@ -1343,6 +1346,7 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
+  isHovering: 0
 --- !u!114 &4980450855176163718
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1526,6 +1530,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: TIMERKEY
   useLocalization: 1
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls:
@@ -1556,6 +1561,7 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
+  isHovering: 0
 --- !u!114 &6114875591752524620
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2397,6 +2403,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: RADIOKEY
   useLocalization: 1
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls:
@@ -2427,6 +2434,7 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
+  isHovering: 0
 --- !u!114 &3509850441743799568
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2566,7 +2574,6 @@ MonoBehaviour:
   groundCover1: {fileID: 2667518622007916963}
   groundCover2: {fileID: 3900149790839404592}
   foregroundGrass: {fileID: 8665284266660803308}
-  birdMaterial: {fileID: 2100000, guid: 101a309229cab07409a8aa1bd34d334d, type: 2}
   weathers:
   - weatherName: "\u767D\u5929"
     background:
@@ -3388,6 +3395,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: NOTEBOOKKEY
   useLocalization: 1
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls:
@@ -3418,6 +3426,7 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
+  isHovering: 0
 --- !u!114 &4597183616251175768
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3663,6 +3672,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: 
   useLocalization: 0
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls:
@@ -3693,6 +3703,7 @@ MonoBehaviour:
   showBackground: 0
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
+  isHovering: 0
 --- !u!114 &3284945358137157196
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4571,6 +4582,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: SETTINGKEY
   useLocalization: 1
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls:
@@ -4601,6 +4613,7 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
+  isHovering: 0
 --- !u!114 &6140482486372198100
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -39,8 +39,8 @@ namespace BirdGame
                     go.transform.position = new Vector3(startPosX + i * 2, 0, 0);
                 }
             });
-            this.GetSystem<IUISystem>().ShowMask();
-            this.SendEvent<DisableButtonEvent>();
+            // this.GetSystem<IUISystem>().ShowMask();
+            // this.SendEvent<DisableButtonEvent>();
         }
     }
 }

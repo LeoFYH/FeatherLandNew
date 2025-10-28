@@ -207,7 +207,7 @@ namespace BirdGame
                 {
                     // this.GetUtility<IFullScreenUtility>().WallpaperMode();
                     //暂时关闭壁纸模式
-                  // WallpaperModeController.ins.EnterWallpaperMode();
+                  WallpaperModeController.ins.EnterWallpaperMode();
                     Debug.Log("WallpaperMode");
                 }
                 else if (id == 2)

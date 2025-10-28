@@ -8,6 +8,7 @@ namespace BirdGame
         public void OnPointerClick(PointerEventData eventData)
         {
             this.GetSystem<IGameSystem>().SendEvent<OnMaskClickEvent>();
+            Destroy(this.gameObject);
         }
     }
 }
