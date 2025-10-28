@@ -26,18 +26,18 @@ MonoBehaviour:
   prefab: {fileID: 1885250170276666100, guid: 0606efbaf1d05bb4186368666e567f3a, type: 3}
   canFly: 0
   canFlyWait: 0
-  idleClip: {fileID: 7400000, guid: 6ae5fe964260e994fbe6728e6c6de447, type: 2}
+  canFlyHorizontal: 1
   reality: Extinct
-  eraningForSmall: 6
-  eraningForBig: 12
-  priceForSmall: 60
-  priceForBig: 120
-  clickEarning: 3
+  eraningForSmall: 5
+  eraningForBig: 20
+  priceForSmall: 20
+  priceForBig: 100
+  clickEarning: 0.01
   clickEarningForFiveTimes: 0
   description: DodoDescription
   clickAudio: {fileID: 0}
-  totalExp: 4
+  totalExp: 20
   eatExp: 0.5
-  autoExp: 0.1
+  autoExp: 1
   habitat: DodoHabitat
   scenePreview: {fileID: 765954583785660313, guid: 2d52a003b346e5e459a7f384b7218040, type: 3}

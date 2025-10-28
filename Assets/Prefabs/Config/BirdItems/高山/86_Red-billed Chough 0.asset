@@ -27,16 +27,16 @@ MonoBehaviour:
   canFly: 1
   canFlyWait: 0
   canFlyHorizontal: 1
-  reality: Rare
-  eraningForSmall: 2
-  eraningForBig: 4
-  priceForSmall: 20
-  priceForBig: 40
-  clickEarning: 3
+  reality: Common
+  eraningForSmall: 0
+  eraningForBig: 1.8136
+  priceForSmall: 1
+  priceForBig: 2.8147
+  clickEarning: 0
   clickEarningForFiveTimes: 0
   description: RedBillDescription
   clickAudio: {fileID: 0}
-  totalExp: 5
+  totalExp: 8
   eatExp: 1
   autoExp: 0.1
   habitat: CardinalHabitat
