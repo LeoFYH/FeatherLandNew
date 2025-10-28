@@ -23,6 +23,7 @@ namespace BirdGame
         BindableProperty<float> HatchingProgress { get; }
         BindableProperty<bool> IsHatchingFinished { get; }
         int CurrentHatchingBirdIndex { get; set; }
+        int OpenEggIndex { get; set; }
     }
 
     public class GameModel : AbstractModel, IGameModel
@@ -51,6 +52,7 @@ namespace BirdGame
         public BindableProperty<float> HatchingProgress { get; } = new BindableProperty<float>();
         public BindableProperty<bool> IsHatchingFinished { get; } = new BindableProperty<bool>();
         public int CurrentHatchingBirdIndex { get; set; } = -1;
+        public int OpenEggIndex { get; set; } = -1;
         public int EggInfoIndex { get; set; }
     }
 }

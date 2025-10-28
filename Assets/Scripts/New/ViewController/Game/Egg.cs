@@ -21,16 +21,19 @@ namespace BirdGame
         private Tweener floatAnim; // 浮动动画
         private int clickCount = 0;
         private bool isSetBird;
+        private int eggId;
 
-        public void SetEggIndex(int index)
+        public void SetEggIndex(int index, int id)
         {
             EggItemIndex = index;
+            eggId = id;
             isSetBird = false;
         }
 
         public void SetBirdIndex(int index)
         {
             BirdIndex = index;
+            eggId = -1;
             isSetBird = true;
         }
 
@@ -84,6 +87,14 @@ namespace BirdGame
             if(clickCount >= 3)
                 return;
             
+            if(this.GetModel<IGameModel>().OpenEggIndex != -1 && this.GetModel<IGameModel>().OpenEggIndex != eggId)
+                return;
+            
+            if (this.GetModel<IGameModel>().OpenEggIndex == -1)
+            {
+                this.GetModel<IGameModel>().OpenEggIndex = eggId;
+            }
+
             anim?.Kill();
             anim = spriteRenderer.transform.DOShakeScale(0.2f, 0.05f, 50, 180f);
             clickCount++;
@@ -167,6 +178,7 @@ namespace BirdGame
                 this.SendCommand(new SpawnBirdCommand(BirdIndex, isSetBird));
             else
                 this.SendCommand(new SpawnBirdCommand(EggItemIndex, isSetBird));
+            this.GetModel<IGameModel>().OpenEggIndex = -1;
             // 销毁当前蛋对象
             Destroy(gameObject);
         }

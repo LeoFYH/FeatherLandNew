@@ -27,7 +27,8 @@ namespace BirdGame
 
             if (this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].eggList == null)
                 this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].eggList = new List<int>();
-            
+
+            this.GetModel<IGameModel>().OpenEggIndex = -1;
             this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].eggList.Clear();
             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("Egg", obj =>
             {
@@ -35,7 +36,7 @@ namespace BirdGame
                 {
                     this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].eggList.Add(index);
                     GameObject go = GameObject.Instantiate(obj);
-                    go.GetComponent<Egg>().SetEggIndex(index);
+                    go.GetComponent<Egg>().SetEggIndex(index, i);
                     go.transform.position = new Vector3(startPosX + i * 2, 0, 0);
                 }
             });
