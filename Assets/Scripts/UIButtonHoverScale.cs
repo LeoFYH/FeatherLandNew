@@ -28,6 +28,8 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
     {
     }
 
+    private int previousClickCount = 0;
+
     [Header("缩放设置")] 
     public bool isScaleOn = true;
     public float hoverScale = 1.1f;      // 悬停时的缩放倍数
@@ -222,8 +224,9 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         mouseWasOverButton = mouseIsOverButton;
         
         // 处理鼠标点击事件（独立于tooltip逻辑）
-        if (isHovering && (Input.GetMouseButtonDown(0) || SimpleMouseForwarder.leftButtonDown) && !disabled)
+        if (isHovering && (Input.GetMouseButtonDown(0) || (SimpleMouseForwarder.clickCount > previousClickCount)) && !disabled)
         {
+            previousClickCount = SimpleMouseForwarder.clickCount;
             Debug.Log($"[{gameObject.name}] 鼠标点击检测到，触发onClick事件");
             try
             {
@@ -254,6 +257,11 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
             // 鼠标离开时隐藏tooltip
             tooltipObject.SetActive(false);
             onMouseExit?.Invoke();
+        }
+
+        if (SimpleMouseForwarder.clickCount > previousClickCount)
+        {
+            previousClickCount = SimpleMouseForwarder.clickCount;
         }
     }
     
@@ -730,8 +738,9 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         try
         {
             bool mouseIsOverButton = IsMouseOverButton();
-            if (mouseIsOverButton && (Input.GetMouseButtonDown(0) || SimpleMouseForwarder.leftButtonDown))
+            if (mouseIsOverButton && (Input.GetMouseButtonDown(0) || (SimpleMouseForwarder.clickCount > previousClickCount)))
             {
+                previousClickCount = SimpleMouseForwarder.clickCount;
                 Debug.Log($"[{gameObject.name}] 强制点击检测 - 触发onClick事件");
                 onClick?.Invoke();
             }

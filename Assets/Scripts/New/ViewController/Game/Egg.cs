@@ -124,7 +124,7 @@ namespace BirdGame
                 yield return new WaitForSeconds(frameDelay);
             }
             
-            // SpawnBird();
+            SpawnBird();
         }
 
         private void PlayNextFrame()
@@ -168,7 +168,6 @@ namespace BirdGame
             else
                 this.SendCommand(new SpawnBirdCommand(EggItemIndex, isSetBird));
 
-            this.GetSystem<IUISystem>().ShowMask();
             // 销毁当前蛋对象
             Destroy(gameObject);
         }

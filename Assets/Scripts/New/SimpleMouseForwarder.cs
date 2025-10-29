@@ -9,6 +9,7 @@ using AOT;
 
 public class SimpleMouseForwarder : MonoBehaviour
 {
+    public static int clickCount = 0;
     private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
     private static LowLevelMouseProc _proc = HookCallback;
     private static IntPtr _hookID = IntPtr.Zero;
@@ -53,11 +54,6 @@ public class SimpleMouseForwarder : MonoBehaviour
     private static Vector2 mousePosition = Vector2.zero;
     private static SimpleMouseForwarder instance;
 
-    public void SetEnableForwarding(bool value)
-    {
-        enableForwarding = value;
-    }
-
     private void Awake()
     {
         instance = this;
@@ -82,7 +78,7 @@ public class SimpleMouseForwarder : MonoBehaviour
     [MonoPInvokeCallback(typeof(LowLevelMouseProc))]
     private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
     {
-        if (nCode >= 0 && instance != null && instance.enableForwarding)
+        if (nCode >= 0 && instance != null && instance.enableForwarding && WallpaperModeController.ins.isWallpaperModeActive)
         {
             int message = wParam.ToInt32();
             
@@ -104,32 +100,9 @@ public class SimpleMouseForwarder : MonoBehaviour
 
     private void Update()
     {
-        if (instance.enableForwarding)
+        if (leftButtonDown && instance.enableForwarding && WallpaperModeController.ins.isWallpaperModeActive)
         {
-            if (_hookID == IntPtr.Zero)
-            {
-                _hookID = SetHook(_proc);
-                if (_hookID == IntPtr.Zero)
-                {
-                    Debug.LogError("[SimpleMouseForwarder] SetHook failed");
-                }
-                else
-                {
-                    Debug.Log("[SimpleMouseForwarder] SetHook success");
-                }
-            }
-        }
-        else
-        {
-            if (_hookID != IntPtr.Zero)
-            {
-                UnhookWindowsHookEx(_hookID);
-                _hookID = IntPtr.Zero;
-                Debug.Log("[SimpleMouseForwarder] UnhookWindowsHookEx success");
-            }
-        }
-        if (leftButtonDown && instance.enableForwarding)
-        {
+            clickCount++;
             leftButtonDown = false;
             SimulateMouseClick(mousePosition);
             
@@ -159,7 +132,7 @@ public class SimpleMouseForwarder : MonoBehaviour
         if (raycastResults.Count > 0)
         {
             GameObject hitObject = raycastResults[0].gameObject;
-            
+
             if (showDebugLog)
             {
                 Debug.Log($"[SimpleMouseForwarder] 点击目标: {hitObject.name}");

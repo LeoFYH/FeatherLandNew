@@ -57,8 +57,8 @@ namespace BirdGame
                 this.GetModel<IGameModel>().EnteredBirds.Value = 0;
                 this.GetModel<IGameModel>().IsHatchingFinished.Value = false;
             });
-            // this.GetSystem<IUISystem>().ShowMask();
-            // this.GetSystem<IGameSystem>().SendEvent<DisableButtonEvent>();
+            this.GetSystem<IUISystem>().ShowMask();
+            this.GetSystem<IGameSystem>().SendEvent<DisableButtonEvent>();
         }
     }
 }
