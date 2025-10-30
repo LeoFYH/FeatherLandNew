@@ -343,7 +343,7 @@ namespace BirdGame
                 {
                     progressFill.fillAmount = v * 1f / birdConf.totalExp;
                 }).UnRegisterWhenGameObjectDestroyed(gameObject);
-                price = birdConf.priceForSmall;
+                price = data.individualPriceSmall;
             }
             else
             {
@@ -353,11 +353,11 @@ namespace BirdGame
                 {
                     progressFill.fillAmount = v * 1f / data.bird.totalFavorability;
                 }).UnRegisterWhenGameObjectDestroyed(gameObject);
-                price = birdConf.priceForBig;
+                price = data.individualPriceBig;
             }
 
-            incomeText.text = birdConf.eraningForBig.ToString();
-            priceText.text = price.ToString();
+            incomeText.text = data.individualEarningBig.ToString("F1");
+            priceText.text = price.ToString("F1");
             
             saleButton.onClick.AddListener(() =>
             {

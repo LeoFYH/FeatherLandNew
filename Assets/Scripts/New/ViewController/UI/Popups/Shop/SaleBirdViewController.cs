@@ -36,18 +36,18 @@ namespace BirdGame
             if(!birds.ContainsKey(birdId))
                 return;
             var birditem = birds[birdId];
-            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
-            var birdConf = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdId, mapIndex);
             for (int i = 0; i < count; i++)
             {
                 var data = birditem.dataList[0];
+                
+                // 使用实例化时计算的个体化售价
                 if (data.bird.isSmall)
                 {
-                    this.GetModel<IAccountModel>().Coins.Value += birdConf.priceForSmall;
+                    this.GetModel<IAccountModel>().Coins.Value += data.individualPriceSmall;
                 }
                 else
                 {
-                    this.GetModel<IAccountModel>().Coins.Value += birdConf.priceForBig;
+                    this.GetModel<IAccountModel>().Coins.Value += data.individualPriceBig;
                 }
 
                 birditem.dataList.RemoveAt(0);

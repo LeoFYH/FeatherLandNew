@@ -137,6 +137,12 @@ namespace BirdGame
         public float petTime;
         public Vector3 position;
         public int walkArea;
+        
+        // 个体化数值（必须保存以保持一致性）
+        public float individualEarningSmall;
+        public float individualEarningBig;
+        public float individualPriceSmall;
+        public float individualPriceBig;
     }
 
     /// <summary>

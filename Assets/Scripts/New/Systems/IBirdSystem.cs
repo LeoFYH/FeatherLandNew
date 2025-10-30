@@ -63,7 +63,12 @@ namespace BirdGame
                     totalFavorability = birdData.bird.totalFavorability,
                     petTime = 0, // petTime是私有字段，暂时设为0
                     position = birdData.bird.transform.position,
-                    walkArea = birdData.bird.walkArea
+                    walkArea = birdData.bird.walkArea,
+                    // 保存个体化数值
+                    individualEarningSmall = birdData.individualEarningSmall,
+                    individualEarningBig = birdData.individualEarningBig,
+                    individualPriceSmall = birdData.individualPriceSmall,
+                    individualPriceBig = birdData.individualPriceBig
                 };
 
                 saveModel.BirdInfoData.mapBirds[mapIndex].birdList.Add(serializableData);
@@ -307,9 +312,23 @@ namespace BirdGame
             // 添加到BirdModel
             birdModel.AddBird(savedBirdData.birdType, bird);
 
-            // 设置自定义名称
+            // 设置自定义名称和个体化数值（从存档恢复）
             var birdData = birdModel.BirdList[^1];
             birdData.customName = savedBirdData.customName;
+            
+            // 恢复保存的个体化数值（如果存档没有这些值，使用刚生成的随机值）
+            if (savedBirdData.individualEarningBig > 0)
+            {
+                birdData.individualEarningSmall = savedBirdData.individualEarningSmall;
+                birdData.individualEarningBig = savedBirdData.individualEarningBig;
+                birdData.individualPriceSmall = savedBirdData.individualPriceSmall;
+                birdData.individualPriceBig = savedBirdData.individualPriceBig;
+                Debug.Log($"从存档恢复个体化数值 - 成鸟收入:{birdData.individualEarningBig:F2}");
+            }
+            else
+            {
+                Debug.Log($"旧存档无个体化数值，使用新生成的随机值");
+            }
             
             agent.enabled = true;
         }
