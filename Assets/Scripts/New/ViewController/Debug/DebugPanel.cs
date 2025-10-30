@@ -1,4 +1,6 @@
 ﻿using System;
+using QFramework;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -12,6 +14,7 @@ namespace BirdGame.DebugMode
         public Toggle tog_Shop;
         public GameObject birdEdit;
         public GameObject shopEdit;
+        public TMP_InputField coinsInput;
 
         private void Start()
         {
@@ -32,6 +35,24 @@ namespace BirdGame.DebugMode
             tog_Shop.onValueChanged.AddListener(isOn =>
             {
                 shopEdit.SetActive(isOn);
+            });
+
+            coinsInput.text = this.GetModel<IAccountModel>().Coins.Value.ToString();
+            this.GetModel<IAccountModel>().Coins.Register(v =>
+            {
+                coinsInput.text = v.ToString();
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            
+            coinsInput.onEndEdit.AddListener(v=>
+            {
+                try
+                {
+                    this.GetModel<IAccountModel>().Coins.Value = int.Parse(v);
+                }
+                catch (Exception e)
+                {
+                    coinsInput.text = this.GetModel<IAccountModel>().Coins.Value.ToString();
+                }
             });
         }
     }

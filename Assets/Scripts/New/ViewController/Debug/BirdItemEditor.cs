@@ -1,6 +1,8 @@
 ﻿using System;
+using QFramework;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UI;
 
 namespace BirdGame.DebugMode
@@ -23,6 +25,7 @@ namespace BirdGame.DebugMode
         public TMP_InputField growthPerFood;
         public TMP_InputField growthPerMinute;
         public Image icon;
+        public Button createButton;
         
         public void Init(BirdItem item)
         {
@@ -42,6 +45,11 @@ namespace BirdGame.DebugMode
             growthForBig.text = item.totalExp.ToString();
             growthPerFood.text = item.eatExp.ToString();
             growthPerMinute.text = item.autoExp.ToString();
+            
+            createButton.onClick.AddListener(() =>
+            {
+                CreateBird(item.id);
+            });
             
             idInput.onValueChanged.AddListener(v =>
             {
@@ -180,6 +188,23 @@ namespace BirdGame.DebugMode
                 }
             });
             
+        }
+        
+        private void CreateBird(int birdIndex)
+        {
+            var config = this.GetModel<IConfigModel>().BirdConfig;
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            GameObject go = GameObject.Instantiate(config.GetBird(birdIndex, mapIndex).prefab);
+            this.GetModel<IBirdModel>().AddBird(birdIndex, go.GetComponent<Brid>());
+            this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
+            if (this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].eggList.Count > 0)
+                this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].eggList.RemoveAt(0);
+            var agent = go.GetComponent<NavMeshAgent>();
+            agent.enabled = false;
+
+            var point = NavigationManager.Instance.GetRandomTarget(3);
+            go.transform.position = new Vector3(point.x, point.y, 0);
+            agent.enabled = true;
         }
     }
 }
