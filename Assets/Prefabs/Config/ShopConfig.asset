@@ -122,82 +122,75 @@ MonoBehaviour:
       birdCount: 3
       description: 
       birds:
-      - birdType: 95
-        probability: 0.059
-      - birdType: 94
-        probability: 0.038
-      - birdType: 86
-        probability: 0.089
-      - birdType: 87
-        probability: 0.1132
-      - birdType: 88
-        probability: 0.047
-      - birdType: 96
-        probability: 0.1054
       - birdType: 44
-        probability: 0.019
+        probability: 0.4873
       - birdType: 55
-        probability: 0.1065
+        probability: 0.4873
       - birdType: 56
-        probability: 0.068
+        probability: 0.4873
+      - birdType: 57
+        probability: 0.342
+      - birdType: 45
+        probability: 0.01
+      - birdType: 94
+        probability: 0.01
+      - birdType: 95
+        probability: 0.01
+      - birdType: 96
+        probability: 0.01
+      - birdType: 86
+        probability: 0.5027
+      - birdType: 87
+        probability: 0.5027
+      - birdType: 88
+        probability: 0.401
     - eggSp: {fileID: 710238443548197888, guid: 1170092e8fa8e1142a7e347132e8ea45, type: 3}
       price: 16
       birdCount: 3
       description: 
       birds:
       - birdType: 41
-        probability: 0.23
+        probability: 0.4937
       - birdType: 61
-        probability: 0.01
+        probability: 0.4937
       - birdType: 63
-        probability: 0.01
+        probability: 0.4937
+      - birdType: 18
+        probability: 0.0101
       - birdType: 42
-        probability: 0.1223
+        probability: 0.4962
       - birdType: 44
         probability: 0.1
-      - birdType: 18
-        probability: 0.1228
-      - birdType: 87
-        probability: 0.1
+      - birdType: 94
+        probability: 0.05
+      - birdType: 86
+        probability: 0.05
     - eggSp: {fileID: 2219571566158466069, guid: 066d2d923c5b99944aa6d9ca568d816f, type: 3}
       price: 24
       birdCount: 3
       description: 
       birds:
-      - birdType: 61
-        probability: 0.234
-      - birdType: 62
-        probability: 0.337
-      - birdType: 63
-        probability: 0.029
-      - birdType: 58
-        probability: 0.1732
-      - birdType: 59
-        probability: 0.01
-      - birdType: 42
-        probability: 0.5
-      - birdType: 18
-        probability: 0.5
-    - eggSp: {fileID: -8002347335681798773, guid: 3983a1dbff14cd040915f5a365b4942e, type: 3}
-      price: 30
-      birdCount: 3
-      description: 
-      birds:
-      - birdType: 40
-        probability: 0.5
-      - birdType: 65
-        probability: 0.5
-      - birdType: 66
-        probability: 0.5
-      - birdType: 41
-        probability: 0.5
-      - birdType: 62
-        probability: 0.5
-      - birdType: 63
-        probability: 0.5
       - birdType: 43
+        probability: 0.3264
+      - birdType: 58
+        probability: 0.3264
+      - birdType: 59
+        probability: 0.3264
+      - birdType: 60
+        probability: 0.3264
+      - birdType: 40
+        probability: 0.6736
+      - birdType: 64
+        probability: 0.6736
+      - birdType: 65
+        probability: 0.6736
+      - birdType: 66
+        probability: 0.6736
+      - birdType: 96
         probability: 0.5
-      - birdType: 42
+      - birdType: 88
+        probability: 0.5
+      - birdType: 57
         probability: 0.5
   - eggs:
     - eggSp: {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
