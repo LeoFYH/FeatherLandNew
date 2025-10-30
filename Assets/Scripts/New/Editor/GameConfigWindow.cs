@@ -20,6 +20,22 @@ namespace BirdGame.Editor
         private OdinMenuTree tree;
         
         [Title("游戏全局配置", "游戏所有配置在此窗口进行配置", TitleAlignments.Centered)]
+        [LabelText("测试模式"), OnInspectorInit(nameof(OnInit)), OnValueChanged(nameof(OnDebugChanged))]
+        public bool isDebugMode = false;
+
+        private void OnInit()
+        {
+            isDebugMode = PlayerPrefs.HasKey("DebugMode");
+        }
+
+        private void OnDebugChanged()
+        {
+            if(isDebugMode)
+                PlayerPrefs.SetString("DebugMode", "true");
+            else 
+                PlayerPrefs.DeleteKey("DebugMode");
+        }
+
         [Space]
         
         [ReadOnly, LabelText("音乐列表配置文件"), OnInspectorInit("OnRadioInit"), HorizontalGroup("音频配置")]

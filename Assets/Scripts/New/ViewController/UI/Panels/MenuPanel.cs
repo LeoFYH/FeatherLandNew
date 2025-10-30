@@ -3,6 +3,7 @@ using DG.Tweening;
 using QFramework;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace BirdGame
@@ -29,6 +30,7 @@ namespace BirdGame
         public TextMeshProUGUI timeText;
         public GameObject[] weatherItems;
         public RectTransform content;
+        public Button debugButton;
 
         private Sequence anim;
         private Tweener timeAnim;
@@ -52,7 +54,12 @@ namespace BirdGame
             Debug.Log("MenuPanel Start方法开始执行");
             Debug.Log($"MenuPanel GameObject名称: {gameObject.name}");
             Debug.Log($"MenuPanel 激活状态: {gameObject.activeInHierarchy}");
-            
+            debugButton.gameObject.SetActive(SceneManager.sceneCountInBuildSettings > 1);
+            debugButton.onClick.AddListener(() =>
+            {
+                SceneManager.LoadScene("DebugMode", LoadSceneMode.Additive);
+            });
+
             var uiSystem = this.GetSystem<IUISystem>();
             if (uiSystem == null)
             {
