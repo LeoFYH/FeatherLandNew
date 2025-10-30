@@ -235,10 +235,10 @@ namespace BirdGame
             content.anchoredPosition = new Vector2(400, 0);
             
             var accountModel = this.GetModel<IAccountModel>();
-            coinsNum.text = accountModel.Coins.Value.ToString();
+            coinsNum.text = Mathf.FloorToInt(accountModel.Coins.Value).ToString();
             accountModel.Coins.Register(v =>
             {
-                coinsNum.text = v.ToString();
+                coinsNum.text = Mathf.FloorToInt(v).ToString();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
             weatherIcon.sprite = weatherSps[this.GetModel<IGameModel>().WeatherIndex.Value];

@@ -414,18 +414,17 @@ namespace BirdGame
         private void AddCoins()
         {
             Debug.Log("Adding coins");
-            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            var birdData = this.GetModel<IBirdModel>().BirdList[birdIndex];
+            
             if (!isSmall)
             {
-                int index = this.GetModel<IBirdModel>().BirdList[birdIndex].birdType;
-                float income = this.GetModel<IConfigModel>().BirdConfig.GetBird(index, mapIndex).eraningForBig;
-                this.GetModel<IAccountModel>().Coins.Value += income;
+                // 使用实例化时计算的个体化收入
+                this.GetModel<IAccountModel>().Coins.Value += birdData.individualEarningBig;
             }
             else
             {
-                int index = this.GetModel<IBirdModel>().BirdList[birdIndex].birdType;
-                float income = this.GetModel<IConfigModel>().BirdConfig.GetBird(index, mapIndex).eraningForSmall;
-                this.GetModel<IAccountModel>().Coins.Value += income;
+                // 使用实例化时计算的个体化收入
+                this.GetModel<IAccountModel>().Coins.Value += birdData.individualEarningSmall;
             }
         }
 
