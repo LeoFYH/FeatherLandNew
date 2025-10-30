@@ -163,7 +163,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eec45f209d603814f8f235cfe72c6b0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayerText: {fileID: 0}
   enableForwarding: 1
   showDebugLog: 0
 --- !u!1 &445508256
@@ -525,54 +524,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d3428a3d0cb4f868b7226c8b8f28d77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1464225780
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1464225782}
-  - component: {fileID: 1464225781}
-  m_Layer: 0
-  m_Name: WallpaperModeController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1464225781
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1464225780}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7bb15db0f428fa49bf1ad6e490d9402, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isFullscreen: 0
-  startInWallpaperMode: 0
-  targetDisplay: 0
-  isWallpaperModeActive: 0
---- !u!4 &1464225782
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1464225780}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 541.78906, y: 279.6609, z: -1.3196847}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1587091042
 GameObject:
   m_ObjectHideFlags: 0
@@ -1010,6 +961,5 @@ SceneRoots:
   - {fileID: 1222072311}
   - {fileID: 623526102}
   - {fileID: 1925106653}
-  - {fileID: 1464225782}
   - {fileID: 1587091044}
   - {fileID: 276267765}

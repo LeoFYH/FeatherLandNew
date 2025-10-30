@@ -6,17 +6,21 @@ using System.Diagnostics;
 using Debug = UnityEngine.Debug;
 using TMPro;
 using AOT;
+using QFramework;
 
-public class SimpleMouseForwarder : MonoBehaviour
+namespace BirdGame
+{
+public class SimpleMouseForwarder : ViewControllerBase
 {
     public static int clickCount = 0;
+    public static int rightClickCount = 0;
     private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
     private static LowLevelMouseProc _proc = HookCallback;
     private static IntPtr _hookID = IntPtr.Zero;
     
     private const int WH_MOUSE_LL = 14;
     private const int WM_LBUTTONDOWN = 0x0201;
-
+    private const int WM_RBUTTONDOWN = 0x0204;
     [StructLayout(LayoutKind.Sequential)]
     private struct POINT
     {
@@ -51,6 +55,7 @@ public class SimpleMouseForwarder : MonoBehaviour
     public bool showDebugLog = false;
 
     public static bool leftButtonDown = false;
+    public static bool rightButtonDown = false;
     private static Vector2 mousePosition = Vector2.zero;
     private static SimpleMouseForwarder instance;
 
@@ -78,7 +83,7 @@ public class SimpleMouseForwarder : MonoBehaviour
     [MonoPInvokeCallback(typeof(LowLevelMouseProc))]
     private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
     {
-        if (nCode >= 0 && instance != null && instance.enableForwarding && WallpaperModeController.ins.isWallpaperModeActive)
+        if (nCode >= 0 && instance != null && instance.enableForwarding && GameApp.Interface.GetUtility<IFullScreenUtility>().EnableWallpaperMode)
         {
             int message = wParam.ToInt32();
             
@@ -93,6 +98,17 @@ public class SimpleMouseForwarder : MonoBehaviour
                     Debug.Log($"[SimpleMouseForwarder] 捕获左键按下 屏幕({hookStruct.pt.x}, {hookStruct.pt.y})");
                 }
             }
+            else if (message == WM_RBUTTONDOWN)
+            {
+                MSLLHOOKSTRUCT hookStruct = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
+                rightButtonDown = true;
+                mousePosition = new Vector2(hookStruct.pt.x, Screen.height - hookStruct.pt.y);
+                
+                if (instance.showDebugLog)
+                {
+                    Debug.Log($"[SimpleMouseForwarder] 捕获右键按下 屏幕({hookStruct.pt.x}, {hookStruct.pt.y})");
+                }
+            }
         }
         
         return CallNextHookEx(_hookID, nCode, wParam, lParam);
@@ -100,7 +116,7 @@ public class SimpleMouseForwarder : MonoBehaviour
 
     private void Update()
     {
-        if (leftButtonDown && instance.enableForwarding && WallpaperModeController.ins.isWallpaperModeActive)
+        if (leftButtonDown && instance.enableForwarding && GameApp.Interface.GetUtility<IFullScreenUtility>().EnableWallpaperMode)
         {
             clickCount++;
             leftButtonDown = false;
@@ -109,6 +125,16 @@ public class SimpleMouseForwarder : MonoBehaviour
             if (showDebugLog)
             {
                 Debug.Log($"[SimpleMouseForwarder] 转发点击到Unity EventSystem: {mousePosition}");
+            }
+        }
+        if (rightButtonDown && instance.enableForwarding && GameApp.Interface.GetUtility<IFullScreenUtility>().EnableWallpaperMode)
+        {
+            rightClickCount++;
+            rightButtonDown = false;
+            SimulateMouseClick(mousePosition);
+            if (showDebugLog)
+            {
+                Debug.Log($"[SimpleMouseForwarder] 转发右键点击到Unity EventSystem: {mousePosition}");
             }
         }
     }
@@ -154,6 +180,7 @@ public class SimpleMouseForwarder : MonoBehaviour
             _hookID = IntPtr.Zero;
         }
         instance = null;
+        }
     }
 }
 

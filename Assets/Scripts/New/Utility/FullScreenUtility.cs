@@ -141,11 +141,6 @@ namespace BirdGame
         }
 
         /// <summary>
-        /// Unity窗口句柄
-        /// </summary>
-        private IntPtr unityWindowHandle;
-
-        /// <summary>
         /// 原始窗口样式（用于退出时恢复）
         /// </summary>
         private IntPtr originalWindowStyle;
@@ -259,27 +254,26 @@ namespace BirdGame
         public void WallpaperMode()
         {
 #if !UNITY_EDITOR
-            // 获取Unity窗口句柄（根据PlayerSettings中的产品名称查找）
-            unityWindowHandle = FindWindow(null, Application.productName);
-            Debug.Log("当前应用窗口名称：" + Application.productName);
-
+            InitializeWindowHandle();
+            WindowedMode();
+            return;
             // 句柄获取失败处理
-            if (unityWindowHandle == IntPtr.Zero)
+            if (windowHandle == IntPtr.Zero)
             {
                 Debug.LogError("无法获取Unity窗口句柄！请检查Player Settings中的Product Name是否正确");
                 return;
             }
 
             // 避免重复进入或句柄无效
-            if (isWallpaperMode || unityWindowHandle == IntPtr.Zero)
+            if (isWallpaperMode || windowHandle == IntPtr.Zero)
                 return;
 
             try
             {
                 // 保存原始窗口状态（用于退出时恢复）
-                originalParent = GetParent(unityWindowHandle);
-                originalWindowStyle = (IntPtr)GetWindowLong(unityWindowHandle, GWL_STYLE);
-                originalExWindowStyle = (IntPtr)GetWindowLong(unityWindowHandle, GWL_EXSTYLE);
+                originalParent = GetParent(windowHandle);
+                originalWindowStyle = (IntPtr)GetWindowLong(windowHandle, GWL_STYLE);
+                originalExWindowStyle = (IntPtr)GetWindowLong(windowHandle, GWL_EXSTYLE);
 
                 RestoreOriginalState();
                 // 找到桌面窗口容器（兼容Win10/11）
@@ -296,24 +290,24 @@ namespace BirdGame
                 }
 
                 // 调整窗口样式：移除标题栏和边框
-                int newStyle = GetWindowLong(unityWindowHandle, GWL_STYLE);
+                int newStyle = GetWindowLong(windowHandle, GWL_STYLE);
                 newStyle &= ~(0x00C00000 | 0x00080000); // 移除标题栏和边框
                 newStyle |= 0x10000000; // 添加WS_VISIBLE确保可见
-                SetWindowLong(unityWindowHandle, GWL_STYLE, newStyle);
+                SetWindowLong(windowHandle, GWL_STYLE, newStyle);
 
                 // 调整扩展样式：设置为工具窗口，支持分层
-                int newExStyle = GetWindowLong(unityWindowHandle, GWL_EXSTYLE);
+                int newExStyle = GetWindowLong(windowHandle, GWL_EXSTYLE);
                 newExStyle |= WS_EX_TOOLWINDOW | WS_EX_LAYERED;
                 newExStyle &= ~WS_EX_APPWINDOW;
                 newExStyle &= ~WS_EX_TRANSPARENT;
-                SetWindowLong(unityWindowHandle, GWL_EXSTYLE, newExStyle);
+                SetWindowLong(windowHandle, GWL_EXSTYLE, newExStyle);
 
                 // 将Unity窗口设置为WorkerW的子窗口（嵌入桌面）
-                SetParent(unityWindowHandle, workerW);
+                SetParent(windowHandle, workerW);
 
                 // 获取目标显示器工作区并调整窗口大小
                 var workingArea = GetScreenWorkingArea(targetDisplay);
-                SetWindowPos(unityWindowHandle, HWND_BOTTOM,
+                SetWindowPos(windowHandle, HWND_BOTTOM,
                     (int)workingArea.x, (int)workingArea.y,
                     (int)workingArea.width, (int)workingArea.height,
                     SWP_FRAMECHANGED | SWP_SHOWWINDOW);
@@ -442,6 +436,7 @@ namespace BirdGame
         public void WindowedMode()
         {
             InitializeWindowHandle();
+            
             if (isWallpaperMode) RestoreOriginalState();
 
             int style = unchecked((int)(WS_OVERLAPPEDWINDOW | WS_VISIBLE));
@@ -470,20 +465,20 @@ namespace BirdGame
         public void RestoreOriginalState()
         {
             // // 避免重复退出或句柄无效
-            // if (!isWallpaperMode || unityWindowHandle == IntPtr.Zero)
+            // if (!isWallpaperMode || windowHandle == IntPtr.Zero)
             //     return;
             //
             // try
             // {
             //     // 恢复原始父窗口
-            //     SetParent(unityWindowHandle, originalParent);
+            //     SetParent(windowHandle, originalParent);
             //
             //     // 恢复原始窗口样式
-            //     SetWindowLong(unityWindowHandle, GWL_STYLE, (int)originalWindowStyle);
-            //     SetWindowLong(unityWindowHandle, GWL_EXSTYLE, (int)originalExWindowStyle);
+            //     SetWindowLong(windowHandle, GWL_STYLE, (int)originalWindowStyle);
+            //     SetWindowLong(windowHandle, GWL_EXSTYLE, (int)originalExWindowStyle);
             //
             //     // 恢复窗口位置和大小
-            //     SetWindowPos(unityWindowHandle, IntPtr.Zero, 0, 0, 0, 0,
+            //     SetWindowPos(windowHandle, IntPtr.Zero, 0, 0, 0, 0,
             //         0x0002 | 0x0001 | 0x0004 | 0x0020); // SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED
             //
             //     // 更新状态标记
@@ -495,45 +490,45 @@ namespace BirdGame
             //     Debug.LogError($"退出壁纸模式失败: {e.Message}");
             // }
             
-            if (unityWindowHandle == IntPtr.Zero)
+            if (windowHandle == IntPtr.Zero)
                 return;
 
             try
             {
                 // 恢复原始父窗口（如果有的话）
                 if (originalParent != IntPtr.Zero)
-                    SetParent(unityWindowHandle, originalParent);
+                    SetParent(windowHandle, originalParent);
 
                 // 如果保存的原始样式有效就恢复，否则强制重置为正常窗口
                 if (originalWindowStyle != IntPtr.Zero)
                 {
-                    SetWindowLong(unityWindowHandle, GWL_STYLE, (int)originalWindowStyle);
+                    SetWindowLong(windowHandle, GWL_STYLE, (int)originalWindowStyle);
                 }
                 else
                 {
-                    int style = GetWindowLong(unityWindowHandle, GWL_STYLE);
+                    int style = GetWindowLong(windowHandle, GWL_STYLE);
                     style |= unchecked((int)(WS_OVERLAPPEDWINDOW | WS_VISIBLE));
-                    SetWindowLong(unityWindowHandle, GWL_STYLE, style);
+                    SetWindowLong(windowHandle, GWL_STYLE, style);
                 }
 
                 if (originalExWindowStyle != IntPtr.Zero)
                 {
-                    SetWindowLong(unityWindowHandle, GWL_EXSTYLE, (int)originalExWindowStyle);
+                    SetWindowLong(windowHandle, GWL_EXSTYLE, (int)originalExWindowStyle);
                 }
                 else
                 {
-                    int exStyle = GetWindowLong(unityWindowHandle, GWL_EXSTYLE);
+                    int exStyle = GetWindowLong(windowHandle, GWL_EXSTYLE);
                     // 去掉透明、分层、工具窗口
                     exStyle &= ~WS_EX_LAYERED;
                     exStyle &= ~WS_EX_TRANSPARENT;
                     exStyle &= ~WS_EX_TOOLWINDOW;
                     // 确保能出现在任务栏
                     exStyle |= WS_EX_APPWINDOW;
-                    SetWindowLong(unityWindowHandle, GWL_EXSTYLE, exStyle);
+                    SetWindowLong(windowHandle, GWL_EXSTYLE, exStyle);
                 }
 
                 // 强制刷新窗口样式
-                SetWindowPos(unityWindowHandle, IntPtr.Zero, 0, 0, 0, 0,
+                SetWindowPos(windowHandle, HWND_TOP, 0, 0, 0, 0,
                     SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
                 isWallpaperMode = false;
