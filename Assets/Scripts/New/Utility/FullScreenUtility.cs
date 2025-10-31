@@ -255,8 +255,7 @@ namespace BirdGame
         {
 #if !UNITY_EDITOR
             InitializeWindowHandle();
-            WindowedMode();
-            return;
+            
             // 句柄获取失败处理
             if (windowHandle == IntPtr.Zero)
             {
@@ -275,7 +274,9 @@ namespace BirdGame
                 originalWindowStyle = (IntPtr)GetWindowLong(windowHandle, GWL_STYLE);
                 originalExWindowStyle = (IntPtr)GetWindowLong(windowHandle, GWL_EXSTYLE);
 
-                RestoreOriginalState();
+                SetFullscreen(true);
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.None;
                 // 找到桌面窗口容器（兼容Win10/11）
                 IntPtr hProgman = FindWindow("Progman", "Program Manager");
                 // 向ProgMan发送消息，确保Win11能正确找到WorkerW
@@ -311,11 +312,6 @@ namespace BirdGame
                     (int)workingArea.x, (int)workingArea.y,
                     (int)workingArea.width, (int)workingArea.height,
                     SWP_FRAMECHANGED | SWP_SHOWWINDOW);
-
-                // 辅助设置：全屏显示并显示光标
-                SetFullscreen(true);
-                Cursor.visible = true;
-                Cursor.lockState = CursorLockMode.None;
 
                 // 更新状态标记
                 isWallpaperMode = true;
@@ -436,6 +432,8 @@ namespace BirdGame
         public void WindowedMode()
         {
             InitializeWindowHandle();
+
+            SetFullscreen(false);
             
             if (isWallpaperMode) RestoreOriginalState();
 
@@ -450,7 +448,7 @@ namespace BirdGame
             int x = (screenW - w) / 2;
             int y = (screenH - h) / 2;
 
-            SetWindowPos(windowHandle, HWND_TOP, x, y, w, h, SWP_SHOWWINDOW);
+            // SetWindowPos(windowHandle, HWND_TOP, x, y, w, h, SWP_SHOWWINDOW);
 
             workAreaWidth = w;
             workAreaHeight = h;
@@ -496,40 +494,41 @@ namespace BirdGame
             try
             {
                 // 恢复原始父窗口（如果有的话）
-                if (originalParent != IntPtr.Zero)
-                    SetParent(windowHandle, originalParent);
+                // if (originalParent != IntPtr.Zero)
+                SetParent(windowHandle, originalParent);
+
 
                 // 如果保存的原始样式有效就恢复，否则强制重置为正常窗口
-                if (originalWindowStyle != IntPtr.Zero)
-                {
-                    SetWindowLong(windowHandle, GWL_STYLE, (int)originalWindowStyle);
-                }
-                else
-                {
-                    int style = GetWindowLong(windowHandle, GWL_STYLE);
-                    style |= unchecked((int)(WS_OVERLAPPEDWINDOW | WS_VISIBLE));
-                    SetWindowLong(windowHandle, GWL_STYLE, style);
-                }
+                // if (originalWindowStyle != IntPtr.Zero)
+                // {
+                //     SetWindowLong(windowHandle, GWL_STYLE, (int)originalWindowStyle);
+                // }
+                // else
+                // {
+                //     int style = GetWindowLong(windowHandle, GWL_STYLE);
+                //     style |= unchecked((int)(WS_OVERLAPPEDWINDOW | WS_VISIBLE));
+                //     SetWindowLong(windowHandle, GWL_STYLE, style);
+                // }
 
-                if (originalExWindowStyle != IntPtr.Zero)
-                {
-                    SetWindowLong(windowHandle, GWL_EXSTYLE, (int)originalExWindowStyle);
-                }
-                else
-                {
-                    int exStyle = GetWindowLong(windowHandle, GWL_EXSTYLE);
-                    // 去掉透明、分层、工具窗口
-                    exStyle &= ~WS_EX_LAYERED;
-                    exStyle &= ~WS_EX_TRANSPARENT;
-                    exStyle &= ~WS_EX_TOOLWINDOW;
-                    // 确保能出现在任务栏
-                    exStyle |= WS_EX_APPWINDOW;
-                    SetWindowLong(windowHandle, GWL_EXSTYLE, exStyle);
-                }
+                // if (originalExWindowStyle != IntPtr.Zero)
+                // {
+                //     SetWindowLong(windowHandle, GWL_EXSTYLE, (int)originalExWindowStyle);
+                // }
+                // else
+                // {
+                //     int exStyle = GetWindowLong(windowHandle, GWL_EXSTYLE);
+                //     // 去掉透明、分层、工具窗口
+                //     exStyle &= ~WS_EX_LAYERED;
+                //     exStyle &= ~WS_EX_TRANSPARENT;
+                //     exStyle &= ~WS_EX_TOOLWINDOW;
+                //     // 确保能出现在任务栏
+                //     exStyle |= WS_EX_APPWINDOW;
+                //     SetWindowLong(windowHandle, GWL_EXSTYLE, exStyle);
+                // }
 
-                // 强制刷新窗口样式
-                SetWindowPos(windowHandle, HWND_TOP, 0, 0, 0, 0,
-                    SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+                // // 强制刷新窗口样式
+                // SetWindowPos(windowHandle, HWND_TOP, 0, 0, 0, 0,
+                //     SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
                 isWallpaperMode = false;
                 Debug.Log("已退出壁纸模式：窗口状态已恢复");
