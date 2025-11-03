@@ -313,12 +313,12 @@ namespace BirdGame
 
         public void ShowEggInfo()
         {
-            if(eggInfo != null)
-                GameObject.Destroy(eggInfo);
-            this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("EggInfo", obj =>
-            {
-                eggInfo = GameObject.Instantiate(obj, popupLayer);
-            });
+            // if(eggInfo != null)
+            //     GameObject.Destroy(eggInfo);
+            // this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("EggInfo", obj =>
+            // {
+            //     eggInfo = GameObject.Instantiate(obj, popupLayer);
+            // });
         }
 
         public void HideEggInfo()
