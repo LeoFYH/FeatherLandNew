@@ -34,7 +34,7 @@ public class WindowModeController : MonoBehaviour
 
     void Start()
     {
-        SetBorderlessMaximizedMode();
+        // SetBorderlessMaximizedMode();
     }
 
     public void SetWindowedMode()
