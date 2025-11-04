@@ -227,7 +227,7 @@ namespace BirdGame
             if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyWait)
             {
                 // 如果不能飞行等待，只进行远处飞行
-                int random = Random.Range(0, 2);
+                int random = Random.Range(0, 9);
                 if (random == 0)
                 {
                     currMachine.ChangeState<BirdIdleState>();
@@ -248,12 +248,12 @@ namespace BirdGame
             else
             {
                 // 如果可以飞行等待，正常选择飞行方式
-                int random = Random.Range(0, 2);
+                int random = Random.Range(0, 9);
                 if (random == 0)
                 {
                     currMachine.ChangeState<BirdIdleState>();
                 }
-                else if (random == 1)
+                else
                 {
                     if (this.GetModel<IBirdModel>().FlyPositions.Count == 0)
                     {

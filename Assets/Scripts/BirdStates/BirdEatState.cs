@@ -24,39 +24,6 @@ namespace BirdGame
         {
             //_brid.onNearOtherBird = OnNearOtherBird;
             
-            // 成鸟绝对不能吃东西，立即退出
-            if (!_brid.isSmall)
-            {
-                // 获取鸟的配置信息
-                int birdIndex = this.GetModel<IBirdModel>().BirdList[_brid.birdIndex].birdType;
-                int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
-                
-                bool canFlyWait = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyWait;
-                bool canFlyHorizontal = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyHorizontal;
-                bool hasFlyPositions = this.GetModel<IBirdModel>().FlyPositions.Count > 0;
-                
-                // 优先选择飞行动作的逻辑
-                
-                if(!canFlyWait && !canFlyHorizontal)
-                {
-                    currMachine.ChangeState<BirdIdleState>();
-                    return;
-                }
-                
-                if (hasFlyPositions && canFlyWait)
-                {
-                    // 如果有飞行位置且支持飞行等待，优先飞到树上
-                    currMachine.ChangeState<BirdFlyState>();
-                    return;
-                }
-                else if (canFlyHorizontal)
-                {
-                    // 如果支持水平飞行，优先选择水平飞行
-                    currMachine.ChangeState<BirdFlyHorizontalState>();
-                    return;
-                }
-                
-            }
             
             _brid.agent.SetDestination(_brid.currFood.transform.position);
             var endPath = _brid.transform.position;
@@ -248,6 +215,40 @@ namespace BirdGame
 
         private void DONext()
         {
+            //先判断能不能飞行
+            if (!_brid.isSmall && Random.Range(0f, 1f) < 0.8f)
+            {
+                // 获取鸟的配置信息
+                int birdIndex = this.GetModel<IBirdModel>().BirdList[_brid.birdIndex].birdType;
+                int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+                
+                bool canFlyWait = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyWait;
+                bool canFlyHorizontal = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyHorizontal;
+                bool hasFlyPositions = this.GetModel<IBirdModel>().FlyPositions.Count > 0;
+                
+                // 优先选择飞行动作的逻辑
+                
+                if(!canFlyWait && !canFlyHorizontal)
+                {
+                    currMachine.ChangeState<BirdIdleState>();
+                    return;
+                }
+                
+                if (hasFlyPositions && canFlyWait)
+                {
+                    // 如果有飞行位置且支持飞行等待，优先飞到树上
+                    currMachine.ChangeState<BirdFlyState>();
+                    return;
+                }
+                else if (canFlyHorizontal)
+                {
+                    // 如果支持水平飞行，优先选择水平飞行
+                    currMachine.ChangeState<BirdFlyHorizontalState>();
+                    return;
+                }
+                
+            }
+            
             // if (_brid.isSmall)
             // {
                 int random = Random.Range(0, 2);

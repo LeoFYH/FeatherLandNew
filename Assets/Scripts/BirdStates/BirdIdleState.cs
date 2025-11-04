@@ -165,13 +165,13 @@ namespace BirdGame
                 
                 // 优先选择飞行动作的逻辑
                 
-                if (hasFlyPositions && canFlyWait)
+                if (hasFlyPositions && canFlyWait && Random.Range(0f, 1f) < 0.8f)
                 {
                     // 如果有飞行位置且支持飞行等待，优先飞到树上
                     currMachine.ChangeState<BirdFlyState>();
                     return;
                 }
-                else if (canFlyHorizontal)
+                else if (canFlyHorizontal && Random.Range(0f, 1f) < 0.8f)
                 {
                     // 如果支持水平飞行，优先选择水平飞行
                     currMachine.ChangeState<BirdFlyHorizontalState>();
