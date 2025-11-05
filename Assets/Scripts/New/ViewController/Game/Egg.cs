@@ -178,7 +178,7 @@ namespace BirdGame
                 this.SendCommand(new SpawnBirdCommand(BirdIndex, isSetBird));
             else
                 this.SendCommand(new SpawnBirdCommand(EggItemIndex, isSetBird));
-
+            this.GetModel<IGameModel>().OpenEggIndex = -1;
             // 销毁当前蛋对象
             Destroy(gameObject);
         }
