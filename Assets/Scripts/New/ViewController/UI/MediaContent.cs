@@ -24,7 +24,7 @@ namespace BirdGame
         {
             redNoteButton.onClick.AddListener(() =>
             {
-                OpenUrlWithCooldown("https://www.xiaohongshu.com/user/profile/62f42f6b000000001f007537?xsec_token=ABG-fPIZWmANGh5VbS-JNNtIrrKltyZkjw1r8LwLOI3Q8=&xsec_source=pc_note");
+                OpenUrlWithCooldown("https://www.xiaohongshu.com/user/profile/6850fe91000000001e002958?");
             });
             insButton.onClick.AddListener(() =>
             {
@@ -36,7 +36,7 @@ namespace BirdGame
             });
             xButton.onClick.AddListener(() =>
             {
-                OpenUrlWithCooldown("https://x.com/sylvanhart_?s=21");
+                OpenUrlWithCooldown("https://x.com/featherlandgame");
             });
             emailButton.onClick.AddListener(() =>
             {

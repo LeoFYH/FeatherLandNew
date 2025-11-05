@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6470784995292299790}
   - component: {fileID: 8095339087817530182}
   - component: {fileID: 6234212631490274487}
+  - component: {fileID: 3602788022499929524}
   m_Layer: 5
   m_Name: Icons (4)
   m_TagString: Untagged
@@ -75,6 +76,46 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &3602788022499929524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 117929189132427781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 0
+  hoverScale: 1.1
+  animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  showDebugInfo: 0
+  localizationKey: Lightning Vloume
+  useLocalization: 1
+  checkUIRaycast: 0
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls: []
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 16
+  fontStyle: 0
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
 --- !u!1 &123214563757434442
 GameObject:
   m_ObjectHideFlags: 0
@@ -86,6 +127,7 @@ GameObject:
   - component: {fileID: 3287873725406973914}
   - component: {fileID: 1285519091141261387}
   - component: {fileID: 4648681946345500556}
+  - component: {fileID: 6333379160202004763}
   m_Layer: 5
   m_Name: Icons
   m_TagString: Untagged
@@ -150,6 +192,46 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &6333379160202004763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 123214563757434442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 0
+  hoverScale: 1.1
+  animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  showDebugInfo: 0
+  localizationKey: Wind Volume
+  useLocalization: 1
+  checkUIRaycast: 0
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls: []
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 16
+  fontStyle: 0
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
 --- !u!1 &179081549648127256
 GameObject:
   m_ObjectHideFlags: 0
@@ -160,6 +242,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5483964315516192969}
   - component: {fileID: 4075911459434502991}
+  - component: {fileID: 2395678352017254410}
   m_Layer: 5
   m_Name: RainSlider
   m_TagString: Untagged
@@ -240,6 +323,46 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2395678352017254410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 179081549648127256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 0
+  hoverScale: 1.1
+  animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  showDebugInfo: 0
+  localizationKey: Rain Vloume
+  useLocalization: 1
+  checkUIRaycast: 0
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls: []
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 16
+  fontStyle: 0
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
 --- !u!1 &210183233849523845
 GameObject:
   m_ObjectHideFlags: 0
@@ -1001,6 +1124,7 @@ GameObject:
   - component: {fileID: 1490181333945020587}
   - component: {fileID: 5013297178952717548}
   - component: {fileID: 7294409716774565465}
+  - component: {fileID: 3112076790584606790}
   m_Layer: 5
   m_Name: Icons (5)
   m_TagString: Untagged
@@ -1065,6 +1189,46 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &3112076790584606790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 931600229768930642}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 0
+  hoverScale: 1.1
+  animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  showDebugInfo: 0
+  localizationKey: Song Vloume
+  useLocalization: 1
+  checkUIRaycast: 0
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls: []
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 16
+  fontStyle: 0
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
 --- !u!1 &946692829712977918
 GameObject:
   m_ObjectHideFlags: 0
@@ -1431,6 +1595,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7016696990615549285}
   - component: {fileID: 2363788055216880532}
+  - component: {fileID: 2752552076453702677}
   m_Layer: 5
   m_Name: SingSlider
   m_TagString: Untagged
@@ -1511,6 +1676,46 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2752552076453702677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1315780148414705213}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 0
+  hoverScale: 1.1
+  animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  showDebugInfo: 0
+  localizationKey: Song Vloume
+  useLocalization: 1
+  checkUIRaycast: 0
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls: []
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 16
+  fontStyle: 0
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
 --- !u!1 &1576955562529938044
 GameObject:
   m_ObjectHideFlags: 0
@@ -2097,7 +2302,7 @@ MonoBehaviour:
   autoAdjustDetectionRange: 1
   showDebugInfo: 0
   localizationKey: Random
-  useLocalization: 0
+  useLocalization: 1
   checkUIRaycast: 0
   onClick:
     m_PersistentCalls:
@@ -2415,7 +2620,7 @@ MonoBehaviour:
   autoAdjustDetectionRange: 1
   showDebugInfo: 0
   localizationKey: Previous
-  useLocalization: 0
+  useLocalization: 1
   checkUIRaycast: 0
   onClick:
     m_PersistentCalls:
@@ -2742,6 +2947,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1582584440979360591}
   - component: {fileID: 3488732422237789035}
+  - component: {fileID: 6391008777712339771}
   m_Layer: 5
   m_Name: ThSlider
   m_TagString: Untagged
@@ -2822,6 +3028,46 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6391008777712339771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3216550485760987353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 0
+  hoverScale: 1.1
+  animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  showDebugInfo: 0
+  localizationKey: Lightning Vloume
+  useLocalization: 1
+  checkUIRaycast: 0
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls: []
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 16
+  fontStyle: 0
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
 --- !u!1 &3266746693636562899
 GameObject:
   m_ObjectHideFlags: 0
@@ -3324,6 +3570,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8649204975215209070}
   - component: {fileID: 3671142944931695808}
+  - component: {fileID: 8489067352409755414}
   m_Layer: 5
   m_Name: SnowSlider
   m_TagString: Untagged
@@ -3404,6 +3651,46 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8489067352409755414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4088818900657101466}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 0
+  hoverScale: 1.1
+  animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  showDebugInfo: 0
+  localizationKey: Snow Vloume
+  useLocalization: 1
+  checkUIRaycast: 0
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls: []
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 16
+  fontStyle: 0
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
 --- !u!1 &4172438687754825161
 GameObject:
   m_ObjectHideFlags: 0
@@ -3415,6 +3702,7 @@ GameObject:
   - component: {fileID: 3014919457738898321}
   - component: {fileID: 7692961924117056488}
   - component: {fileID: 8464435317304632863}
+  - component: {fileID: 4614537134431858557}
   m_Layer: 5
   m_Name: Icons (3)
   m_TagString: Untagged
@@ -3479,6 +3767,46 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &4614537134431858557
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4172438687754825161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 0
+  hoverScale: 1.1
+  animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  showDebugInfo: 0
+  localizationKey: Fire Vloume
+  useLocalization: 1
+  checkUIRaycast: 0
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls: []
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 16
+  fontStyle: 0
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
 --- !u!1 &4200427343541473440
 GameObject:
   m_ObjectHideFlags: 0
@@ -3561,6 +3889,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4460366085060596316}
   - component: {fileID: 3943441708302792966}
+  - component: {fileID: 9084449723138102791}
   m_Layer: 5
   m_Name: WindSlider
   m_TagString: Untagged
@@ -3641,6 +3970,46 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &9084449723138102791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4341978919966569698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 0
+  hoverScale: 1.1
+  animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  showDebugInfo: 0
+  localizationKey: Wind Volume
+  useLocalization: 1
+  checkUIRaycast: 0
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls: []
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 16
+  fontStyle: 0
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
 --- !u!1 &4383318705910775963
 GameObject:
   m_ObjectHideFlags: 0
@@ -5097,6 +5466,7 @@ GameObject:
   - component: {fileID: 2567643360727709688}
   - component: {fileID: 2430215887830080568}
   - component: {fileID: 5971342481964313229}
+  - component: {fileID: 2398980577707241575}
   m_Layer: 5
   m_Name: Icons (1)
   m_TagString: Untagged
@@ -5161,6 +5531,46 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &2398980577707241575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6234594805334561284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 0
+  hoverScale: 1.1
+  animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  showDebugInfo: 0
+  localizationKey: Bird Vloume
+  useLocalization: 1
+  checkUIRaycast: 0
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls: []
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 16
+  fontStyle: 0
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
 --- !u!1 &6353538024952454331
 GameObject:
   m_ObjectHideFlags: 0
@@ -5302,7 +5712,7 @@ MonoBehaviour:
   autoAdjustDetectionRange: 1
   showDebugInfo: 0
   localizationKey: Next
-  useLocalization: 0
+  useLocalization: 1
   checkUIRaycast: 0
   onClick:
     m_PersistentCalls:
@@ -5700,7 +6110,7 @@ MonoBehaviour:
   autoAdjustDetectionRange: 1
   showDebugInfo: 0
   localizationKey: Play
-  useLocalization: 0
+  useLocalization: 1
   checkUIRaycast: 0
   onClick:
     m_PersistentCalls:
@@ -5731,6 +6141,7 @@ GameObject:
   - component: {fileID: 5908726314791229571}
   - component: {fileID: 995156233028884394}
   - component: {fileID: 1728254570448247388}
+  - component: {fileID: 8587622294184503317}
   m_Layer: 5
   m_Name: Icons (2)
   m_TagString: Untagged
@@ -5795,6 +6206,46 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8587622294184503317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6668631350014731186}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 0
+  hoverScale: 1.1
+  animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  showDebugInfo: 0
+  localizationKey: Rain Vloume
+  useLocalization: 1
+  checkUIRaycast: 0
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls: []
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 16
+  fontStyle: 0
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
 --- !u!1 &6779103130369093372
 GameObject:
   m_ObjectHideFlags: 0
@@ -5936,7 +6387,7 @@ MonoBehaviour:
   autoAdjustDetectionRange: 1
   showDebugInfo: 0
   localizationKey: Pause
-  useLocalization: 0
+  useLocalization: 1
   checkUIRaycast: 0
   onClick:
     m_PersistentCalls:
@@ -6758,7 +7209,7 @@ MonoBehaviour:
   autoAdjustDetectionRange: 1
   showDebugInfo: 0
   localizationKey: Loop
-  useLocalization: 0
+  useLocalization: 1
   checkUIRaycast: 0
   onClick:
     m_PersistentCalls:
@@ -6939,6 +7390,7 @@ GameObject:
   - component: {fileID: 710496112981501526}
   - component: {fileID: 1093721383025659277}
   - component: {fileID: 9136018695343983936}
+  - component: {fileID: 891518753302662631}
   m_Layer: 5
   m_Name: Icons (6)
   m_TagString: Untagged
@@ -7003,6 +7455,46 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &891518753302662631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7851430737295596430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 0
+  hoverScale: 1.1
+  animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  showDebugInfo: 0
+  localizationKey: Snow Vloume
+  useLocalization: 1
+  checkUIRaycast: 0
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls: []
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 16
+  fontStyle: 0
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
 --- !u!1 &8023900623390325539
 GameObject:
   m_ObjectHideFlags: 0
@@ -7881,6 +8373,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3164442787473272264}
   - component: {fileID: 2717608905696310794}
+  - component: {fileID: 8287561674531020097}
   m_Layer: 5
   m_Name: FireSlider
   m_TagString: Untagged
@@ -7961,6 +8454,46 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8287561674531020097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9073473387606708744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 0
+  hoverScale: 1.1
+  animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  showDebugInfo: 0
+  localizationKey: Fire Vloume
+  useLocalization: 1
+  checkUIRaycast: 0
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls: []
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 16
+  fontStyle: 0
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
 --- !u!1 &9088480691475639346
 GameObject:
   m_ObjectHideFlags: 0
@@ -7971,6 +8504,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3902405248231755951}
   - component: {fileID: 5082807940222726523}
+  - component: {fileID: 2750783585653352168}
   m_Layer: 5
   m_Name: BirdSlider
   m_TagString: Untagged
@@ -8051,3 +8585,43 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2750783585653352168
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9088480691475639346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 0
+  hoverScale: 1.1
+  animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  showDebugInfo: 0
+  localizationKey: Bird Vloume
+  useLocalization: 1
+  checkUIRaycast: 0
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls: []
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 16
+  fontStyle: 0
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}

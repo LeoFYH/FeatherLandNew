@@ -92,10 +92,22 @@ namespace BirdGame
                 var saveModel = this.GetModel<ISaveModel>();
                 var configModel = this.GetModel<IConfigModel>();
                 
+                if (saveModel.AccountData.tools == null)
+                    saveModel.AccountData.tools = new List<ToolInfo>();
+                
                 // 查找食物工具配置
                 for (int i = 0; i < configModel.ShopConfig.tools.Length; i++)
                 {
                     var toolItem = configModel.ShopConfig.tools[i];
+                    if (saveModel.AccountData.tools.Count <= i)
+                    {
+                        saveModel.AccountData.tools.Add(new ToolInfo());
+                    }
+                    if (saveModel.AccountData.tools[i].unlockedList == null)
+                    {
+                        saveModel.AccountData.tools[i].unlockedList = new List<int>() { 0 };
+                    }
+                    
                     if (toolItem.name.ToLower() == "food")
                     {
                         // 查找匹配的食物类型

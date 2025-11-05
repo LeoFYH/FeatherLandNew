@@ -256,16 +256,16 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
             onMouseExit?.Invoke();
         }
     }
-    
+
     /// <summary>
     /// 更新提示文本（支持本地化）
     /// </summary>
     private void UpdateTooltipText()
     {
         if (tooltipText == null) return;
-        
+
         string displayText = "";
-        
+
         // 如果启用本地化且有本地化系统
         if (useLocalization && localizationSystem != null && !string.IsNullOrEmpty(localizationKey))
         {
@@ -285,20 +285,19 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
             // 本地化未启用或本地化Key为空时，直接什么都不显示，不打印警告
             displayText = localizationKey;
         }
-        
+
         tooltipText.text = displayText;
-        
+
         // 使用本地化系统的字体
-        if (localizationSystem != null)
+
+        TMP_FontAsset fontAsset = this.GetSystem<ILocalizationSystem>().GetFontAsset();
+        if (fontAsset != null)
         {
-            TMP_FontAsset fontAsset = localizationSystem.GetFontAsset();
-            if (fontAsset != null)
-            {
-                tooltipText.font = fontAsset;
-            }
+            tooltipText.font = fontAsset;
         }
+
     }
-    
+
     /// <summary>
     /// 检测鼠标是否真的在按钮上
     /// </summary>
