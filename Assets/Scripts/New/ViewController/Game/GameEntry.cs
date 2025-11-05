@@ -222,14 +222,8 @@ namespace BirdGame
         
         void OnApplicationQuit()
         {
-            this.GetUtility<IFullScreenUtility>().RestoreOriginalState();
             this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
             this.GetSystem<ISteamSystem>().ShutDown();
-        }
-
-        private void OnDestroy()
-        {
-            this.GetUtility<IFullScreenUtility>().RestoreOriginalState();
         }
     }
 }

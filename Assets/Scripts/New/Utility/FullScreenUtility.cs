@@ -20,7 +20,6 @@ namespace BirdGame
         bool IsWallpaperModeActive();
         bool IsRunningAsAdministrator();
         bool RequestAdministratorPrivileges();
-        void RestoreOriginalState();
     }
 
     public class FullScreenUtility : IFullScreenUtility
@@ -81,8 +80,11 @@ namespace BirdGame
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
 
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool SetForegroundWindow(IntPtr hWnd);
+
         // ---------------- constants ----------------
-        private const uint WS_OVERLAPPEDWINDOW = 0x00CF0000;
+        private const uint WS_OVERLAPPEDWINDOW = 0x00000000 | 0x00C00000 | 0x00080000 | 0x00040000 | 0x00020000 | 0x00010000;
         private const uint WS_POPUP = 0x80000000;
         private const uint WS_VISIBLE = 0x10000000;
         private const uint WS_CAPTION = 0x00C00000;
@@ -261,13 +263,6 @@ namespace BirdGame
         {
 #if !UNITY_EDITOR
             InitializeWindowHandle();
-            
-            // 句柄获取失败处理
-            if (windowHandle == IntPtr.Zero)
-            {
-                Debug.LogError("无法获取Unity窗口句柄！请检查Player Settings中的Product Name是否正确");
-                return;
-            }
 
             // 避免重复进入或句柄无效
             if (isWallpaperMode || windowHandle == IntPtr.Zero)
@@ -275,9 +270,6 @@ namespace BirdGame
 
             try
             {
-                // 保存原始窗口状态（用于退出时恢复）
-                originalParent = GetParent(windowHandle);
-
                 // 找到桌面窗口容器（兼容Win10/11）
                 IntPtr hProgman = FindWindow("Progman", "Program Manager");
                 // 向ProgMan发送消息，确保Win11能正确找到WorkerW
@@ -291,18 +283,24 @@ namespace BirdGame
                     return;
                 }
 
-                // 调整窗口样式：移除标题栏和边框
+                // 设置窗口样式：无边框弹出窗口
                 int newStyle = GetWindowLong(windowHandle, GWL_STYLE);
-                newStyle &= ~(0x00C00000 | 0x00080000); // 移除标题栏和边框
-                newStyle |= 0x10000000; // 添加WS_VISIBLE确保可见
-                SetWindowLongPtr(windowHandle, GWL_STYLE, new IntPtr(newStyle));
+                newStyle &= ~unchecked((int)WS_OVERLAPPEDWINDOW);
+                newStyle |= unchecked((int)WS_POPUP);
+                newStyle |= unchecked((int)WS_VISIBLE);
+                SetWindowLongPtr(windowHandle, GWL_STYLE, new IntPtr((long)newStyle));
 
                 // 调整扩展样式：设置为工具窗口，支持分层
                 int newExStyle = GetWindowLong(windowHandle, GWL_EXSTYLE);
-                newExStyle |= WS_EX_TOOLWINDOW | WS_EX_LAYERED;
+                newExStyle |= unchecked((int)WS_EX_TOOLWINDOW);
+                newExStyle |= unchecked((int)WS_EX_LAYERED);
                 newExStyle &= ~WS_EX_APPWINDOW;
                 newExStyle &= ~WS_EX_TRANSPARENT;
-                SetWindowLongPtr(windowHandle, GWL_EXSTYLE, new IntPtr(newExStyle));
+                SetWindowLongPtr(windowHandle, GWL_EXSTYLE, new IntPtr((long)newExStyle));
+
+                // 应用样式变化
+                SetWindowPos(windowHandle, IntPtr.Zero, 0, 0, 0, 0,
+                    SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
                 // 将Unity窗口设置为WorkerW的子窗口（嵌入桌面）
                 SetParent(windowHandle, workerW);
@@ -316,10 +314,9 @@ namespace BirdGame
 
                 // 更新状态标记
                 isWallpaperMode = true;
-                SetFullscreen(true);
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
-                Debug.Log("壁纸模式激活：窗口已嵌入桌面");
+                Debug.Log($"[WallpaperMode] 激活 - {(int)workingArea.width}x{(int)workingArea.height}");
             }
             catch (Exception e)
             {
@@ -417,247 +414,101 @@ namespace BirdGame
         public void FullscreenMode()
         {
             InitializeWindowHandle();
-            if (isWallpaperMode) RestoreOriginalState();
 
-            int screenW = GetSystemMetrics(0);
-            int screenH = GetSystemMetrics(1);
+             // Reset wallpaper mode flag if coming from wallpaper mode
+            if (isWallpaperMode)
+            {
+                SetParent(windowHandle, IntPtr.Zero);
+                
+                // Remove wallpaper mode extended styles
+                int currExStyle = GetWindowLong(windowHandle, GWL_EXSTYLE);
+                currExStyle &= ~WS_EX_TOOLWINDOW;
+                currExStyle &= ~WS_EX_LAYERED;
+                SetWindowLongPtr(windowHandle, GWL_EXSTYLE, new IntPtr((long)currExStyle));
+                
+                isWallpaperMode = false;
+                Debug.Log("[FullscreenMode] 从壁纸模式退出");
+            }
 
-            // Set Unity to exclusive fullscreen mode
-            Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
-            Screen.SetResolution(screenW, screenH, FullScreenMode.ExclusiveFullScreen);
+            // Get full screen dimensions (not working area)
+            int screenWidth = GetSystemMetrics(0);  // SM_CXSCREEN
+            int screenHeight = GetSystemMetrics(1); // SM_CYSCREEN
 
-            // Set borderless window style for fullscreen
-            int style = unchecked((int)(WS_POPUP | WS_VISIBLE));
-            SetWindowLongPtr(windowHandle, GWL_STYLE, new IntPtr(style));
-
-            SetWindowPos(windowHandle, HWND_TOP, 0, 0, screenW, screenH, SWP_FRAMECHANGED | SWP_SHOWWINDOW);
-
-            workAreaWidth = screenW;
-            workAreaHeight = screenH;
-            isWallpaperMode = false;
+            int style = GetWindowLong(windowHandle, GWL_STYLE);
+            style &= ~unchecked((int)WS_OVERLAPPEDWINDOW);
+            style |= unchecked((int)WS_POPUP);
+            SetWindowLong(windowHandle, GWL_STYLE, (int)style);
             
-            // Ensure cursor is visible and not locked in fullscreen mode
+            // Position window at top of Z-order covering entire screen
+            SetWindowPos(windowHandle, HWND_TOP,
+                0, 0,
+                screenWidth, screenHeight,
+                SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
-            
-            Debug.Log($"全屏模式 {screenW}x{screenH}");
+            Debug.Log($"[FullscreenMode] 激活 - {screenWidth}x{screenHeight}");
         }
 
         public void WindowedMode()
         {
             InitializeWindowHandle();
-            
-            // DON'T call RestoreOriginalState() - it might restore to fullscreen!
-            // Instead, directly force windowed mode regardless of previous state
-            
-            // If coming from wallpaper mode, just reset the flag
+             // Reset wallpaper mode flag if coming from wallpaper mode
             if (isWallpaperMode)
             {
+                SetParent(windowHandle, IntPtr.Zero);
+                // 获取当前窗口样式，修改后重新应用
+                // int currStyle = GetWindowLong(windowHandle, GWL_STYLE);
+                
+                // // currStyle |= unchecked((int)(WS_OVERLAPPEDWINDOW | WS_VISIBLE));
+                
+                // SetWindowLongPtr(windowHandle, GWL_STYLE, new IntPtr((long)currStyle));
+                int currExStyle = GetWindowLong(windowHandle, GWL_EXSTYLE);
+                currExStyle &= ~WS_EX_TOOLWINDOW;
+                currExStyle &= ~WS_EX_LAYERED;
+                // // currExStyle &= ~WS_EX_APPWINDOW;
+                // // currExStyle &= ~WS_EX_TRANSPARENT;
+                SetWindowLongPtr(windowHandle, GWL_EXSTYLE, new IntPtr((long)currExStyle));
+                SetWindowPos(windowHandle, IntPtr.Zero, 0, 0, 0, 0,
+                     SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+
+                ShowWindow(windowHandle, SW_SHOW);
+                // 不再修改窗口的尺寸和位置
                 isWallpaperMode = false;
                 Debug.Log("[WindowedMode] 从壁纸模式退出");
             }
 
-            // Get screen dimensions FIRST
-            int screenW = GetSystemMetrics(0);
-            int screenH = GetSystemMetrics(1);
+            // Get current screen resolution
+            int screenW = Screen.currentResolution.width;
+            int screenH = Screen.currentResolution.height;
 
-            // Calculate desired CLIENT area size (80% of screen)
-            int clientW = (int)(screenW * 0.8f);
-            int clientH = (int)(screenH * 0.8f);
+            // Calculate desired window size (80% of screen)
+            int windowW = (int)(screenW * 0.8f);
+            int windowH = (int)(screenH * 0.8f);
 
-            Debug.Log($"[WindowedMode] 目标 - 屏幕: {screenW}x{screenH}, 客户端: {clientW}x{clientH}");
+            Debug.Log($"[WindowedMode] 目标 - 屏幕: {screenW}x{screenH}, 窗口: {windowW}x{windowH}");
 
-            // Step 1: Reset parent to normal (remove any desktop/wallpaper embedding)
-            SetParent(windowHandle, IntPtr.Zero);
-
-            // Step 2: Set window style with all windowed features
-            // WS_OVERLAPPEDWINDOW includes: WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX
-            uint style = WS_OVERLAPPEDWINDOW | WS_VISIBLE;
-            int exStyle = WS_EX_APPWINDOW;
-
-            SetWindowLongPtr(windowHandle, GWL_STYLE, new IntPtr(unchecked((int)style)));
-            SetWindowLongPtr(windowHandle, GWL_EXSTYLE, new IntPtr(exStyle));
-
-            // Verify the style was set correctly
-            int currentStyle = GetWindowLong(windowHandle, GWL_STYLE);
-            int currentExStyle = GetWindowLong(windowHandle, GWL_EXSTYLE);
-            Debug.Log($"[WindowedMode] 样式验证 - Style: 0x{currentStyle:X}, ExStyle: 0x{currentExStyle:X}");
-
-            // Step 3: Force style refresh with FRAMECHANGED - this rebuilds the window frame
-            SetWindowPos(windowHandle, IntPtr.Zero, 0, 0, 0, 0, 
-                SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
-
-            // Step 4: Calculate window size including frame decorations
-            RECT rect = new RECT { Left = 0, Top = 0, Right = clientW, Bottom = clientH };
-            AdjustWindowRectEx(ref rect, style, false, exStyle);
+            Screen.SetResolution(windowW, windowH, false);
             
-            int windowW = rect.Right - rect.Left;
-            int windowH = rect.Bottom - rect.Top;
-            
-            // Center the window
-            int x = (screenW - windowW) / 2;
-            int y = (screenH - windowH) / 2;
+            Debug.Log($"[WindowedMode] Unity窗口模式已设置 - {windowW}x{windowH}");
 
-            Debug.Log($"[WindowedMode] 计算 - 窗口: {windowW}x{windowH}, 位置: ({x},{y})");
-
-            // Step 5: Position and size the window
-            SetWindowPos(windowHandle, HWND_TOP, x, y, windowW, windowH, SWP_FRAMECHANGED | SWP_SHOWWINDOW);
-
-            // Step 6: Set Unity to windowed mode AFTER positioning
-            // This ensures Unity adapts to the window we created rather than fighting it
-            Screen.fullScreenMode = FullScreenMode.Windowed;
-            Screen.fullScreen = false;
-
-            // Step 7: Verify the style is STILL correct after Unity changes
-            // Unity sometimes removes important style flags, so we need to restore them
-            int finalStyle = GetWindowLong(windowHandle, GWL_STYLE);
-            Debug.Log($"[WindowedMode] Unity处理后样式 - Style: 0x{finalStyle:X}");
-            
-            // Check if Unity removed any critical window features
-            uint requiredStyle = WS_OVERLAPPEDWINDOW | WS_VISIBLE;
-            bool styleChanged = false;
-            
-            // Check each important flag
-            if ((finalStyle & (int)WS_THICKFRAME) == 0)
-            {
-                Debug.LogWarning("[WindowedMode] Unity移除了WS_THICKFRAME (resize border)，正在恢复...");
-                styleChanged = true;
-            }
-            if ((finalStyle & (int)WS_MAXIMIZEBOX) == 0)
-            {
-                Debug.LogWarning("[WindowedMode] Unity移除了WS_MAXIMIZEBOX (maximize button)，正在恢复...");
-                styleChanged = true;
-            }
-            if ((finalStyle & (int)WS_MINIMIZEBOX) == 0)
-            {
-                Debug.LogWarning("[WindowedMode] Unity移除了WS_MINIMIZEBOX (minimize button)，正在恢复...");
-                styleChanged = true;
-            }
-            
-            // If Unity changed our style, force it back
-            if (styleChanged || (finalStyle & (int)requiredStyle) != (int)requiredStyle)
-            {
-                Debug.LogWarning("[WindowedMode] 强制恢复完整窗口样式...");
-                SetWindowLongPtr(windowHandle, GWL_STYLE, new IntPtr(unchecked((int)requiredStyle)));
-                SetWindowPos(windowHandle, IntPtr.Zero, 0, 0, 0, 0, 
-                    SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED | SWP_SHOWWINDOW);
-                
-                // Verify it stuck
-                int verifyStyle = GetWindowLong(windowHandle, GWL_STYLE);
-                Debug.Log($"[WindowedMode] 恢复后样式 - Style: 0x{verifyStyle:X}");
-            }
-
-            // Verify result
-            GetWindowRect(windowHandle, out RECT actualWindow);
-            GetClientRect(windowHandle, out RECT actualClient);
-            int actualWindowW = actualWindow.Right - actualWindow.Left;
-            int actualWindowH = actualWindow.Bottom - actualWindow.Top;
-            int actualClientW = actualClient.Right - actualClient.Left;
-            int actualClientH = actualClient.Bottom - actualClient.Top;
-            
-            Debug.Log($"[WindowedMode] 实际 - 窗口: {actualWindowW}x{actualWindowH}, 客户端: {actualClientW}x{actualClientH}");
-            
-            // Force update workAreaWidth/Height
-            workAreaWidth = actualClientW;
-            workAreaHeight = actualClientH;
+            // Update internal tracking
+            workAreaWidth = windowW;
+            workAreaHeight = windowH;
             
             // Ensure cursor is visible and not locked in windowed mode
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
-            Debug.Log("[WindowedMode] 光标状态已重置为可见且未锁定");
+            
+            Debug.Log("[WindowedMode] 完成 - 窗口模式已激活");
         }
 
         public bool IsWallpaperModeActive() => isWallpaperMode;
         public bool IsRunningAsAdministrator() => false;
         public bool RequestAdministratorPrivileges() => false;
-
-        public void RestoreOriginalState()
-        {
-            // // 避免重复退出或句柄无效
-            // if (!isWallpaperMode || windowHandle == IntPtr.Zero)
-            //     return;
-            //
-            // try
-            // {
-            //     // 恢复原始父窗口
-            //     SetParent(windowHandle, originalParent);
-            //
-            //     // 恢复原始窗口样式
-            //     SetWindowLong(windowHandle, GWL_STYLE, (int)originalWindowStyle);
-            //     SetWindowLong(windowHandle, GWL_EXSTYLE, (int)originalExWindowStyle);
-            //
-            //     // 恢复窗口位置和大小
-            //     SetWindowPos(windowHandle, IntPtr.Zero, 0, 0, 0, 0,
-            //         0x0002 | 0x0001 | 0x0004 | 0x0020); // SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED
-            //
-            //     // 更新状态标记
-            //     isWallpaperMode = false;
-            //     Debug.Log("已退出壁纸模式：窗口状态已恢复");
-            // }
-            // catch (Exception e)
-            // {
-            //     Debug.LogError($"退出壁纸模式失败: {e.Message}");
-            // }
-            
-            if (windowHandle == IntPtr.Zero)
-                return;
-
-            try
-            {
-                // 恢复原始父窗口（如果有的话）
-                // if (originalParent != IntPtr.Zero)
-                SetParent(windowHandle, originalParent);
-
-
-                // 如果保存的原始样式有效就恢复，否则强制重置为正常窗口
-                // if (originalStyle != IntPtr.Zero)
-                // {
-                //     SetWindowLongPtr(windowHandle, GWL_STYLE, originalStyle);
-                // }
-                // else
-                // {
-                //     int style = GetWindowLong(windowHandle, GWL_STYLE);
-                //     style |= unchecked((int)(WS_OVERLAPPEDWINDOW | WS_VISIBLE));
-                //     SetWindowLongPtr(windowHandle, GWL_STYLE, new IntPtr(style));
-                // }
-
-                // if (originalExStyle != IntPtr.Zero)
-                // {
-                //     SetWindowLongPtr(windowHandle, GWL_EXSTYLE, originalExStyle);
-                // }
-                // else
-                // {
-                //     int exStyle = GetWindowLong(windowHandle, GWL_EXSTYLE);
-                //     // 去掉透明、分层、工具窗口
-                //     exStyle &= ~WS_EX_LAYERED;
-                //     exStyle &= ~WS_EX_TRANSPARENT;
-                //     exStyle &= ~WS_EX_TOOLWINDOW;
-                //     // 确保能出现在任务栏
-                //     exStyle |= WS_EX_APPWINDOW;
-                //     SetWindowLongPtr(windowHandle, GWL_EXSTYLE, new IntPtr(exStyle));
-                // }
-
-                // // 强制刷新窗口样式
-                // SetWindowPos(windowHandle, HWND_TOP, 0, 0, 0, 0,
-                //     SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
-
-                isWallpaperMode = false;
-                Debug.Log("已退出壁纸模式：窗口状态已恢复");
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"退出壁纸模式失败: {e.Message}");
-            }
-        }
-
-        ~FullScreenUtility()
-        {
-            if (isWallpaperMode) RestoreOriginalState();
-        }
 #else
         // 非 Windows 平台
         public void WallpaperMode() { Debug.LogWarning("桌面模式仅在 Windows 平台支持"); }
-        public void RestoreOriginalState() { Debug.LogWarning("壁纸模式仅在 Windows 平台支持"); }
         public void FullscreenMode() { Debug.LogWarning("全屏模式仅在 Windows 平台支持"); }
         public void WindowedMode() { Debug.LogWarning("窗口模式仅在 Windows 平台支持"); }
         public bool IsWallpaperModeActive() { return false; }
