@@ -18,7 +18,15 @@ namespace BirdGame
                 //     this.GetSystem<ISaveSystem>().SaveData();
                 // }
                 Debug.Log("Show");
-                this.GetSystem<IUISystem>().ShowPopup(UIPopup.TutorialPopup);
+                if (!PlayerPrefs.HasKey("ShowedTutorial"))
+                {
+                    PlayerPrefs.SetString("ShowedTutorial", "true");
+                    this.GetSystem<IUISystem>().ShowPopup(UIPopup.TutorialPopup);
+                }
+                else
+                {
+                    this.GetSystem<IGameSystem>().SendEvent<EnableHoverScaleEvent>();
+                }
                 this.GetSystem<IUISystem>().HidePopup(UIPopup.ThanksPopup);
             });
         }

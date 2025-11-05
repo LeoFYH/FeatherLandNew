@@ -87,7 +87,8 @@ namespace BirdGame
             });
             this.RegisterEvent<StopTomatoEvent>(evt =>
             {
-                this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
+                if (item.TimerCoroutine != null)
+                    this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
                 item.TimerCoroutine = null;
                 Refresh(false);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);

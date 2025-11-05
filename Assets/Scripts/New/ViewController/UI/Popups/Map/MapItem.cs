@@ -40,7 +40,7 @@ namespace BirdGame
             else
             {
                 // 前一个地图未购买，隐藏当前地图图标
-                gameObject.SetActive(false);
+                gameObject.SetActive(true);
             }
         }
 
@@ -49,6 +49,12 @@ namespace BirdGame
             thisButton = GetComponent<Button>();
             thisButton.onClick.AddListener(() =>
             {
+                if (!this.GetModel<IConfigModel>().MapConfig.maps[mapIndex].purchasable)
+                {
+                    this.GetSystem<IUISystem>().ShowPrompt("Habitat is developing!");
+                    return;
+                }
+
                 if (this.GetModel<ISaveModel>().BirdInfoData.currentMap == mapIndex)
                 {
                     return;

@@ -318,14 +318,17 @@ namespace BirdGame
         {
             languageDropdown.ClearOptions();
             var languageConfig = this.GetModel<IConfigModel>().LocalizationConfig;
-            foreach (var language in languageConfig.languageDic)
-            {
-                string value = this.GetSystem<ILocalizationSystem>().GetString(language.Key.ToString());
-                languageDropdown.options.Add(new TMP_Dropdown.OptionData(value, itemSprite, Color.white));
-                languages.Add(language.Key);
-                Debug.Log(value);
-            }
+            // foreach (var language in languageConfig.languageDic)
+            // {
+            //     string value = this.GetSystem<ILocalizationSystem>().GetString(language.Key.ToString());
+            //     languageDropdown.options.Add(new TMP_Dropdown.OptionData(value, itemSprite, Color.white));
+            //     languages.Add(language.Key);
+            //     Debug.Log(value);
+            // }
+            languageDropdown.options.Add(new TMP_Dropdown.OptionData("English",itemSprite, Color.white));
+            languages.Add(SystemLanguage.English);
 
+            this.GetModel<ISaveModel>().SettingData.gameLanguage = SystemLanguage.English;
             var currentLanguage = this.GetModel<ISaveModel>().SettingData.gameLanguage;
             Debug.Log($"存档中的语言设置: {currentLanguage}");
             Debug.Log($"本地化配置支持的语言: {string.Join(", ", languages)}");

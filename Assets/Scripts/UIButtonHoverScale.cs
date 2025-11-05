@@ -283,7 +283,7 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         else
         {
             // 本地化未启用或本地化Key为空时，直接什么都不显示，不打印警告
-            displayText = "";
+            displayText = localizationKey;
         }
         
         tooltipText.text = displayText;
