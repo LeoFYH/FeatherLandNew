@@ -40,8 +40,7 @@ namespace BirdGame
                     Debug.Log("启动时设置为窗口模式");
                     break;
                 case 1:
-                    // this.GetUtility<IFullScreenUtility>().WallpaperMode();
-                    // WallpaperModeController.ins.EnterWallpaperMode();
+                    this.GetUtility<IFullScreenUtility>().WallpaperMode();
                     Debug.Log("启动时设置为壁纸模式");
                     break;
                 default:
@@ -223,14 +222,8 @@ namespace BirdGame
         
         void OnApplicationQuit()
         {
-            this.GetUtility<IFullScreenUtility>().RestoreOriginalState();
             this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
             this.GetSystem<ISteamSystem>().ShutDown();
-        }
-
-        private void OnDestroy()
-        {
-            this.GetUtility<IFullScreenUtility>().RestoreOriginalState();
         }
     }
 }
