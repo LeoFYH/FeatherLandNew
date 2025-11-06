@@ -174,9 +174,8 @@ namespace BirdGame
             });
             quitButton.onClick.AddListener(() =>
             {
-                this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
-                this.GetSystem<ISteamSystem>().FirstPlayTime();
-                ExitProcess(0);
+                // 显示退出确认弹窗，询问是否填写问卷
+                this.GetSystem<IUISystem>().ShowExitConfirm();
             });
             
             // 添加清除存档按钮的点击监听器
