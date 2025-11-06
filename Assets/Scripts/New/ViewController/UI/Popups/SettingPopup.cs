@@ -272,7 +272,7 @@ namespace BirdGame
                 languageRect.anchoredPosition = new Vector2(0, languageY);
             }
 
-            moveHeight = (isScreenExpend ? 204 : 0) + (isLanguageExpend ? 570 : 0);
+            moveHeight = (isScreenExpend ? 204 : 0) + (isLanguageExpend ? 105 : 0);
 
             deleteRect.anchoredPosition = new Vector2(0, deleteY - moveHeight);
             tutorialRect.anchoredPosition = new Vector2(0, tutorailY - moveHeight);
@@ -325,7 +325,7 @@ namespace BirdGame
             // }
             string value = this.GetSystem<ILocalizationSystem>().GetString("English");
             languageDropdown.options.Add(new TMP_Dropdown.OptionData(value,itemSprite, Color.white));
-            value = this.GetSystem<ILocalizationSystem>().GetString("ChineseSimplified");
+            value = this.GetSystem<ILocalizationSystem>().GetString("Chinese");
             languageDropdown.options.Add(new TMP_Dropdown.OptionData(value, itemSprite, Color.white));
             languages.Add(SystemLanguage.English);
             languages.Add(SystemLanguage.ChineseSimplified);
