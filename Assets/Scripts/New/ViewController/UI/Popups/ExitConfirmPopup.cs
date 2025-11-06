@@ -17,6 +17,7 @@ namespace BirdGame
         
         public Button yesButton;
         public Button noButton;
+        public Button closeButton;
         public TextMeshProUGUI messageText;
 
         private void Start()
@@ -69,6 +70,15 @@ namespace BirdGame
 
             yesButton.onClick.AddListener(OnYesClick);
             noButton.onClick.AddListener(OnNoClick);
+            
+            // 关闭按钮只关闭弹窗，不退出游戏
+            if (closeButton != null)
+            {
+                closeButton.onClick.AddListener(() =>
+                {
+                    this.GetSystem<IUISystem>().HidePopup(UIPopup.ExitConfirmPopup);
+                });
+            }
         }
 
         private void OnYesClick()
