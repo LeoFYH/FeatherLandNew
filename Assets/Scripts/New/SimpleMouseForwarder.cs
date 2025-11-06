@@ -21,13 +21,22 @@ public class SimpleMouseForwarder : ViewControllerBase
     
     private const int WH_MOUSE_LL = 14;
     private const int WM_LBUTTONDOWN = 0x0201;
+    private const int WM_LBUTTONUP = 0x0202;
     private const int WM_RBUTTONDOWN = 0x0204;
     private const int WM_MOUSEWHEEL = 0x020A;
     private const int WM_MOUSEHWHEEL = 0x020E;
+    private const int WM_MOUSEMOVE = 0x0200;
 
     private static float wheelDelta = 0f;
     private static bool isHorizontalWheel = false;
     private static Vector2 wheelMousePosition = Vector2.zero;
+
+    private static Vector2 currentMousePosition = Vector2.zero;
+    private static Vector2 lastMousePosition = Vector2.zero;
+
+    private static bool isMouseDragging = false;
+    private static Vector2 currentDragPosition = Vector2.zero;
+    private static GameObject currentDragTarget = null;
 
     [StructLayout(LayoutKind.Sequential)]
     private struct POINT
@@ -100,21 +109,52 @@ public class SimpleMouseForwarder : ViewControllerBase
         if (nCode >= 0 && instance != null && instance.enableForwarding && GameApp.Interface.GetUtility<IFullScreenUtility>().EnableWallpaperMode)
         {
             int message = wParam.ToInt32();
+            MSLLHOOKSTRUCT hookStruct = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
+            currentMousePosition = new Vector2(hookStruct.pt.x, Screen.height - hookStruct.pt.y);
             
             if (message == WM_LBUTTONDOWN)
             {
-                MSLLHOOKSTRUCT hookStruct = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
                 leftButtonDown = true;
-                mousePosition = new Vector2(hookStruct.pt.x, Screen.height - hookStruct.pt.y);
+                mousePosition = currentMousePosition;
+                lastMousePosition = currentMousePosition;
+                isMouseDragging = false;
+                currentDragTarget = null;
+
+                currentDragTarget = FindDragTarget(currentMousePosition);
                 
                 if (instance.showDebugLog)
                 {
                     Debug.Log($"[SimpleMouseForwarder] 捕获左键按下 屏幕({hookStruct.pt.x}, {hookStruct.pt.y})");
                 }
             }
+            else if (message == WM_MOUSEMOVE)
+            {
+                currentDragPosition = currentMousePosition;
+
+                // If we have a drag target, send drag updates
+                if (isMouseDragging && currentDragTarget != null)
+                {
+                    SendDragUpdateToTarget(currentDragTarget, currentMousePosition);
+                }
+                else if (leftButtonDown && currentDragTarget != null)
+                {
+                    // Start dragging after mouse moves a bit
+                    Vector2 dragStartDelta = currentMousePosition - mousePosition;
+                    if (dragStartDelta.magnitude > 5f) // Drag threshold
+                    {
+                        isMouseDragging = true;
+                        SendDragUpdateToTarget(currentDragTarget, currentMousePosition);
+                    }
+                }
+            }
+            else if (message == WM_LBUTTONUP)
+            {
+                leftButtonDown = false;
+                isMouseDragging = false;
+                currentDragTarget = null;
+            }
             else if (message == WM_RBUTTONDOWN)
             {
-                MSLLHOOKSTRUCT hookStruct = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
                 rightButtonDown = true;
                 mousePosition = new Vector2(hookStruct.pt.x, Screen.height - hookStruct.pt.y);
                 
@@ -125,7 +165,6 @@ public class SimpleMouseForwarder : ViewControllerBase
             }
             else if (message == WM_MOUSEWHEEL || message == WM_MOUSEHWHEEL)
             {
-                MSLLHOOKSTRUCT hookStruct = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
                 short wheelDeltaRaw = (short)((hookStruct.mouseData >> 16) & 0xFFFF);
                 wheelDelta = wheelDeltaRaw / 120f; // Normalize to standard wheel units
                 isHorizontalWheel = (message == WM_MOUSEHWHEEL);
@@ -168,6 +207,72 @@ public class SimpleMouseForwarder : ViewControllerBase
                 handler.ReceiveWheelDelta(delta, isHorizontal);
                 break; // Only send to the first handler found
             }
+        }
+    }
+
+    private static void ForwardDragToUI(Vector2 screenPosition)
+    {
+        if (EventSystem.current == null) return;
+        
+        PointerEventData pointerData = new PointerEventData(EventSystem.current)
+        {
+            position = screenPosition,
+            button = PointerEventData.InputButton.Left,
+        };
+        
+        var raycastResults = new System.Collections.Generic.List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerData, raycastResults);
+        
+        foreach (var result in raycastResults)
+        {
+            // Look for slider drag handlers
+            SliderBarClickHandler sliderHandler = result.gameObject.GetComponent<SliderBarClickHandler>();
+            if (sliderHandler != null)
+            {
+                // The handler will process the drag in its Update()
+                ExecuteEvents.Execute(sliderHandler.gameObject, pointerData, ExecuteEvents.dragHandler);
+                break;
+            }
+        }
+    }
+
+    private static GameObject FindDragTarget(Vector2 screenPosition)
+    {
+        if (EventSystem.current == null) return null;
+        
+        PointerEventData pointerData = new PointerEventData(EventSystem.current)
+        {
+            position = screenPosition,
+            button = PointerEventData.InputButton.Left
+        };
+        
+        var raycastResults = new System.Collections.Generic.List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerData, raycastResults);
+        
+        foreach (var result in raycastResults)
+        {
+            // Look for slider drag handlers
+            SliderBarClickHandler sliderHandler = result.gameObject.GetComponent<SliderBarClickHandler>();
+            if (sliderHandler != null)
+            {
+                return result.gameObject;
+            }
+            
+        }
+        
+        return null;
+    }
+
+    private static void SendDragUpdateToTarget(GameObject target, Vector2 currentPos)
+    {
+        if (target == null) return;
+        
+        // Try HookBasedSliderHandler first
+        SliderBarClickHandler handler = target.GetComponent<SliderBarClickHandler>();
+        if (handler != null)
+        {
+            handler.ReceiveDragUpdate(currentPos);
+            return;
         }
     }
 
@@ -225,7 +330,8 @@ public class SimpleMouseForwarder : ViewControllerBase
         
         PointerEventData pointerData = new PointerEventData(EventSystem.current)
         {
-            position = screenPosition
+            position = screenPosition,
+            button = PointerEventData.InputButton.Left
         };
         
         var raycastResults = new System.Collections.Generic.List<RaycastResult>();
@@ -234,6 +340,15 @@ public class SimpleMouseForwarder : ViewControllerBase
         if (raycastResults.Count > 0)
         {
             GameObject hitObject = raycastResults[0].gameObject;
+
+            SliderBarClickHandler sliderHandler = hitObject.GetComponent<SliderBarClickHandler>();
+            if (sliderHandler != null)
+            {
+                ExecuteEvents.Execute(hitObject, pointerData, ExecuteEvents.pointerClickHandler);
+                ExecuteEvents.Execute(hitObject, pointerData, ExecuteEvents.pointerDownHandler);
+                Debug.Log($"[SimpleMouseForwarder] 滑块交互: {hitObject.name}");
+                return;
+            }
 
             if (showDebugLog)
             {
