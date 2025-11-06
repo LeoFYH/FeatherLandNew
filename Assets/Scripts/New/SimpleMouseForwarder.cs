@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
 using System.Runtime.InteropServices;
@@ -21,6 +22,13 @@ public class SimpleMouseForwarder : ViewControllerBase
     private const int WH_MOUSE_LL = 14;
     private const int WM_LBUTTONDOWN = 0x0201;
     private const int WM_RBUTTONDOWN = 0x0204;
+    private const int WM_MOUSEWHEEL = 0x020A;
+    private const int WM_MOUSEHWHEEL = 0x020E;
+
+    private static float wheelDelta = 0f;
+    private static bool isHorizontalWheel = false;
+    private static Vector2 wheelMousePosition = Vector2.zero;
+
     [StructLayout(LayoutKind.Sequential)]
     private struct POINT
     {
@@ -50,6 +58,12 @@ public class SimpleMouseForwarder : ViewControllerBase
 
     [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     private static extern IntPtr GetModuleHandle(string lpModuleName);
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern IntPtr GetForegroundWindow();
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder text, int count);
 
     public bool enableForwarding = true;
     public bool showDebugLog = false;
@@ -109,32 +123,94 @@ public class SimpleMouseForwarder : ViewControllerBase
                     Debug.Log($"[SimpleMouseForwarder] 捕获右键按下 屏幕({hookStruct.pt.x}, {hookStruct.pt.y})");
                 }
             }
+            else if (message == WM_MOUSEWHEEL || message == WM_MOUSEHWHEEL)
+            {
+                MSLLHOOKSTRUCT hookStruct = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
+                short wheelDeltaRaw = (short)((hookStruct.mouseData >> 16) & 0xFFFF);
+                wheelDelta = wheelDeltaRaw / 120f; // Normalize to standard wheel units
+                isHorizontalWheel = (message == WM_MOUSEHWHEEL);
+                wheelMousePosition = new Vector2(hookStruct.pt.x, Screen.height - hookStruct.pt.y);
+                
+                if (instance.showDebugLog)
+                {
+                    Debug.Log($"[SimpleMouseForwarder] 捕获鼠标滚轮 Delta: {wheelDelta}, Horizontal: {isHorizontalWheel}, 位置: {wheelMousePosition}");
+                }
+                
+                // Forward to UI immediately
+                ForwardWheelToUI(wheelMousePosition, wheelDelta, isHorizontalWheel);
+                
+                // Reset
+                wheelDelta = 0f;
+            }
         }
         
         return CallNextHookEx(_hookID, nCode, wParam, lParam);
     }
 
-    private void Update()
+    private static void ForwardWheelToUI(Vector2 screenPosition, float delta, bool isHorizontal)
     {
-        if (leftButtonDown && instance.enableForwarding && GameApp.Interface.GetUtility<IFullScreenUtility>().EnableWallpaperMode)
+        if (EventSystem.current == null) return;
+        
+        PointerEventData pointerData = new PointerEventData(EventSystem.current)
         {
-            clickCount++;
-            leftButtonDown = false;
-            SimulateMouseClick(mousePosition);
-            
-            if (showDebugLog)
+            position = screenPosition
+        };
+        
+        var raycastResults = new System.Collections.Generic.List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerData, raycastResults);
+        
+        foreach (var result in raycastResults)
+        {
+            // Look for our mouse wheel handlers
+            ScrollRectMouseWheelHandler handler = result.gameObject.GetComponent<ScrollRectMouseWheelHandler>();
+            if (handler != null)
             {
-                Debug.Log($"[SimpleMouseForwarder] 转发点击到Unity EventSystem: {mousePosition}");
+                handler.ReceiveWheelDelta(delta, isHorizontal);
+                break; // Only send to the first handler found
             }
         }
-        if (rightButtonDown && instance.enableForwarding && GameApp.Interface.GetUtility<IFullScreenUtility>().EnableWallpaperMode)
+    }
+
+    private string GetForegroundWindowTitle()
+    {
+        IntPtr hwnd = GetForegroundWindow();
+        if (hwnd != IntPtr.Zero)
         {
-            rightClickCount++;
-            rightButtonDown = false;
-            SimulateMouseClick(mousePosition);
-            if (showDebugLog)
+            const int nChars = 256;
+            System.Text.StringBuilder Buff = new System.Text.StringBuilder(nChars);
+            if (GetWindowText(hwnd, Buff, nChars) > 0)
             {
-                Debug.Log($"[SimpleMouseForwarder] 转发右键点击到Unity EventSystem: {mousePosition}");
+                return Buff.ToString();
+            }
+        }
+        return string.Empty;
+    }
+
+    private void Update()
+    {
+        // Get the current foreground window handle
+        if (GetForegroundWindowTitle() == "Program Manager" || GetForegroundWindowTitle() == string.Empty)
+        {
+            if (leftButtonDown && instance.enableForwarding && GameApp.Interface.GetUtility<IFullScreenUtility>().EnableWallpaperMode)
+            {
+                clickCount++;
+                leftButtonDown = false;
+                SimulateMouseClick(mousePosition);
+                
+                if (showDebugLog)
+                {
+                    Debug.Log($"[SimpleMouseForwarder] 转发点击到Unity EventSystem: {mousePosition}");
+                }
+            }
+            if (rightButtonDown && instance.enableForwarding && GameApp.Interface.GetUtility<IFullScreenUtility>().EnableWallpaperMode)
+            {
+                rightClickCount++;
+                rightButtonDown = false;
+                SimulateMouseClick(mousePosition);
+                if (showDebugLog)
+                {
+                    Debug.Log($"[SimpleMouseForwarder] 转发右键点击到Unity EventSystem: {mousePosition}");
+                }
             }
         }
     }

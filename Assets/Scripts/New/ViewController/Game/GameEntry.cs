@@ -23,6 +23,7 @@ namespace BirdGame
                 yield return null;
             }
             // 根据保存的设置设置屏幕模式
+            this.GetModel<ISaveModel>().SettingData.screenMode = 2;
             int savedScreenMode = this.GetModel<ISaveModel>().SettingData.screenMode;
             Debug.Log($"从存档加载的屏幕模式: {savedScreenMode}");
             SetScreenMode(savedScreenMode);
