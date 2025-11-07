@@ -27,16 +27,24 @@ public class SimpleMouseForwarder : ViewControllerBase
     private const int WM_MOUSEHWHEEL = 0x020E;
     private const int WM_MOUSEMOVE = 0x0200;
 
+    private const int WH_KEYBOARD_LL = 13;
+    private const int WM_KEYDOWN = 0x0100;
+    private const int WM_KEYUP = 0x0101;
+    private const int WM_CHAR = 0x0102;
+
     private static float wheelDelta = 0f;
     private static bool isHorizontalWheel = false;
     private static Vector2 wheelMousePosition = Vector2.zero;
 
+    private static bool isMouseDown = false;
     private static Vector2 currentMousePosition = Vector2.zero;
     private static Vector2 lastMousePosition = Vector2.zero;
-
-    private static bool isMouseDragging = false;
-    private static Vector2 currentDragPosition = Vector2.zero;
     private static GameObject currentDragTarget = null;
+
+    private static IntPtr _keyboardHookID = IntPtr.Zero;
+    private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
+    private static LowLevelKeyboardProc _keyboardProc = KeyboardHookCallback;
+    private static GameObject _focusedTMPInputField = null;
 
     [StructLayout(LayoutKind.Sequential)]
     private struct POINT
@@ -55,8 +63,21 @@ public class SimpleMouseForwarder : ViewControllerBase
         public IntPtr dwExtraInfo;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
+    private struct KBDLLHOOKSTRUCT
+    {
+        public uint vkCode;
+        public uint scanCode;
+        public uint flags;
+        public uint time;
+        public IntPtr dwExtraInfo;
+    }
+
     [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelMouseProc lpfn, IntPtr hMod, uint dwThreadId);
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
 
     [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
@@ -86,15 +107,20 @@ public class SimpleMouseForwarder : ViewControllerBase
     {
         instance = this;
         
-        // 安装鼠标钩子
+        // Install mouse hook
         _hookID = SetHook(_proc);
-        if (_hookID == IntPtr.Zero)
+        
+        // Install keyboard hook
+        _keyboardHookID = SetKeyboardHook(_keyboardProc);
+
+        Debug.Log($"[SimpleMouseForwarder] 鼠标钩子: {_hookID}, 键盘钩子: {_keyboardHookID}");
+        if (_hookID == IntPtr.Zero || _keyboardHookID == IntPtr.Zero)
         {
-            Debug.LogError("[SimpleMouseForwarder] 鼠标钩子安装失败！");
+            Debug.LogError("[SimpleMouseForwarder] 钩子安装失败！");
         }
         else
         {
-            Debug.Log("[SimpleMouseForwarder] 鼠标钩子安装成功");
+            Debug.Log("[SimpleMouseForwarder] 鼠标和键盘钩子安装成功");
         }
     }
 
@@ -103,10 +129,51 @@ public class SimpleMouseForwarder : ViewControllerBase
         return SetWindowsHookEx(WH_MOUSE_LL, proc, GetModuleHandle(Application.productName), 0);
     }
 
+    private static IntPtr SetKeyboardHook(LowLevelKeyboardProc proc)
+    {
+        return SetWindowsHookEx(WH_KEYBOARD_LL, proc, GetModuleHandle(Application.productName), 0);
+    }
+
+    [MonoPInvokeCallback(typeof(LowLevelKeyboardProc))]
+    private static IntPtr KeyboardHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+    {
+        if (nCode >= 0 && instance != null && instance.enableForwarding && _focusedTMPInputField != null)
+        {
+            int message = wParam.ToInt32();
+            int vkCode = Marshal.ReadInt32(lParam);
+
+            if (message == WM_KEYDOWN)
+            {
+                char character = (char)vkCode;
+                if (character >= 32 && character <= 126) // Printable characters
+                {
+                    Debug.Log($"[SimpleMouseForwarder] 捕获键盘输入: {character}");
+                    SendTextToTMPInputField(character.ToString());
+                }
+
+                // Special keys
+                switch (vkCode)
+                {
+                    case 8: // Backspace
+                        SendTextToTMPInputField("\b");
+                        break;
+                    case 13: // Enter
+                        SendTextToTMPInputField("\n");
+                        break;
+                    case 27: // Escape
+                        SendTextToTMPInputField("\u001b");
+                        break;
+                }
+            }
+        }
+        
+        return CallNextHookEx(_keyboardHookID, nCode, wParam, lParam);
+    }
+
     [MonoPInvokeCallback(typeof(LowLevelMouseProc))]
     private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
     {
-        if (nCode >= 0 && instance != null && instance.enableForwarding && GameApp.Interface.GetUtility<IFullScreenUtility>().EnableWallpaperMode)
+        if (nCode >= 0 && instance != null && instance.enableForwarding)
         {
             int message = wParam.ToInt32();
             MSLLHOOKSTRUCT hookStruct = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
@@ -116,10 +183,8 @@ public class SimpleMouseForwarder : ViewControllerBase
             {
                 leftButtonDown = true;
                 mousePosition = currentMousePosition;
+                isMouseDown = true;
                 lastMousePosition = currentMousePosition;
-                isMouseDragging = false;
-                currentDragTarget = null;
-
                 currentDragTarget = FindDragTarget(currentMousePosition);
                 
                 if (instance.showDebugLog)
@@ -129,28 +194,20 @@ public class SimpleMouseForwarder : ViewControllerBase
             }
             else if (message == WM_MOUSEMOVE)
             {
-                currentDragPosition = currentMousePosition;
-
-                // If we have a drag target, send drag updates
-                if (isMouseDragging && currentDragTarget != null)
+                // Track mouse movement for dragging
+                if (isMouseDown)
                 {
-                    SendDragUpdateToTarget(currentDragTarget, currentMousePosition);
-                }
-                else if (leftButtonDown && currentDragTarget != null)
-                {
-                    // Start dragging after mouse moves a bit
-                    Vector2 dragStartDelta = currentMousePosition - mousePosition;
-                    if (dragStartDelta.magnitude > 5f) // Drag threshold
+                    // Forward drag movement to UI
+                    if (currentDragTarget != null)
                     {
-                        isMouseDragging = true;
-                        SendDragUpdateToTarget(currentDragTarget, currentMousePosition);
+                        ForwardDragToUI(currentDragTarget);
                     }
                 }
+                lastMousePosition = currentMousePosition;
             }
             else if (message == WM_LBUTTONUP)
             {
-                leftButtonDown = false;
-                isMouseDragging = false;
+                isMouseDown = false;
                 currentDragTarget = null;
             }
             else if (message == WM_RBUTTONDOWN)
@@ -186,53 +243,16 @@ public class SimpleMouseForwarder : ViewControllerBase
         return CallNextHookEx(_hookID, nCode, wParam, lParam);
     }
 
-    private static void ForwardWheelToUI(Vector2 screenPosition, float delta, bool isHorizontal)
+    private static void SendTextToTMPInputField(string text)
     {
-        if (EventSystem.current == null) return;
-        
-        PointerEventData pointerData = new PointerEventData(EventSystem.current)
-        {
-            position = screenPosition
-        };
-        
-        var raycastResults = new System.Collections.Generic.List<RaycastResult>();
-        EventSystem.current.RaycastAll(pointerData, raycastResults);
-        
-        foreach (var result in raycastResults)
-        {
-            // Look for our mouse wheel handlers
-            ScrollRectMouseWheelHandler handler = result.gameObject.GetComponent<ScrollRectMouseWheelHandler>();
-            if (handler != null)
-            {
-                handler.ReceiveWheelDelta(delta, isHorizontal);
-                break; // Only send to the first handler found
-            }
-        }
-    }
+        if (_focusedTMPInputField == null) return;
 
-    private static void ForwardDragToUI(Vector2 screenPosition)
-    {
-        if (EventSystem.current == null) return;
-        
-        PointerEventData pointerData = new PointerEventData(EventSystem.current)
+        // Try HookTMPInputHandler first
+        HookTMPInputHandler handler = _focusedTMPInputField.GetComponent<HookTMPInputHandler>();
+        if (handler != null)
         {
-            position = screenPosition,
-            button = PointerEventData.InputButton.Left,
-        };
-        
-        var raycastResults = new System.Collections.Generic.List<RaycastResult>();
-        EventSystem.current.RaycastAll(pointerData, raycastResults);
-        
-        foreach (var result in raycastResults)
-        {
-            // Look for slider drag handlers
-            SliderBarClickHandler sliderHandler = result.gameObject.GetComponent<SliderBarClickHandler>();
-            if (sliderHandler != null)
-            {
-                // The handler will process the drag in its Update()
-                ExecuteEvents.Execute(sliderHandler.gameObject, pointerData, ExecuteEvents.dragHandler);
-                break;
-            }
+            handler.ReceiveKeyboardInput(text);
+            return;
         }
     }
 
@@ -257,22 +277,43 @@ public class SimpleMouseForwarder : ViewControllerBase
             {
                 return result.gameObject;
             }
-            
         }
         
         return null;
     }
 
-    private static void SendDragUpdateToTarget(GameObject target, Vector2 currentPos)
+    private static void ForwardDragToUI(GameObject target)
     {
-        if (target == null) return;
-        
-        // Try HookBasedSliderHandler first
-        SliderBarClickHandler handler = target.GetComponent<SliderBarClickHandler>();
-        if (handler != null)
+        if (EventSystem.current == null) return;
+        PointerEventData pointerData = new PointerEventData(EventSystem.current)
         {
-            handler.ReceiveDragUpdate(currentPos);
-            return;
+            position = currentMousePosition,
+            button = PointerEventData.InputButton.Left,
+        };
+        ExecuteEvents.Execute(target, pointerData, ExecuteEvents.dragHandler);
+    }
+
+    private static void ForwardWheelToUI(Vector2 screenPosition, float delta, bool isHorizontal)
+    {
+        if (EventSystem.current == null) return;
+        
+        PointerEventData pointerData = new PointerEventData(EventSystem.current)
+        {
+            position = screenPosition
+        };
+        
+        var raycastResults = new System.Collections.Generic.List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerData, raycastResults);
+        
+        foreach (var result in raycastResults)
+        {
+            // Look for our mouse wheel handlers
+            ScrollRectMouseWheelHandler handler = result.gameObject.GetComponent<ScrollRectMouseWheelHandler>();
+            if (handler != null)
+            {
+                handler.ReceiveWheelDelta(delta, isHorizontal);
+                break; // Only send to the first handler found
+            }
         }
     }
 
@@ -296,7 +337,7 @@ public class SimpleMouseForwarder : ViewControllerBase
         // Get the current foreground window handle
         if (GetForegroundWindowTitle() == "Program Manager" || GetForegroundWindowTitle() == string.Empty)
         {
-            if (leftButtonDown && instance.enableForwarding && GameApp.Interface.GetUtility<IFullScreenUtility>().EnableWallpaperMode)
+            if (leftButtonDown && instance.enableForwarding)
             {
                 clickCount++;
                 leftButtonDown = false;
@@ -307,7 +348,7 @@ public class SimpleMouseForwarder : ViewControllerBase
                     Debug.Log($"[SimpleMouseForwarder] 转发点击到Unity EventSystem: {mousePosition}");
                 }
             }
-            if (rightButtonDown && instance.enableForwarding && GameApp.Interface.GetUtility<IFullScreenUtility>().EnableWallpaperMode)
+            if (rightButtonDown && instance.enableForwarding)
             {
                 rightClickCount++;
                 rightButtonDown = false;
@@ -339,23 +380,32 @@ public class SimpleMouseForwarder : ViewControllerBase
         
         if (raycastResults.Count > 0)
         {
-            GameObject hitObject = raycastResults[0].gameObject;
-
-            SliderBarClickHandler sliderHandler = hitObject.GetComponent<SliderBarClickHandler>();
-            if (sliderHandler != null)
+            foreach (var result in raycastResults)
             {
+                GameObject hitObject = result.gameObject;
+                HookTMPInputHandler tmpHandler = hitObject.GetComponent<HookTMPInputHandler>();
+                
+                if (tmpHandler != null)
+                {
+                    tmpHandler.ActivateInputField();
+                    _focusedTMPInputField = hitObject;
+                    Debug.Log($"[SimpleMouseForwarder] TMP输入框激活: {hitObject.name}");
+                    return;
+                }
+                
+                // Check for slider handlers
+                SliderBarClickHandler sliderHandler = hitObject.GetComponent<SliderBarClickHandler>();
+                if (sliderHandler != null)
+                {
+                    ExecuteEvents.Execute(hitObject, pointerData, ExecuteEvents.pointerClickHandler);
+                    ExecuteEvents.Execute(hitObject, pointerData, ExecuteEvents.pointerDownHandler);
+                    Debug.Log($"[SimpleMouseForwarder] 滑块交互: {hitObject.name}");
+                    return;
+                }
+                
                 ExecuteEvents.Execute(hitObject, pointerData, ExecuteEvents.pointerClickHandler);
-                ExecuteEvents.Execute(hitObject, pointerData, ExecuteEvents.pointerDownHandler);
-                Debug.Log($"[SimpleMouseForwarder] 滑块交互: {hitObject.name}");
                 return;
             }
-
-            if (showDebugLog)
-            {
-                Debug.Log($"[SimpleMouseForwarder] 点击目标: {hitObject.name}");
-            }
-            
-            ExecuteEvents.Execute(hitObject, pointerData, ExecuteEvents.pointerClickHandler);
         }
         else if (showDebugLog)
         {
@@ -370,6 +420,13 @@ public class SimpleMouseForwarder : ViewControllerBase
             UnhookWindowsHookEx(_hookID);
             _hookID = IntPtr.Zero;
         }
+
+        if (_keyboardHookID != IntPtr.Zero)
+        {
+            UnhookWindowsHookEx(_keyboardHookID);
+            _keyboardHookID = IntPtr.Zero;
+        }
+        
         instance = null;
         }
     }

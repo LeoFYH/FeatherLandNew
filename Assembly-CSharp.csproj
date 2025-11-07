@@ -94,8 +94,8 @@
     <Compile Include="Assets\Scripts\BirdStates\BirdFlyDownState.cs" />
     <Compile Include="Assets\Scripts\New\Models\ILoadingModel.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\MediaContent.cs" />
-    <Compile Include="Assets\Scripts\New\Models\IBirdModel.cs" />
     <Compile Include="Assets\Scripts\New\ScrollRectMouseWheelHandler.cs" />
+    <Compile Include="Assets\Scripts\New\Models\IBirdModel.cs" />
     <Compile Include="Assets\Scripts\New\Commands\CreateBirdCommand.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Note\ScheduleItem.cs" />
     <Compile Include="Assets\Rewired\Integration\UnityUI\PlayerPointerEventData.cs" />
@@ -120,6 +120,7 @@
     <Compile Include="Assets\Rewired\Examples\CustomPlatform\Scripts\MyPlatformUnifiedMouseSource.cs" />
     <Compile Include="Assets\Scripts\Notebook\NotebookUI.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\HoverScaleControl.cs" />
+    <Compile Include="Assets\Scripts\New\HookTMPInputHandler.cs" />
     <Compile Include="Assets\Rewired\Extras\ControlMapper\Scripts\CanvasScalerExt.cs" />
     <Compile Include="Assets\Rewired\Examples\CustomControllersTouch\Scripts\CustomControllerDemo.cs" />
     <Compile Include="Assets\Rewired\Extras\ControlMapper\Scripts\ButtonInfo.cs" />

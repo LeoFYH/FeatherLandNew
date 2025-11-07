@@ -1,163 +1,130 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
 
 public class SliderBarClickHandler : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler
 {
-    [Header("References")]
     public Slider slider;
-    
-    [Header("Drag Settings")]
-    public bool enableClickToSet = true;
-    public bool enableDrag = true;
     public float dragSensitivity = 1.0f;
     
     private bool isDragging = false;
-    private Vector2 dragStartScreenPos;
-    private float dragStartValue;
-    private Vector2 lastMousePos;
+    private Vector2 previousMousePos;
+    public TextMeshProUGUI debugText;
+
+    void Start()
+    {
+        if (debugText == null)
+        {
+            debugText = GameObject.Find("Debug").GetComponent<TextMeshProUGUI>();
+        }
+    }
 
     void Update()
     {
-        // Drag handling is now done through ReceiveDragUpdate method
+        if (isDragging)
+        {
+            HandleSmartDrag();
+        }
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (enableClickToSet && !isDragging)
+        if (!isDragging)
         {
-            SetSliderValueFromClick(eventData.position);
-            Debug.Log($"[HookBasedSlider] Click set value to: {slider.value:F2}");
+            SetValueFromClick(eventData.position);
         }
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (enableDrag)
-        {
-            isDragging = true;
-            dragStartScreenPos = eventData.position;
-            lastMousePos = eventData.position;
-            dragStartValue = slider.value;
-            Debug.Log($"[HookBasedSlider] Drag started at value: {slider.value:F2}");
-        }
+        isDragging = true;
+        previousMousePos = eventData.position;
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        if (isDragging)
-        {
-            isDragging = false;
-            Debug.Log($"[HookBasedSlider] Drag ended at value: {slider.value:F2}");
-        }
+        isDragging = false;
+        debugText.text = "isDragging: " + isDragging;
     }
 
-    // Called by SimpleMouseForwarder when mouse moves during drag
-    public void ReceiveDragUpdate(Vector2 currentMousePos)
+    private void HandleSmartDrag()
     {
-        if (!isDragging || !enableDrag) return;
+        Vector2 currentMousePos = Input.mousePosition;
+        Vector2 delta = currentMousePos - previousMousePos;
 
-        Vector2 delta = currentMousePos - lastMousePos;
-
+        // Only process if there's meaningful movement
         if (delta.magnitude > 0.1f)
         {
-            UpdateSliderValueFromDrag(delta);
-            lastMousePos = currentMousePos;
-        }
-    }
-
-    private void UpdateSliderValueFromDrag(Vector2 delta)
-    {
-        // Only use the relevant axis based on slider direction
-        float relevantDelta = GetRelevantDeltaForDirection(delta);
-        
-        if (Mathf.Abs(relevantDelta) > 0.1f)
-        {
-            float valueChange = CalculateValueChange(relevantDelta);
-            float newValue = slider.value + valueChange * dragSensitivity;
+            // Get the relevant axis based on slider direction
+            float relevantDelta = GetRelevantAxisDelta(delta);
             
-            slider.value = Mathf.Clamp(newValue, slider.minValue, slider.maxValue);
+            // Apply drag
+            float valueChange = (relevantDelta / GetScreenSize()) * dragSensitivity;
+            float valueRange = slider.maxValue - slider.minValue;
             
-            Debug.Log($"[HookBasedSlider] {slider.direction} drag - Delta: {relevantDelta:F1}, Value: {slider.value:F2}");
+            slider.value += valueChange * valueRange;
+            slider.value = Mathf.Clamp(slider.value, slider.minValue, slider.maxValue);
+
+            previousMousePos = currentMousePos;
         }
     }
 
-    private float GetRelevantDeltaForDirection(Vector2 delta)
+    private float GetRelevantAxisDelta(Vector2 delta)
     {
-        switch (slider.direction)
+        // For horizontal sliders, only use X movement
+        if (slider.direction == Slider.Direction.LeftToRight || slider.direction == Slider.Direction.RightToLeft)
         {
-            case Slider.Direction.LeftToRight:
-            case Slider.Direction.RightToLeft:
-                return delta.x; // Horizontal movement for horizontal sliders
-            case Slider.Direction.BottomToTop:
-            case Slider.Direction.TopToBottom:
-                return delta.y; // Vertical movement for vertical sliders
-            default:
-                return delta.x;
+            return delta.x;
         }
-    }
-
-    private float CalculateValueChange(float delta)
-    {
-        float screenReference = GetScreenReferenceForDirection();
-        float valueRange = slider.maxValue - slider.minValue;
-        
-        float normalizedDelta = delta / screenReference;
-        return normalizedDelta * valueRange;
-    }
-
-    private float GetScreenReferenceForDirection()
-    {
-        switch (slider.direction)
+        // For vertical sliders, only use Y movement
+        else
         {
-            case Slider.Direction.LeftToRight:
-            case Slider.Direction.RightToLeft:
-                return Screen.width;
-            case Slider.Direction.BottomToTop:
-            case Slider.Direction.TopToBottom:
-                return Screen.height;
-            default:
-                return Screen.width;
+            return delta.y;
         }
     }
 
-    private void SetSliderValueFromClick(Vector2 screenPosition)
+    private float GetScreenSize()
     {
-        RectTransform sliderRect = GetComponent<RectTransform>();
+        // Use appropriate screen dimension based on slider direction
+        if (slider.direction == Slider.Direction.LeftToRight || slider.direction == Slider.Direction.RightToLeft)
+        {
+            return Screen.width;
+        }
+        else
+        {
+            return Screen.height;
+        }
+    }
+
+    private void SetValueFromClick(Vector2 screenPosition)
+    {
+        RectTransform rect = GetComponent<RectTransform>();
         Vector2 localPoint;
         
-        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            sliderRect, 
-            screenPosition, 
-            null, 
-            out localPoint))
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(rect, screenPosition, null, out localPoint))
         {
-            Rect rect = sliderRect.rect;
-            float normalizedValue = CalculateNormalizedValue(localPoint, rect);
+            Rect rectArea = rect.rect;
+            float normalizedValue = 0f;
+            
+            if (slider.direction == Slider.Direction.LeftToRight)
+            {
+                normalizedValue = Mathf.InverseLerp(rectArea.xMin, rectArea.xMax, localPoint.x);
+            }
+            else if (slider.direction == Slider.Direction.RightToLeft)
+            {
+                normalizedValue = Mathf.InverseLerp(rectArea.xMax, rectArea.xMin, localPoint.x);
+            }
+            else if (slider.direction == Slider.Direction.BottomToTop)
+            {
+                normalizedValue = Mathf.InverseLerp(rectArea.yMin, rectArea.yMax, localPoint.y);
+            }
+            else if (slider.direction == Slider.Direction.TopToBottom)
+            {
+                normalizedValue = Mathf.InverseLerp(rectArea.yMax, rectArea.yMin, localPoint.y);
+            }
             
             slider.value = normalizedValue * (slider.maxValue - slider.minValue) + slider.minValue;
         }
-    }
-
-    private float CalculateNormalizedValue(Vector2 localPoint, Rect rect)
-    {
-        switch (slider.direction)
-        {
-            case Slider.Direction.LeftToRight:
-                return Mathf.InverseLerp(rect.xMin, rect.xMax, localPoint.x);
-            case Slider.Direction.RightToLeft:
-                return Mathf.InverseLerp(rect.xMax, rect.xMin, localPoint.x);
-            case Slider.Direction.BottomToTop:
-                return Mathf.InverseLerp(rect.yMin, rect.yMax, localPoint.y);
-            case Slider.Direction.TopToBottom:
-                return Mathf.InverseLerp(rect.yMax, rect.yMin, localPoint.y);
-            default:
-                return Mathf.InverseLerp(rect.xMin, rect.xMax, localPoint.x);
-        }
-    }
-
-    void OnDisable()
-    {
-        isDragging = false;
     }
 }
