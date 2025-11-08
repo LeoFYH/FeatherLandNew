@@ -30,7 +30,8 @@ namespace BirdGame
         ThanksPopup,
         MapPopup,
         BuyConfirmPopup,
-        HatchingBirdPopup
+        HatchingBirdPopup,
+        ExitConfirmPopup
     }
 
     public interface IUISystem : ISystem
@@ -96,6 +97,7 @@ namespace BirdGame
         void HideDecorationInfo();
         void ShowBuyConfirm(Action onConfirm);
         void ShowBuyConfirm(string price, Action onConfirm);
+        void ShowExitConfirm();
     }
 
     public class UISystem : AbstractSystem, IUISystem
@@ -366,6 +368,11 @@ namespace BirdGame
                 var popup = popupDic[UIPopup.BuyConfirmPopup] as BuyConfirmPopup;
                 popup.Init(price, onConfirm);
             });
+        }
+
+        public void ShowExitConfirm()
+        {
+            ShowPopup(UIPopup.ExitConfirmPopup);
         }
     }
 }

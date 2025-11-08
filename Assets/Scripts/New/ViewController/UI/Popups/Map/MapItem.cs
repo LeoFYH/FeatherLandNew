@@ -83,12 +83,12 @@ namespace BirdGame
                     Debug.Log(this.GetModel<IConfigModel>().MapConfig.maps[mapIndex].cost + " " +
                               this.GetModel<ISaveModel>().AccountData.coins);
                     if (this.GetModel<IConfigModel>().MapConfig.maps[mapIndex].cost <=
-                        this.GetModel<ISaveModel>().AccountData.coins)
+                        this.GetModel<IAccountModel>().Coins.Value)
                     {
                         string price = this.GetModel<IConfigModel>().MapConfig.maps[mapIndex].cost.ToString();
                         this.GetSystem<IUISystem>().ShowBuyConfirm(price, () =>
                         {
-                            this.GetModel<ISaveModel>().AccountData.coins -=
+                            this.GetModel<IAccountModel>().Coins.Value -=
                                 this.GetModel<IConfigModel>().MapConfig.maps[mapIndex].cost;
                             this.GetModel<IAccountModel>().Coins.Value = this.GetModel<ISaveModel>().AccountData.coins;
                             this.GetModel<ISaveModel>().BirdInfoData.mapBirds.Add(new MapBirdList());

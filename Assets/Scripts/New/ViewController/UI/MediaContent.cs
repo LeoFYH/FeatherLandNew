@@ -59,7 +59,7 @@ namespace BirdGame
                 else
                 {
                     // 英文问卷URL
-                    questionnaireUrl = "https://docs.google.com/forms/d/e/1FAIpQLSc8n0iE8-QwvcCrxmZn1E0pmGNatpmasQMrVpxV-Su6SMGjAw/viewform";
+                    questionnaireUrl = "https://docs.google.com/forms/d/e/1FAIpQLSc-ZXHbN_L50UcYAzEnynKfHTs_MKLkB3-euTo_Ytqnco2u2A/viewform?usp=send_form";
                 }
                 
                 OpenUrlWithCooldown(questionnaireUrl);

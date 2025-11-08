@@ -174,9 +174,8 @@ namespace BirdGame
             });
             quitButton.onClick.AddListener(() =>
             {
-                this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
-                this.GetSystem<ISteamSystem>().FirstPlayTime();
-                ExitProcess(0);
+                // 显示退出确认弹窗，询问是否填写问卷
+                this.GetSystem<IUISystem>().ShowExitConfirm();
             });
             
             // 添加清除存档按钮的点击监听器
@@ -230,10 +229,15 @@ namespace BirdGame
                 screenDropdown.options[2].text = this.GetSystem<ILocalizationSystem>().GetString("Full Screen");
                 screenDropdown.RefreshShownValue();
                 int count = languages.Count;
+                var currentLang = this.GetModel<ISaveModel>().SettingData.gameLanguage;
                 for (int i = 0; i < count; i++)
                 {
-                    languageDropdown.options[i].text =
-                        this.GetSystem<ILocalizationSystem>().GetString(languages[i].ToString());
+                    string langText = this.GetSystem<ILocalizationSystem>().GetString(languages[i].ToString());
+                    if (languages[i] == SystemLanguage.ChineseSimplified && currentLang == SystemLanguage.ChineseSimplified)
+                    {
+                        langText = "中文";
+                    }
+                    languageDropdown.options[i].text = langText;
                 }
                 languageDropdown.RefreshShownValue();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
@@ -325,15 +329,18 @@ namespace BirdGame
             //     languages.Add(language.Key);
             //     Debug.Log(value);
             // }
+            var currentLanguage = this.GetModel<ISaveModel>().SettingData.gameLanguage;
+            
             string value = this.GetSystem<ILocalizationSystem>().GetString("English");
             languageDropdown.options.Add(new TMP_Dropdown.OptionData(value,itemSprite, Color.white));
             value = this.GetSystem<ILocalizationSystem>().GetString("Chinese");
+            if (currentLanguage == SystemLanguage.ChineseSimplified)
+            {
+                value = "中文";
+            }
             languageDropdown.options.Add(new TMP_Dropdown.OptionData(value, itemSprite, Color.white));
             languages.Add(SystemLanguage.English);
             languages.Add(SystemLanguage.ChineseSimplified);
-
-            //this.GetModel<ISaveModel>().SettingData.gameLanguage = SystemLanguage.English;
-            var currentLanguage = this.GetModel<ISaveModel>().SettingData.gameLanguage;
             Debug.Log($"存档中的语言设置: {currentLanguage}");
             Debug.Log($"本地化配置支持的语言: {string.Join(", ", languages)}");
             
