@@ -12,7 +12,7 @@ namespace BirdGame
     {
         public Image icon;
         public LocalizationText itemName;
-        public TextMeshProUGUI selectName;
+        public LocalizationText selectName;
         public LocalizationText description;
         public TextMeshProUGUI priceText;
         public Button buyButton;
@@ -50,8 +50,9 @@ namespace BirdGame
             icon.sprite = sp;
             if (sp != null)
                 icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.3f;
+            Debug.Log("名称：" + item.name);
             itemName.SetKey(item.name);
-            selectName.text = item.selections[gameModel.SelectedToolDic[index].Value].selectionName;
+            selectName.SetKey(item.selections[gameModel.SelectedToolDic[index].Value].selectionName);
             
             // 优先使用descriptionKey，如果没有设置则使用description
             var selectedTool = item.selections[gameModel.SelectedToolDic[index].Value];
@@ -142,8 +143,8 @@ namespace BirdGame
                 icon.sprite = sp;
                 if(sp != null)
                     icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.3f;
-                selectName.text = item.selections[v].selectionName;
-                selectName.text = item.selections[v].selectionName;
+                selectName.SetKey(item.selections[v].selectionName);
+                selectName.SetKey(item.selections[v].selectionName);
                 
                 // 优先使用descriptionKey，如果没有设置则使用description
                 var selectedTool = item.selections[v];

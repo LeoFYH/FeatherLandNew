@@ -26,6 +26,8 @@ namespace BirdGame.Editor
 
         [EnumToggleButtons, HideLabel] public Page page;
 
+        private string searchingString = "";
+
         private void InitConfig()
         {
             if (config != null)
@@ -309,6 +311,7 @@ namespace BirdGame.Editor
             GUILayout.BeginHorizontal();
             {
                 GUILayout.Label("Words");
+                searchingString = GUILayout.TextField(searchingString);
                 if (GUILayout.Button("刷新", GUILayout.Width(50)))
                 {
                     LoadWords();
@@ -329,6 +332,11 @@ namespace BirdGame.Editor
             {
                 for (int i = 0; i < wordKeys.Count; i++)
                 {
+                    if (!words[currentSelectedLanguage].keys[i].ToLower().Contains(searchingString.ToLower()))
+                    {
+                        continue;
+                    }
+
                     GUILayout.BeginHorizontal();
                     {
                         GUILayout.Label("图片翻译", GUILayout.Width(60));
