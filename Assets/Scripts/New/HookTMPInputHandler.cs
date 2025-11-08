@@ -81,10 +81,6 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler
         {
             HandleBackspace();
         }
-        else if (input == "\n" || input == "\r") // Enter
-        {
-            SubmitInput();
-        }
         else if (input == "\u001b") // Escape
         {
             CancelInput();
