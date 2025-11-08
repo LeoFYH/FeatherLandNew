@@ -314,9 +314,9 @@ MonoBehaviour:
       preview: {fileID: 2249036447366657726, guid: 10fc14826a0ea1043838ec63412928db, type: 3}
   - decorations:
     - icon: {fileID: 21300000, guid: 6ecc79e55459078409f056c5379c6643, type: 3}
-      name: Tent
+      name: Cozy Tent
       prefab: {fileID: 3012990827443070192, guid: 2acff718fbd44f440ad6059637e71e93, type: 3}
-      description: A place for hatching new eggs!
+      description: Cozy TentDescription
       price: 20000
       scale: 0.5
       iconScale: 0.6
@@ -328,9 +328,9 @@ MonoBehaviour:
       isVisible: 1
       preview: {fileID: -7410131866019014177, guid: 263a4c1617cbdc542b4dc9351fe5e909, type: 3}
     - icon: {fileID: 21300000, guid: f7f4e60f33d752d4f9f4af14cce23c35, type: 3}
-      name: Tree stump
+      name: Tiny Tree
       prefab: {fileID: 4463724722352328304, guid: 5c023014a7ef5b24395ca124b75a5de7, type: 3}
-      description: 
+      description: Tiny TreeDescription
       price: 10000
       scale: 0.5
       iconScale: 0.987
@@ -342,9 +342,9 @@ MonoBehaviour:
       isVisible: 1
       preview: {fileID: -7410131866019014177, guid: 263a4c1617cbdc542b4dc9351fe5e909, type: 3}
     - icon: {fileID: 21300000, guid: 73b6246cb4c7f9447a67ce1553764fbc, type: 3}
-      name: Blanket
+      name: Carpet
       prefab: {fileID: 7099460407733767612, guid: 994ac90f93e30fc4cbacf3de4525c2e0, type: 3}
-      description: 
+      description: CarpetDescription
       price: 2000
       scale: 0.5
       iconScale: 0.5
@@ -356,10 +356,10 @@ MonoBehaviour:
       isVisible: 1
       preview: {fileID: -7410131866019014177, guid: 263a4c1617cbdc542b4dc9351fe5e909, type: 3}
     - icon: {fileID: 21300000, guid: f586a57a0ab00f94293fecf4dec37f16, type: 3}
-      name: Kite
+      name: Breezy Kite
       prefab: {fileID: 5691537437215484801, guid: 5c04819a227ad214eb1a2ae12f9ab453, type: 3}
-      description: 5000
-      price: 0
+      description: Breezy KiteDescription
+      price: 5000
       scale: 0.5
       iconScale: 0.38
       maxQuantity: 1
