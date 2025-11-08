@@ -8,6 +8,8 @@ namespace BirdGame
 
     public class BirdRunState : StateBase
     {
+        private const float SpeedOffsetRange = 0.4f;
+
         private Brid _brid;
         private Vector3 target;
         private NavMeshPath currentPath = new NavMeshPath();
@@ -25,6 +27,11 @@ namespace BirdGame
             _brid.onNearOtherBird = OnNearOtherBird;
             if (!_brid.agent.enabled)
                 _brid.agent.enabled = true;
+
+            float randomOffset = Random.Range(-SpeedOffsetRange, SpeedOffsetRange);
+            float adjustedSpeed = Mathf.Max(0.1f, _brid.moveSpeed + randomOffset);
+            _brid.agent.speed = adjustedSpeed;
+
             // Release any existing food target when entering run state
             if (_brid.currFood != null)
             {
@@ -185,6 +192,7 @@ namespace BirdGame
             _brid.onNearOtherBird = null;
             _brid.lineRenderer.positionCount = 0;
             _brid.anim.SetFloat("MoveSpeed", 0f);
+            _brid.agent.speed = _brid.moveSpeed;
             _brid.agent.isStopped = true;
             _brid.agent.velocity = Vector3.zero;
         }

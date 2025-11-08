@@ -3,6 +3,7 @@ using QFramework;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 
 namespace BirdGame
@@ -84,15 +85,18 @@ namespace BirdGame
                     {
                         return; // 如果不可购买，直接返回，不执行任何操作
                     }
-                    
+
+                    Debug.Log(this.GetModel<IConfigModel>().MapConfig.maps[mapIndex].cost + " " +
+                              this.GetModel<ISaveModel>().AccountData.coins);
                     if (this.GetModel<IConfigModel>().MapConfig.maps[mapIndex].cost <=
-                        this.GetModel<ISaveModel>().AccountData.coins)
+                        this.GetModel<IAccountModel>().Coins.Value)
                     {
                         string price = this.GetModel<IConfigModel>().MapConfig.maps[mapIndex].cost.ToString();
                         this.GetSystem<IUISystem>().ShowBuyConfirm(price, () =>
                         {
-                            this.GetModel<ISaveModel>().AccountData.coins -=
+                            this.GetModel<IAccountModel>().Coins.Value -=
                                 this.GetModel<IConfigModel>().MapConfig.maps[mapIndex].cost;
+                            this.GetModel<IAccountModel>().Coins.Value = this.GetModel<ISaveModel>().AccountData.coins;
                             this.GetModel<ISaveModel>().BirdInfoData.mapBirds.Add(new MapBirdList());
                             this.GetSystem<ISaveSystem>().SaveData();
                             LoadMap();

@@ -32,7 +32,7 @@ namespace BirdGame
             Text,
         }
 
-        [ShowInInspector] public PatternType Type { get; set; }
+        [ShowInInspector] public PatternType Type { get; set; } = PatternType.Text;
 
         [ShowIf("@Type==PatternType.Image"), PreviewField(30, ObjectFieldAlignment.Left)]
         public Sprite sprite;

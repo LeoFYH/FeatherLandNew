@@ -22,7 +22,7 @@ MonoBehaviour:
       description: 
       birds:
       - birdType: 0
-        probability: 0.1004
+        probability: 0.602
       - birdType: 1
         probability: 0.0596
       - birdType: 13
@@ -44,7 +44,7 @@ MonoBehaviour:
       - birdType: 9
         probability: 0.01
       - birdType: 3
-        probability: 0.602
+        probability: 0.259
       - birdType: 4
         probability: 0.097
       - birdType: 5
@@ -131,13 +131,13 @@ MonoBehaviour:
       - birdType: 57
         probability: 0.342
       - birdType: 45
-        probability: 0.01
+        probability: 0.1
       - birdType: 94
-        probability: 0.01
+        probability: 0.1
       - birdType: 95
-        probability: 0.01
+        probability: 0.1
       - birdType: 96
-        probability: 0.01
+        probability: 0.1
       - birdType: 86
         probability: 0.5027
       - birdType: 87
@@ -242,9 +242,9 @@ MonoBehaviour:
   sceneDecorations:
   - decorations:
     - icon: {fileID: 21300000, guid: e9d52e55e18fd6d41bd00d03f25be2aa, type: 3}
-      name: Bear
+      name: Plushie Bear
       prefab: {fileID: 1044825183646240256, guid: f1b435be5ef71dd478baa788369922b4, type: 3}
-      description: 
+      description: Plushie BearDescription
       price: 2000
       scale: 0.3
       iconScale: 0.8
@@ -256,9 +256,9 @@ MonoBehaviour:
       isVisible: 1
       preview: {fileID: 2252215622904973494, guid: e8d6224ed5ee28e43a5a9a9d32903735, type: 3}
     - icon: {fileID: 21300000, guid: c93ed47603d0bd3408834d2122774f2b, type: 3}
-      name: Shark
+      name: Plushie Shark
       prefab: {fileID: 1166340943317647624, guid: 6a22db7c7df822a418b7b3357b6a26cc, type: 3}
-      description: 
+      description: Plushie SharkDescription
       price: 1000
       scale: 0.5
       iconScale: 0.8
@@ -270,9 +270,9 @@ MonoBehaviour:
       isVisible: 1
       preview: {fileID: 4211650801804232175, guid: a59790bee586e3e4e87a9af00ff998c8, type: 3}
     - icon: {fileID: 21300000, guid: d5d1ad1d2cdb1974891da5b43ec0d45a, type: 3}
-      name: Light
+      name: Lamp
       prefab: {fileID: 2284361441789399348, guid: 5017403402a3ea34994e3c16a98e07b6, type: 3}
-      description: 
+      description: LampDescription
       price: 600
       scale: 0.2
       iconScale: 0.5
@@ -285,9 +285,9 @@ MonoBehaviour:
       isVisible: 1
       preview: {fileID: 8562949734922071416, guid: cc73f1987084237499be19bfc5c9e79e, type: 3}
     - icon: {fileID: 2689972777894202174, guid: 712afaa5b2578144e9c0f98eddba4083, type: 3}
-      name: Guitar
+      name: TingTing Guitar
       prefab: {fileID: 2929794707948516033, guid: a1a17510931365b42b909558051e2577, type: 3}
-      description: 
+      description: TingTing GuitarDescription
       price: 200
       scale: 0.5
       iconScale: 1
@@ -314,9 +314,9 @@ MonoBehaviour:
       preview: {fileID: 2249036447366657726, guid: 10fc14826a0ea1043838ec63412928db, type: 3}
   - decorations:
     - icon: {fileID: 21300000, guid: 6ecc79e55459078409f056c5379c6643, type: 3}
-      name: Tent
+      name: Cozy Tent
       prefab: {fileID: 3012990827443070192, guid: 2acff718fbd44f440ad6059637e71e93, type: 3}
-      description: A place for hatching new eggs!
+      description: Cozy TentDescription
       price: 20000
       scale: 0.5
       iconScale: 0.6
@@ -328,9 +328,9 @@ MonoBehaviour:
       isVisible: 1
       preview: {fileID: -7410131866019014177, guid: 263a4c1617cbdc542b4dc9351fe5e909, type: 3}
     - icon: {fileID: 21300000, guid: f7f4e60f33d752d4f9f4af14cce23c35, type: 3}
-      name: Tree stump
+      name: Tiny Tree
       prefab: {fileID: 4463724722352328304, guid: 5c023014a7ef5b24395ca124b75a5de7, type: 3}
-      description: 
+      description: Tiny TreeDescription
       price: 10000
       scale: 0.5
       iconScale: 0.987
@@ -342,9 +342,9 @@ MonoBehaviour:
       isVisible: 1
       preview: {fileID: -7410131866019014177, guid: 263a4c1617cbdc542b4dc9351fe5e909, type: 3}
     - icon: {fileID: 21300000, guid: 73b6246cb4c7f9447a67ce1553764fbc, type: 3}
-      name: Blanket
+      name: Carpet
       prefab: {fileID: 7099460407733767612, guid: 994ac90f93e30fc4cbacf3de4525c2e0, type: 3}
-      description: 
+      description: CarpetDescription
       price: 2000
       scale: 0.5
       iconScale: 0.5
@@ -356,10 +356,10 @@ MonoBehaviour:
       isVisible: 1
       preview: {fileID: -7410131866019014177, guid: 263a4c1617cbdc542b4dc9351fe5e909, type: 3}
     - icon: {fileID: 21300000, guid: f586a57a0ab00f94293fecf4dec37f16, type: 3}
-      name: Kite
+      name: Breezy Kite
       prefab: {fileID: 5691537437215484801, guid: 5c04819a227ad214eb1a2ae12f9ab453, type: 3}
-      description: 5000
-      price: 0
+      description: Breezy KiteDescription
+      price: 5000
       scale: 0.5
       iconScale: 0.38
       maxQuantity: 1

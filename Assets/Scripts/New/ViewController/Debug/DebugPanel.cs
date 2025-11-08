@@ -48,6 +48,7 @@ namespace BirdGame.DebugMode
                 try
                 {
                     this.GetModel<IAccountModel>().Coins.Value = int.Parse(v);
+                    this.GetModel<ISaveModel>().AccountData.coins = int.Parse(v);
                 }
                 catch (Exception e)
                 {
