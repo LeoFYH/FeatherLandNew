@@ -222,8 +222,21 @@ namespace BirdGame
                 int birdIndex = this.GetModel<IBirdModel>().BirdList[_brid.birdIndex].birdType;
                 int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
                 
-                bool canFlyWait = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyWait;
-                bool canFlyHorizontal = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyHorizontal;
+                var birdConfig = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex);
+                if (birdConfig == null)
+                {
+                    currMachine.ChangeState<BirdIdleState>();
+                    return;
+                }
+
+                if (!birdConfig.canFly)
+                {
+                    currMachine.ChangeState<BirdIdleState>();
+                    return;
+                }
+
+                bool canFlyWait = birdConfig.canFlyWait;
+                bool canFlyHorizontal = birdConfig.canFlyHorizontal;
                 bool hasFlyPositions = this.GetModel<IBirdModel>().FlyPositions.Count > 0;
                 
                 // 优先选择飞行动作的逻辑
