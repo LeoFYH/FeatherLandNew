@@ -122,15 +122,15 @@ namespace BirdGame
             this.GetSystem<IGameSystem>().CreateDecorations();
                 
             this.GetSystem<IUISystem>().ShowPanel(UIPanel.MenuPanel);
-                
-            // 游戏加载完成，显示教程弹窗
-            // if (!this.GetModel<ISaveModel>().SettingData.isShowedTutorial)
-            // {
-            //     this.GetSystem<IUISystem>().ShowPopup(UIPopup.TutorialPopup);
-            //     this.GetModel<ISaveModel>().SettingData.isShowedTutorial = true;
-            //     this.GetSystem<ISaveSystem>().SaveData();
-            // }
-            this.GetSystem<IUISystem>().ShowPopup(UIPopup.ThanksPopup);
+
+            this.GetSystem<IMonoSystem>().StartCoroutine(EnableUiInteractionsNextFrame());
+        }
+
+        private IEnumerator EnableUiInteractionsNextFrame()
+        {
+            yield return null;
+            this.GetSystem<IGameSystem>().SendEvent<EnableHoverScaleEvent>();
+            this.GetSystem<IGameSystem>().SendEvent<EnableButtonEvent>();
         }
 
         /// <summary>
