@@ -136,7 +136,14 @@ namespace BirdGame
             
             int birdIndex = this.GetModel<IBirdModel>().BirdList[_brid.birdIndex].birdType;
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
-            if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFly)
+            var birdConfig = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex);
+            if (birdConfig == null)
+            {
+                currMachine.ChangeState<BirdRunState>();
+                return;
+            }
+
+            if (!birdConfig.canFly)
             {
                 if (_brid.isSmall)
                     currMachine.ChangeState<BirdRunState>();
@@ -159,8 +166,8 @@ namespace BirdGame
             else
             {
                 // 长大的鸟优先选择飞行动作
-                bool canFlyWait = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyWait;
-                bool canFlyHorizontal = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyHorizontal;
+                bool canFlyWait = birdConfig.canFlyWait;
+                bool canFlyHorizontal = birdConfig.canFlyHorizontal;
                 bool hasFlyPositions = this.GetModel<IBirdModel>().FlyPositions.Count > 0;
                 
                 // 优先选择飞行动作的逻辑
@@ -183,7 +190,7 @@ namespace BirdGame
                 if (this.GetModel<IBirdModel>().FlyPositions.Count > 0)
                 {
                     // 检查是否能飞行等待
-                    if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyWait)
+                    if (!birdConfig.canFlyWait)
                     {
                         // 如果不能飞行等待，只进行远处飞行
                         int index = Random.Range(0, 3);
@@ -193,7 +200,7 @@ namespace BirdGame
                         }
                         else if(index == 1)
                         {
-                            if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyHorizontal)
+                            if (!birdConfig.canFlyHorizontal)
                             {
                                 currMachine.ChangeState<BirdRunState>();
                             }
@@ -222,7 +229,7 @@ namespace BirdGame
                         }
                         else if(index == 2)
                         {
-                            if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyHorizontal)
+                            if (!birdConfig.canFlyHorizontal)
                             {
                                 currMachine.ChangeState<BirdFlyState>();
                             }
@@ -246,7 +253,7 @@ namespace BirdGame
                     }
                     else
                     {
-                        if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyHorizontal)
+                        if (!birdConfig.canFlyHorizontal)
                         {
                             currMachine.ChangeState<BirdRunState>();
                         }

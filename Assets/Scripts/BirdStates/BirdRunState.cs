@@ -220,7 +220,14 @@ namespace BirdGame
 
             int birdIndex = this.GetModel<IBirdModel>().BirdList[_brid.birdIndex].birdType;
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
-            if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFly)
+            var birdConfig = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex);
+            if (birdConfig == null)
+            {
+                currMachine.ChangeState<BirdIdleState>();
+                return;
+            }
+
+            if (!birdConfig.canFly)
             {
                 currMachine.ChangeState<BirdIdleState>();
                 return;
@@ -232,7 +239,7 @@ namespace BirdGame
             }
 
             // 检查是否能飞行等待
-            if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyWait)
+            if (!birdConfig.canFlyWait)
             {
                 // 如果不能飞行等待，只进行远处飞行
                 int random = Random.Range(0, 9);
@@ -242,7 +249,7 @@ namespace BirdGame
                 }
                 else
                 {
-                    if (!this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).canFlyHorizontal)
+                    if (!birdConfig.canFlyHorizontal)
                     {
                         currMachine.ChangeState<BirdIdleState>();
                     }
