@@ -1,45 +1,129 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using TMPro;
+using UnityEngine.UI;
+using System.Collections;
 
-public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler
+public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("References")]
     public TMP_InputField inputField;
+    public Image backgroundImage;
     
     [Header("Settings")]
     public bool autoActivateOnClick = true;
     public bool selectAllOnClick = false;
+    public bool enableClickToPositionCaret = true;
     
     private bool isFocused = false;
+    private bool isMouseOver = false;
     private string originalText = "";
+    private bool isSelecting = false;
+    private Vector2 selectionStartPosition;
+
+    [System.Serializable]
+    public struct KeyEventData
+    {
+        public KeyType keyType;
+        public char keyChar;
+        public bool shiftPressed;
+        public bool ctrlPressed;
+        public bool altPressed;
+    }
+
+    public enum KeyType
+    {
+        Character,
+        Backspace,
+        Enter,
+        Escape,
+        Delete,
+        ArrowLeft,
+        ArrowRight,
+        ArrowUp,
+        ArrowDown,
+        Home,
+        End,
+        Tab
+    }
 
     void Start()
     {
         if (inputField == null)
             inputField = GetComponent<TMP_InputField>();
             
-        // Store original text
+        if (backgroundImage == null)
+            backgroundImage = GetComponent<Image>();
+            
+        if (backgroundImage != null)
+        {
+            backgroundImage.raycastTarget = true;
+        }
+            
         originalText = inputField != null ? inputField.text : "";
         
-        // Add event listeners
         if (inputField != null)
         {
             inputField.onSubmit.AddListener(OnSubmit);
             inputField.onDeselect.AddListener(OnDeselect);
+            inputField.onSelect.AddListener(OnSelect);
         }
+        
+        StartCoroutine(DisableCaretRaycastsDelayed());
+    }
+
+    private System.Collections.IEnumerator DisableCaretRaycastsDelayed()
+    {
+        yield return null;
+        DisableCaretRaycastTargets();
+    }
+
+    private void DisableCaretRaycastTargets()
+    {
+        if (inputField == null) return;
+
+        Graphic[] graphics = GetComponentsInChildren<Graphic>(true);
+        foreach (Graphic graphic in graphics)
+        {
+            if (graphic != backgroundImage && 
+                graphic != inputField.textComponent &&
+                graphic.gameObject != inputField.placeholder)
+            {
+                graphic.raycastTarget = false;
+            }
+        }
+    }
+
+    void Update()
+    {
+        DisableCaretRaycastTargets();
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        HandleInputFieldClick();
+        HandleInputFieldClick(eventData);
     }
 
-    private void HandleInputFieldClick()
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        isMouseOver = true;
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        isMouseOver = false;
+    }
+
+    private void HandleInputFieldClick(PointerEventData eventData)
     {
         if (autoActivateOnClick)
         {
             ActivateInputField();
+            
+            if (enableClickToPositionCaret)
+            {
+                SetCaretToClickPosition(eventData.position);
+            }
         }
 
         if (selectAllOnClick && isFocused)
@@ -48,6 +132,56 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler
         }
 
         Debug.Log($"[HookTMPInputHandler] TMP InputField clicked: {gameObject.name}");
+    }
+
+    public void SetCaretToClickPosition(Vector2 screenPosition)
+    {
+        if (inputField == null || inputField.textComponent == null) return;
+
+        TMP_Text textComponent = inputField.textComponent;
+        RectTransform textRectTransform = textComponent.rectTransform;
+
+        Vector2 localMousePosition;
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            textRectTransform, 
+            screenPosition, 
+            null, 
+            out localMousePosition))
+        {
+            int caretPosition = GetCaretPositionFromMousePosition(textComponent, localMousePosition);
+            inputField.caretPosition = caretPosition;
+            
+            // Clear selection on regular click
+            inputField.selectionAnchorPosition = caretPosition;
+            inputField.selectionFocusPosition = caretPosition;
+            
+            Debug.Log($"[HookTMPInputHandler] Caret positioned at: {caretPosition}");
+        }
+    }
+
+    private int GetCaretPositionFromMousePosition(TMP_Text textComponent, Vector2 localPosition)
+    {
+        int characterIndex = TMP_TextUtilities.FindNearestCharacter(textComponent, localPosition, null, false);
+        
+        if (characterIndex >= 0 && characterIndex < textComponent.textInfo.characterCount)
+        {
+            TMP_CharacterInfo charInfo = textComponent.textInfo.characterInfo[characterIndex];
+            float charMidpoint = charInfo.bottomLeft.x + (charInfo.topRight.x - charInfo.bottomLeft.x) / 2f;
+            
+            if (localPosition.x > charMidpoint)
+            {
+                return characterIndex + 1;
+            }
+            else
+            {
+                return characterIndex;
+            }
+        }
+        
+        if (localPosition.x < 0)
+            return 0;
+        else
+            return inputField.text.Length;
     }
 
     public void ActivateInputField()
@@ -70,52 +204,496 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    // Called by your hook when keyboard input is detected
-    public void ReceiveKeyboardInput(string input)
+    public void ReceiveKeyboardInput(KeyEventData keyData)
     {
         if (!isFocused || inputField == null) return;
 
-        Debug.Log($"[HookTMPInputHandler] Received keyboard input: '{input}'");
+        Debug.Log($"[HookTMPInputHandler] Received key: {keyData.keyType}, Char: '{keyData.keyChar}', Shift: {keyData.shiftPressed}");
 
-        if (input == "\b") // Backspace
+        switch (keyData.keyType)
         {
-            HandleBackspace();
+            case KeyType.Character:
+                if (keyData.keyChar != '\0')
+                {
+                    HandleCharacterInput(keyData.keyChar);
+                }
+                break;
+                
+            case KeyType.Backspace:
+                HandleBackspace();
+                break;
+                
+            case KeyType.Enter:
+                HandleEnter();
+                break;
+                
+            case KeyType.Escape:
+                CancelInput();
+                break;
+                
+            case KeyType.Delete:
+                HandleDelete();
+                break;
+                
+            case KeyType.ArrowLeft:
+                HandleArrowKey(-1, keyData.shiftPressed);
+                break;
+                
+            case KeyType.ArrowRight:
+                HandleArrowKey(1, keyData.shiftPressed);
+                break;
+                
+            case KeyType.ArrowUp:
+                HandleArrowKeyVertical(-1, keyData.shiftPressed);
+                break;
+                
+            case KeyType.ArrowDown:
+                HandleArrowKeyVertical(1, keyData.shiftPressed);
+                break;
+                
+            case KeyType.Home:
+                HandleHomeKey(keyData.shiftPressed);
+                break;
+                
+            case KeyType.End:
+                HandleEndKey(keyData.shiftPressed);
+                break;
+                
+            case KeyType.Tab:
+                HandleTab();
+                break;
         }
-        else if (input == "\u001b") // Escape
+    }
+
+    private void HandleCharacterInput(char character)
+    {
+        // If there's a selection, replace it with the new character
+        if (HasSelection())
         {
-            CancelInput();
+            ReplaceSelection(character.ToString());
         }
-        else if (input.Length == 1 && IsPrintableChar(input[0])) // Regular text input
+        else
         {
-            AppendText(input);
+            // Normal character insertion at caret position
+            int caretPos = inputField.caretPosition;
+            string currentText = inputField.text;
+            
+            if (caretPos >= 0 && caretPos <= currentText.Length)
+            {
+                inputField.text = currentText.Insert(caretPos, character.ToString());
+                inputField.caretPosition = caretPos + 1;
+                
+                // Clear selection after insertion
+                inputField.selectionAnchorPosition = inputField.caretPosition;
+                inputField.selectionFocusPosition = inputField.caretPosition;
+            }
         }
     }
 
     private void HandleBackspace()
     {
-        if (inputField.text.Length > 0)
+        if (HasSelection())
         {
-            inputField.text = inputField.text.Substring(0, inputField.text.Length - 1);
-            // Update caret position
-            inputField.caretPosition = inputField.text.Length;
+            // Delete the selected text
+            DeleteSelection();
+        }
+        else
+        {
+            // Normal backspace at caret position
+            int caretPos = inputField.caretPosition;
+            if (caretPos > 0 && inputField.text.Length > 0)
+            {
+                string currentText = inputField.text;
+                inputField.text = currentText.Remove(caretPos - 1, 1);
+                inputField.caretPosition = caretPos - 1;
+                
+                // Clear selection
+                inputField.selectionAnchorPosition = inputField.caretPosition;
+                inputField.selectionFocusPosition = inputField.caretPosition;
+            }
         }
     }
 
-    private void AppendText(string text)
+    private void HandleDelete()
     {
-        inputField.text += text;
-        // Update caret position to end
+        if (HasSelection())
+        {
+            // Delete the selected text
+            DeleteSelection();
+        }
+        else
+        {
+            // Normal delete at caret position
+            int caretPos = inputField.caretPosition;
+            if (caretPos < inputField.text.Length && inputField.text.Length > 0)
+            {
+                string currentText = inputField.text;
+                inputField.text = currentText.Remove(caretPos, 1);
+                
+                // Keep selection cleared
+                inputField.selectionAnchorPosition = inputField.caretPosition;
+                inputField.selectionFocusPosition = inputField.caretPosition;
+            }
+        }
+    }
+
+    private void HandleArrowKey(int direction, bool shiftPressed)
+    {
+        int newPosition = inputField.caretPosition + direction;
+        
+        if (newPosition >= 0 && newPosition <= inputField.text.Length)
+        {
+            if (shiftPressed)
+            {
+                // Shift + Arrow: Extend selection
+                if (!HasSelection())
+                {
+                    // Start new selection from current caret position
+                    inputField.selectionAnchorPosition = inputField.caretPosition;
+                }
+                
+                inputField.caretPosition = newPosition;
+                inputField.selectionFocusPosition = newPosition;
+                
+                // Force the selection to be visible
+                inputField.ForceLabelUpdate();
+            }
+            else
+            {
+                // Regular Arrow: Move caret and clear selection
+                inputField.caretPosition = newPosition;
+                inputField.selectionAnchorPosition = newPosition;
+                inputField.selectionFocusPosition = newPosition;
+            }
+            
+            Debug.Log($"[HookTMPInputHandler] Arrow key - Caret: {inputField.caretPosition}, Selection: {inputField.selectionAnchorPosition}-{inputField.selectionFocusPosition}");
+        }
+    }
+
+    private void HandleArrowKeyVertical(int direction, bool shiftPressed)
+    {
+        if (inputField.lineType == TMP_InputField.LineType.MultiLineNewline)
+        {
+            // Multi-line: Move line by line
+            MoveCaretVertically(direction, shiftPressed);
+        }
+        else
+        {
+            // Single line: Move to start/end
+            if (direction < 0) // Up arrow
+            {
+                if (shiftPressed)
+                    ExtendSelectionToStart();
+                else
+                    MoveCaretToStart();
+            }
+            else // Down arrow
+            {
+                if (shiftPressed)
+                    ExtendSelectionToEnd();
+                else
+                    MoveCaretToEnd();
+            }
+        }
+    }
+
+    private void MoveCaretVertically(int direction, bool shiftPressed)
+    {
+        if (inputField.textComponent == null) return;
+
+        TMP_Text textComponent = inputField.textComponent;
+        int currentCaretPos = inputField.caretPosition;
+        
+        // Get current line information
+        int currentLine = GetLineAtPosition(currentCaretPos);
+        int targetLine = currentLine + direction;
+        
+        // Get total line count
+        int lineCount = textComponent.textInfo.lineCount;
+        
+        if (targetLine >= 0 && targetLine < lineCount)
+        {
+            // Get the target line
+            TMP_LineInfo targetLineInfo = textComponent.textInfo.lineInfo[targetLine];
+            
+            // Find the character in the target line that's horizontally closest to current position
+            int closestChar = FindClosestCharacterInLine(textComponent, currentCaretPos, targetLine);
+            
+            if (closestChar >= 0)
+            {
+                if (shiftPressed)
+                {
+                    // Extend selection
+                    if (!HasSelection())
+                    {
+                        inputField.selectionAnchorPosition = currentCaretPos;
+                    }
+                    inputField.caretPosition = closestChar;
+                    inputField.selectionFocusPosition = closestChar;
+                }
+                else
+                {
+                    // Move caret only
+                    inputField.caretPosition = closestChar;
+                    inputField.selectionAnchorPosition = closestChar;
+                    inputField.selectionFocusPosition = closestChar;
+                }
+            }
+        }
+    }
+
+    private int GetLineAtPosition(int caretPosition)
+    {
+        if (inputField.textComponent == null) return 0;
+        
+        TMP_Text textComponent = inputField.textComponent;
+        for (int i = 0; i < textComponent.textInfo.lineCount; i++)
+        {
+            TMP_LineInfo lineInfo = textComponent.textInfo.lineInfo[i];
+            if (caretPosition >= lineInfo.firstCharacterIndex && caretPosition <= lineInfo.lastCharacterIndex)
+            {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    private int FindClosestCharacterInLine(TMP_Text textComponent, int referencePosition, int targetLine)
+    {
+        if (textComponent.textInfo.lineCount <= targetLine) return referencePosition;
+        
+        TMP_LineInfo targetLineInfo = textComponent.textInfo.lineInfo[targetLine];
+        TMP_LineInfo currentLineInfo = textComponent.textInfo.lineInfo[GetLineAtPosition(referencePosition)];
+        
+        // Get the horizontal position of the reference character
+        float referenceX = 0f;
+        if (referencePosition < textComponent.textInfo.characterCount)
+        {
+            TMP_CharacterInfo refChar = textComponent.textInfo.characterInfo[referencePosition];
+            referenceX = (refChar.bottomLeft.x + refChar.topRight.x) / 2f;
+        }
+        
+        // Find character in target line closest to referenceX
+        int closestChar = targetLineInfo.firstCharacterIndex;
+        float closestDistance = float.MaxValue;
+        
+        for (int i = targetLineInfo.firstCharacterIndex; i <= targetLineInfo.lastCharacterIndex; i++)
+        {
+            if (i >= textComponent.textInfo.characterCount) break;
+            
+            TMP_CharacterInfo charInfo = textComponent.textInfo.characterInfo[i];
+            float charX = (charInfo.bottomLeft.x + charInfo.topRight.x) / 2f;
+            float distance = Mathf.Abs(charX - referenceX);
+            
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestChar = i;
+            }
+        }
+        
+        return closestChar;
+    }
+
+    private void HandleHomeKey(bool shiftPressed)
+    {
+        if (shiftPressed)
+            ExtendSelectionToStart();
+        else
+            MoveCaretToStart();
+    }
+
+    private void HandleEndKey(bool shiftPressed)
+    {
+        if (shiftPressed)
+            ExtendSelectionToEnd();
+        else
+            MoveCaretToEnd();
+    }
+
+    private void MoveCaretToStart()
+    {
+        inputField.caretPosition = 0;
+        inputField.selectionAnchorPosition = 0;
+        inputField.selectionFocusPosition = 0;
+    }
+
+    private void MoveCaretToEnd()
+    {
         inputField.caretPosition = inputField.text.Length;
+        inputField.selectionAnchorPosition = inputField.text.Length;
+        inputField.selectionFocusPosition = inputField.text.Length;
+    }
+
+    private void ExtendSelectionToStart()
+    {
+        if (!HasSelection())
+        {
+            inputField.selectionAnchorPosition = inputField.caretPosition;
+        }
+        inputField.caretPosition = 0;
+        inputField.selectionFocusPosition = 0;
+    }
+
+    private void ExtendSelectionToEnd()
+    {
+        if (!HasSelection())
+        {
+            inputField.selectionAnchorPosition = inputField.caretPosition;
+        }
+        inputField.caretPosition = inputField.text.Length;
+        inputField.selectionFocusPosition = inputField.text.Length;
+    }
+
+    private bool HasSelection()
+    {
+        return inputField.selectionAnchorPosition != inputField.selectionFocusPosition;
+    }
+
+    private int GetSelectionStart()
+    {
+        return Mathf.Min(inputField.selectionAnchorPosition, inputField.selectionFocusPosition);
+    }
+
+    private int GetSelectionEnd()
+    {
+        return Mathf.Max(inputField.selectionAnchorPosition, inputField.selectionFocusPosition);
+    }
+
+    private string GetSelectedText()
+    {
+        if (!HasSelection()) return string.Empty;
+        
+        int start = GetSelectionStart();
+        int end = GetSelectionEnd();
+        int length = end - start;
+        
+        if (start >= 0 && start + length <= inputField.text.Length)
+        {
+            return inputField.text.Substring(start, length);
+        }
+        
+        return string.Empty;
+    }
+
+    private void ReplaceSelection(string newText)
+    {
+        if (!HasSelection()) return;
+        
+        int start = GetSelectionStart();
+        int end = GetSelectionEnd();
+        int length = end - start;
+        
+        string currentText = inputField.text;
+        
+        // Replace the selected text
+        inputField.text = currentText.Remove(start, length).Insert(start, newText);
+        
+        // Move caret to end of inserted text and clear selection
+        inputField.caretPosition = start + newText.Length;
+        inputField.selectionAnchorPosition = inputField.caretPosition;
+        inputField.selectionFocusPosition = inputField.caretPosition;
+        
+        Debug.Log($"[HookTMPInputHandler] Replaced selection with: '{newText}'");
+    }
+
+    private void DeleteSelection()
+    {
+        if (!HasSelection()) return;
+        
+        int start = GetSelectionStart();
+        int end = GetSelectionEnd();
+        int length = end - start;
+        
+        string currentText = inputField.text;
+        inputField.text = currentText.Remove(start, length);
+        
+        // Move caret to start of deleted selection and clear selection
+        inputField.caretPosition = start;
+        inputField.selectionAnchorPosition = start;
+        inputField.selectionFocusPosition = start;
+        
+        Debug.Log($"[HookTMPInputHandler] Deleted selection");
+    }
+
+    private void HandleEnter()
+    {
+        if (HasSelection())
+        {
+            // Replace selection with newline
+            ReplaceSelection("\n");
+        }
+        else if (inputField.lineType == TMP_InputField.LineType.MultiLineNewline)
+        {
+            int caretPos = inputField.caretPosition;
+            string currentText = inputField.text;
+            inputField.text = currentText.Insert(caretPos, "\n");
+            inputField.caretPosition = caretPos + 1;
+            
+            // Clear selection
+            inputField.selectionAnchorPosition = inputField.caretPosition;
+            inputField.selectionFocusPosition = inputField.caretPosition;
+        }
+        else
+        {
+            SubmitInput();
+        }
+    }
+
+    private void HandleTab()
+    {
+        if (HasSelection())
+        {
+            ReplaceSelection("\t");
+        }
+        else
+        {
+            int caretPos = inputField.caretPosition;
+            string currentText = inputField.text;
+            inputField.text = currentText.Insert(caretPos, "\t");
+            inputField.caretPosition = caretPos + 1;
+            
+            // Clear selection
+            inputField.selectionAnchorPosition = inputField.caretPosition;
+            inputField.selectionFocusPosition = inputField.caretPosition;
+        }
+    }
+
+    public void ReceiveKeyboardInput(string input)
+    {
+        if (!isFocused || inputField == null) return;
+
+        if (input == "\b")
+        {
+            HandleBackspace();
+        }
+        else if (input == "\u001b")
+        {
+            CancelInput();
+        }
+        else if (input == "\n" || input == "\r")
+        {
+            HandleEnter();
+        }
+        else if (input.Length == 1 && IsPrintableChar(input[0]))
+        {
+            HandleCharacterInput(input[0]);
+        }
     }
 
     private void SelectAllText()
     {
         if (inputField.isFocused)
         {
-            inputField.caretPosition = inputField.text.Length;
             inputField.selectionAnchorPosition = 0;
             inputField.selectionFocusPosition = inputField.text.Length;
+            inputField.caretPosition = inputField.text.Length;
         }
+    }
+
+    private void OnSelect(string text)
+    {
+        isFocused = true;
     }
 
     private void OnSubmit(string text)
@@ -125,6 +703,7 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler
 
     private void OnDeselect(string text)
     {
+        isFocused = false;
         DeactivateInputField();
     }
 
@@ -143,7 +722,7 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler
 
     private bool IsPrintableChar(char c)
     {
-        return c >= 32 && c <= 126; // Printable ASCII characters
+        return c >= 32 && c <= 126;
     }
 
     public bool IsFocused()
@@ -157,6 +736,7 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler
         {
             inputField.onSubmit.RemoveListener(OnSubmit);
             inputField.onDeselect.RemoveListener(OnDeselect);
+            inputField.onSelect.RemoveListener(OnSelect);
         }
     }
 }

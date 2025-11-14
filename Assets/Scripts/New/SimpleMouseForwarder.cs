@@ -32,6 +32,19 @@ public class SimpleMouseForwarder : ViewControllerBase
     private const int WM_KEYUP = 0x0101;
     private const int WM_CHAR = 0x0102;
 
+    private const uint VK_SHIFT = 0x10;
+    private const uint VK_CONTROL = 0x11;
+    private const uint VK_MENU = 0x12; // ALT key
+    private const uint VK_LEFT = 0x25;
+    private const uint VK_UP = 0x26;
+    private const uint VK_RIGHT = 0x27;
+    private const uint VK_DOWN = 0x28;
+    private const uint VK_HOME = 0x24;
+    private const uint VK_END = 0x23;
+    private const uint VK_DELETE = 0x2E;
+    private const uint VK_TAB = 0x09;
+    private const uint VK_CAPITAL = 0x14;
+
     private static float wheelDelta = 0f;
     private static bool isHorizontalWheel = false;
     private static Vector2 wheelMousePosition = Vector2.zero;
@@ -78,6 +91,9 @@ public class SimpleMouseForwarder : ViewControllerBase
 
     [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
+
+    [DllImport("user32.dll")]
+    private static extern short GetKeyState(uint nVirtKey);
 
     [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
@@ -140,34 +156,181 @@ public class SimpleMouseForwarder : ViewControllerBase
         if (nCode >= 0 && instance != null && instance.enableForwarding && _focusedTMPInputField != null)
         {
             int message = wParam.ToInt32();
-            int vkCode = Marshal.ReadInt32(lParam);
-
+            
             if (message == WM_KEYDOWN)
             {
-                char character = (char)vkCode;
-                if (character >= 32 && character <= 126) // Printable characters
-                {
-                    Debug.Log($"[SimpleMouseForwarder] 捕获键盘输入: {character}");
-                    SendTextToTMPInputField(character.ToString());
-                }
-
-                // Special keys
-                switch (vkCode)
-                {
-                    case 8: // Backspace
-                        SendTextToTMPInputField("\b");
-                        break;
-                    case 13: // Enter
-                        SendTextToTMPInputField("\n");
-                        break;
-                    case 27: // Escape
-                        SendTextToTMPInputField("\u001b");
-                        break;
-                }
+                KBDLLHOOKSTRUCT hookStruct = Marshal.PtrToStructure<KBDLLHOOKSTRUCT>(lParam);
+                HandleKeyDown(hookStruct);
             }
         }
         
         return CallNextHookEx(_keyboardHookID, nCode, wParam, lParam);
+    }
+
+    private static void HandleKeyDown(KBDLLHOOKSTRUCT hookStruct)
+{
+    // Get modifier key states
+    bool shiftPressed = (GetKeyState(VK_SHIFT) & 0x8000) != 0;
+    bool ctrlPressed = (GetKeyState(VK_CONTROL) & 0x8000) != 0;
+    bool altPressed = (GetKeyState(VK_MENU) & 0x8000) != 0;
+    bool capsLock = (GetKeyState(VK_CAPITAL) & 0x0001) != 0;
+
+    var keyData = new HookTMPInputHandler.KeyEventData
+    {
+        shiftPressed = shiftPressed,
+        ctrlPressed = ctrlPressed,
+        altPressed = altPressed
+    };
+
+    // Handle all keys
+    switch (hookStruct.vkCode)
+    {
+        case 8: // Backspace
+            keyData.keyType = HookTMPInputHandler.KeyType.Backspace;
+            break;
+        case 13: // Enter
+            keyData.keyType = HookTMPInputHandler.KeyType.Enter;
+            break;
+        case 27: // Escape
+            keyData.keyType = HookTMPInputHandler.KeyType.Escape;
+            break;
+        case VK_DELETE: // Delete
+            keyData.keyType = HookTMPInputHandler.KeyType.Delete;
+            break;
+        case VK_LEFT: // Left Arrow
+            keyData.keyType = HookTMPInputHandler.KeyType.ArrowLeft;
+            break;
+        case VK_RIGHT: // Right Arrow
+            keyData.keyType = HookTMPInputHandler.KeyType.ArrowRight;
+            break;
+        case VK_UP: // Up Arrow
+            keyData.keyType = HookTMPInputHandler.KeyType.ArrowUp;
+            break;
+        case VK_DOWN: // Down Arrow
+            keyData.keyType = HookTMPInputHandler.KeyType.ArrowDown;
+            break;
+        case VK_HOME: // Home
+            keyData.keyType = HookTMPInputHandler.KeyType.Home;
+            break;
+        case VK_END: // End
+            keyData.keyType = HookTMPInputHandler.KeyType.End;
+            break;
+        case VK_TAB: // Tab
+            keyData.keyType = HookTMPInputHandler.KeyType.Tab;
+            break;
+        default:
+            // Handle character keys - use proper character mapping
+            char character = MapVirtualKeyToCharacter(hookStruct.vkCode, shiftPressed, capsLock);
+            if (character != '\0')
+            {
+                keyData.keyType = HookTMPInputHandler.KeyType.Character;
+                keyData.keyChar = character;
+            }
+            else
+            {
+                return; // Ignore other keys
+            }
+            break;
+    }
+
+    SendKeyEventToTMPInputField(keyData);
+    
+    if (instance.showDebugLog)
+    {
+        if (keyData.keyType == HookTMPInputHandler.KeyType.Character)
+        {
+            Debug.Log($"[SimpleMouseForwarder] Key: '{keyData.keyChar}' (Shift: {shiftPressed}, CapsLock: {capsLock})");
+        }
+        else
+        {
+            Debug.Log($"[SimpleMouseForwarder] Key: {keyData.keyType} (Shift: {shiftPressed})");
+        }
+    }
+}
+
+private static char MapVirtualKeyToCharacter(uint vkCode, bool shiftPressed, bool capsLock)
+{
+    // Handle letters A-Z
+    if (vkCode >= 0x41 && vkCode <= 0x5A)
+    {
+        char baseChar = (char)('a' + (vkCode - 0x41)); // Convert to lowercase base
+        bool shouldUppercase = shiftPressed ^ capsLock; // XOR: uppercase if only one is true
+        
+        return shouldUppercase ? char.ToUpper(baseChar) : baseChar;
+    }
+    
+    // Handle numbers 0-9
+    if (vkCode >= 0x30 && vkCode <= 0x39)
+    {
+        if (shiftPressed)
+        {
+            // Number row symbols when shift is pressed
+            switch (vkCode)
+            {
+                case 0x30: return ')';
+                case 0x31: return '!';
+                case 0x32: return '@';
+                case 0x33: return '#';
+                case 0x34: return '$';
+                case 0x35: return '%';
+                case 0x36: return '^';
+                case 0x37: return '&';
+                case 0x38: return '*';
+                case 0x39: return '(';
+            }
+        }
+        return (char)('0' + (vkCode - 0x30));
+    }
+    
+    // Handle symbol keys
+    if (shiftPressed)
+    {
+        switch (vkCode)
+        {
+            case 0xBD: return '_'; // -
+            case 0xBB: return '+'; // =
+            case 0xDB: return '{'; // [
+            case 0xDD: return '}'; // ]
+            case 0xDC: return '|'; // \
+            case 0xBA: return ':'; // ;
+            case 0xDE: return '"'; // '
+            case 0xBC: return '<'; // ,
+            case 0xBE: return '>'; // .
+            case 0xBF: return '?'; // /
+            case 0xC0: return '~'; // `
+        }
+    }
+    else
+    {
+        switch (vkCode)
+        {
+            case 0xBD: return '-';
+            case 0xBB: return '=';
+            case 0xDB: return '[';
+            case 0xDD: return ']';
+            case 0xDC: return '\\';
+            case 0xBA: return ';';
+            case 0xDE: return '\'';
+            case 0xBC: return ',';
+            case 0xBE: return '.';
+            case 0xBF: return '/';
+            case 0xC0: return '`';
+            case 0x20: return ' '; // Space
+        }
+    }
+    
+    return '\0'; // Unhandled key
+}
+
+    private static void SendKeyEventToTMPInputField(HookTMPInputHandler.KeyEventData keyData)
+    {
+        if (_focusedTMPInputField == null) return;
+
+        HookTMPInputHandler handler = _focusedTMPInputField.GetComponent<HookTMPInputHandler>();
+        if (handler != null)
+        {
+            handler.ReceiveKeyboardInput(keyData);
+        }
     }
 
     [MonoPInvokeCallback(typeof(LowLevelMouseProc))]
@@ -389,6 +552,13 @@ public class SimpleMouseForwarder : ViewControllerBase
                 {
                     tmpHandler.ActivateInputField();
                     _focusedTMPInputField = hitObject;
+                    
+                    // PASS THE CLICK POSITION TO THE HANDLER
+                    if (tmpHandler.enableClickToPositionCaret)
+                    {
+                        tmpHandler.SetCaretToClickPosition(screenPosition);
+                    }
+                    
                     Debug.Log($"[SimpleMouseForwarder] TMP输入框激活: {hitObject.name}");
                     return;
                 }
