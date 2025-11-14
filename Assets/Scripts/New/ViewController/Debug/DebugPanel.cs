@@ -12,8 +12,10 @@ namespace BirdGame.DebugMode
         public Button closeButton;
         public Toggle tog_Bird;
         public Toggle tog_Shop;
+        public Button audioButton;
         public GameObject birdEdit;
         public GameObject shopEdit;
+        public GameObject audioPanel;
         public TMP_InputField coinsInput;
 
         private void Start()
@@ -54,6 +56,13 @@ namespace BirdGame.DebugMode
                 {
                     coinsInput.text = this.GetModel<IAccountModel>().Coins.Value.ToString();
                 }
+            });
+            
+            if(audioPanel.activeSelf)
+                audioPanel.SetActive(false);
+            audioButton.onClick.AddListener(() =>
+            {
+                audioPanel.SetActive(true);
             });
         }
     }
