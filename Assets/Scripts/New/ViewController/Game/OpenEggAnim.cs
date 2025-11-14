@@ -1,4 +1,5 @@
 ﻿using System;
+using DG.Tweening;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -9,9 +10,11 @@ namespace BirdGame
     {
         public SpriteRenderer sr;
         public TextMeshProUGUI nameText;
+        public Transform bird;
 
         private Action onAnimComplete;
         private bool canWait = false;
+        private float scale = 0.3f;
 
         private void Start()
         {
@@ -31,6 +34,8 @@ namespace BirdGame
             var config = this.GetModel<IConfigModel>().BirdConfig;
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             sr.sprite = config.GetBird(index, mapIndex).preview;
+            scale = 275f / sr.sprite.rect.size.x;
+            bird.transform.localScale = Vector3.zero;
             
             // 使用本地化系统获取鸟类名称
             string birdNameKey = config.GetBirdNameKey(index, mapIndex);
@@ -52,6 +57,14 @@ namespace BirdGame
         public void OnAnimComplete()
         {
             canWait = true;
+        }
+
+        public void OnShowBird()
+        {
+            bird.localScale = Vector3.one * 0.00001f;
+            var anim = DOTween.Sequence();
+            anim.Append(bird.DOScale(scale * 1.2f, 36 * Time.deltaTime).SetEase(Ease.InSine));
+            anim.Append(bird.DOScale(scale, 6 * Time.deltaTime).SetEase(Ease.OutSine));
         }
     }
 }

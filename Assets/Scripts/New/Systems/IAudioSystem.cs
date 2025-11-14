@@ -1,8 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using QFramework;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Audio;
+using Random = UnityEngine.Random;
 
 namespace BirdGame
 {
@@ -347,7 +350,8 @@ namespace BirdGame
                     defaultVolume = 1.0f; // Wind环境音设为100%
                     //Debug.Log($"🌪️ 设置Wind环境音效音量为: {defaultVolume * 100}%");
                 }
-                
+
+                audio.outputAudioMixerGroup = config.environments[i].mixer.FindMatchingGroups(string.Empty)[0];
                 // 如果用户没有设置过这个环境音效的音量，使用默认值
                 if (saveModel.environmentVolumes[i] == 0f)
                 {
@@ -366,6 +370,8 @@ namespace BirdGame
                     audio.volume = v * radioModel.Volume.Value;
                 });
             }
+
+            effectAudio.outputAudioMixerGroup = config.effectMixer.FindMatchingGroups(String.Empty)[0];
             
             isEnvironmentInited = true;
             //Debug.Log("🌍 环境音效初始化完成！Bird环境音设为100%，Wind环境音设为100%，其他环境音设为0");

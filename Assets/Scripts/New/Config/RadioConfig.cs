@@ -1,6 +1,7 @@
 ﻿using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace BirdGame
 {
@@ -10,8 +11,9 @@ namespace BirdGame
         public AudioItem[] musicItems;
         [TableList(ShowIndexLabels = true)]
         public AudioItem[] environments;
-        
-        [Title("音效"), Space(10)]
+
+        [Title("音效"), Space(10)] 
+        public AudioMixer effectMixer;
         public AudioClip click;
         public AudioClip dropFood;
         public AudioClip stroke;
@@ -28,5 +30,6 @@ namespace BirdGame
         public string songName;
         [LabelText("音乐文件")]
         public AudioClip songFile;
+        public AudioMixer mixer;
     }
 }
