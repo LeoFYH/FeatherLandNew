@@ -551,6 +551,7 @@ namespace BirdGame
         }
 #else
         // 非 Windows 平台
+        public bool EnableWallpaperMode => false;
         public void WallpaperMode() { Debug.LogWarning("桌面模式仅在 Windows 平台支持"); }
         public void RestoreOriginalState() { Debug.LogWarning("壁纸模式仅在 Windows 平台支持"); }
         public void FullscreenMode() { Debug.LogWarning("全屏模式仅在 Windows 平台支持"); }
