@@ -29,23 +29,24 @@ public class StorePanel : PopupPanelBase
     private void Buy()
     {
         Debug.Log("buy");
-        if (GameManager.Instance.noOpenEggs > 0)
-        {
-            UIManager.Instance.CreatePrompt("There are also eggs that have not hatched");
-            return;
-        }
-        if (GameManager.Instance.coin >= GameManager.Instance.eggPackage)
-        {
-            GameManager.Instance.coin -= GameManager.Instance.eggPackage;
-            //coinTxt.text = GameManager.Instance.coin.ToString();
-            UIManager.Instance.coinTxt.text = GameManager.Instance.coin.ToString();
-            GameManager.Instance.CreateBrid();
-            Close();
-            //HatchPage.SetActive(true);
-        }
-        else
-        {
-            UIManager.Instance.CreatePrompt("Insufficient coins");
-        }
+        // if (GameManager.Instance.noOpenEggs > 0)
+        // {
+        //     UIManager.Instance.CreatePrompt("There are also eggs that have not hatched");
+        //     return;
+        // }
+        //
+        // if (GameManager.Instance.coin >= GameManager.Instance.eggPackage)
+        // {
+        //     GameManager.Instance.coin -= GameManager.Instance.eggPackage;
+        //     //coinTxt.text = GameManager.Instance.coin.ToString();
+        //     UIManager.Instance.coinTxt.text = GameManager.Instance.coin.ToString();
+        //     GameManager.Instance.CreateBrid();
+        //     Close();
+        //     //HatchPage.SetActive(true);
+        // }
+        // else
+        // {
+        //     UIManager.Instance.CreatePrompt("Insufficient coins");
+        // }
     }
 }

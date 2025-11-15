@@ -16,13 +16,11 @@ public class InfoPanel : PopupPanelBase
     public Image cursor;
     int price;
     GameObject go;
-    int level;
 
     public void Init(GameObject go, int price, string s1, string s2, int level, float progress,float progress2,bool cursorOn)
     {
         //gameObject.SetActive(true);
         OnShowPanel();
-        this.level = level;
         this.go = go;
         this.price = price;
         titleTxt.text = s1;
@@ -36,8 +34,8 @@ public class InfoPanel : PopupPanelBase
 
     public void Sell()
     {
-        GameManager.Instance.coin += price;
-        UIManager.Instance.coinTxt.text = GameManager.Instance.coin.ToString();
+        // GameManager.Instance.coin += price;
+        // UIManager.Instance.coinTxt.text = GameManager.Instance.coin.ToString();
         Close();
         Destroy(go);
     }

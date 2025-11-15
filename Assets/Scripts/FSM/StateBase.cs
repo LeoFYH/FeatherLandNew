@@ -1,17 +1,25 @@
-using FSM;
+using QFramework;
 
 // State Base Class
 
-public abstract class StateBase
+namespace BirdGame
 {
-    protected StateMachine currMachine;
-    
-    public StateBase(StateMachine machine)
+    public abstract class StateBase : IController
     {
-        currMachine = machine;
-    }
+        protected StateMachine currMachine;
 
-    public abstract void OnEnter();
-    public abstract void OnUpdate();
-    public abstract void OnExit();
+        public StateBase(StateMachine machine)
+        {
+            currMachine = machine;
+        }
+
+        public abstract void OnEnter();
+        public abstract void OnUpdate();
+        public abstract void OnExit();
+
+        public IArchitecture GetArchitecture()
+        {
+            return GameApp.Interface;
+        }
+    }
 }

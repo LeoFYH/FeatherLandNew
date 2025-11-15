@@ -280,8 +280,7 @@ public class PomodoroTimer : PopupPanelBase
     // Close功能
     public void ClosePanel()
     {
-        if (panelToHide != null)
-            panelToHide.SetActive(false);
+        OnHidePanel();
     }
 
     // 工作結束後，隱藏workEndPanel並開始break計時

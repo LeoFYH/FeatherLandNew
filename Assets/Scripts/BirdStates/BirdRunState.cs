@@ -1,154 +1,291 @@
-using FSM;
+using DG.Tweening;
+using QFramework;
 using UnityEngine;
+using UnityEngine.AI;
 
-public class BirdRunState : StateBase
+namespace BirdGame
 {
-    private Brid _brid;
-    private Vector3 target;
-    
-    public BirdRunState(StateMachine machine) : base(machine)
-    {
-        _brid = machine.currObj.GetComponent<Brid>();
-    }
 
-    public override void OnEnter()
+    public class BirdRunState : StateBase
     {
-        // Release any existing food target when entering run state
-        if (_brid.currFood != null)
+        private const float SpeedOffsetRange = 0.4f;
+
+        private Brid _brid;
+        private Vector3 target;
+        private NavMeshPath currentPath = new NavMeshPath();
+        private bool isFollowingMouse = false;
+        private float followMouseStartTime = 0;
+        private float followMouseDuration = 8f; // 跟随时间延长到8秒
+
+        public BirdRunState(StateMachine machine) : base(machine)
         {
-            _brid.currFood.isTargeted = false;
-            _brid.currFood = null;
+            _brid = machine.currObj.GetComponent<Brid>();
         }
 
-        Vector2 currentPos = _brid.transform.position;
-        Vector2 newTarget;
-
-        if (_brid.walkableArea != null)
+        public override void OnEnter()
         {
-            newTarget = _brid.walkableArea.GetRandomPoint(currentPos, _brid.radiusX);
-        }
-        else
-        {
-            float x = Random.Range(-_brid.radiusX, _brid.radiusX);
-            float y = Random.Range(-_brid.radiusY, _brid.radiusY);
-            newTarget = new Vector2(currentPos.x + x, currentPos.y + y);
-        }
+            _brid.onNearOtherBird = OnNearOtherBird;
+            if (!_brid.agent.enabled)
+                _brid.agent.enabled = true;
 
-        target = new Vector3(newTarget.x, newTarget.y, _brid.transform.position.z);
-    }
+            float randomOffset = Random.Range(-SpeedOffsetRange, SpeedOffsetRange);
+            float adjustedSpeed = Mathf.Max(0.1f, _brid.moveSpeed + randomOffset);
+            _brid.agent.speed = adjustedSpeed;
 
-    public override void OnUpdate()
-    {
-        if (_brid.isSmall)
-        {
-            // Find closest untargeted food
-            Food closestFood = null;
-            float closestDistance = float.MaxValue;
-
-            foreach (var food in GameManager.Instance.foods)
+            // Release any existing food target when entering run state
+            if (_brid.currFood != null)
             {
-                if (!food.isTargeted)
-                {
-                    float distance = Vector3.Distance(_brid.transform.position, food.transform.position);
-                    if (distance < closestDistance)
-                    {
-                        closestDistance = distance;
-                        closestFood = food;
-                    }
-                }
+                _brid.currFood.isTargeted = false;
+                _brid.currFood = null;
             }
 
-            // If we found food, either switch to it or keep current target if it's closer
-            if (closestFood != null)
+            // 检查是否应该跟随鼠标
+            if (_brid.shouldFollowMouse)
             {
-                float currentDistance = _brid.currFood != null ? 
-                    Vector3.Distance(_brid.transform.position, _brid.currFood.transform.position) : 
-                    float.MaxValue;
-
-                if (closestDistance < currentDistance)
-                {
-                    if (1==2)  // 10个数中随机到1时去吃食物
-                    {
-                        if (_brid.currFood != null)
-                        {
-                            _brid.currFood.isTargeted = false;
-                        }
-                        _brid.currFood = closestFood;
-                        _brid.currFood.isTargeted = true;
-                        currMachine.ChangeState<BirdEatState>();
-                        return;
-                    }
-                }
-            }
-        }
-        
-        // If no food to chase, continue random movement
-        Vector3 nextPosition = Vector3.MoveTowards(
-            _brid.transform.position, 
-            target, 
-            _brid.moveSpeed * Time.deltaTime
-        );
-
-        if (_brid.walkableArea != null)
-        {
-            Vector2 nextPos2D = new Vector2(nextPosition.x, nextPosition.y);
-            if (!_brid.walkableArea.IsPointInside(nextPos2D))
-            {
-                nextPos2D = _brid.walkableArea.GetClosestValidPoint(nextPos2D);
-                nextPosition = new Vector3(nextPos2D.x, nextPos2D.y, nextPosition.z);
-            }
-        }
-
-        _brid.transform.position = nextPosition;
-        _brid.sr.flipX = target.x > _brid.transform.position.x;
-        _brid.anim.SetFloat("MoveSpeed", 1);
-        if (Vector3.Distance(_brid.transform.position, target) <= 0.1f)
-        {
-            DONext();
-        }
-    }
-
-    public override void OnExit()
-    {
-        _brid.anim.SetFloat("MoveSpeed", 0f);
-        
-        // Release any food target when leaving run state
-        if (_brid.currFood != null)
-        {
-            _brid.currFood.isTargeted = false;
-            _brid.currFood = null;
-        }
-    }
-
-    private void DONext()
-    {
-        if (_brid.isSmall)
-        {
-            currMachine.ChangeState<BirdIdleState>();
-            return;
-        }
-
-        int random = Random.Range(0, 2);
-        if (random == 0)
-        {
-            currMachine.ChangeState<BirdIdleState>();
-        }
-        else if (random == 1)
-        {
-            if (GameManager.Instance.flyPositions.Count == 0)
-            {
-                currMachine.ChangeState<BirdFlyState>();
-                return;
+                isFollowingMouse = true;
+                followMouseStartTime = Time.time;
+                _brid.shouldFollowMouse = false; // 重置标志
+                Debug.Log("RunState: 开始跟随鼠标！");
+                return; // 不设置随机目标，直接跟随鼠标
             }
 
-            int index = Random.Range(0, 2);
-            if (index == 0)
+            //Vector2 currentPos = _brid.transform.position;
+            // Vector2 newTarget;
+            //
+            // var walkableArea = NavigationManager.Instance.GetWalkableArea(_brid.walkArea);
+            // if (walkableArea != null)
+            // {
+            //     newTarget = walkableArea.GetRandomPoint(currentPos, _brid.radiusX);
+            // }
+            // else
+            // {
+            //     float x = Random.Range(-_brid.radiusX, _brid.radiusX);
+            //     float y = Random.Range(-_brid.radiusY, _brid.radiusY);
+            //     newTarget = new Vector2(currentPos.x + x, currentPos.y + y);
+            // }
+
+            target = NavigationManager.Instance.GetRandomTarget(_brid.walkArea);
+            while (target == Vector3.zero)
             {
-                currMachine.ChangeState<BirdFlyState>();
+                target = NavigationManager.Instance.GetRandomTarget(_brid.walkArea);
+            }
+
+            if (_brid.agent.SetDestination(target))
+            {
+                _brid.agent.isStopped = false;
             }
             else
             {
-                currMachine.ChangeState<BirdFlyState>();
+                Debug.LogError("目标超出渲染地面范围！");
+            }
+
+            float distance = _brid.agent.remainingDistance;
+            float time = distance / _brid.moveSpeed;
+            DOTween.Sequence().AppendCallback(() =>
+            {
+                if (_brid.walkArea == 3)
+                {
+                    Food food;
+                    if (this.GetSystem<IGameSystem>().TryGetUntargetedFood(_brid.transform.position, out food))
+                    {
+                        // int random = Random.Range(1, 10);
+                        // if(random == 1) // 10个数中随机到1时去吃食物
+                        // {
+                        _brid.currFood = food;
+                        currMachine.ChangeState<BirdEatState>();
+                        //}
+                    }
+                }
+            }).SetDelay(time * 0.5f);
+        }
+
+        public override void OnUpdate()
+        {
+            if (_brid.anim.GetCurrentAnimatorStateInfo(0).IsName("Stroke") && !isFollowingMouse)
+            {
+                currMachine.ChangeState<BirdIdleState>();
+                return;
+            }
+
+            // 处理跟随鼠标逻辑
+            // if (isFollowingMouse)
+            // {
+            //     float followDuration = Time.time - followMouseStartTime;
+            //     if (followDuration >= followMouseDuration)
+            //     {
+            //         // 跟随时间结束，切换到idle状态
+            //         isFollowingMouse = false;
+            //         currMachine.ChangeState<BirdIdleState>();
+            //         Debug.Log("跟随鼠标结束");
+            //         return;
+            //     }
+            //     else
+            //     {
+            //         // 跟随鼠标移动
+            //         Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            //         mouseWorldPos.z = _brid.transform.position.z; // 保持Z轴不变
+                    
+            //         _brid.agent.SetDestination(mouseWorldPos);
+            //         _brid.agent.isStopped = false;
+                    
+            //         // 根据移动方向设置sprite朝向
+            //         if (Mathf.Abs(_brid.agent.velocity.x) > 0.001f)
+            //         {
+            //             _brid.sr.flipX = _brid.agent.velocity.x >= 0;
+            //         }
+                    
+            //         _brid.anim.SetFloat("MoveSpeed", 1);
+                    
+            //         // 跟随时冒爱心（每0.5秒一次）
+            //         if (Mathf.FloorToInt(followDuration * 2) != Mathf.FloorToInt((followDuration - Time.deltaTime) * 2))
+            //         {
+            //             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("Heart", obj =>
+            //             {
+            //                 GameObject.Instantiate(obj, _brid.heartPos);
+            //             });
+            //         }
+                    
+            //         return;
+            //     }
+            // }
+
+            // 正常的跑步逻辑
+            if (!_brid.agent.pathPending && _brid.agent.remainingDistance <= 0.01f)
+            {
+                _brid.agent.isStopped = true;
+                _brid.agent.velocity = Vector3.zero;
+                _brid.lineRenderer.positionCount = 0;
+                DONext();
+            }
+            else
+            {
+                if(this.GetModel<IConfigModel>().BirdConfig.isDrawPathLine)
+                    DrawPath();
+                _brid.sr.flipX = _brid.agent.velocity.x >= 0;
+                _brid.anim.SetFloat("MoveSpeed", 1);
+            }
+        }
+        
+        private void DrawPath()
+        {
+            _brid.agent.CalculatePath(target, currentPath);
+            int pathLength = currentPath.corners.Length;
+            if (pathLength < 2)
+            {
+                _brid.lineRenderer.positionCount = 2;
+                _brid.lineRenderer.SetPosition(0, _brid.transform.position);
+                _brid.lineRenderer.SetPosition(1, target);
+            }
+            else
+            {
+                _brid.lineRenderer.positionCount = pathLength + 1;
+                for (int i = 0; i < pathLength; i++)
+                {
+                    _brid.lineRenderer.SetPosition(i, currentPath.corners[i]);
+                }
+                _brid.lineRenderer.SetPosition(pathLength, target);
+            }
+        }
+
+        public override void OnExit()
+        {
+            _brid.onNearOtherBird = null;
+            _brid.lineRenderer.positionCount = 0;
+            _brid.anim.SetFloat("MoveSpeed", 0f);
+            _brid.agent.speed = _brid.moveSpeed;
+            _brid.agent.isStopped = true;
+            _brid.agent.velocity = Vector3.zero;
+        }
+
+        private void OnNearOtherBird()
+        {
+            currMachine.ChangeState<BirdIdleState>();
+        }
+
+        private void DONext()
+        {
+            // 安全检查：确保birdIndex在有效范围内
+            if (_brid.birdIndex < 0 || _brid.birdIndex >= this.GetModel<IBirdModel>().BirdList.Count)
+            {
+                Debug.LogWarning($"鸟的索引无效: {_brid.birdIndex}, BirdList.Count: {this.GetModel<IBirdModel>().BirdList.Count}");
+                currMachine.ChangeState<BirdIdleState>();
+                return;
+            }
+
+            if (_brid.isDesktopBird)
+            {
+                currMachine.ChangeState<BirdRunState>();
+                return;
+            }
+
+            int birdIndex = this.GetModel<IBirdModel>().BirdList[_brid.birdIndex].birdType;
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            var birdConfig = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex);
+            if (birdConfig == null)
+            {
+                currMachine.ChangeState<BirdIdleState>();
+                return;
+            }
+
+            if (!birdConfig.canFly)
+            {
+                currMachine.ChangeState<BirdIdleState>();
+                return;
+            }
+            if (_brid.isSmall)
+            {
+                currMachine.ChangeState<BirdIdleState>();
+                return;
+            }
+
+            // 检查是否能飞行等待
+            if (!birdConfig.canFlyWait)
+            {
+                // 如果不能飞行等待，只进行远处飞行
+                int random = Random.Range(0, 9);
+                if (random == 0)
+                {
+                    currMachine.ChangeState<BirdIdleState>();
+                }
+                else
+                {
+                    if (!birdConfig.canFlyHorizontal)
+                    {
+                        currMachine.ChangeState<BirdIdleState>();
+                    }
+                    else
+                    {
+                        currMachine.ChangeState<BirdFlyHorizontalState>();
+                    }
+                    //currMachine.ChangeState<BirdFlyHorizontalState>();
+                }
+            }
+            else
+            {
+                // 如果可以飞行等待，正常选择飞行方式
+                int random = Random.Range(0, 9);
+                if (random == 0)
+                {
+                    currMachine.ChangeState<BirdIdleState>();
+                }
+                else
+                {
+                    if (this.GetModel<IBirdModel>().FlyPositions.Count == 0)
+                    {
+                        currMachine.ChangeState<BirdFlyState>();
+                        return;
+                    }
+
+                    int index = Random.Range(0, 2);
+                    if (index == 0)
+                    {
+                        currMachine.ChangeState<BirdFlyState>();
+                    }
+                    else
+                    {
+                        currMachine.ChangeState<BirdFlyState>();
+                    }
+                }
             }
         }
     }

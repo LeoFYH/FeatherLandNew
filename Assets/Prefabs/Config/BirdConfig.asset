@@ -1,0 +1,304 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c998ea8945749ad829e2434e82655c0, type: 3}
+  m_Name: BirdConfig
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: colorSettings
+      Entry: 7
+      Data: 0|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[UnityEngine.Color32,
+        UnityEngine.CoreModule]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 1|System.Collections.Generic.GenericEqualityComparer`1[[System.String,
+        mscorlib]], mscorlib
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 5
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Common
+    - Name: $v
+      Entry: 7
+      Data: UnityEngine.Color32, UnityEngine.CoreModule
+    - Name: 
+      Entry: 3
+      Data: 56
+    - Name: 
+      Entry: 3
+      Data: 56
+    - Name: 
+      Entry: 3
+      Data: 56
+    - Name: 
+      Entry: 3
+      Data: 255
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Rare
+    - Name: $v
+      Entry: 7
+      Data: UnityEngine.Color32, UnityEngine.CoreModule
+    - Name: 
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 3
+      Data: 155
+    - Name: 
+      Entry: 3
+      Data: 255
+    - Name: 
+      Entry: 3
+      Data: 255
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Endangered
+    - Name: $v
+      Entry: 7
+      Data: UnityEngine.Color32, UnityEngine.CoreModule
+    - Name: 
+      Entry: 3
+      Data: 183
+    - Name: 
+      Entry: 3
+      Data: 65
+    - Name: 
+      Entry: 3
+      Data: 255
+    - Name: 
+      Entry: 3
+      Data: 255
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Extinct
+    - Name: $v
+      Entry: 7
+      Data: UnityEngine.Color32, UnityEngine.CoreModule
+    - Name: 
+      Entry: 3
+      Data: 247
+    - Name: 
+      Entry: 3
+      Data: 168
+    - Name: 
+      Entry: 3
+      Data: 4
+    - Name: 
+      Entry: 3
+      Data: 255
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Unknown
+    - Name: $v
+      Entry: 7
+      Data: UnityEngine.Color32, UnityEngine.CoreModule
+    - Name: 
+      Entry: 3
+      Data: 162
+    - Name: 
+      Entry: 3
+      Data: 160
+    - Name: 
+      Entry: 3
+      Data: 160
+    - Name: 
+      Entry: 3
+      Data: 255
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+  isDrawPathLine: 0
+  maxBirdCount: 45
+  sceneBirds:
+  - birdClasses:
+    - birdName: Cockatiel
+      birds:
+      - {fileID: 11400000, guid: 1d3cf216acfabcf4d984b870f6340668, type: 2}
+      - {fileID: 11400000, guid: 0cd0b67372145184ebbdfd3285f3a86d, type: 2}
+      - {fileID: 11400000, guid: 27af311299b3cb943b0eeef492819b1a, type: 2}
+    - birdName: Cockatoo
+      birds:
+      - {fileID: 11400000, guid: a1c913ecfc117744cb8767af5cebb8e1, type: 2}
+      - {fileID: 11400000, guid: 21a0b45561d722f4ba71e65a1909d79d, type: 2}
+      - {fileID: 11400000, guid: 1fbc9ad5d9843b649a8b9ec8f6bdaad9, type: 2}
+      - {fileID: 11400000, guid: 49dfae3ab49d4d94dbd9a00a6bab71ba, type: 2}
+    - birdName: Parakeet1
+      birds:
+      - {fileID: 11400000, guid: a9a839fd191d6e84aadbc83930e57292, type: 2}
+      - {fileID: 11400000, guid: 1868ec116ece3d2429cf03f24a7992c5, type: 2}
+      - {fileID: 11400000, guid: 4eb1a0f040646e443a7724f7b31f0c6f, type: 2}
+      - {fileID: 11400000, guid: 4e168b59c9f864d47916bb68eb10956f, type: 2}
+    - birdName: Lorikeet
+      birds:
+      - {fileID: 11400000, guid: e93668c95397762409c6e45f30668ac4, type: 2}
+      - {fileID: 11400000, guid: bad7818fa5b839b4ab1e90226b0bdd01, type: 2}
+      - {fileID: 11400000, guid: 2ef5fc688aa0e4440b34bbd70d68b29f, type: 2}
+    - birdName: Dodo
+      birds:
+      - {fileID: 11400000, guid: 99165c92a1752624c9bf81fb9b9bc932, type: 2}
+    - birdName: Kakapo
+      birds:
+      - {fileID: 11400000, guid: d3ace339e24cf864aa2e7c172c975a2c, type: 2}
+      - {fileID: 11400000, guid: 1610ebac8462616498029f1114b18ba5, type: 2}
+      - {fileID: 11400000, guid: 0bb6c886896731447a3033385f56bcea, type: 2}
+      - {fileID: 11400000, guid: e4c049a512bf4c0469d9ad0a0faeb2fb, type: 2}
+    - birdName: Northern Cardinal
+      birds:
+      - {fileID: 11400000, guid: ab67f63702c051048b945e9cfb37531d, type: 2}
+      - {fileID: 11400000, guid: afd341c372b421f448dad33d74455eb2, type: 2}
+      - {fileID: 11400000, guid: 541a47fec1f4d44478d239488cb0f31f, type: 2}
+    - birdName: Kiwi
+      birds:
+      - {fileID: 11400000, guid: c1115d95327fd0147a97f59230e4d1cd, type: 2}
+      - {fileID: 11400000, guid: 1365882deab7f4b4d84bb44f4c96ebd0, type: 2}
+      - {fileID: 11400000, guid: 821db0a068972f846ac83b6c23d74ae3, type: 2}
+      - {fileID: 11400000, guid: ad76c3e17359c6644b4c4653e429ca99, type: 2}
+    - birdName: Grey Parrot
+      birds:
+      - {fileID: 11400000, guid: 163410c450343af41960ca68c7d043c2, type: 2}
+      - {fileID: 11400000, guid: 7596a71aa2d5dc94e903084b255b469b, type: 2}
+      - {fileID: 11400000, guid: 1d2d98f25ab7e6a47a3d6737fb5efef3, type: 2}
+      - {fileID: 11400000, guid: 3ce40e02928e6c6418dd33a08b13c622, type: 2}
+    - birdName: Turtledove
+      birds:
+      - {fileID: 11400000, guid: 113e5e4e7c6603543bb9cbda645da60a, type: 2}
+    - birdName: Kingfisher
+      birds:
+      - {fileID: 11400000, guid: bfe3f5707ce9bd24da2ac98a8e7c9706, type: 2}
+  - birdClasses:
+    - birdName: Eagle
+      birds:
+      - {fileID: 11400000, guid: c24722771c489af44866daa898313c43, type: 2}
+      - {fileID: 11400000, guid: fd88e42947e30fa4a8a439eab31b3135, type: 2}
+      - {fileID: 11400000, guid: 528e37b5f02117c4f98556cab3032cf6, type: 2}
+      - {fileID: 11400000, guid: 9c17f5b17a57d5248b8cdeef944aa453, type: 2}
+    - birdName: Vulture
+      birds:
+      - {fileID: 11400000, guid: a8e2536155dbf1541b3d4f7c4e6fcd77, type: 2}
+      - {fileID: 11400000, guid: 94b542aae0043194eb8f551a95c2969a, type: 2}
+      - {fileID: 11400000, guid: 45336f07e87465549a2e247ea122c5c6, type: 2}
+      - {fileID: 11400000, guid: ce03fd40aca6a1d4d963921d1b046d52, type: 2}
+    - birdName: Dove
+      birds:
+      - {fileID: 11400000, guid: 113e5e4e7c6603543bb9cbda645da60a, type: 2}
+    - birdName: Black Grouse
+      birds:
+      - {fileID: 11400000, guid: 21e8edfece9d400498e5782443f2f52c, type: 2}
+      - {fileID: 11400000, guid: c3a03212ad26bce40abbeca445fb8f71, type: 2}
+      - {fileID: 11400000, guid: a854e9fe408d73342abebac7dabb7cdc, type: 2}
+      - {fileID: 11400000, guid: 54efcc259061b1c41940062fe78a92e9, type: 2}
+    - birdName: Bearded Vulture
+      birds:
+      - {fileID: 11400000, guid: 8e1f801452eeff348b046c57f33a175f, type: 2}
+      - {fileID: 11400000, guid: b2f5cbd8a73f5f8499b4e5b9d3f7b9e9, type: 2}
+      - {fileID: 11400000, guid: c7e32d685adfff443b13c512f054f634, type: 2}
+      - {fileID: 11400000, guid: f1cdb13df12bc8f4da0fc7df7250f7fe, type: 2}
+    - birdName: Long-tailed Tit
+      birds:
+      - {fileID: 11400000, guid: f203e758f8eb1284e84001431bc0cec0, type: 2}
+    - birdName: Snow Bunting
+      birds:
+      - {fileID: 11400000, guid: 20011e8484cf33841b81825cb9342e20, type: 2}
+      - {fileID: 11400000, guid: 9f1084f3226f8a24fbb427e4abf4754e, type: 2}
+      - {fileID: 11400000, guid: 40f1c578fe9536c4090d6068ce495da2, type: 2}
+      - {fileID: 11400000, guid: d78d6d6fd0a2e6e4a9276dc44ca5e930, type: 2}
+    - birdName: Chough
+      birds:
+      - {fileID: 11400000, guid: 2896ccde2820b1f4fa7103b81ec903ed, type: 2}
+      - {fileID: 11400000, guid: 820500deb820f4c4cbcf60c95645c30b, type: 2}
+      - {fileID: 11400000, guid: 58c1f8125a76bab4eadcd79b0f103c23, type: 2}
+  - birdClasses:
+    - birdName: Pharaoh Eagle-Owl
+      birds:
+      - {fileID: 11400000, guid: 92c5c322f0c0afd4b8f2c0521dfc0366, type: 2}
+    - birdName: Namaqua Dove
+      birds:
+      - {fileID: 11400000, guid: e45630f4a10c28948b41eb7e30460c51, type: 2}
+      - {fileID: 11400000, guid: 94f92367b3be5ae4b8a2fe3f63b7e7a8, type: 2}
+      - {fileID: 11400000, guid: 588db74c6336a57459079161860b2ad2, type: 2}
+    - birdName: ArabianBustard
+      birds:
+      - {fileID: 11400000, guid: 5dca8bf9e1c656b4783d5963593e8011, type: 2}
+    - birdName: Brown_necked Raven
+      birds:
+      - {fileID: 11400000, guid: f30aafa9af4a350489965e439c151bd3, type: 2}
+    - birdName: Southern Yellow-billed Hornbill
+      birds:
+      - {fileID: 11400000, guid: 308472ed31814fb4cb6de30fec18ee41, type: 2}
+    - birdName: Desert Finch
+      birds:
+      - {fileID: 11400000, guid: 2a01b2e126e2b1c4082aada9987b7067, type: 2}
+    - birdName: Cinnamon-breasted Bunting
+      birds:
+      - {fileID: 11400000, guid: cc53a47af7c472e4e9981d987b664e39, type: 2}
+      - {fileID: 11400000, guid: 61b5548b52f0cfb44b23ae0e19aeca06, type: 2}
+      - {fileID: 11400000, guid: 1b4551e3bfc76ea40aee54870e49b471, type: 2}

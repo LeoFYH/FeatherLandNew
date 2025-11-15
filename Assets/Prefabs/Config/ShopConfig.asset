@@ -1,0 +1,427 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3af29a6e86b04fca88f7fd9ffc287542, type: 3}
+  m_Name: ShopConfig
+  m_EditorClassIdentifier: 
+  startCoins: 10
+  coinsLimit: 500000
+  sceneEggs:
+  - eggs:
+    - eggSp: {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
+      price: 5
+      birdCount: 3
+      description: 
+      birds:
+      - birdType: 0
+        probability: 0.602
+      - birdType: 1
+        probability: 0.0596
+      - birdType: 13
+        probability: 0.0385
+      - birdType: 6
+        probability: 0.089
+      - birdType: 21
+        probability: 0.1132
+      - birdType: 22
+        probability: 0.0474
+      - birdType: 23
+        probability: 0.1054
+      - birdType: 2
+        probability: 0.0191
+      - birdType: 7
+        probability: 0.1065
+      - birdType: 8
+        probability: 0.0689
+      - birdType: 9
+        probability: 0.01
+      - birdType: 3
+        probability: 0.259
+      - birdType: 4
+        probability: 0.097
+      - birdType: 5
+        probability: 0.0848
+    - eggSp: {fileID: 710238443548197888, guid: 1170092e8fa8e1142a7e347132e8ea45, type: 3}
+      price: 8
+      birdCount: 3
+      description: 
+      birds:
+      - birdType: 14
+        probability: 0.01
+      - birdType: 31
+        probability: 0.01
+      - birdType: 32
+        probability: 0.23
+      - birdType: 18
+        probability: 0.1223
+      - birdType: 19
+        probability: 0.1657
+      - birdType: 12
+        probability: 0.01
+      - birdType: 26
+        probability: 0.3687
+      - birdType: 38
+        probability: 0.01
+      - birdType: 39
+        probability: 0.0734
+    - eggSp: {fileID: 2219571566158466069, guid: 066d2d923c5b99944aa6d9ca568d816f, type: 3}
+      price: 12
+      birdCount: 3
+      description: 
+      birds:
+      - birdType: 15
+        probability: 0.2345
+      - birdType: 28
+        probability: 0.3377
+      - birdType: 29
+        probability: 0.0296
+      - birdType: 30
+        probability: 0.1732
+      - birdType: 17
+        probability: 0.01
+      - birdType: 27
+        probability: 0.01
+      - birdType: 33
+        probability: 0.1951
+      - birdType: 34
+        probability: 0.01
+    - eggSp: {fileID: -8002347335681798773, guid: 3983a1dbff14cd040915f5a365b4942e, type: 3}
+      price: 15
+      birdCount: 3
+      description: 
+      birds:
+      - birdType: 15
+        probability: 0.5
+      - birdType: 29
+        probability: 0.5
+      - birdType: 30
+        probability: 0.5
+      - birdType: 7
+        probability: 0.5
+      - birdType: 11
+        probability: 0.5
+      - birdType: 2
+        probability: 0.5
+      - birdType: 27
+        probability: 0.5
+      - birdType: 33
+        probability: 0.5
+      - birdType: 34
+        probability: 0.5
+  - eggs:
+    - eggSp: {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
+      price: 10
+      birdCount: 3
+      description: 
+      birds:
+      - birdType: 44
+        probability: 0.4873
+      - birdType: 55
+        probability: 0.4873
+      - birdType: 56
+        probability: 0.4873
+      - birdType: 57
+        probability: 0.342
+      - birdType: 45
+        probability: 0.1
+      - birdType: 94
+        probability: 0.1
+      - birdType: 95
+        probability: 0.1
+      - birdType: 96
+        probability: 0.1
+      - birdType: 86
+        probability: 0.5027
+      - birdType: 87
+        probability: 0.5027
+      - birdType: 88
+        probability: 0.401
+    - eggSp: {fileID: 710238443548197888, guid: 1170092e8fa8e1142a7e347132e8ea45, type: 3}
+      price: 16
+      birdCount: 3
+      description: 
+      birds:
+      - birdType: 41
+        probability: 0.4937
+      - birdType: 61
+        probability: 0.4937
+      - birdType: 63
+        probability: 0.4937
+      - birdType: 18
+        probability: 0.0101
+      - birdType: 42
+        probability: 0.4962
+      - birdType: 44
+        probability: 0.1
+      - birdType: 94
+        probability: 0.05
+      - birdType: 86
+        probability: 0.05
+    - eggSp: {fileID: 2219571566158466069, guid: 066d2d923c5b99944aa6d9ca568d816f, type: 3}
+      price: 24
+      birdCount: 3
+      description: 
+      birds:
+      - birdType: 43
+        probability: 0.3264
+      - birdType: 58
+        probability: 0.3264
+      - birdType: 59
+        probability: 0.3264
+      - birdType: 60
+        probability: 0.3264
+      - birdType: 40
+        probability: 0.6736
+      - birdType: 64
+        probability: 0.6736
+      - birdType: 65
+        probability: 0.6736
+      - birdType: 66
+        probability: 0.6736
+      - birdType: 96
+        probability: 0.5
+      - birdType: 88
+        probability: 0.5
+      - birdType: 57
+        probability: 0.5
+  - eggs:
+    - eggSp: {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
+      price: 0
+      birdCount: 3
+      description: 
+      birds:
+      - birdType: 20
+        probability: 0.5
+      - birdType: 36
+        probability: 0.5
+      - birdType: 36
+        probability: 0.5
+      - birdType: 37
+        probability: 0.5
+    - eggSp: {fileID: 710238443548197888, guid: 1170092e8fa8e1142a7e347132e8ea45, type: 3}
+      price: 0
+      birdCount: 3
+      description: 
+      birds:
+      - birdType: 54
+        probability: 0.5
+      - birdType: 49
+        probability: 0.5
+      - birdType: 48
+        probability: 0.5
+    - eggSp: {fileID: 2219571566158466069, guid: 066d2d923c5b99944aa6d9ca568d816f, type: 3}
+      price: 0
+      birdCount: 3
+      description: 
+      birds:
+      - birdType: 51
+        probability: 0.5
+      - birdType: 53
+        probability: 0.5
+      - birdType: 50
+        probability: 0.5
+    - eggSp: {fileID: -8002347335681798773, guid: 3983a1dbff14cd040915f5a365b4942e, type: 3}
+      price: 0
+      birdCount: 3
+      description: 
+      birds:
+      - birdType: 51
+        probability: 0.5
+      - birdType: 54
+        probability: 0.5
+      - birdType: 50
+        probability: 0.5
+  sceneDecorations:
+  - decorations:
+    - icon: {fileID: 21300000, guid: e9d52e55e18fd6d41bd00d03f25be2aa, type: 3}
+      name: Plushie Bear
+      prefab: {fileID: 1044825183646240256, guid: f1b435be5ef71dd478baa788369922b4, type: 3}
+      description: Plushie BearDescription
+      price: 2000
+      scale: 0.3
+      iconScale: 0.8
+      maxQuantity: 1
+      sceneSprite: {fileID: 21300000, guid: e9d52e55e18fd6d41bd00d03f25be2aa, type: 3}
+      fixedPositions:
+      - {x: 2.24, y: -4.4, z: 0}
+      isGround: 0
+      isVisible: 1
+      preview: {fileID: 2252215622904973494, guid: e8d6224ed5ee28e43a5a9a9d32903735, type: 3}
+    - icon: {fileID: 21300000, guid: c93ed47603d0bd3408834d2122774f2b, type: 3}
+      name: Plushie Shark
+      prefab: {fileID: 1166340943317647624, guid: 6a22db7c7df822a418b7b3357b6a26cc, type: 3}
+      description: Plushie SharkDescription
+      price: 1000
+      scale: 0.5
+      iconScale: 0.8
+      maxQuantity: 1
+      sceneSprite: {fileID: 21300000, guid: c93ed47603d0bd3408834d2122774f2b, type: 3}
+      fixedPositions:
+      - {x: -7.86, y: -6, z: 0}
+      isGround: 0
+      isVisible: 1
+      preview: {fileID: 4211650801804232175, guid: a59790bee586e3e4e87a9af00ff998c8, type: 3}
+    - icon: {fileID: 21300000, guid: d5d1ad1d2cdb1974891da5b43ec0d45a, type: 3}
+      name: Lamp
+      prefab: {fileID: 2284361441789399348, guid: 5017403402a3ea34994e3c16a98e07b6, type: 3}
+      description: LampDescription
+      price: 600
+      scale: 0.2
+      iconScale: 0.5
+      maxQuantity: 2
+      sceneSprite: {fileID: 21300000, guid: d5d1ad1d2cdb1974891da5b43ec0d45a, type: 3}
+      fixedPositions:
+      - {x: -5.57, y: -2.41, z: 0}
+      - {x: 5.31, y: 0.69, z: 0}
+      isGround: 1
+      isVisible: 1
+      preview: {fileID: 8562949734922071416, guid: cc73f1987084237499be19bfc5c9e79e, type: 3}
+    - icon: {fileID: 2689972777894202174, guid: 712afaa5b2578144e9c0f98eddba4083, type: 3}
+      name: TingTing Guitar
+      prefab: {fileID: 2929794707948516033, guid: a1a17510931365b42b909558051e2577, type: 3}
+      description: TingTing GuitarDescription
+      price: 200
+      scale: 0.5
+      iconScale: 1
+      maxQuantity: 1
+      sceneSprite: {fileID: 2689972777894202174, guid: 712afaa5b2578144e9c0f98eddba4083, type: 3}
+      fixedPositions:
+      - {x: 3.933, y: -4.916, z: 0}
+      isGround: 0
+      isVisible: 1
+      preview: {fileID: 2249036447366657726, guid: 10fc14826a0ea1043838ec63412928db, type: 3}
+    - icon: {fileID: 5640074446529624515, guid: 9efacdbf502db7d469774f28435ecd67, type: 3}
+      name: Bonefire
+      prefab: {fileID: 7232351721812198875, guid: 7fc13f646e4448644a7830d5a0d78b17, type: 3}
+      description: 
+      price: 400
+      scale: 0.5
+      iconScale: 0.8
+      maxQuantity: 1
+      sceneSprite: {fileID: 5640074446529624515, guid: 9efacdbf502db7d469774f28435ecd67, type: 3}
+      fixedPositions:
+      - {x: 0.23, y: -4.56, z: 0}
+      isGround: 0
+      isVisible: 0
+      preview: {fileID: 2249036447366657726, guid: 10fc14826a0ea1043838ec63412928db, type: 3}
+  - decorations:
+    - icon: {fileID: 21300000, guid: 6ecc79e55459078409f056c5379c6643, type: 3}
+      name: Cozy Tent
+      prefab: {fileID: 3012990827443070192, guid: 2acff718fbd44f440ad6059637e71e93, type: 3}
+      description: Cozy TentDescription
+      price: 20000
+      scale: 0.5
+      iconScale: 0.6
+      maxQuantity: 1
+      sceneSprite: {fileID: 21300000, guid: 6ecc79e55459078409f056c5379c6643, type: 3}
+      fixedPositions:
+      - {x: -5.25, y: -4.48, z: 0}
+      isGround: 0
+      isVisible: 1
+      preview: {fileID: -7410131866019014177, guid: 263a4c1617cbdc542b4dc9351fe5e909, type: 3}
+    - icon: {fileID: 21300000, guid: f7f4e60f33d752d4f9f4af14cce23c35, type: 3}
+      name: Tiny Tree
+      prefab: {fileID: 4463724722352328304, guid: 5c023014a7ef5b24395ca124b75a5de7, type: 3}
+      description: Tiny TreeDescription
+      price: 10000
+      scale: 0.5
+      iconScale: 0.987
+      maxQuantity: 1
+      sceneSprite: {fileID: 21300000, guid: f7f4e60f33d752d4f9f4af14cce23c35, type: 3}
+      fixedPositions:
+      - {x: -8.56, y: -5.48, z: 0}
+      isGround: 0
+      isVisible: 1
+      preview: {fileID: -7410131866019014177, guid: 263a4c1617cbdc542b4dc9351fe5e909, type: 3}
+    - icon: {fileID: 21300000, guid: 73b6246cb4c7f9447a67ce1553764fbc, type: 3}
+      name: Carpet
+      prefab: {fileID: 7099460407733767612, guid: 994ac90f93e30fc4cbacf3de4525c2e0, type: 3}
+      description: CarpetDescription
+      price: 2000
+      scale: 0.5
+      iconScale: 0.5
+      maxQuantity: 1
+      sceneSprite: {fileID: 21300000, guid: 73b6246cb4c7f9447a67ce1553764fbc, type: 3}
+      fixedPositions:
+      - {x: -0.12, y: -4.27, z: 0}
+      isGround: 1
+      isVisible: 1
+      preview: {fileID: -7410131866019014177, guid: 263a4c1617cbdc542b4dc9351fe5e909, type: 3}
+    - icon: {fileID: 21300000, guid: f586a57a0ab00f94293fecf4dec37f16, type: 3}
+      name: Breezy Kite
+      prefab: {fileID: 5691537437215484801, guid: 5c04819a227ad214eb1a2ae12f9ab453, type: 3}
+      description: Breezy KiteDescription
+      price: 5000
+      scale: 0.5
+      iconScale: 0.38
+      maxQuantity: 1
+      sceneSprite: {fileID: 21300000, guid: f586a57a0ab00f94293fecf4dec37f16, type: 3}
+      fixedPositions:
+      - {x: -1.76, y: -4.47, z: 0}
+      isGround: 0
+      isVisible: 1
+      preview: {fileID: -7410131866019014177, guid: 263a4c1617cbdc542b4dc9351fe5e909, type: 3}
+  - decorations: []
+  tools:
+  - name: Food
+    isVisible: 1
+    selections:
+    - icon: {fileID: -1196716382573312124, guid: 2188b2416a3540547b887296393f1963, type: 3}
+      type: 0
+      selectionName: Seed
+      description: 
+      descriptionKey: SeedKey
+      price: 0
+      foodScale: 0.04
+      addCount: 0
+    - icon: {fileID: -3520649881568307650, guid: c53a4b854fc13b246880f045ae7f38b1, type: 3}
+      type: 0
+      selectionName: Grain
+      description: 
+      descriptionKey: GrainKey
+      price: 300
+      foodScale: 0.06
+      addCount: 0
+    - icon: {fileID: 4495422397181781673, guid: 2a09792a324f4874196f98f9c4eb95a7, type: 3}
+      type: 0
+      selectionName: Bean
+      description: 
+      descriptionKey: BeanKey
+      price: 300
+      foodScale: 0.06
+      addCount: 0
+  - name: Bird Max Count
+    isVisible: 0
+    selections:
+    - icon: {fileID: 0}
+      type: 1
+      selectionName: +5
+      description: 
+      descriptionKey: 
+      price: 0
+      foodScale: 1
+      addCount: 5
+    - icon: {fileID: 0}
+      type: 1
+      selectionName: +10
+      description: 
+      descriptionKey: 
+      price: 0
+      foodScale: 1
+      addCount: 10
+    - icon: {fileID: 0}
+      type: 1
+      selectionName: +15
+      description: 
+      descriptionKey: 
+      price: 0
+      foodScale: 1
+      addCount: 15

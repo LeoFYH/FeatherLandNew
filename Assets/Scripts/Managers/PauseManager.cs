@@ -12,7 +12,7 @@ public class PauseManager : PopupPanelBase
         {
             _group = gameObject.AddComponent<CanvasGroup>();
         }
-
+        
         _originScale = PauseMenu.transform.localScale;
     }
 
@@ -48,7 +48,8 @@ public class PauseManager : PopupPanelBase
     }
     public void closeTab()
     {
-        PauseMenu.SetActive(false);
+        //PauseMenu.SetActive(false);
+        OnHidePanel();
         isPause = false;
     }
 
