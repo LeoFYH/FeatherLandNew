@@ -21,6 +21,15 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
     private bool isSelecting = false;
     private Vector2 selectionStartPosition;
 
+    [Header("Selection Settings")]
+    public bool enableDragSelection = true;
+    public Color selectionColor = new Color(0.2f, 0.4f, 0.8f, 0.4f);
+
+    private bool isDraggingForSelection = false;
+    private Vector2 dragStartPosition;
+    private int dragStartCaretPosition;
+
+
     [System.Serializable]
     public struct KeyEventData
     {
@@ -99,6 +108,82 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
         DisableCaretRaycastTargets();
     }
 
+    private void UpdateCaretPosition(int newPosition)
+    {
+        if (inputField == null) return;
+        
+        inputField.caretPosition = newPosition;
+        
+        // Only clear selection if we're not in the middle of drag selection
+        if (!isDraggingForSelection)
+        {
+            inputField.selectionAnchorPosition = newPosition;
+            inputField.selectionFocusPosition = newPosition;
+            inputField.ForceLabelUpdate();
+        }
+    }
+
+    public void HandleDragSelection(PointerEventData eventData)
+    {
+        if (!enableDragSelection || !isFocused || inputField == null) return;
+
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            if (!isDraggingForSelection)
+            {
+                // Start drag selection
+                isDraggingForSelection = true;
+                dragStartPosition = eventData.position;
+                dragStartCaretPosition = inputField.caretPosition;
+                
+                // Initialize selection
+                inputField.selectionAnchorPosition = dragStartCaretPosition;
+                inputField.selectionFocusPosition = dragStartCaretPosition;
+                
+                Debug.Log($"[HookTMPInputHandler] Started drag selection from position: {dragStartCaretPosition}");
+            }
+            else
+            {
+                // Update selection during drag
+                SetCaretToDragPosition(eventData.position);
+                
+                Debug.Log($"[HookTMPInputHandler] Drag selection: {GetSelectionStart()}-{GetSelectionEnd()}");
+            }
+        }
+    }
+
+    public void EndDragSelection()
+    {
+        if (isDraggingForSelection)
+        {
+            isDraggingForSelection = false;
+            Debug.Log($"[HookTMPInputHandler] Ended drag selection. Final selection: {GetSelectionStart()}-{GetSelectionEnd()}");
+        }
+    }
+
+    private void SetCaretToDragPosition(Vector2 screenPosition)
+    {
+        if (inputField == null || inputField.textComponent == null) return;
+
+        TMP_Text textComponent = inputField.textComponent;
+        RectTransform textRectTransform = textComponent.rectTransform;
+
+        Vector2 localMousePosition;
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            textRectTransform, 
+            screenPosition, 
+            null, 
+            out localMousePosition))
+        {
+            int caretPosition = GetCaretPositionFromMousePosition(textComponent, localMousePosition);
+            inputField.caretPosition = caretPosition;
+            inputField.selectionFocusPosition = caretPosition;
+            
+            // Force update to show selection
+            inputField.ForceLabelUpdate();
+        }
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
         HandleInputFieldClick(eventData);
@@ -119,19 +204,35 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
         if (autoActivateOnClick)
         {
             ActivateInputField();
-            
-            if (enableClickToPositionCaret)
-            {
-                SetCaretToClickPosition(eventData.position);
-            }
         }
 
+        // Always position caret on click (if enabled)
+        if (enableClickToPositionCaret)
+        {
+            SetCaretToClickPosition(eventData.position);
+        }
+
+        // Handle selection logic
         if (selectAllOnClick && isFocused)
         {
             SelectAllText();
         }
+        else
+        {
+            // For regular clicks (not drags), clear any existing selection
+            // and just position the caret
+            if (!isDraggingForSelection)
+            {
+                // Clear selection on single click
+                inputField.selectionAnchorPosition = inputField.caretPosition;
+                inputField.selectionFocusPosition = inputField.caretPosition;
+                
+                // Force update to clear selection visually
+                inputField.ForceLabelUpdate();
+            }
+        }
 
-        Debug.Log($"[HookTMPInputHandler] TMP InputField clicked: {gameObject.name}");
+        Debug.Log($"[HookTMPInputHandler] TMP InputField clicked: {gameObject.name}, Caret: {inputField.caretPosition}");
     }
 
     public void SetCaretToClickPosition(Vector2 screenPosition)
@@ -151,11 +252,15 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
             int caretPosition = GetCaretPositionFromMousePosition(textComponent, localMousePosition);
             inputField.caretPosition = caretPosition;
             
-            // Clear selection on regular click
+            // IMPORTANT: Clear selection on regular click
+            // Set both anchor and focus to the same position to clear selection
             inputField.selectionAnchorPosition = caretPosition;
             inputField.selectionFocusPosition = caretPosition;
             
-            Debug.Log($"[HookTMPInputHandler] Caret positioned at: {caretPosition}");
+            // Force update to clear any visual selection
+            inputField.ForceLabelUpdate();
+            
+            Debug.Log($"[HookTMPInputHandler] Caret positioned at: {caretPosition}, Selection cleared");
         }
     }
 
@@ -166,20 +271,33 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
         if (characterIndex >= 0 && characterIndex < textComponent.textInfo.characterCount)
         {
             TMP_CharacterInfo charInfo = textComponent.textInfo.characterInfo[characterIndex];
-            float charMidpoint = charInfo.bottomLeft.x + (charInfo.topRight.x - charInfo.bottomLeft.x) / 2f;
             
-            if (localPosition.x > charMidpoint)
+            // Check if character is visible (space characters might have zero width)
+            if (charInfo.isVisible)
             {
-                return characterIndex + 1;
+                float charMidpoint = charInfo.bottomLeft.x + (charInfo.topRight.x - charInfo.bottomLeft.x) / 2f;
+                
+                if (localPosition.x > charMidpoint)
+                {
+                    return characterIndex + 1;
+                }
+                else
+                {
+                    return characterIndex;
+                }
             }
             else
             {
+                // For invisible characters, just return the position
                 return characterIndex;
             }
         }
         
+        // Handle edge cases
         if (localPosition.x < 0)
             return 0;
+        else if (localPosition.x > textComponent.rectTransform.rect.width)
+            return inputField.text.Length;
         else
             return inputField.text.Length;
     }
@@ -354,9 +472,6 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
                 
                 inputField.caretPosition = newPosition;
                 inputField.selectionFocusPosition = newPosition;
-                
-                // Force the selection to be visible
-                inputField.ForceLabelUpdate();
             }
             else
             {
@@ -364,7 +479,11 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
                 inputField.caretPosition = newPosition;
                 inputField.selectionAnchorPosition = newPosition;
                 inputField.selectionFocusPosition = newPosition;
+                isDraggingForSelection = false; // Clear drag state
             }
+            
+            // Force update to show selection
+            inputField.ForceLabelUpdate();
             
             Debug.Log($"[HookTMPInputHandler] Arrow key - Caret: {inputField.caretPosition}, Selection: {inputField.selectionAnchorPosition}-{inputField.selectionFocusPosition}");
         }
@@ -704,7 +823,13 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
     private void OnDeselect(string text)
     {
         isFocused = false;
+        isDraggingForSelection = false;
         DeactivateInputField();
+    }
+
+    public void ClearDragState()
+    {
+        isDraggingForSelection = false;
     }
 
     public void SubmitInput()

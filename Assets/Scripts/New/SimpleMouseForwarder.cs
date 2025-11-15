@@ -59,6 +59,9 @@ public class SimpleMouseForwarder : ViewControllerBase
     private static LowLevelKeyboardProc _keyboardProc = KeyboardHookCallback;
     private static GameObject _focusedTMPInputField = null;
 
+    private static bool isLeftMouseDragging = false;
+    private static Vector2 dragStartPosition;
+
     [StructLayout(LayoutKind.Sequential)]
     private struct POINT
     {
@@ -153,7 +156,7 @@ public class SimpleMouseForwarder : ViewControllerBase
     [MonoPInvokeCallback(typeof(LowLevelKeyboardProc))]
     private static IntPtr KeyboardHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
     {
-        if (nCode >= 0 && instance != null && instance.enableForwarding && _focusedTMPInputField != null)
+        if (nCode >= 0 && instance != null && instance.enableForwarding && _focusedTMPInputField != null && (instance.GetForegroundWindowTitle() == "Program Manager" || instance.GetForegroundWindowTitle() == string.Empty))
         {
             int message = wParam.ToInt32();
             
@@ -336,7 +339,7 @@ private static char MapVirtualKeyToCharacter(uint vkCode, bool shiftPressed, boo
     [MonoPInvokeCallback(typeof(LowLevelMouseProc))]
     private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
     {
-        if (nCode >= 0 && instance != null && instance.enableForwarding)
+        if (nCode >= 0 && instance != null && instance.enableForwarding && (instance.GetForegroundWindowTitle() == "Program Manager" || instance.GetForegroundWindowTitle() == string.Empty))
         {
             int message = wParam.ToInt32();
             MSLLHOOKSTRUCT hookStruct = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
@@ -347,7 +350,9 @@ private static char MapVirtualKeyToCharacter(uint vkCode, bool shiftPressed, boo
                 leftButtonDown = true;
                 mousePosition = currentMousePosition;
                 isMouseDown = true;
+                isLeftMouseDragging = false;
                 lastMousePosition = currentMousePosition;
+                dragStartPosition = currentMousePosition;
                 currentDragTarget = FindDragTarget(currentMousePosition);
                 
                 if (instance.showDebugLog)
@@ -357,20 +362,91 @@ private static char MapVirtualKeyToCharacter(uint vkCode, bool shiftPressed, boo
             }
             else if (message == WM_MOUSEMOVE)
             {
-                // Track mouse movement for dragging
-                if (isMouseDown)
+                // Check if we're starting a drag (mouse moved while button is down)
+                if (isMouseDown && !isLeftMouseDragging)
                 {
-                    // Forward drag movement to UI
-                    if (currentDragTarget != null)
+                    float dragThreshold = 3f; // Reduced threshold for better responsiveness
+                    if (Vector2.Distance(currentMousePosition, dragStartPosition) > dragThreshold)
                     {
-                        ForwardDragToUI(currentDragTarget);
+                        isLeftMouseDragging = true;
+                        
+                        // If we're dragging over a TMP input field, start text selection
+                        if (_focusedTMPInputField != null)
+                        {
+                            HookTMPInputHandler handler = _focusedTMPInputField.GetComponent<HookTMPInputHandler>();
+                            if (handler != null && handler.enableDragSelection && handler.IsFocused())
+                            {
+                                // Create pointer event data for the drag
+                                PointerEventData pointerData = new PointerEventData(EventSystem.current)
+                                {
+                                    position = currentMousePosition,
+                                    button = PointerEventData.InputButton.Left,
+                                    delta = currentMousePosition - lastMousePosition
+                                };
+                                
+                                handler.HandleDragSelection(pointerData);
+                                
+                                if (instance.showDebugLog)
+                                {
+                                    Debug.Log($"[SimpleMouseForwarder] Started drag selection at: {currentMousePosition}");
+                                }
+                            }
+                        }
                     }
+                }
+                
+                // Continue drag selection if active
+                if (isLeftMouseDragging && _focusedTMPInputField != null)
+                {
+                    HookTMPInputHandler handler = _focusedTMPInputField.GetComponent<HookTMPInputHandler>();
+                    if (handler != null && handler.enableDragSelection && handler.IsFocused())
+                    {
+                        PointerEventData pointerData = new PointerEventData(EventSystem.current)
+                        {
+                            position = currentMousePosition,
+                            button = PointerEventData.InputButton.Left,
+                            delta = currentMousePosition - lastMousePosition
+                        };
+                        
+                        handler.HandleDragSelection(pointerData);
+                    }
+                }
+                
+                // Track mouse movement for other dragging (sliders, etc.)
+                if (isMouseDown && currentDragTarget != null)
+                {
+                    ForwardDragToUI(currentDragTarget);
                 }
                 lastMousePosition = currentMousePosition;
             }
             else if (message == WM_LBUTTONUP)
             {
+                if (isLeftMouseDragging && _focusedTMPInputField != null)
+                {
+                    // End drag selection
+                    HookTMPInputHandler handler = _focusedTMPInputField.GetComponent<HookTMPInputHandler>();
+                    if (handler != null)
+                    {
+                        handler.EndDragSelection();
+                        
+                        if (instance.showDebugLog)
+                        {
+                            Debug.Log($"[SimpleMouseForwarder] Ended drag selection");
+                        }
+                    }
+                }
+                else if (!isLeftMouseDragging && _focusedTMPInputField != null)
+                {
+                    // This was a simple click, not a drag - ensure selection is cleared
+                    HookTMPInputHandler handler = _focusedTMPInputField.GetComponent<HookTMPInputHandler>();
+                    if (handler != null)
+                    {
+                        handler.ClearDragState();
+                    }
+                }
+                
                 isMouseDown = false;
+                isLeftMouseDragging = false;
                 currentDragTarget = null;
             }
             else if (message == WM_RBUTTONDOWN)
@@ -406,19 +482,6 @@ private static char MapVirtualKeyToCharacter(uint vkCode, bool shiftPressed, boo
         return CallNextHookEx(_hookID, nCode, wParam, lParam);
     }
 
-    private static void SendTextToTMPInputField(string text)
-    {
-        if (_focusedTMPInputField == null) return;
-
-        // Try HookTMPInputHandler first
-        HookTMPInputHandler handler = _focusedTMPInputField.GetComponent<HookTMPInputHandler>();
-        if (handler != null)
-        {
-            handler.ReceiveKeyboardInput(text);
-            return;
-        }
-    }
-
     private static GameObject FindDragTarget(Vector2 screenPosition)
     {
         if (EventSystem.current == null) return null;
@@ -434,6 +497,13 @@ private static char MapVirtualKeyToCharacter(uint vkCode, bool shiftPressed, boo
         
         foreach (var result in raycastResults)
         {
+            // Look for TMP input fields that support drag selection
+            HookTMPInputHandler tmpHandler = result.gameObject.GetComponent<HookTMPInputHandler>();
+            if (tmpHandler != null && tmpHandler.enableDragSelection && tmpHandler.IsFocused())
+            {
+                return result.gameObject;
+            }
+            
             // Look for slider drag handlers
             SliderBarClickHandler sliderHandler = result.gameObject.GetComponent<SliderBarClickHandler>();
             if (sliderHandler != null)
@@ -443,6 +513,19 @@ private static char MapVirtualKeyToCharacter(uint vkCode, bool shiftPressed, boo
         }
         
         return null;
+    }
+
+    private static void SendTextToTMPInputField(string text)
+    {
+        if (_focusedTMPInputField == null) return;
+
+        // Try HookTMPInputHandler first
+        HookTMPInputHandler handler = _focusedTMPInputField.GetComponent<HookTMPInputHandler>();
+        if (handler != null)
+        {
+            handler.ReceiveKeyboardInput(text);
+            return;
+        }
     }
 
     private static void ForwardDragToUI(GameObject target)
@@ -531,6 +614,8 @@ private static char MapVirtualKeyToCharacter(uint vkCode, bool shiftPressed, boo
             Debug.LogWarning("[SimpleMouseForwarder] 场景中没有 EventSystem！");
             return;
         }
+
+        _focusedTMPInputField = null;
         
         PointerEventData pointerData = new PointerEventData(EventSystem.current)
         {
