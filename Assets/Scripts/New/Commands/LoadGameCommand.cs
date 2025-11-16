@@ -121,8 +121,8 @@ namespace BirdGame
                 
             this.GetSystem<IGameSystem>().CreateDecorations();
             
-            // 设置默认的晴天环境音
-            this.GetSystem<IAudioSystem>().SetEnvironmentVolumesByWeather(0);
+            // 设置默认的晴天环境音（初始化时不使用淡入淡出，直接切换）
+            this.GetSystem<IAudioSystem>().SetEnvironmentVolumesByWeather(0, useFade: false);
                 
             this.GetSystem<IUISystem>().ShowPanel(UIPanel.MenuPanel);
 

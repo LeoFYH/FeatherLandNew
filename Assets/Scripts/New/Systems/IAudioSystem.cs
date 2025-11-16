@@ -62,7 +62,8 @@ namespace BirdGame
         /// 根据天气索引设置环境音音量
         /// </summary>
         /// <param name="weatherIndex">天气索引：0=晴天, 1=雨天, 2=夜晚, 3=黄昏, 4=其他</param>
-        void SetEnvironmentVolumesByWeather(int weatherIndex);
+        /// <param name="useFade">是否使用淡入淡出效果，默认为true</param>
+        void SetEnvironmentVolumesByWeather(int weatherIndex, bool useFade = true);
     }
 
     public class AudioSystem : AbstractSystem, IAudioSystem
@@ -389,7 +390,7 @@ namespace BirdGame
             //Debug.Log("🌍 环境音效初始化完成！Bird环境音设为100%，Wind环境音设为100%，其他环境音设为0");
         }
 
-        public void SetEnvironmentVolumesByWeather(int weatherIndex)
+        public void SetEnvironmentVolumesByWeather(int weatherIndex, bool useFade = true)
         {
             InitEnvironments();
             
@@ -484,7 +485,7 @@ namespace BirdGame
                     break;
             }
             
-            // 对每个环境音启动淡入淡出协程
+            // 对每个环境音设置音量
             for (int i = 0; i < environmentCount && i < environmentAudios.Count; i++)
             {
                 float targetVolume = targetVolumes.ContainsKey(i) ? targetVolumes[i] : 0.0f;
@@ -500,20 +501,32 @@ namespace BirdGame
                     }
                     radioModel.EnvironmentVolumes[i].Value = targetVolume;
                 }
-                else
+                else if (useFade)
                 {
-                    // 立即设置目标值，让 UI 立即更新
+                    // 使用淡入淡出效果
+                    // 先启动淡入淡出协程并添加到字典（这样监听器就不会直接设置音量）
+                    var coroutine = this.GetSystem<IMonoSystem>().StartCoroutine(
+                        FadeEnvironmentVolume(i, currentVolume, targetVolume));
+                    environmentFadeCoroutines[i] = coroutine;
+                    
+                    // 然后立即设置目标值，让 UI 立即更新
+                    // 由于协程已经在字典中，监听器不会直接设置音量，而是由协程控制
                     // 如果目标值是0，先设置为一个很小的值，再设置回0，确保监听器被触发
                     if (targetVolume == 0.0f && currentVolume == 0.0f)
                     {
                         radioModel.EnvironmentVolumes[i].Value = 0.0001f;
                     }
                     radioModel.EnvironmentVolumes[i].Value = targetVolume;
-                    
-                    // 启动淡入淡出协程（协程会平滑过渡音频音量，但不会再次触发 EnvironmentVolumes 的更新）
-                    var coroutine = this.GetSystem<IMonoSystem>().StartCoroutine(
-                        FadeEnvironmentVolume(i, currentVolume, targetVolume));
-                    environmentFadeCoroutines[i] = coroutine;
+                }
+                else
+                {
+                    // 不使用淡入淡出，直接设置
+                    // 如果目标值是0，先设置为一个很小的值，再设置回0，确保监听器被触发
+                    if (targetVolume == 0.0f && currentVolume == 0.0f)
+                    {
+                        radioModel.EnvironmentVolumes[i].Value = 0.0001f;
+                    }
+                    radioModel.EnvironmentVolumes[i].Value = targetVolume;
                 }
             }
         }
