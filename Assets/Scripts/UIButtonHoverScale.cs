@@ -199,7 +199,7 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
                 
                 if (mouseIsOverButton)
                 {
-                    Debug.Log($"[{gameObject.name}] 鼠标悬停中 - 距离: {distance:F2}, 检测范围: {detectionRange}");
+                    //Debug.Log($"[{gameObject.name}] 鼠标悬停中 - 距离: {distance:F2}, 检测范围: {detectionRange}");
                 }
             }
         }
@@ -224,14 +224,14 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         // 处理鼠标点击事件（独立于tooltip逻辑）
         if (isHovering && Input.GetMouseButtonDown(0) && !disabled)
         {
-            Debug.Log($"[{gameObject.name}] 鼠标点击检测到，触发onClick事件");
+            //Debug.Log($"[{gameObject.name}] 鼠标点击检测到，触发onClick事件");
             try
             {
                 onClick?.Invoke();
             }
             catch (System.Exception ex)
             {
-                Debug.LogError($"[{gameObject.name}] onClick事件执行失败: {ex.Message}");
+                //Debug.LogError($"[{gameObject.name}] onClick事件执行失败: {ex.Message}");
             }
         }
 
