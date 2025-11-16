@@ -217,23 +217,29 @@ namespace BirdGame
         public void PlayEffect(EffectType type)
         {
             AudioClip clip = null;
+            AudioMixerGroup group = null;
             switch (type)
             {
                 case EffectType.Click: 
-                    clip = this.GetModel<IConfigModel>().RadioConfig.click;
+                    clip = this.GetModel<IConfigModel>().RadioConfig.click.songFile;
+                    group = this.GetModel<IConfigModel>().RadioConfig.click.group;
                     break;
                 case EffectType.DropFood:
-                    clip = this.GetModel<IConfigModel>().RadioConfig.dropFood;
+                    clip = this.GetModel<IConfigModel>().RadioConfig.dropFood.songFile;
+                    group = this.GetModel<IConfigModel>().RadioConfig.dropFood.group;
                     break;
                 case EffectType.Stroke:
-                    clip = this.GetModel<IConfigModel>().RadioConfig.stroke;
+                    clip = this.GetModel<IConfigModel>().RadioConfig.stroke.songFile;
+                    group = this.GetModel<IConfigModel>().RadioConfig.stroke.group;
                     break;
                 case EffectType.GrowUp:
-                    clip = this.GetModel<IConfigModel>().RadioConfig.growUp;
+                    clip = this.GetModel<IConfigModel>().RadioConfig.growUp.songFile;
+                    group = this.GetModel<IConfigModel>().RadioConfig.growUp.group;
                     break;
             }
             
             effectAudio.clip = clip;
+            effectAudio.outputAudioMixerGroup = group;
             //撒食物音效调整
             effectAudio.volume = 0.22f; //降低音量0.22
             
@@ -359,8 +365,8 @@ namespace BirdGame
                     defaultVolume = 1.0f; // Wind环境音设为100%
                     //Debug.Log($"🌪️ 设置Wind环境音效音量为: {defaultVolume * 100}%");
                 }
-
-                audio.outputAudioMixerGroup = config.environments[i].mixer.FindMatchingGroups(string.Empty)[0];
+                
+                audio.outputAudioMixerGroup = config.environments[i].group;
                 // 如果用户没有设置过这个环境音效的音量，使用默认值
                 if (saveModel.environmentVolumes[i] == 0f)
                 {
@@ -384,7 +390,7 @@ namespace BirdGame
                 });
             }
 
-            effectAudio.outputAudioMixerGroup = config.effectMixer.FindMatchingGroups(String.Empty)[0];
+            //effectAudio.outputAudioMixerGroup = config.effectMixer.FindMatchingGroups(String.Empty)[0];
             
             isEnvironmentInited = true;
             //Debug.Log("🌍 环境音效初始化完成！Bird环境音设为100%，Wind环境音设为100%，其他环境音设为0");

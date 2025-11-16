@@ -3,7 +3,6 @@ using System.Text;
 using QFramework;
 using TMPro;
 using UnityEngine;
-using Rewired;
 
 namespace BirdGame
 {
@@ -16,12 +15,10 @@ namespace BirdGame
         
         private TMP_InputField inputField;
         private SystemLanguage currentLanguage;
-        private Player rewiredPlayer;
         
         private void Awake()
         {
             inputField = GetComponent<TMP_InputField>();
-            rewiredPlayer = ReInput.players.GetPlayer(playerId);
         }
         
         private void Start()
@@ -42,7 +39,7 @@ namespace BirdGame
         
         private void Update()
         {
-            if (inputField.isFocused && rewiredPlayer.GetButtonDown(newlineActionName))
+            if (inputField.isFocused && Input.GetKeyDown(KeyCode.Return))
             {
                 InsertNewline();
             }

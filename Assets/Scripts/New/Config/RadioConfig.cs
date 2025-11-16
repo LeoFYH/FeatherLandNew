@@ -11,13 +11,12 @@ namespace BirdGame
         public AudioItem[] musicItems;
         [TableList(ShowIndexLabels = true)]
         public AudioItem[] environments;
-
+        
         [Title("音效"), Space(10)] 
-        public AudioMixer effectMixer;
-        public AudioClip click;
-        public AudioClip dropFood;
-        public AudioClip stroke;
-        public AudioClip growUp;
+        public AudioItem click;
+        public AudioItem dropFood;
+        public AudioItem stroke;
+        public AudioItem growUp;
 
         [Title("Clock提示音乐库"), Space(10), TableList(ShowIndexLabels = true, AlwaysExpanded = true)] 
         public AudioItem[] alertClips;
@@ -30,6 +29,7 @@ namespace BirdGame
         public string songName;
         [LabelText("音乐文件")]
         public AudioClip songFile;
-        public AudioMixer mixer;
+        public string key;
+        public AudioMixerGroup group;
     }
 }
