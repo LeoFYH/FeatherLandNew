@@ -233,12 +233,75 @@ namespace BirdGame
             });
             radioModel.Volume.Value = saveModel.MusicSettingData.bgmVolume;
             volumeSlider.value = radioModel.Volume.Value;
+            
+            // 确保环境音已初始化
+            this.GetSystem<IAudioSystem>().InitEnvironments();
+            
+            // 根据当前天气同步环境音音量
+            SyncEnvironmentVolumesByWeather();
+            
+            // Debug所有环境音的音量
+            DebugEnvironmentVolumes();
             // if (!musicView.activeSelf)
             //     musicView.SetActive(true);
             // if(environmentView.activeSelf)
             //     environmentView.SetActive(false);
             // environmentButton.gameObject.SetActive(true);
             // musicButton.gameObject.SetActive(false);
+        }
+        
+        /// <summary>
+        /// 根据当前天气同步环境音音量
+        /// </summary>
+        private void SyncEnvironmentVolumesByWeather()
+        {
+            var gameModel = this.GetModel<IGameModel>();
+            int currentWeatherIndex = gameModel.WeatherIndex.Value;
+            
+            // 根据当前天气索引同步环境音音量
+            if (currentWeatherIndex == 0 || currentWeatherIndex == 1 || currentWeatherIndex == 2 || currentWeatherIndex == 3 || currentWeatherIndex == 4)
+            {
+                this.GetSystem<IAudioSystem>().SetEnvironmentVolumesByWeather(currentWeatherIndex);
+            }
+        }
+        
+        /// <summary>
+        /// Debug所有环境音的音量
+        /// </summary>
+        private void DebugEnvironmentVolumes()
+        {
+            var radioModel = this.GetModel<IRadioModel>();
+            var configModel = this.GetModel<IConfigModel>();
+            
+            // 确保环境音已初始化
+            this.GetSystem<IAudioSystem>().InitEnvironments();
+            
+            if (configModel?.RadioConfig?.environments == null)
+            {
+                Debug.LogWarning("RadioConfig或environments未初始化");
+                return;
+            }
+
+            Debug.Log("========== 环境音音量 Debug ==========");
+            
+            for (int i = 0; i < configModel.RadioConfig.environments.Length; i++)
+            {
+                string environmentName = configModel.RadioConfig.environments[i].songName;
+                float volume = 0f;
+                
+                if (i < radioModel.EnvironmentVolumes.Count)
+                {
+                    volume = radioModel.EnvironmentVolumes[i].Value;
+                }
+                else
+                {
+                    Debug.LogWarning($"环境音索引 {i} 超出范围，EnvironmentVolumes.Count = {radioModel.EnvironmentVolumes.Count}");
+                }
+                
+                Debug.Log($"环境音 [{i}] {environmentName}: {volume * 100:F2}% (值: {volume:F4})");
+            }
+            
+            Debug.Log("=====================================");
         }
     }
 }

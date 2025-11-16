@@ -57,6 +57,12 @@ namespace BirdGame
         void StopAlert();
 
         void InitEnvironments();
+        
+        /// <summary>
+        /// 根据天气索引设置环境音音量
+        /// </summary>
+        /// <param name="weatherIndex">天气索引：0=晴天, 1=雨天, 2=夜晚, 3=黄昏, 4=其他</param>
+        void SetEnvironmentVolumesByWeather(int weatherIndex);
     }
 
     public class AudioSystem : AbstractSystem, IAudioSystem
@@ -375,6 +381,129 @@ namespace BirdGame
             
             isEnvironmentInited = true;
             //Debug.Log("🌍 环境音效初始化完成！Bird环境音设为100%，Wind环境音设为100%，其他环境音设为0");
+        }
+
+        public void SetEnvironmentVolumesByWeather(int weatherIndex)
+        {
+            InitEnvironments();
+            
+            var configModel = this.GetModel<IConfigModel>();
+            if (configModel?.RadioConfig?.environments == null)
+            {
+                Debug.LogWarning("RadioConfig或environments未初始化，无法设置环境音音量");
+                return;
+            }
+            
+            int environmentCount = configModel.RadioConfig.environments.Length;
+            
+            // 确保EnvironmentVolumes列表有足够的元素
+            while (radioModel.EnvironmentVolumes.Count < environmentCount)
+            {
+                radioModel.EnvironmentVolumes.Add(new BindableProperty<float>());
+            }
+            
+            switch (weatherIndex)
+            {
+                case 0: // 晴天
+                    // 先设置所有环境音为0
+                    for (int i = 0; i < environmentCount; i++)
+                    {
+                        if (i < radioModel.EnvironmentVolumes.Count)
+                        {
+                            // 如果当前值已经是0，先设置为一个很小的值，再设置回0，确保监听器被触发
+                            if (radioModel.EnvironmentVolumes[i].Value == 0.0f)
+                            {
+                                radioModel.EnvironmentVolumes[i].Value = 0.0001f;
+                            }
+                            radioModel.EnvironmentVolumes[i].Value = 0.0f;
+                        }
+                    }
+                    // 然后设置索引1为0.0589
+                    if (environmentCount > 1 && radioModel.EnvironmentVolumes.Count > 1)
+                    {
+                        radioModel.EnvironmentVolumes[1].Value = 0.0589f;
+                    }
+                    break;
+                    
+                case 1: // 雨天
+                    // 先设置所有环境音为0
+                    for (int i = 0; i < environmentCount; i++)
+                    {
+                        if (i < radioModel.EnvironmentVolumes.Count)
+                        {
+                            // 如果当前值已经是0，先设置为一个很小的值，再设置回0，确保监听器被触发
+                            if (radioModel.EnvironmentVolumes[i].Value == 0.0f)
+                            {
+                                radioModel.EnvironmentVolumes[i].Value = 0.0001f;
+                            }
+                            radioModel.EnvironmentVolumes[i].Value = 0.0f;
+                        }
+                    }
+                    // 然后设置索引2为0.4578
+                    if (environmentCount > 2 && radioModel.EnvironmentVolumes.Count > 2)
+                    {
+                        radioModel.EnvironmentVolumes[2].Value = 0.4578f;
+                    }
+                    break;
+                    
+                case 2: // 夜晚
+                    // 设置所有环境音音量为0
+                    for (int i = 0; i < environmentCount; i++)
+                    {
+                        if (i < radioModel.EnvironmentVolumes.Count)
+                        {
+                            // 如果当前值已经是0，先设置为一个很小的值，再设置回0，确保监听器被触发
+                            if (radioModel.EnvironmentVolumes[i].Value == 0.0f)
+                            {
+                                radioModel.EnvironmentVolumes[i].Value = 0.0001f;
+                            }
+                            radioModel.EnvironmentVolumes[i].Value = 0.0f;
+                        }
+                    }
+                    break;
+                    
+                case 3: // 黄昏
+                    // 先设置所有环境音为0
+                    for (int i = 0; i < environmentCount; i++)
+                    {
+                        if (i < radioModel.EnvironmentVolumes.Count)
+                        {
+                            // 如果当前值已经是0，先设置为一个很小的值，再设置回0，确保监听器被触发
+                            if (radioModel.EnvironmentVolumes[i].Value == 0.0f)
+                            {
+                                radioModel.EnvironmentVolumes[i].Value = 0.0001f;
+                            }
+                            radioModel.EnvironmentVolumes[i].Value = 0.0f;
+                        }
+                    }
+                    // 然后设置索引1为0.0674
+                    if (environmentCount > 1 && radioModel.EnvironmentVolumes.Count > 1)
+                    {
+                        radioModel.EnvironmentVolumes[1].Value = 0.0674f;
+                    }
+                    break;
+                    
+                case 4: // 天气索引4
+                    // 先设置所有环境音为0
+                    for (int i = 0; i < environmentCount; i++)
+                    {
+                        if (i < radioModel.EnvironmentVolumes.Count)
+                        {
+                            // 如果当前值已经是0，先设置为一个很小的值，再设置回0，确保监听器被触发
+                            if (radioModel.EnvironmentVolumes[i].Value == 0.0f)
+                            {
+                                radioModel.EnvironmentVolumes[i].Value = 0.0001f;
+                            }
+                            radioModel.EnvironmentVolumes[i].Value = 0.0f;
+                        }
+                    }
+                    // 然后设置索引0为0.2259
+                    if (environmentCount > 0 && radioModel.EnvironmentVolumes.Count > 0)
+                    {
+                        radioModel.EnvironmentVolumes[0].Value = 0.2259f;
+                    }
+                    break;
+            }
         }
     }
 }

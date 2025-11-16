@@ -120,6 +120,9 @@ namespace BirdGame
             this.GetSystem<IBirdSystem>().GenerateBirdsFromSave();
                 
             this.GetSystem<IGameSystem>().CreateDecorations();
+            
+            // 设置默认的晴天环境音
+            this.GetSystem<IAudioSystem>().SetEnvironmentVolumesByWeather(0);
                 
             this.GetSystem<IUISystem>().ShowPanel(UIPanel.MenuPanel);
 
