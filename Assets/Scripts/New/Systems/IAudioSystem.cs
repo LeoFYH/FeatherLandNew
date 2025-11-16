@@ -76,6 +76,8 @@ namespace BirdGame
         private bool isEnvironmentInited = false;
         private GameObject obj;
         private Coroutine musicPlayingCoroutine = null;
+        private Dictionary<int, Coroutine> environmentFadeCoroutines = new Dictionary<int, Coroutine>();
+        private const float FADE_DURATION = 1.0f; // 淡入淡出持续时间（秒）
         
         protected override void OnInit()
         {
@@ -336,7 +338,7 @@ namespace BirdGame
             for (int i = 0; i < config.environments.Length; i++)
             {
                 var audio = obj.AddComponent<AudioSource>();
-                environmentAudios.Add(obj.AddComponent<AudioSource>());
+                environmentAudios.Add(audio);
                 while (saveModel.environmentVolumes.Count <= i)
                 {
                     saveModel.environmentVolumes.Add(0);
@@ -373,7 +375,11 @@ namespace BirdGame
                 radioModel.EnvironmentVolumes[index].Register(v =>
                 {
                     saveModel.environmentVolumes[index] = v;
-                    audio.volume = v * radioModel.Volume.Value;
+                    // 如果该环境音正在淡入淡出，不直接设置音量，让协程控制
+                    if (!environmentFadeCoroutines.ContainsKey(index))
+                    {
+                        audio.volume = v * radioModel.Volume.Value;
+                    }
                 });
             }
 
@@ -402,26 +408,31 @@ namespace BirdGame
                 radioModel.EnvironmentVolumes.Add(new BindableProperty<float>());
             }
             
+            // 停止所有正在进行的淡入淡出协程
+            foreach (var kvp in environmentFadeCoroutines)
+            {
+                if (kvp.Value != null)
+                {
+                    this.GetSystem<IMonoSystem>().StopCoroutine(kvp.Value);
+                }
+            }
+            environmentFadeCoroutines.Clear();
+            
+            // 定义目标音量值
+            Dictionary<int, float> targetVolumes = new Dictionary<int, float>();
+            
             switch (weatherIndex)
             {
                 case 0: // 晴天
                     // 先设置所有环境音为0
                     for (int i = 0; i < environmentCount; i++)
                     {
-                        if (i < radioModel.EnvironmentVolumes.Count)
-                        {
-                            // 如果当前值已经是0，先设置为一个很小的值，再设置回0，确保监听器被触发
-                            if (radioModel.EnvironmentVolumes[i].Value == 0.0f)
-                            {
-                                radioModel.EnvironmentVolumes[i].Value = 0.0001f;
-                            }
-                            radioModel.EnvironmentVolumes[i].Value = 0.0f;
-                        }
+                        targetVolumes[i] = 0.0f;
                     }
                     // 然后设置索引1为0.0589
-                    if (environmentCount > 1 && radioModel.EnvironmentVolumes.Count > 1)
+                    if (environmentCount > 1)
                     {
-                        radioModel.EnvironmentVolumes[1].Value = 0.0589f;
+                        targetVolumes[1] = 0.0589f;
                     }
                     break;
                     
@@ -429,20 +440,12 @@ namespace BirdGame
                     // 先设置所有环境音为0
                     for (int i = 0; i < environmentCount; i++)
                     {
-                        if (i < radioModel.EnvironmentVolumes.Count)
-                        {
-                            // 如果当前值已经是0，先设置为一个很小的值，再设置回0，确保监听器被触发
-                            if (radioModel.EnvironmentVolumes[i].Value == 0.0f)
-                            {
-                                radioModel.EnvironmentVolumes[i].Value = 0.0001f;
-                            }
-                            radioModel.EnvironmentVolumes[i].Value = 0.0f;
-                        }
+                        targetVolumes[i] = 0.0f;
                     }
                     // 然后设置索引2为0.4578
-                    if (environmentCount > 2 && radioModel.EnvironmentVolumes.Count > 2)
+                    if (environmentCount > 2)
                     {
-                        radioModel.EnvironmentVolumes[2].Value = 0.4578f;
+                        targetVolumes[2] = 0.4578f;
                     }
                     break;
                     
@@ -450,15 +453,7 @@ namespace BirdGame
                     // 设置所有环境音音量为0
                     for (int i = 0; i < environmentCount; i++)
                     {
-                        if (i < radioModel.EnvironmentVolumes.Count)
-                        {
-                            // 如果当前值已经是0，先设置为一个很小的值，再设置回0，确保监听器被触发
-                            if (radioModel.EnvironmentVolumes[i].Value == 0.0f)
-                            {
-                                radioModel.EnvironmentVolumes[i].Value = 0.0001f;
-                            }
-                            radioModel.EnvironmentVolumes[i].Value = 0.0f;
-                        }
+                        targetVolumes[i] = 0.0f;
                     }
                     break;
                     
@@ -466,20 +461,12 @@ namespace BirdGame
                     // 先设置所有环境音为0
                     for (int i = 0; i < environmentCount; i++)
                     {
-                        if (i < radioModel.EnvironmentVolumes.Count)
-                        {
-                            // 如果当前值已经是0，先设置为一个很小的值，再设置回0，确保监听器被触发
-                            if (radioModel.EnvironmentVolumes[i].Value == 0.0f)
-                            {
-                                radioModel.EnvironmentVolumes[i].Value = 0.0001f;
-                            }
-                            radioModel.EnvironmentVolumes[i].Value = 0.0f;
-                        }
+                        targetVolumes[i] = 0.0f;
                     }
                     // 然后设置索引1为0.0674
-                    if (environmentCount > 1 && radioModel.EnvironmentVolumes.Count > 1)
+                    if (environmentCount > 1)
                     {
-                        radioModel.EnvironmentVolumes[1].Value = 0.0674f;
+                        targetVolumes[1] = 0.0674f;
                     }
                     break;
                     
@@ -487,22 +474,89 @@ namespace BirdGame
                     // 先设置所有环境音为0
                     for (int i = 0; i < environmentCount; i++)
                     {
-                        if (i < radioModel.EnvironmentVolumes.Count)
-                        {
-                            // 如果当前值已经是0，先设置为一个很小的值，再设置回0，确保监听器被触发
-                            if (radioModel.EnvironmentVolumes[i].Value == 0.0f)
-                            {
-                                radioModel.EnvironmentVolumes[i].Value = 0.0001f;
-                            }
-                            radioModel.EnvironmentVolumes[i].Value = 0.0f;
-                        }
+                        targetVolumes[i] = 0.0f;
                     }
                     // 然后设置索引0为0.2259
-                    if (environmentCount > 0 && radioModel.EnvironmentVolumes.Count > 0)
+                    if (environmentCount > 0)
                     {
-                        radioModel.EnvironmentVolumes[0].Value = 0.2259f;
+                        targetVolumes[0] = 0.2259f;
                     }
                     break;
+            }
+            
+            // 对每个环境音启动淡入淡出协程
+            for (int i = 0; i < environmentCount && i < environmentAudios.Count; i++)
+            {
+                float targetVolume = targetVolumes.ContainsKey(i) ? targetVolumes[i] : 0.0f;
+                float currentVolume = radioModel.EnvironmentVolumes[i].Value;
+                
+                // 如果目标值和当前值相同，直接设置（不需要淡入淡出）
+                if (Mathf.Approximately(currentVolume, targetVolume))
+                {
+                    // 如果当前值已经是0，先设置为一个很小的值，再设置回0，确保监听器被触发
+                    if (currentVolume == 0.0f)
+                    {
+                        radioModel.EnvironmentVolumes[i].Value = 0.0001f;
+                    }
+                    radioModel.EnvironmentVolumes[i].Value = targetVolume;
+                }
+                else
+                {
+                    // 立即设置目标值，让 UI 立即更新
+                    // 如果目标值是0，先设置为一个很小的值，再设置回0，确保监听器被触发
+                    if (targetVolume == 0.0f && currentVolume == 0.0f)
+                    {
+                        radioModel.EnvironmentVolumes[i].Value = 0.0001f;
+                    }
+                    radioModel.EnvironmentVolumes[i].Value = targetVolume;
+                    
+                    // 启动淡入淡出协程（协程会平滑过渡音频音量，但不会再次触发 EnvironmentVolumes 的更新）
+                    var coroutine = this.GetSystem<IMonoSystem>().StartCoroutine(
+                        FadeEnvironmentVolume(i, currentVolume, targetVolume));
+                    environmentFadeCoroutines[i] = coroutine;
+                }
+            }
+        }
+        
+        /// <summary>
+        /// 环境音淡入淡出协程
+        /// </summary>
+        private IEnumerator FadeEnvironmentVolume(int index, float startVolume, float targetVolume)
+        {
+            if (index >= environmentAudios.Count || index >= radioModel.EnvironmentVolumes.Count)
+                yield break;
+            
+            AudioSource audio = environmentAudios[index];
+            float elapsedTime = 0f;
+            
+            // 保存初始音量（用于淡入淡出）
+            float initialAudioVolume = audio.volume / radioModel.Volume.Value;
+            if (Mathf.Approximately(radioModel.Volume.Value, 0f))
+            {
+                initialAudioVolume = startVolume;
+            }
+            
+            while (elapsedTime < FADE_DURATION)
+            {
+                elapsedTime += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsedTime / FADE_DURATION);
+                // 使用平滑插值
+                float currentVolume = Mathf.Lerp(initialAudioVolume, targetVolume, t);
+                
+                // 直接设置音频音量（不触发监听器，避免循环）
+                // 每次更新时读取最新的主音量，以响应主音量变化
+                audio.volume = currentVolume * radioModel.Volume.Value;
+                
+                yield return null;
+            }
+            
+            // 淡入淡出完成后，确保最终音量正确（EnvironmentVolumes 已经在开始时设置为目标值了）
+            audio.volume = targetVolume * radioModel.Volume.Value;
+            
+            // 从字典中移除已完成的协程
+            if (environmentFadeCoroutines.ContainsKey(index))
+            {
+                environmentFadeCoroutines.Remove(index);
             }
         }
     }
