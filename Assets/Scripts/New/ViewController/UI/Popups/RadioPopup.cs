@@ -234,11 +234,11 @@ namespace BirdGame
             radioModel.Volume.Value = saveModel.MusicSettingData.bgmVolume;
             volumeSlider.value = radioModel.Volume.Value;
             
-            // 确保环境音已初始化
+            // 确保环境音已初始化（这会从保存的数据中加载用户设置，不会重置）
             this.GetSystem<IAudioSystem>().InitEnvironments();
             
-            // 根据当前天气同步环境音音量
-            SyncEnvironmentVolumesByWeather();
+            // 不再根据天气同步环境音音量，保留用户的更改
+            // 环境音只在场景加载时（LoadGameCommand）或天气变化时（WeatherManager）才会同步
             
             // Debug所有环境音的音量
             DebugEnvironmentVolumes();
@@ -248,21 +248,6 @@ namespace BirdGame
             //     environmentView.SetActive(false);
             // environmentButton.gameObject.SetActive(true);
             // musicButton.gameObject.SetActive(false);
-        }
-        
-        /// <summary>
-        /// 根据当前天气同步环境音音量
-        /// </summary>
-        private void SyncEnvironmentVolumesByWeather()
-        {
-            var gameModel = this.GetModel<IGameModel>();
-            int currentWeatherIndex = gameModel.WeatherIndex.Value;
-            
-            // 根据当前天气索引同步环境音音量
-            if (currentWeatherIndex == 0 || currentWeatherIndex == 1 || currentWeatherIndex == 2 || currentWeatherIndex == 3 || currentWeatherIndex == 4)
-            {
-                this.GetSystem<IAudioSystem>().SetEnvironmentVolumesByWeather(currentWeatherIndex);
-            }
         }
         
         /// <summary>
