@@ -206,7 +206,7 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
             ActivateInputField();
         }
 
-        // Always position caret on click (if enabled)
+        // FIRST position the caret, THEN handle selection logic
         if (enableClickToPositionCaret)
         {
             SetCaretToClickPosition(eventData.position);
@@ -219,20 +219,23 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
         }
         else
         {
-            // For regular clicks (not drags), clear any existing selection
-            // and just position the caret
-            if (!isDraggingForSelection)
-            {
-                // Clear selection on single click
-                inputField.selectionAnchorPosition = inputField.caretPosition;
-                inputField.selectionFocusPosition = inputField.caretPosition;
-                
-                // Force update to clear selection visually
-                inputField.ForceLabelUpdate();
-            }
+            // For regular clicks, ensure selection is cleared
+            ClearSelection();
         }
 
         Debug.Log($"[HookTMPInputHandler] TMP InputField clicked: {gameObject.name}, Caret: {inputField.caretPosition}");
+    }
+
+    private void ClearSelection()
+    {
+        if (inputField == null) return;
+        
+        // Set both anchor and focus to the same position to clear selection
+        inputField.selectionAnchorPosition = inputField.caretPosition;
+        inputField.selectionFocusPosition = inputField.caretPosition;
+        
+        // Force update to clear any visual selection
+        inputField.ForceLabelUpdate();
     }
 
     public void SetCaretToClickPosition(Vector2 screenPosition)
@@ -250,15 +253,13 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
             out localMousePosition))
         {
             int caretPosition = GetCaretPositionFromMousePosition(textComponent, localMousePosition);
+            
+            // Set caret position FIRST
             inputField.caretPosition = caretPosition;
             
-            // IMPORTANT: Clear selection on regular click
-            // Set both anchor and focus to the same position to clear selection
+            // THEN clear selection by setting both anchor and focus to the same position
             inputField.selectionAnchorPosition = caretPosition;
             inputField.selectionFocusPosition = caretPosition;
-            
-            // Force update to clear any visual selection
-            inputField.ForceLabelUpdate();
             
             Debug.Log($"[HookTMPInputHandler] Caret positioned at: {caretPosition}, Selection cleared");
         }
@@ -266,16 +267,17 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
 
     private int GetCaretPositionFromMousePosition(TMP_Text textComponent, Vector2 localPosition)
     {
+        // Use TMP's built-in utilities to find the closest character
         int characterIndex = TMP_TextUtilities.FindNearestCharacter(textComponent, localPosition, null, false);
         
         if (characterIndex >= 0 && characterIndex < textComponent.textInfo.characterCount)
         {
             TMP_CharacterInfo charInfo = textComponent.textInfo.characterInfo[characterIndex];
             
-            // Check if character is visible (space characters might have zero width)
-            if (charInfo.isVisible)
+            // For visible characters, determine if we should place caret before or after
+            if (charInfo.isVisible && charInfo.topRight.x > charInfo.bottomLeft.x)
             {
-                float charMidpoint = charInfo.bottomLeft.x + (charInfo.topRight.x - charInfo.bottomLeft.x) / 2f;
+                float charMidpoint = (charInfo.bottomLeft.x + charInfo.topRight.x) / 2f;
                 
                 if (localPosition.x > charMidpoint)
                 {
@@ -288,15 +290,15 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
             }
             else
             {
-                // For invisible characters, just return the position
+                // For invisible characters or line breaks, return the position
                 return characterIndex;
             }
         }
         
-        // Handle edge cases
-        if (localPosition.x < 0)
+        // Handle edge cases - click beyond text bounds
+        if (localPosition.x < textComponent.rectTransform.rect.xMin)
             return 0;
-        else if (localPosition.x > textComponent.rectTransform.rect.width)
+        else if (localPosition.x > textComponent.rectTransform.rect.xMax)
             return inputField.text.Length;
         else
             return inputField.text.Length;
