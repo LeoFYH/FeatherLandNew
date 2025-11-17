@@ -22,12 +22,7 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
     private Vector2 selectionStartPosition;
 
     [Header("Selection Settings")]
-    public bool enableDragSelection = true;
     public Color selectionColor = new Color(0.2f, 0.4f, 0.8f, 0.4f);
-
-    private bool isDraggingForSelection = false;
-    private Vector2 dragStartPosition;
-    private int dragStartCaretPosition;
 
 
     [System.Serializable]
@@ -113,76 +108,11 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
         if (inputField == null) return;
         
         inputField.caretPosition = newPosition;
-        
-        // Only clear selection if we're not in the middle of drag selection
-        if (!isDraggingForSelection)
-        {
-            inputField.selectionAnchorPosition = newPosition;
-            inputField.selectionFocusPosition = newPosition;
-            inputField.ForceLabelUpdate();
-        }
+        inputField.selectionAnchorPosition = newPosition;
+        inputField.selectionFocusPosition = newPosition;
+        inputField.ForceLabelUpdate();
     }
 
-    public void HandleDragSelection(PointerEventData eventData)
-    {
-        if (!enableDragSelection || !isFocused || inputField == null) return;
-
-        if (eventData.button == PointerEventData.InputButton.Left)
-        {
-            if (!isDraggingForSelection)
-            {
-                // Start drag selection
-                isDraggingForSelection = true;
-                dragStartPosition = eventData.position;
-                dragStartCaretPosition = inputField.caretPosition;
-                
-                // Initialize selection
-                inputField.selectionAnchorPosition = dragStartCaretPosition;
-                inputField.selectionFocusPosition = dragStartCaretPosition;
-                
-                Debug.Log($"[HookTMPInputHandler] Started drag selection from position: {dragStartCaretPosition}");
-            }
-            else
-            {
-                // Update selection during drag
-                SetCaretToDragPosition(eventData.position);
-                
-                Debug.Log($"[HookTMPInputHandler] Drag selection: {GetSelectionStart()}-{GetSelectionEnd()}");
-            }
-        }
-    }
-
-    public void EndDragSelection()
-    {
-        if (isDraggingForSelection)
-        {
-            isDraggingForSelection = false;
-            Debug.Log($"[HookTMPInputHandler] Ended drag selection. Final selection: {GetSelectionStart()}-{GetSelectionEnd()}");
-        }
-    }
-
-    private void SetCaretToDragPosition(Vector2 screenPosition)
-    {
-        if (inputField == null || inputField.textComponent == null) return;
-
-        TMP_Text textComponent = inputField.textComponent;
-        RectTransform textRectTransform = textComponent.rectTransform;
-
-        Vector2 localMousePosition;
-        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            textRectTransform, 
-            screenPosition, 
-            null, 
-            out localMousePosition))
-        {
-            int caretPosition = GetCaretPositionFromMousePosition(textComponent, localMousePosition);
-            inputField.caretPosition = caretPosition;
-            inputField.selectionFocusPosition = caretPosition;
-            
-            // Force update to show selection
-            inputField.ForceLabelUpdate();
-        }
-    }
 
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -213,15 +143,15 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
         }
 
         // Handle selection logic
-        if (selectAllOnClick && isFocused)
-        {
-            SelectAllText();
-        }
-        else
-        {
-            // For regular clicks, ensure selection is cleared
-            ClearSelection();
-        }
+        // if (selectAllOnClick && isFocused)
+        // {
+        //     SelectAllText();
+        // }
+        // else
+        // {
+        //     // For regular clicks, ensure selection is cleared
+        //     ClearSelection();
+        // }
 
         Debug.Log($"[HookTMPInputHandler] TMP InputField clicked: {gameObject.name}, Caret: {inputField.caretPosition}");
     }
@@ -245,6 +175,9 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
         TMP_Text textComponent = inputField.textComponent;
         RectTransform textRectTransform = textComponent.rectTransform;
 
+        // Force mesh update to ensure textInfo is current
+        textComponent.ForceMeshUpdate();
+
         Vector2 localMousePosition;
         if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
             textRectTransform, 
@@ -267,41 +200,282 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
 
     private int GetCaretPositionFromMousePosition(TMP_Text textComponent, Vector2 localPosition)
     {
-        // Use TMP's built-in utilities to find the closest character
-        int characterIndex = TMP_TextUtilities.FindNearestCharacter(textComponent, localPosition, null, false);
+        // Try the alternative method first
+        int position = GetCaretPositionFromMousePositionAlternative(textComponent, localPosition);
         
-        if (characterIndex >= 0 && characterIndex < textComponent.textInfo.characterCount)
+        if (position >= 0 && position <= inputField.text.Length)
         {
-            TMP_CharacterInfo charInfo = textComponent.textInfo.characterInfo[characterIndex];
+            return position;
+        }
+        
+        // Fallback to the original method
+        return GetCaretPositionByLine(textComponent, localPosition);
+    }
+
+    private int GetCaretPositionByLine(TMP_Text textComponent, Vector2 localPosition)
+    {
+        // Find which line was clicked based on Y position
+        // Use actual character positions for accurate line detection
+        int clickedLine = -1;
+        
+        Debug.Log($"[HookTMPInputHandler] LocalY: {localPosition.y:F2}");
+        
+        for (int i = 0; i < textComponent.textInfo.lineCount; i++)
+        {
+            TMP_LineInfo lineInfo = textComponent.textInfo.lineInfo[i];
             
-            // For visible characters, determine if we should place caret before or after
-            if (charInfo.isVisible && charInfo.topRight.x > charInfo.bottomLeft.x)
+            // Get the actual Y bounds from characters in this line
+            float lineTop = float.MinValue;
+            float lineBottom = float.MaxValue;
+            bool foundVisibleChar = false;
+            
+            // Check all characters in this line to find actual bounds
+            for (int charIdx = lineInfo.firstCharacterIndex; charIdx <= lineInfo.lastCharacterIndex; charIdx++)
             {
-                float charMidpoint = (charInfo.bottomLeft.x + charInfo.topRight.x) / 2f;
+                if (charIdx >= textComponent.textInfo.characterCount) break;
                 
-                if (localPosition.x > charMidpoint)
+                TMP_CharacterInfo charInfo = textComponent.textInfo.characterInfo[charIdx];
+                if (!charInfo.isVisible) continue;
+                
+                foundVisibleChar = true;
+                float charTop = Mathf.Max(charInfo.topLeft.y, charInfo.topRight.y);
+                float charBottom = Mathf.Min(charInfo.bottomLeft.y, charInfo.bottomRight.y);
+                
+                if (charTop > lineTop) lineTop = charTop;
+                if (charBottom < lineBottom) lineBottom = charBottom;
+            }
+            
+            // If no visible characters, use lineInfo values as fallback
+            if (!foundVisibleChar)
+            {
+                // Use baseline with ascender/descender
+                float lineBaseline = lineInfo.baseline;
+                lineTop = lineBaseline + lineInfo.ascender;
+                lineBottom = lineBaseline + lineInfo.descender;
+                
+                // Ensure lineTop > lineBottom (Y increases upward in UI)
+                if (lineTop < lineBottom)
                 {
-                    return characterIndex + 1;
-                }
-                else
-                {
-                    return characterIndex;
+                    float temp = lineTop;
+                    lineTop = lineBottom;
+                    lineBottom = temp;
                 }
             }
-            else
+            
+            float lineHeight = lineInfo.lineHeight;
+            float tolerance = lineHeight * 0.5f; // 50% of line height as tolerance
+            
+            Debug.Log($"[HookTMPInputHandler] Line {i}: Top={lineTop:F2}, Bottom={lineBottom:F2}, Height={lineHeight:F2}, ClickY={localPosition.y:F2}");
+            
+            // Check if click is within this line's vertical range
+            // lineTop is higher Y value, lineBottom is lower Y value
+            if (localPosition.y <= (lineTop + tolerance) && localPosition.y >= (lineBottom - tolerance))
             {
-                // For invisible characters or line breaks, return the position
-                return characterIndex;
+                clickedLine = i;
+                Debug.Log($"[HookTMPInputHandler] Click detected on line {i}");
+                break;
             }
         }
         
-        // Handle edge cases - click beyond text bounds
-        if (localPosition.x < textComponent.rectTransform.rect.xMin)
-            return 0;
-        else if (localPosition.x > textComponent.rectTransform.rect.xMax)
+        // If no line found, use a different approach based on line centers
+        if (clickedLine == -1)
+        {
+            clickedLine = FindClosestLineByCenter(textComponent, localPosition.y);
+            Debug.Log($"[HookTMPInputHandler] Using closest line by center: {clickedLine}");
+        }
+        
+        // Now find the horizontal position within the line
+        return GetCaretPositionInLine(textComponent, clickedLine, localPosition.x);
+    }
+
+    private int GetCaretPositionInLine(TMP_Text textComponent, int lineIndex, float localX)
+    {
+        if (lineIndex < 0 || lineIndex >= textComponent.textInfo.lineCount)
             return inputField.text.Length;
-        else
+        
+        TMP_LineInfo lineInfo = textComponent.textInfo.lineInfo[lineIndex];
+        
+        Debug.Log($"[HookTMPInputHandler] Processing line {lineIndex}: FirstChar={lineInfo.firstCharacterIndex}, LastChar={lineInfo.lastCharacterIndex}, " +
+                $"LineStartX={lineInfo.lineExtents.min.x:F2}, LineEndX={lineInfo.lineExtents.max.x:F2}, ClickX={localX:F2}");
+        
+        // Handle clicking before the line
+        if (localX < lineInfo.lineExtents.min.x)
+        {
+            Debug.Log($"[HookTMPInputHandler] Click before line start, using first character");
+            return lineInfo.firstCharacterIndex;
+        }
+        
+        // Handle clicking after the line
+        if (localX > lineInfo.lineExtents.max.x)
+        {
+            Debug.Log($"[HookTMPInputHandler] Click after line end, using position after last character");
+            return GetPositionAfterLastCharacter(lineInfo);
+        }
+        
+        // Find the closest character in this line
+        int closestCharIndex = lineInfo.firstCharacterIndex;
+        float minDistance = float.MaxValue;
+        
+        for (int i = lineInfo.firstCharacterIndex; i <= lineInfo.lastCharacterIndex; i++)
+        {
+            if (i >= textComponent.textInfo.characterCount) break;
+            
+            TMP_CharacterInfo charInfo = textComponent.textInfo.characterInfo[i];
+            
+            // Skip characters that don't have proper geometry
+            if (!charInfo.isVisible || charInfo.topRight.x <= charInfo.bottomLeft.x)
+                continue;
+            
+            float charCenter = (charInfo.bottomLeft.x + charInfo.topRight.x) / 2f;
+            float distance = Mathf.Abs(localX - charCenter);
+            
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                
+                // Determine if we should place caret before or after this character
+                if (localX > charCenter)
+                {
+                    closestCharIndex = i + 1;
+                }
+                else
+                {
+                    closestCharIndex = i;
+                }
+            }
+        }
+        
+        Debug.Log($"[HookTMPInputHandler] Selected character index: {closestCharIndex}");
+        return Mathf.Clamp(closestCharIndex, 0, inputField.text.Length);
+    }
+
+    private int GetPositionAfterLastCharacter(TMP_LineInfo lineInfo)
+    {
+        // For the last line, return the end of text
+        // For other lines, return the position before the newline
+        if (lineInfo.lastCharacterIndex >= 0 && lineInfo.lastCharacterIndex < inputField.text.Length)
+        {
+            return lineInfo.lastCharacterIndex + 1;
+        }
+        
+        return inputField.text.Length;
+    }
+
+    private int FindClosestLineByCenter(TMP_Text textComponent, float localY)
+    {
+        int closestLine = 0;
+        float minDistance = float.MaxValue;
+        
+        for (int i = 0; i < textComponent.textInfo.lineCount; i++)
+        {
+            TMP_LineInfo lineInfo = textComponent.textInfo.lineInfo[i];
+            
+            // Get actual Y bounds from characters in this line
+            float lineTop = float.MinValue;
+            float lineBottom = float.MaxValue;
+            bool foundVisibleChar = false;
+            
+            for (int charIdx = lineInfo.firstCharacterIndex; charIdx <= lineInfo.lastCharacterIndex; charIdx++)
+            {
+                if (charIdx >= textComponent.textInfo.characterCount) break;
+                
+                TMP_CharacterInfo charInfo = textComponent.textInfo.characterInfo[charIdx];
+                if (!charInfo.isVisible) continue;
+                
+                foundVisibleChar = true;
+                float charTop = Mathf.Max(charInfo.topLeft.y, charInfo.topRight.y);
+                float charBottom = Mathf.Min(charInfo.bottomLeft.y, charInfo.bottomRight.y);
+                
+                if (charTop > lineTop) lineTop = charTop;
+                if (charBottom < lineBottom) lineBottom = charBottom;
+            }
+            
+            // Fallback to lineInfo if no visible characters
+            if (!foundVisibleChar)
+            {
+                float lineBaseline = lineInfo.baseline;
+                lineTop = lineBaseline + lineInfo.ascender;
+                lineBottom = lineBaseline + lineInfo.descender;
+                
+                if (lineTop < lineBottom)
+                {
+                    float temp = lineTop;
+                    lineTop = lineBottom;
+                    lineBottom = temp;
+                }
+            }
+            
+            float lineCenter = (lineTop + lineBottom) / 2f;
+            float distance = Mathf.Abs(localY - lineCenter);
+            
+            Debug.Log($"[HookTMPInputHandler] Line {i} center: {lineCenter:F2}, Distance to click: {distance:F2}");
+            
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                closestLine = i;
+            }
+        }
+        
+        return closestLine;
+    }
+
+    private int GetCaretPositionFromMousePositionAlternative(TMP_Text textComponent, Vector2 localPosition)
+    {
+        // Alternative approach: check each character's screen position
+        for (int i = 0; i < textComponent.textInfo.characterCount; i++)
+        {
+            TMP_CharacterInfo charInfo = textComponent.textInfo.characterInfo[i];
+            
+            if (!charInfo.isVisible) continue;
+            
+            // Get character bounds in local coordinates
+            Vector3 bottomLeft = charInfo.bottomLeft;
+            Vector3 topRight = charInfo.topRight;
+            
+            // In Unity UI space, Y increases upward
+            // bottomLeft.y should be less than topRight.y
+            // So we check: bottomLeft.y <= localY <= topRight.y
+            float minY = Mathf.Min(bottomLeft.y, topRight.y);
+            float maxY = Mathf.Max(bottomLeft.y, topRight.y);
+            
+            // Check if click is within this character's bounds
+            if (localPosition.x >= bottomLeft.x && localPosition.x <= topRight.x &&
+                localPosition.y >= minY && localPosition.y <= maxY)
+            {
+                // Determine if we should place caret before or after this character
+                float charMidpoint = (bottomLeft.x + topRight.x) / 2f;
+                
+                if (localPosition.x > charMidpoint)
+                {
+                    return i + 1;
+                }
+                else
+                {
+                    return i;
+                }
+            }
+        }
+        
+        // If no character found, use line-based approach as fallback
+        return GetCaretPositionByLine(textComponent, localPosition);
+    }
+
+    private int GetLineEndPosition(TMP_Text textComponent, int lineIndex)
+    {
+        if (lineIndex < 0 || lineIndex >= textComponent.textInfo.lineCount)
             return inputField.text.Length;
+        
+        TMP_LineInfo lineInfo = textComponent.textInfo.lineInfo[lineIndex];
+        
+        // For the last line, return the end of text
+        if (lineIndex == textComponent.textInfo.lineCount - 1)
+        {
+            return inputField.text.Length;
+        }
+        
+        // For other lines, return the position before the newline character
+        return lineInfo.lastCharacterIndex + 1;
     }
 
     public void ActivateInputField()
@@ -481,7 +655,6 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
                 inputField.caretPosition = newPosition;
                 inputField.selectionAnchorPosition = newPosition;
                 inputField.selectionFocusPosition = newPosition;
-                isDraggingForSelection = false; // Clear drag state
             }
             
             // Force update to show selection
@@ -825,13 +998,7 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
     private void OnDeselect(string text)
     {
         isFocused = false;
-        isDraggingForSelection = false;
         DeactivateInputField();
-    }
-
-    public void ClearDragState()
-    {
-        isDraggingForSelection = false;
     }
 
     public void SubmitInput()
