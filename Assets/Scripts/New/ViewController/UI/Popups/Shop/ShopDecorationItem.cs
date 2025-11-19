@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace BirdGame
 {
-    public class ShopDecorationItem : ViewControllerBase, IPointerEnterHandler, IPointerExitHandler
+    public class ShopDecorationItem : ViewControllerBase
     {
         public Image icon;
         public LocalizationText nameText;
@@ -101,19 +101,19 @@ namespace BirdGame
             });
         }
 
-        public void OnPointerEnter(PointerEventData eventData)
-        {
-            this.GetSystem<IUISystem>().ShowDecorationInfo(id);
-        }
-
-        public void OnPointerExit(PointerEventData eventData)
-        {
-            this.GetSystem<IUISystem>().HideDecorationInfo();
-        }
-        
-        private void OnDisable()
-        {
-            this.GetSystem<IUISystem>().HideDecorationInfo();
-        }
+        // public void OnPointerEnter(PointerEventData eventData)
+        // {
+        //     this.GetSystem<IUISystem>().ShowDecorationInfo(id);
+        // }
+        //
+        // public void OnPointerExit(PointerEventData eventData)
+        // {
+        //     this.GetSystem<IUISystem>().HideDecorationInfo();
+        // }
+        //
+        // private void OnDisable()
+        // {
+        //     this.GetSystem<IUISystem>().HideDecorationInfo();
+        // }
     }
 }

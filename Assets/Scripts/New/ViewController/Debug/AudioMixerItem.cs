@@ -1,6 +1,8 @@
 ﻿using System;
+using QFramework;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.UI;
 
 namespace BirdGame.DebugMode
@@ -15,18 +17,19 @@ namespace BirdGame.DebugMode
 
         public void Init(AudioItem item)
         {
-            audioSource.outputAudioMixerGroup = item.mixer.FindMatchingGroups(string.Empty)[0];
+            audioSource.outputAudioMixerGroup = item.group;
             audioSource.clip = item.songFile;
             nameText.text = item.songName;
+            Debug.Log(item.songName);
             
             float v;
-            if(item.mixer.GetFloat("Master", out v))
+            if(item.group.audioMixer.GetFloat(item.key, out v))
             {
                 volumeSlider.value = v;
             }
             volumeSlider.onValueChanged.AddListener(value =>
             {
-                item.mixer.SetFloat("Master", value);
+                item.group.audioMixer.SetFloat(item.key, value);
             });
             
             playButton.onClick.AddListener(() =>

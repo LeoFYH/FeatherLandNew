@@ -31,13 +31,13 @@ namespace BirdGame
             SetPos();
         }
 
-        private void Update()
-        {
-            if (isActive)
-            {
-                SetPos();
-            }
-        }
+        // private void Update()
+        // {
+        //     if (isActive)
+        //     {
+        //         SetPos();
+        //     }
+        // }
 
         private void SetPos()
         {
