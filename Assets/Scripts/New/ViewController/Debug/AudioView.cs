@@ -34,19 +34,19 @@ namespace BirdGame.DebugMode
             }
 
             var clickObj = GameObject.Instantiate(itemPrefab, content);
-            clickObj.GetComponent<AudioMixerItem>().Init(config.click);
+            clickObj.GetComponent<AudioMixerItem>().Init(config.effects[0]);
             clickObj.SetActive(true);
             
             var dropFoodObj = GameObject.Instantiate(itemPrefab, content);
-            dropFoodObj.GetComponent<AudioMixerItem>().Init(config.dropFood);
+            dropFoodObj.GetComponent<AudioMixerItem>().Init(config.effects[1]);
             dropFoodObj.SetActive(true);
             
             var strokeObj = GameObject.Instantiate(itemPrefab, content);
-            strokeObj.GetComponent<AudioMixerItem>().Init(config.stroke);
+            strokeObj.GetComponent<AudioMixerItem>().Init(config.effects[2]);
             strokeObj.SetActive(true);
             
             var growUpObj = GameObject.Instantiate(itemPrefab, content);
-            growUpObj.GetComponent<AudioMixerItem>().Init(config.growUp);
+            growUpObj.GetComponent<AudioMixerItem>().Init(config.effects[3]);
             growUpObj.SetActive(true);
         }
     }
