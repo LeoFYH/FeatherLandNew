@@ -85,6 +85,7 @@ namespace BirdGame
 
         public void OnClick()
         {
+            this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Hatch);
             SpawnBird();
 
             // PlayNextFrame();

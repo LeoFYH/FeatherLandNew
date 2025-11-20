@@ -15,6 +15,8 @@ namespace BirdGame
         DropFood,
         Stroke,
         GrowUp,
+        Buy,
+        Hatch
     }
 
     public interface IAudioSystem : ISystem
@@ -236,6 +238,14 @@ namespace BirdGame
                 case EffectType.GrowUp:
                     clip = this.GetModel<IConfigModel>().RadioConfig.effects[3].songFile;
                     group = this.GetModel<IConfigModel>().RadioConfig.effects[3].group;
+                    break;
+                case EffectType.Buy:
+                    clip = this.GetModel<IConfigModel>().RadioConfig.effects[4].songFile;
+                    group = this.GetModel<IConfigModel>().RadioConfig.effects[4].group;
+                    break;
+                case EffectType.Hatch:
+                    clip = this.GetModel<IConfigModel>().RadioConfig.effects[5].songFile;
+                    group = this.GetModel<IConfigModel>().RadioConfig.effects[5].group;
                     break;
             }
             
