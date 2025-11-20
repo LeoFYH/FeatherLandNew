@@ -28,9 +28,11 @@ namespace BirdGame
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
         }
 
-        public void InitBird(int index, Action onComplete)
+        public void InitBird(int index, int eggType, Action onComplete)
         {
             onAnimComplete = onComplete;
+            var anim = GetComponent<Animator>();
+            anim.Play("OpenEgg" + eggType);
             var config = this.GetModel<IConfigModel>().BirdConfig;
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             sr.sprite = config.GetBird(index, mapIndex).preview;

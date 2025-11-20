@@ -26,11 +26,12 @@ namespace BirdGame
             else
                 val = RandomGetBirdIndex();
             CheckIllustratedUpdate(val);
+            int eggtype = this.GetModel<IGameModel>().ShopEggSelectIndex.Value;
             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("OpenEggAnim", obj =>
             {
                 this.SendEvent<HideEggEvent>();
                 var anim = GameObject.Instantiate(obj).GetComponent<OpenEggAnim>();
-                anim.InitBird(val, () =>
+                anim.InitBird(val, eggtype, () =>
                 {
                     this.SendEvent<ShowEggEvent>();
                     CreateBird(val);

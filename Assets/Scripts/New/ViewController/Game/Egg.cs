@@ -15,6 +15,7 @@ namespace BirdGame
         public SpriteRenderer spriteRenderer;
         public GameObject effect1;
         public GameObject effect2;
+        public Sprite[] eggSps;
         private int currentFrame = 0; // 当前显示的帧索引
         private Tweener anim;
         private Tweener floatAnim; // 浮动动画
@@ -26,6 +27,7 @@ namespace BirdGame
             EggItemIndex = index;
             eggId = id;
             isSetBird = false;
+            spriteRenderer.sprite = eggSps[this.GetModel<IGameModel>().ShopEggSelectIndex.Value];
         }
 
         public void SetBirdIndex(int index)
@@ -33,6 +35,7 @@ namespace BirdGame
             BirdIndex = index;
             eggId = -1;
             isSetBird = true;
+            spriteRenderer.sprite = eggSps[0];
         }
 
         /// <summary>
