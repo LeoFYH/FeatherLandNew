@@ -317,6 +317,18 @@ namespace BirdGame
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
                 Debug.Log($"[WallpaperMode] 激活 - {(int)workingArea.width}x{(int)workingArea.height}");
+                
+                // Enable SimpleMouseForwarder object in wallpaper mode
+                SimpleMouseForwarder mouseForwarder = UnityEngine.Object.FindObjectOfType<SimpleMouseForwarder>(true);
+                if (mouseForwarder != null)
+                {
+                    mouseForwarder.gameObject.SetActive(true);
+                    Debug.Log("[WallpaperMode] SimpleMouseForwarder 已启用");
+                }
+                else
+                {
+                    Debug.LogWarning("[WallpaperMode] 未找到 SimpleMouseForwarder 组件");
+                }
             }
             catch (Exception e)
             {
@@ -448,6 +460,14 @@ namespace BirdGame
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
             Debug.Log($"[FullscreenMode] 激活 - {screenWidth}x{screenHeight}");
+            
+            // Disable SimpleMouseForwarder object in fullscreen mode
+            SimpleMouseForwarder mouseForwarder = UnityEngine.Object.FindObjectOfType<SimpleMouseForwarder>(true);
+            if (mouseForwarder != null)
+            {
+                mouseForwarder.gameObject.SetActive(false);
+                Debug.Log("[FullscreenMode] SimpleMouseForwarder 已禁用");
+            }
         }
 
         public void WindowedMode()
@@ -501,6 +521,14 @@ namespace BirdGame
             Cursor.lockState = CursorLockMode.None;
             
             Debug.Log("[WindowedMode] 完成 - 窗口模式已激活");
+            
+            // Disable SimpleMouseForwarder object in windowed mode
+            SimpleMouseForwarder mouseForwarder = UnityEngine.Object.FindObjectOfType<SimpleMouseForwarder>(true);
+            if (mouseForwarder != null)
+            {
+                mouseForwarder.gameObject.SetActive(false);
+                Debug.Log("[WindowedMode] SimpleMouseForwarder 已禁用");
+            }
         }
 
         public bool IsWallpaperModeActive() => isWallpaperMode;

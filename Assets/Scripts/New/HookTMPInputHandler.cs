@@ -3,9 +3,18 @@ using UnityEngine.EventSystems;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections;
+using QFramework;
+using System.Runtime.InteropServices;
+using System;
 
 public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
+    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern IntPtr GetForegroundWindow();
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder text, int count);
+
     [Header("References")]
     public TMP_InputField inputField;
     public Image backgroundImage;
@@ -14,12 +23,15 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
     public bool autoActivateOnClick = true;
     public bool selectAllOnClick = false;
     public bool enableClickToPositionCaret = true;
+    public bool enableDebugLog = false;
     
     private bool isFocused = false;
     private bool isMouseOver = false;
     private string originalText = "";
     private bool isSelecting = false;
     private Vector2 selectionStartPosition;
+
+    private static HookTMPInputHandler instance;
 
     [Header("Selection Settings")]
     public Color selectionColor = new Color(0.2f, 0.4f, 0.8f, 0.4f);
@@ -51,8 +63,25 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
         Tab
     }
 
+    private string GetForegroundWindowTitle()
+    {
+        IntPtr hwnd = GetForegroundWindow();
+        if (hwnd != IntPtr.Zero)
+        {
+            const int nChars = 256;
+            System.Text.StringBuilder Buff = new System.Text.StringBuilder(nChars);
+            if (GetWindowText(hwnd, Buff, nChars) > 0)
+            {
+                return Buff.ToString();
+            }
+        }
+        return string.Empty;
+    }
+
     void Start()
     {
+        instance = this;
+
         if (inputField == null)
             inputField = GetComponent<TMP_InputField>();
             
@@ -72,14 +101,6 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
             inputField.onDeselect.AddListener(OnDeselect);
             inputField.onSelect.AddListener(OnSelect);
         }
-        
-        StartCoroutine(DisableCaretRaycastsDelayed());
-    }
-
-    private System.Collections.IEnumerator DisableCaretRaycastsDelayed()
-    {
-        yield return null;
-        DisableCaretRaycastTargets();
     }
 
     private void DisableCaretRaycastTargets()
@@ -153,7 +174,10 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
         //     ClearSelection();
         // }
 
-        Debug.Log($"[HookTMPInputHandler] TMP InputField clicked: {gameObject.name}, Caret: {inputField.caretPosition}");
+        if (enableDebugLog)
+        {
+            Debug.Log($"[HookTMPInputHandler] TMP InputField clicked: {gameObject.name}, Caret: {inputField.caretPosition}");
+        }
     }
 
     private void ClearSelection()
@@ -175,8 +199,12 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
         TMP_Text textComponent = inputField.textComponent;
         RectTransform textRectTransform = textComponent.rectTransform;
 
-        // Force mesh update to ensure textInfo is current
-        textComponent.ForceMeshUpdate();
+        // Only force mesh update if textInfo is not available or outdated
+        // This avoids expensive updates on every click
+        if (textComponent.textInfo == null || textComponent.textInfo.characterCount == 0)
+        {
+            textComponent.ForceMeshUpdate();
+        }
 
         Vector2 localMousePosition;
         if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
@@ -194,7 +222,13 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
             inputField.selectionAnchorPosition = caretPosition;
             inputField.selectionFocusPosition = caretPosition;
             
-            Debug.Log($"[HookTMPInputHandler] Caret positioned at: {caretPosition}, Selection cleared");
+            // Only force label update once at the end
+            inputField.ForceLabelUpdate();
+            
+            if (enableDebugLog)
+            {
+                Debug.Log($"[HookTMPInputHandler] Caret positioned at: {caretPosition}, Selection cleared");
+            }
         }
     }
 
@@ -217,8 +251,6 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
         // Find which line was clicked based on Y position
         // Use actual character positions for accurate line detection
         int clickedLine = -1;
-        
-        Debug.Log($"[HookTMPInputHandler] LocalY: {localPosition.y:F2}");
         
         for (int i = 0; i < textComponent.textInfo.lineCount; i++)
         {
@@ -265,14 +297,11 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
             float lineHeight = lineInfo.lineHeight;
             float tolerance = lineHeight * 0.5f; // 50% of line height as tolerance
             
-            Debug.Log($"[HookTMPInputHandler] Line {i}: Top={lineTop:F2}, Bottom={lineBottom:F2}, Height={lineHeight:F2}, ClickY={localPosition.y:F2}");
-            
             // Check if click is within this line's vertical range
             // lineTop is higher Y value, lineBottom is lower Y value
             if (localPosition.y <= (lineTop + tolerance) && localPosition.y >= (lineBottom - tolerance))
             {
                 clickedLine = i;
-                Debug.Log($"[HookTMPInputHandler] Click detected on line {i}");
                 break;
             }
         }
@@ -281,7 +310,6 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
         if (clickedLine == -1)
         {
             clickedLine = FindClosestLineByCenter(textComponent, localPosition.y);
-            Debug.Log($"[HookTMPInputHandler] Using closest line by center: {clickedLine}");
         }
         
         // Now find the horizontal position within the line
@@ -295,20 +323,15 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
         
         TMP_LineInfo lineInfo = textComponent.textInfo.lineInfo[lineIndex];
         
-        Debug.Log($"[HookTMPInputHandler] Processing line {lineIndex}: FirstChar={lineInfo.firstCharacterIndex}, LastChar={lineInfo.lastCharacterIndex}, " +
-                $"LineStartX={lineInfo.lineExtents.min.x:F2}, LineEndX={lineInfo.lineExtents.max.x:F2}, ClickX={localX:F2}");
-        
         // Handle clicking before the line
         if (localX < lineInfo.lineExtents.min.x)
         {
-            Debug.Log($"[HookTMPInputHandler] Click before line start, using first character");
             return lineInfo.firstCharacterIndex;
         }
         
         // Handle clicking after the line
         if (localX > lineInfo.lineExtents.max.x)
         {
-            Debug.Log($"[HookTMPInputHandler] Click after line end, using position after last character");
             return GetPositionAfterLastCharacter(lineInfo);
         }
         
@@ -345,7 +368,6 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
             }
         }
         
-        Debug.Log($"[HookTMPInputHandler] Selected character index: {closestCharIndex}");
         return Mathf.Clamp(closestCharIndex, 0, inputField.text.Length);
     }
 
@@ -407,8 +429,6 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
             
             float lineCenter = (lineTop + lineBottom) / 2f;
             float distance = Mathf.Abs(localY - lineCenter);
-            
-            Debug.Log($"[HookTMPInputHandler] Line {i} center: {lineCenter:F2}, Distance to click: {distance:F2}");
             
             if (distance < minDistance)
             {
@@ -485,7 +505,10 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
             inputField.ActivateInputField();
             inputField.Select();
             isFocused = true;
-            Debug.Log($"[HookTMPInputHandler] TMP InputField activated: {inputField.text}");
+            if (enableDebugLog)
+            {
+                Debug.Log($"[HookTMPInputHandler] TMP InputField activated: {inputField.text}");
+            }
         }
     }
 
@@ -502,7 +525,10 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
     {
         if (!isFocused || inputField == null) return;
 
-        Debug.Log($"[HookTMPInputHandler] Received key: {keyData.keyType}, Char: '{keyData.keyChar}', Shift: {keyData.shiftPressed}");
+        if (enableDebugLog)
+        {
+            Debug.Log($"[HookTMPInputHandler] Received key: {keyData.keyType}, Char: '{keyData.keyChar}', Shift: {keyData.shiftPressed}");
+        }
 
         switch (keyData.keyType)
         {
@@ -574,6 +600,7 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
             
             if (caretPos >= 0 && caretPos <= currentText.Length)
             {
+                // Support for Unicode characters (Chinese, etc.)
                 inputField.text = currentText.Insert(caretPos, character.ToString());
                 inputField.caretPosition = caretPos + 1;
                 
@@ -581,6 +608,11 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
                 inputField.selectionAnchorPosition = inputField.caretPosition;
                 inputField.selectionFocusPosition = inputField.caretPosition;
             }
+        }
+        
+        if (enableDebugLog)
+        {
+            Debug.Log($"[HookTMPInputHandler] Inserted character: '{character}' (Unicode: {(int)character})");
         }
     }
 
@@ -660,7 +692,10 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
             // Force update to show selection
             inputField.ForceLabelUpdate();
             
-            Debug.Log($"[HookTMPInputHandler] Arrow key - Caret: {inputField.caretPosition}, Selection: {inputField.selectionAnchorPosition}-{inputField.selectionFocusPosition}");
+            if (enableDebugLog)
+            {
+                Debug.Log($"[HookTMPInputHandler] Arrow key - Caret: {inputField.caretPosition}, Selection: {inputField.selectionAnchorPosition}-{inputField.selectionFocusPosition}");
+            }
         }
     }
 
@@ -1016,7 +1051,16 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
 
     private bool IsPrintableChar(char c)
     {
-        return c >= 32 && c <= 126;
+        // Support basic ASCII + Chinese/Unicode characters
+        // Chinese characters typically fall in these Unicode ranges:
+        // - CJK Unified Ideographs: 0x4E00-0x9FFF
+        // - CJK Compatibility Ideographs: 0xF900-0xFAFF
+        // - CJK Unified Ideographs Extension A: 0x3400-0x4DBF
+        // - CJK Unified Ideographs Extension B: 0x20000-0x2A6DF
+        return (c >= 32 && c <= 126) || 
+            (c >= 0x4E00 && c <= 0x9FFF) ||
+            (c >= 0xF900 && c <= 0xFAFF) ||
+            (c >= 0x3400 && c <= 0x4DBF);
     }
 
     public bool IsFocused()

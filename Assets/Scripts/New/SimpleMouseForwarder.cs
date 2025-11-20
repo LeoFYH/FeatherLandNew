@@ -9,9 +9,7 @@ using TMPro;
 using AOT;
 using QFramework;
 
-namespace BirdGame
-{
-public class SimpleMouseForwarder : ViewControllerBase
+public class SimpleMouseForwarder : MonoBehaviour
 {
     public static int clickCount = 0;
     public static int rightClickCount = 0;
@@ -44,6 +42,13 @@ public class SimpleMouseForwarder : ViewControllerBase
     private const uint VK_DELETE = 0x2E;
     private const uint VK_TAB = 0x09;
     private const uint VK_CAPITAL = 0x14;
+
+    private const int WM_IME_CHAR = 0x0286;
+    private const int WM_IME_COMPOSITION = 0x010F;
+    private const int WM_IME_STARTCOMPOSITION = 0x010D;
+    private const int WM_IME_ENDCOMPOSITION = 0x010E;
+    private const int WM_IME_NOTIFY = 0x0282;
+    private static bool isIMECompositionActive = false;
 
     private static float wheelDelta = 0f;
     private static bool isHorizontalWheel = false;
@@ -117,6 +122,24 @@ public class SimpleMouseForwarder : ViewControllerBase
     [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     private static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder text, int count);
 
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetKeyboardLayout(uint idThread);
+
+    [DllImport("user32.dll")]
+    private static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr ProcessId);
+
+    [DllImport("imm32.dll")]
+    private static extern bool ImmIsIME(IntPtr hKL);
+
+    [DllImport("user32.dll")]
+    private static extern int ToUnicodeEx(uint wVirtKey, uint wScanCode, byte[] lpKeyState, 
+        [Out, MarshalAs(UnmanagedType.LPWStr, SizeConst = 64)] System.Text.StringBuilder pwszBuff, 
+        int cchBuff, uint wFlags, IntPtr dwhkl);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool GetKeyboardState(byte[] lpKeyState);
+
     public bool enableForwarding = true;
     public bool showDebugLog = false;
 
@@ -125,7 +148,28 @@ public class SimpleMouseForwarder : ViewControllerBase
     private static Vector2 mousePosition = Vector2.zero;
     private static SimpleMouseForwarder instance;
 
-    private void Awake()
+    // private void Awake()
+    // {
+    //     instance = this;
+        
+    //     // Install mouse hook
+    //     _hookID = SetHook(_proc);
+        
+    //     // Install keyboard hook
+    //     _keyboardHookID = SetKeyboardHook(_keyboardProc);
+
+    //     Debug.Log($"[SimpleMouseForwarder] 鼠标钩子: {_hookID}, 键盘钩子: {_keyboardHookID}");
+    //     if (_hookID == IntPtr.Zero || _keyboardHookID == IntPtr.Zero)
+    //     {
+    //         Debug.LogError("[SimpleMouseForwarder] 钩子安装失败！");
+    //     }
+    //     else
+    //     {
+    //         Debug.Log("[SimpleMouseForwarder] 鼠标和键盘钩子安装成功");
+    //     }
+    // }
+
+    private void OnEnable()
     {
         instance = this;
         
@@ -159,174 +203,298 @@ public class SimpleMouseForwarder : ViewControllerBase
     [MonoPInvokeCallback(typeof(LowLevelKeyboardProc))]
     private static IntPtr KeyboardHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
     {
-        if (nCode >= 0 && instance != null && instance.enableForwarding && _focusedTMPInputField != null && (instance.GetForegroundWindowTitle() == "Program Manager" || instance.GetForegroundWindowTitle() == string.Empty))
+        if (nCode >= 0 && instance != null && instance.enableForwarding && _focusedTMPInputField != null)
         {
             int message = wParam.ToInt32();
+            
+            // Note: Low-level keyboard hooks only receive WM_KEYDOWN, WM_KEYUP, WM_SYSKEYDOWN, WM_SYSKEYUP
+            // IME messages (WM_IME_CHAR, WM_IME_COMPOSITION, etc.) are sent to window procedures, not hooks
+            // We detect IME input by checking the keyboard layout and using ToUnicodeEx
             
             if (message == WM_KEYDOWN)
             {
                 KBDLLHOOKSTRUCT hookStruct = Marshal.PtrToStructure<KBDLLHOOKSTRUCT>(lParam);
-                HandleKeyDown(hookStruct);
+                
+                // Check if IME is active
+                bool imeActive = IsIMEActive();
+                if (imeActive)
+                {
+                    isIMECompositionActive = true;
+                }
+                
+                // If IME composition is active, let number keys pass through for character selection
+                if (isIMECompositionActive && IsNumberKey(hookStruct.vkCode))
+                {
+                    if (instance.showDebugLog)
+                        Debug.Log($"[SimpleMouseForwarder] Allowing number key {hookStruct.vkCode} for IME selection");
+                    return CallNextHookEx(_keyboardHookID, nCode, wParam, lParam);
+                }
+                
+                HandleKeyDown(hookStruct, imeActive);
+            }
+            else if (message == WM_KEYUP)
+            {
+                // Reset IME composition state on key up (IME composition typically ends when a key is released)
+                // This is a heuristic - actual IME state should be tracked differently
+                KBDLLHOOKSTRUCT hookStruct = Marshal.PtrToStructure<KBDLLHOOKSTRUCT>(lParam);
+                if (!IsIMEActive())
+                {
+                    isIMECompositionActive = false;
+                }
             }
         }
         
         return CallNextHookEx(_keyboardHookID, nCode, wParam, lParam);
     }
 
-    private static void HandleKeyDown(KBDLLHOOKSTRUCT hookStruct)
-{
-    // Get modifier key states
-    bool shiftPressed = (GetKeyState(VK_SHIFT) & 0x8000) != 0;
-    bool ctrlPressed = (GetKeyState(VK_CONTROL) & 0x8000) != 0;
-    bool altPressed = (GetKeyState(VK_MENU) & 0x8000) != 0;
-    bool capsLock = (GetKeyState(VK_CAPITAL) & 0x0001) != 0;
-
-    var keyData = new HookTMPInputHandler.KeyEventData
+    private static bool IsNumberKey(uint vkCode)
     {
-        shiftPressed = shiftPressed,
-        ctrlPressed = ctrlPressed,
-        altPressed = altPressed
-    };
+        return (vkCode >= 0x30 && vkCode <= 0x39) || // 0-9
+            (vkCode >= 0x60 && vkCode <= 0x69);   // Numpad 0-9
+    }
 
-    // Handle all keys
-    switch (hookStruct.vkCode)
+    private static char GetUnicodeCharacter(uint vkCode, uint scanCode)
     {
-        case 8: // Backspace
-            keyData.keyType = HookTMPInputHandler.KeyType.Backspace;
-            break;
-        case 13: // Enter
-            keyData.keyType = HookTMPInputHandler.KeyType.Enter;
-            break;
-        case 27: // Escape
-            keyData.keyType = HookTMPInputHandler.KeyType.Escape;
-            break;
-        case VK_DELETE: // Delete
-            keyData.keyType = HookTMPInputHandler.KeyType.Delete;
-            break;
-        case VK_LEFT: // Left Arrow
-            keyData.keyType = HookTMPInputHandler.KeyType.ArrowLeft;
-            break;
-        case VK_RIGHT: // Right Arrow
-            keyData.keyType = HookTMPInputHandler.KeyType.ArrowRight;
-            break;
-        case VK_UP: // Up Arrow
-            keyData.keyType = HookTMPInputHandler.KeyType.ArrowUp;
-            break;
-        case VK_DOWN: // Down Arrow
-            keyData.keyType = HookTMPInputHandler.KeyType.ArrowDown;
-            break;
-        case VK_HOME: // Home
-            keyData.keyType = HookTMPInputHandler.KeyType.Home;
-            break;
-        case VK_END: // End
-            keyData.keyType = HookTMPInputHandler.KeyType.End;
-            break;
-        case VK_TAB: // Tab
-            keyData.keyType = HookTMPInputHandler.KeyType.Tab;
-            break;
-        default:
-            // Handle character keys - use proper character mapping
-            char character = MapVirtualKeyToCharacter(hookStruct.vkCode, shiftPressed, capsLock);
-            if (character != '\0')
+        // Get keyboard layout for the foreground window
+        IntPtr foregroundWindow = GetForegroundWindow();
+        if (foregroundWindow == IntPtr.Zero) return '\0';
+        
+        uint threadId = GetWindowThreadProcessId(foregroundWindow, IntPtr.Zero);
+        IntPtr keyboardLayout = GetKeyboardLayout(threadId);
+        
+        // Get current keyboard state
+        byte[] keyState = new byte[256];
+        if (!GetKeyboardState(keyState))
+        {
+            // Fallback: manually get key states for modifier keys
+            if ((GetKeyState(VK_SHIFT) & 0x8000) != 0) keyState[VK_SHIFT] = 0x80;
+            if ((GetKeyState(VK_CONTROL) & 0x8000) != 0) keyState[VK_CONTROL] = 0x80;
+            if ((GetKeyState(VK_MENU) & 0x8000) != 0) keyState[VK_MENU] = 0x80;
+            if ((GetKeyState(VK_CAPITAL) & 0x0001) != 0) keyState[VK_CAPITAL] = 0x01;
+        }
+        
+        // Use ToUnicodeEx to convert virtual key code to Unicode character
+        System.Text.StringBuilder buffer = new System.Text.StringBuilder(64);
+        int result = ToUnicodeEx(vkCode, scanCode, keyState, buffer, 64, 0, keyboardLayout);
+        
+        if (result > 0 && buffer.Length > 0)
+        {
+            char character = buffer[0];
+            if (instance != null && instance.showDebugLog)
+                Debug.Log($"[SimpleMouseForwarder] ToUnicodeEx: '{character}' (Unicode: {(int)character}) from VK: {vkCode}");
+            return character;
+        }
+        
+        return '\0';
+    }
+
+    private static void HandleIMECharacter(char character)
+    {
+        if (_focusedTMPInputField == null) return;
+
+        var keyData = new HookTMPInputHandler.KeyEventData
+        {
+            keyType = HookTMPInputHandler.KeyType.Character,
+            keyChar = character,
+            shiftPressed = false,
+            ctrlPressed = false,
+            altPressed = false
+        };
+
+        SendKeyEventToTMPInputField(keyData);
+        
+        if (instance.showDebugLog)
+        {
+            Debug.Log($"[SimpleMouseForwarder] IME Character: '{character}' (Unicode: {(int)character})");
+        }
+    }
+
+    private static void HandleKeyDown(KBDLLHOOKSTRUCT hookStruct, bool imeActive)
+    {
+        // Get modifier key states
+        bool shiftPressed = (GetKeyState(VK_SHIFT) & 0x8000) != 0;
+        bool ctrlPressed = (GetKeyState(VK_CONTROL) & 0x8000) != 0;
+        bool altPressed = (GetKeyState(VK_MENU) & 0x8000) != 0;
+        bool capsLock = (GetKeyState(VK_CAPITAL) & 0x0001) != 0;
+
+        var keyData = new HookTMPInputHandler.KeyEventData
+        {
+            shiftPressed = shiftPressed,
+            ctrlPressed = ctrlPressed,
+            altPressed = altPressed
+        };
+
+        // Handle all keys
+        switch (hookStruct.vkCode)
+        {
+            case 8: // Backspace
+                keyData.keyType = HookTMPInputHandler.KeyType.Backspace;
+                break;
+            case 13: // Enter
+                keyData.keyType = HookTMPInputHandler.KeyType.Enter;
+                break;
+            case 27: // Escape
+                keyData.keyType = HookTMPInputHandler.KeyType.Escape;
+                break;
+            case VK_DELETE: // Delete
+                keyData.keyType = HookTMPInputHandler.KeyType.Delete;
+                break;
+            case VK_LEFT: // Left Arrow
+                keyData.keyType = HookTMPInputHandler.KeyType.ArrowLeft;
+                break;
+            case VK_RIGHT: // Right Arrow
+                keyData.keyType = HookTMPInputHandler.KeyType.ArrowRight;
+                break;
+            case VK_UP: // Up Arrow
+                keyData.keyType = HookTMPInputHandler.KeyType.ArrowUp;
+                break;
+            case VK_DOWN: // Down Arrow
+                keyData.keyType = HookTMPInputHandler.KeyType.ArrowDown;
+                break;
+            case VK_HOME: // Home
+                keyData.keyType = HookTMPInputHandler.KeyType.Home;
+                break;
+            case VK_END: // End
+                keyData.keyType = HookTMPInputHandler.KeyType.End;
+                break;
+            case VK_TAB: // Tab
+                keyData.keyType = HookTMPInputHandler.KeyType.Tab;
+                break;
+            default:
+                // During IME composition, don't handle number keys
+                if (isIMECompositionActive && IsNumberKey(hookStruct.vkCode))
+                {
+                    if (instance.showDebugLog)
+                        Debug.Log($"[SimpleMouseForwarder] Skipping number key {hookStruct.vkCode} during IME composition");
+                    return;
+                }
+                
+                // For IME input or when IME is active, prioritize ToUnicodeEx to get Unicode characters
+                char character = '\0';
+                if (imeActive || isIMECompositionActive)
+                {
+                    // Use ToUnicodeEx to get the composed Unicode character (for Chinese, etc.)
+                    character = GetUnicodeCharacter(hookStruct.vkCode, hookStruct.scanCode);
+                }
+                
+                // If ToUnicodeEx didn't return a character, fall back to regular mapping
+                if (character == '\0')
+                {
+                    character = MapVirtualKeyToCharacter(hookStruct.vkCode, shiftPressed, capsLock);
+                }
+                
+                if (character != '\0')
+                {
+                    keyData.keyType = HookTMPInputHandler.KeyType.Character;
+                    keyData.keyChar = character;
+                }
+                else
+                {
+                    return; // Ignore other keys
+                }
+                break;
+        }
+
+        SendKeyEventToTMPInputField(keyData);
+        
+        if (instance.showDebugLog)
+        {
+            if (keyData.keyType == HookTMPInputHandler.KeyType.Character)
             {
-                keyData.keyType = HookTMPInputHandler.KeyType.Character;
-                keyData.keyChar = character;
+                Debug.Log($"[SimpleMouseForwarder] Key: '{keyData.keyChar}' (Unicode: {(int)keyData.keyChar}, IME: {imeActive}, Shift: {shiftPressed}, CapsLock: {capsLock})");
             }
             else
             {
-                return; // Ignore other keys
+                Debug.Log($"[SimpleMouseForwarder] Key: {keyData.keyType} (Shift: {shiftPressed})");
             }
-            break;
+        }
     }
 
-    SendKeyEventToTMPInputField(keyData);
-    
-    if (instance.showDebugLog)
+    private static char MapVirtualKeyToCharacter(uint vkCode, bool shiftPressed, bool capsLock)
     {
-        if (keyData.keyType == HookTMPInputHandler.KeyType.Character)
+        // Handle Unicode characters (Chinese, etc.)
+        // For IME input, this might not be called, but keep it for regular input
+        
+        // Handle letters A-Z
+        if (vkCode >= 0x41 && vkCode <= 0x5A)
         {
-            Debug.Log($"[SimpleMouseForwarder] Key: '{keyData.keyChar}' (Shift: {shiftPressed}, CapsLock: {capsLock})");
+            char baseChar = (char)('a' + (vkCode - 0x41));
+            bool shouldUppercase = shiftPressed ^ capsLock;
+            return shouldUppercase ? char.ToUpper(baseChar) : baseChar;
+        }
+        
+        // Handle numbers 0-9
+        if (vkCode >= 0x30 && vkCode <= 0x39)
+        {
+            if (shiftPressed)
+            {
+                switch (vkCode)
+                {
+                    case 0x30: return ')';
+                    case 0x31: return '!';
+                    case 0x32: return '@';
+                    case 0x33: return '#';
+                    case 0x34: return '$';
+                    case 0x35: return '%';
+                    case 0x36: return '^';
+                    case 0x37: return '&';
+                    case 0x38: return '*';
+                    case 0x39: return '(';
+                }
+            }
+            return (char)('0' + (vkCode - 0x30));
+        }
+        
+        // Handle symbol keys
+        if (shiftPressed)
+        {
+            switch (vkCode)
+            {
+                case 0xBD: return '_';
+                case 0xBB: return '+';
+                case 0xDB: return '{';
+                case 0xDD: return '}';
+                case 0xDC: return '|';
+                case 0xBA: return ':';
+                case 0xDE: return '"';
+                case 0xBC: return '<';
+                case 0xBE: return '>';
+                case 0xBF: return '?';
+                case 0xC0: return '~';
+            }
         }
         else
         {
-            Debug.Log($"[SimpleMouseForwarder] Key: {keyData.keyType} (Shift: {shiftPressed})");
-        }
-    }
-}
-
-private static char MapVirtualKeyToCharacter(uint vkCode, bool shiftPressed, bool capsLock)
-{
-    // Handle letters A-Z
-    if (vkCode >= 0x41 && vkCode <= 0x5A)
-    {
-        char baseChar = (char)('a' + (vkCode - 0x41)); // Convert to lowercase base
-        bool shouldUppercase = shiftPressed ^ capsLock; // XOR: uppercase if only one is true
-        
-        return shouldUppercase ? char.ToUpper(baseChar) : baseChar;
-    }
-    
-    // Handle numbers 0-9
-    if (vkCode >= 0x30 && vkCode <= 0x39)
-    {
-        if (shiftPressed)
-        {
-            // Number row symbols when shift is pressed
             switch (vkCode)
             {
-                case 0x30: return ')';
-                case 0x31: return '!';
-                case 0x32: return '@';
-                case 0x33: return '#';
-                case 0x34: return '$';
-                case 0x35: return '%';
-                case 0x36: return '^';
-                case 0x37: return '&';
-                case 0x38: return '*';
-                case 0x39: return '(';
+                case 0xBD: return '-';
+                case 0xBB: return '=';
+                case 0xDB: return '[';
+                case 0xDD: return ']';
+                case 0xDC: return '\\';
+                case 0xBA: return ';';
+                case 0xDE: return '\'';
+                case 0xBC: return ',';
+                case 0xBE: return '.';
+                case 0xBF: return '/';
+                case 0xC0: return '`';
+                case 0x20: return ' ';
             }
         }
-        return (char)('0' + (vkCode - 0x30));
+        
+        return '\0';
     }
-    
-    // Handle symbol keys
-    if (shiftPressed)
+
+    private static bool IsIMEActive()
     {
-        switch (vkCode)
-        {
-            case 0xBD: return '_'; // -
-            case 0xBB: return '+'; // =
-            case 0xDB: return '{'; // [
-            case 0xDD: return '}'; // ]
-            case 0xDC: return '|'; // \
-            case 0xBA: return ':'; // ;
-            case 0xDE: return '"'; // '
-            case 0xBC: return '<'; // ,
-            case 0xBE: return '>'; // .
-            case 0xBF: return '?'; // /
-            case 0xC0: return '~'; // `
-        }
+        IntPtr foregroundWindow = GetForegroundWindow();
+        if (foregroundWindow == IntPtr.Zero) return false;
+        
+        uint threadId = GetWindowThreadProcessId(foregroundWindow, IntPtr.Zero);
+        IntPtr keyboardLayout = GetKeyboardLayout(threadId);
+        
+        return ImmIsIME(keyboardLayout);
     }
-    else
-    {
-        switch (vkCode)
-        {
-            case 0xBD: return '-';
-            case 0xBB: return '=';
-            case 0xDB: return '[';
-            case 0xDD: return ']';
-            case 0xDC: return '\\';
-            case 0xBA: return ';';
-            case 0xDE: return '\'';
-            case 0xBC: return ',';
-            case 0xBE: return '.';
-            case 0xBF: return '/';
-            case 0xC0: return '`';
-            case 0x20: return ' '; // Space
-        }
-    }
-    
-    return '\0'; // Unhandled key
-}
 
     private static void SendKeyEventToTMPInputField(HookTMPInputHandler.KeyEventData keyData)
     {
@@ -342,7 +510,7 @@ private static char MapVirtualKeyToCharacter(uint vkCode, bool shiftPressed, boo
     [MonoPInvokeCallback(typeof(LowLevelMouseProc))]
     private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
     {
-        if (nCode >= 0 && instance != null && instance.enableForwarding && (instance.GetForegroundWindowTitle() == "Program Manager" || instance.GetForegroundWindowTitle() == string.Empty))
+        if (nCode >= 0 && instance != null && instance.enableForwarding)
         {
             int message = wParam.ToInt32();
             MSLLHOOKSTRUCT hookStruct = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
@@ -455,19 +623,6 @@ private static char MapVirtualKeyToCharacter(uint vkCode, bool shiftPressed, boo
         return null;
     }
 
-    private static void SendTextToTMPInputField(string text)
-    {
-        if (_focusedTMPInputField == null) return;
-
-        // Try HookTMPInputHandler first
-        HookTMPInputHandler handler = _focusedTMPInputField.GetComponent<HookTMPInputHandler>();
-        if (handler != null)
-        {
-            handler.ReceiveKeyboardInput(text);
-            return;
-        }
-    }
-
     private static void ForwardDragToUI(GameObject target)
     {
         if (EventSystem.current == null) return;
@@ -521,7 +676,7 @@ private static char MapVirtualKeyToCharacter(uint vkCode, bool shiftPressed, boo
     private void Update()
     {
         // Get the current foreground window handle
-        if (GetForegroundWindowTitle() == "Program Manager" || GetForegroundWindowTitle() == string.Empty)
+        if ((GetForegroundWindowTitle() == "Program Manager" || GetForegroundWindowTitle() == string.Empty))
         {
             if (leftButtonDown && instance.enableForwarding)
             {
@@ -608,6 +763,30 @@ private static char MapVirtualKeyToCharacter(uint vkCode, bool shiftPressed, boo
         }
     }
 
+    private void OnDisable()
+    {
+        Debug.Log("[SimpleMouseForwarder] OnDisable");
+        // Unhook all hooks when object is deactivated
+        if (_hookID != IntPtr.Zero)
+        {
+            UnhookWindowsHookEx(_hookID);
+            _hookID = IntPtr.Zero;
+            Debug.Log("[SimpleMouseForwarder] 鼠标钩子已卸载 (OnDisable)");
+        }
+
+        if (_keyboardHookID != IntPtr.Zero)
+        {
+            UnhookWindowsHookEx(_keyboardHookID);
+            _keyboardHookID = IntPtr.Zero;
+            Debug.Log("[SimpleMouseForwarder] 键盘钩子已卸载 (OnDisable)");
+        }
+        
+        if (instance == this)
+        {
+            instance = null;
+        }
+    }
+
     private void OnDestroy()
     {
         if (_hookID != IntPtr.Zero)
@@ -623,7 +802,5 @@ private static char MapVirtualKeyToCharacter(uint vkCode, bool shiftPressed, boo
         }
         
         instance = null;
-        }
     }
 }
-
