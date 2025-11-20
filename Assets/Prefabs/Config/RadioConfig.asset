@@ -134,43 +134,31 @@ MonoBehaviour:
     songFile: {fileID: 8300000, guid: 834d30b7798997447b355e867ddce33f, type: 3}
     key: Lightning
     group: {fileID: 2686922901651642568, guid: 5c4d4607342bae344bcb79f16a7989ee, type: 2}
-  click:
-    songName: Click
+  effects:
+  - songName: Click
     songFile: {fileID: 8300000, guid: d35eea371792f40788bb26825d0b48d5, type: 3}
     key: Click
     group: {fileID: 7072114554179992747, guid: be329ccde3afcd34485b5a4af5c16ee3, type: 2}
-  dropFood:
-    songName: DropFood
+  - songName: DropFood
     songFile: {fileID: 8300000, guid: 383824a163b2b4415b8785f695eb0785, type: 3}
     key: DropFood
     group: {fileID: -820342034493167473, guid: be329ccde3afcd34485b5a4af5c16ee3, type: 2}
-  stroke:
-    songName: Stroke
-    songFile: {fileID: 8300000, guid: 8892c8d60d243404a929134a58551b4a, type: 3}
-    key: Stroke
-    group: {fileID: 5933339891330114226, guid: be329ccde3afcd34485b5a4af5c16ee3, type: 2}
-  growUp:
-    songName: GrowUp
-    songFile: {fileID: 8300000, guid: f83d9fc14452c0747ae32cfa1790e82c, type: 3}
-    key: GrowUp
-    group: {fileID: -7016279717019545665, guid: be329ccde3afcd34485b5a4af5c16ee3, type: 2}
-  effects:
-  - songName: Click
-    songFile: {fileID: 8300000, guid: 969577f2cbdbe84469d245d754aa10c0, type: 3}
-    key: Click
-    group: {fileID: 7072114554179992747, guid: be329ccde3afcd34485b5a4af5c16ee3, type: 2}
-  - songName: DropFood
-    songFile: {fileID: 8300000, guid: ac9a82e218683ea42bcb24478bc5a01c, type: 3}
-    key: DropFood
-    group: {fileID: -820342034493167473, guid: be329ccde3afcd34485b5a4af5c16ee3, type: 2}
-  - songName: Stroke
-    songFile: {fileID: 8300000, guid: 3573113d04c964e409b61a1cfc94047b, type: 3}
-    key: Stroke
+  - songName: Petting
+    songFile: {fileID: 8300000, guid: c46bfc19455494c0bb4496ccff946cf6, type: 3}
+    key: Petting
     group: {fileID: 5933339891330114226, guid: be329ccde3afcd34485b5a4af5c16ee3, type: 2}
   - songName: GrowUp
     songFile: {fileID: 8300000, guid: f83d9fc14452c0747ae32cfa1790e82c, type: 3}
     key: GrowUp
     group: {fileID: -7016279717019545665, guid: be329ccde3afcd34485b5a4af5c16ee3, type: 2}
+  - songName: Buy
+    songFile: {fileID: 8300000, guid: eccd1182d0fba4cfca535eb52c38c23b, type: 3}
+    key: Buy
+    group: {fileID: -4143810835312692217, guid: be329ccde3afcd34485b5a4af5c16ee3, type: 2}
+  - songName: Hatch
+    songFile: {fileID: 8300000, guid: d823bd01d2ac54d15b23a6eedf0fdf7f, type: 3}
+    key: Hatch
+    group: {fileID: 8447557217150194903, guid: be329ccde3afcd34485b5a4af5c16ee3, type: 2}
   alertClips:
   - songName: Fire
     songFile: {fileID: 8300000, guid: 39bf75059594a924f92fafd51e5bc28c, type: 3}
