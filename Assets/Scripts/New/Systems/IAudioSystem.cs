@@ -110,6 +110,7 @@ namespace BirdGame
             radioModel.TotalTime.Value = item.songFile.length;
             radioModel.SongProgress.Value = 0;
             radioAudio.clip = item.songFile;
+            radioAudio.outputAudioMixerGroup = item.group;
             radioModel.SongName.Value =
                 this.GetModel<IConfigModel>().RadioConfig.musicItems[radioModel.SongIndex].songName;
             radioAudio.Play();
@@ -221,20 +222,20 @@ namespace BirdGame
             switch (type)
             {
                 case EffectType.Click: 
-                    clip = this.GetModel<IConfigModel>().RadioConfig.click.songFile;
-                    group = this.GetModel<IConfigModel>().RadioConfig.click.group;
+                    clip = this.GetModel<IConfigModel>().RadioConfig.effects[0].songFile;
+                    group = this.GetModel<IConfigModel>().RadioConfig.effects[0].group;
                     break;
                 case EffectType.DropFood:
-                    clip = this.GetModel<IConfigModel>().RadioConfig.dropFood.songFile;
-                    group = this.GetModel<IConfigModel>().RadioConfig.dropFood.group;
+                    clip = this.GetModel<IConfigModel>().RadioConfig.effects[1].songFile;
+                    group = this.GetModel<IConfigModel>().RadioConfig.effects[1].group;
                     break;
                 case EffectType.Stroke:
-                    clip = this.GetModel<IConfigModel>().RadioConfig.stroke.songFile;
-                    group = this.GetModel<IConfigModel>().RadioConfig.stroke.group;
+                    clip = this.GetModel<IConfigModel>().RadioConfig.effects[2].songFile;
+                    group = this.GetModel<IConfigModel>().RadioConfig.effects[2].group;
                     break;
                 case EffectType.GrowUp:
-                    clip = this.GetModel<IConfigModel>().RadioConfig.growUp.songFile;
-                    group = this.GetModel<IConfigModel>().RadioConfig.growUp.group;
+                    clip = this.GetModel<IConfigModel>().RadioConfig.effects[3].songFile;
+                    group = this.GetModel<IConfigModel>().RadioConfig.effects[3].group;
                     break;
             }
             

@@ -13,10 +13,7 @@ namespace BirdGame
         public AudioItem[] environments;
         
         [Title("音效"), Space(10)] 
-        public AudioItem click;
-        public AudioItem dropFood;
-        public AudioItem stroke;
-        public AudioItem growUp;
+        public AudioItem[] effects;
 
         [Title("Clock提示音乐库"), Space(10), TableList(ShowIndexLabels = true, AlwaysExpanded = true)] 
         public AudioItem[] alertClips;
