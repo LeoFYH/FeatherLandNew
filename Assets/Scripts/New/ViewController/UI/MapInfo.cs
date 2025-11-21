@@ -26,10 +26,10 @@ namespace BirdGame
             SetPos();
         }
 
-        private void Update()
-        {
-            SetPos();
-        }
+        // private void Update()
+        // {
+        //     SetPos();
+        // }
 
         private void SetPos()
         {

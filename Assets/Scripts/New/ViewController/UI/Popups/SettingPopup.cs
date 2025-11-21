@@ -331,14 +331,14 @@ namespace BirdGame
             
             string value = this.GetSystem<ILocalizationSystem>().GetString("English");
             languageDropdown.options.Add(new TMP_Dropdown.OptionData(value,itemSprite, Color.white));
-            value = this.GetSystem<ILocalizationSystem>().GetString("Chinese");
-            if (currentLanguage == SystemLanguage.ChineseSimplified)
-            {
-                value = "中文";
-            }
-            languageDropdown.options.Add(new TMP_Dropdown.OptionData(value, itemSprite, Color.white));
+            // value = this.GetSystem<ILocalizationSystem>().GetString("Chinese");
+            // if (currentLanguage == SystemLanguage.ChineseSimplified)
+            // {
+            //     value = "中文";
+            // }
+            // languageDropdown.options.Add(new TMP_Dropdown.OptionData(value, itemSprite, Color.white));
             languages.Add(SystemLanguage.English);
-            languages.Add(SystemLanguage.ChineseSimplified);
+            //languages.Add(SystemLanguage.ChineseSimplified);
             Debug.Log($"存档中的语言设置: {currentLanguage}");
             Debug.Log($"本地化配置支持的语言: {string.Join(", ", languages)}");
             

@@ -75,7 +75,7 @@ namespace BirdGame
         {
             if (currentIndex == index)
                 return;
-
+            Debug.Log("天气index为" + index);
             if (currentIndex != -1)
             {
                 var lastWeather = weathers[currentIndex];
@@ -232,8 +232,18 @@ namespace BirdGame
             mainSequence.OnComplete(() => 
             {
                 Debug.Log("天气切换完成");
+                
+                // 根据天气索引设置环境音音量
+                if (index == 0 || index == 1 || index == 2 || index == 3 || index == 4)
+                {
+                    this.GetSystem<IAudioSystem>().SetEnvironmentVolumesByWeather(index);
+                }
             });
         }
+        
+
+
+
 
         private void Update()
         {

@@ -27,7 +27,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 1}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4027617916547506636}
@@ -76,12 +76,12 @@ SpriteRenderer:
   m_SortingLayerID: -202900907
   m_SortingLayer: 1
   m_SortingOrder: 16
-  m_Sprite: {fileID: -6255674438024747967, guid: d421d533afdde014c97b48ed5b7c9863, type: 3}
+  m_Sprite: {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 8.59, y: 7.9}
+  m_Size: {x: 3.64, y: 4.24}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -136,23 +136,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a89923267f18b44897f30efa9d03d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eggSprites:
-  - {fileID: -6255674438024747967, guid: d421d533afdde014c97b48ed5b7c9863, type: 3}
-  - {fileID: -4418742033310814763, guid: c2ed9d20576498d47b9e0b82d909f698, type: 3}
-  - {fileID: -1283029194545823707, guid: e186c2160c4ea094c9d1e357c6de1a53, type: 3}
-  - {fileID: 1681710406201969514, guid: 059577efb4e35534883f60ac00ced613, type: 3}
-  - {fileID: -2048998958439741314, guid: a754a012accfa984c981cb6cb2635381, type: 3}
-  - {fileID: -4398534338499799412, guid: cd4124df2b9460041aab06f0caad1a9d, type: 3}
-  - {fileID: -5471530427654471320, guid: 551bafd2cfdafa9428ea5913dcbc296f, type: 3}
-  - {fileID: 1568030854954983633, guid: b8e9111d61a8f6f4eb63ad0686fc348d, type: 3}
-  - {fileID: 3319315479902275752, guid: 894664b8750b6744dabf0d615b5802cc, type: 3}
-  - {fileID: -5039586027553292080, guid: 0e534bb7ff08ad94c85608a8653eeb5e, type: 3}
-  - {fileID: 1842576560247616568, guid: c492bda72b503914ab7ee9b2383932e1, type: 3}
-  - {fileID: 21300000, guid: 6766a6cdd0728f448ba935ec71b5126a, type: 3}
-  - {fileID: -420679486246272402, guid: 25465d24250320f45bad9d066a3529ed, type: 3}
   spriteRenderer: {fileID: 8641895144709943338}
   effect1: {fileID: 406376635277754614}
   effect2: {fileID: 7113994344422696998}
+  eggSps:
+  - {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
+  - {fileID: 710238443548197888, guid: 1170092e8fa8e1142a7e347132e8ea45, type: 3}
+  - {fileID: 2219571566158466069, guid: 066d2d923c5b99944aa6d9ca568d816f, type: 3}
+  - {fileID: -8002347335681798773, guid: 3983a1dbff14cd040915f5a365b4942e, type: 3}
 --- !u!61 &993549381428427568
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -11,15 +11,14 @@ namespace BirdGame
         [ShowInInspector, ReadOnly]
         public int EggItemIndex { get; private set; }
         public int BirdIndex { get; private set; }
-
-        public Sprite[] eggSprites; // 蛋动画的每一帧图片
+        
         public SpriteRenderer spriteRenderer;
         public GameObject effect1;
         public GameObject effect2;
+        public Sprite[] eggSps;
         private int currentFrame = 0; // 当前显示的帧索引
         private Tweener anim;
         private Tweener floatAnim; // 浮动动画
-        private int clickCount = 0;
         private bool isSetBird;
         private int eggId;
 
@@ -28,6 +27,7 @@ namespace BirdGame
             EggItemIndex = index;
             eggId = id;
             isSetBird = false;
+            spriteRenderer.sprite = eggSps[this.GetModel<IGameModel>().ShopEggSelectIndex.Value];
         }
 
         public void SetBirdIndex(int index)
@@ -35,6 +35,7 @@ namespace BirdGame
             BirdIndex = index;
             eggId = -1;
             isSetBird = true;
+            spriteRenderer.sprite = eggSps[0];
         }
 
         /// <summary>
@@ -84,24 +85,8 @@ namespace BirdGame
 
         public void OnClick()
         {
-            if(clickCount >= 3)
-                return;
-            
-            if(this.GetModel<IGameModel>().OpenEggIndex != -1 && this.GetModel<IGameModel>().OpenEggIndex != eggId)
-                return;
-            
-            if (this.GetModel<IGameModel>().OpenEggIndex == -1)
-            {
-                this.GetModel<IGameModel>().OpenEggIndex = eggId;
-            }
-
-            anim?.Kill();
-            anim = spriteRenderer.transform.DOShakeScale(0.2f, 0.05f, 50, 180f);
-            clickCount++;
-            if (clickCount >= 3)
-            {
-                StartCoroutine(OpenEgg());
-            }
+            this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Hatch);
+            SpawnBird();
 
             // PlayNextFrame();
             //
@@ -109,42 +94,6 @@ namespace BirdGame
             // {
             //     SpawnBird();
             // }
-        }
-
-        private IEnumerator OpenEgg()
-        {
-            effect2.SetActive(true);
-            effect1.SetActive(false);
-            
-            // 停止effect1的粒子特效
-            if (effect1 != null)
-            {
-                var particleSystem1 = effect1.GetComponent<ParticleSystem>();
-                if (particleSystem1 != null)
-                {
-                    particleSystem1.Stop();
-                }
-            }
-            
-            while (currentFrame < eggSprites.Length)
-            {
-                PlayNextFrame();
-                
-                // 从第7帧开始播放速度变慢
-                float frameDelay = currentFrame >= 7 ? 0.1f : 0.07f;
-                yield return new WaitForSeconds(frameDelay);
-            }
-            
-            SpawnBird();
-        }
-
-        private void PlayNextFrame()
-        {
-            if (currentFrame < eggSprites.Length)
-            {
-                spriteRenderer.sprite = eggSprites[currentFrame];
-                currentFrame++;
-            }
         }
 
         private void OnDestroy()
