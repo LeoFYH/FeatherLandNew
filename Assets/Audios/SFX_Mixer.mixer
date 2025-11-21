@@ -69,6 +69,28 @@ AudioMixerGroupController:
   m_Mute: 0
   m_Solo: 0
   m_BypassEffects: 0
+--- !u!244 &-6490818922727407802
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_EffectID: 168d09415324e4e4cb6ae5b4136cc67e
+  m_EffectName: Compressor
+  m_MixLevel: 1073a6d94d7514dbfa3643c410619a49
+  m_Parameters:
+  - m_ParameterName: Threshold
+    m_GUID: e78990204422848a1a6601e5b185bbfe
+  - m_ParameterName: Attack
+    m_GUID: dc0efdebb53ee4397b81c2abc8fa05e1
+  - m_ParameterName: Release
+    m_GUID: e2724604b267c410d9ff8c6d12598e0b
+  - m_ParameterName: Make up gain
+    m_GUID: 5001e168726dc49bfbe65c45c674bcef
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
 --- !u!243 &-4143810835312692217
 AudioMixerGroupController:
   m_ObjectHideFlags: 0
@@ -178,6 +200,8 @@ AudioMixerController:
     name: Click
   - guid: 8ea0c74d54e478d44928f27c52cb4f8a
     name: DropFood
+  - guid: a791711ea9fc744618bb8e9adc88bca0
+    name: Eat
   - guid: 76523916c41c9294daed8612ede8a231
     name: GrowUp
   - guid: 8d05e3addf6f8481a9d14baa6b039c58
@@ -249,10 +273,11 @@ AudioMixerSnapshotController:
   m_FloatValues:
     01c04f609bfa94439ad5661af93e4906: 0
     265010d1a972743e1b8d1b009c46bd3b: 8.51
-    71d7dc92d8c3f78408b3ef096e9380e5: -0.8840523
+    71d7dc92d8c3f78408b3ef096e9380e5: -6.5566154
     1f9b89c2038cf43b1abab0c60195d9bc: 1.404
     49815a568f42c4081bc4ddbcaa171cfa: -17.5
     579d79d7795fd4a8fb50689acdf82ab6: 1.55
+    5001e168726dc49bfbe65c45c674bcef: 10.45
     62ed4c6b315804485a14809a9d5c0cf1: 5829
     8ea0c74d54e478d44928f27c52cb4f8a: -19.255663
     8d05e3addf6f8481a9d14baa6b039c58: 0
@@ -317,6 +342,7 @@ AudioMixerGroupController:
   m_Send: 00000000000000000000000000000000
   m_Effects:
   - {fileID: 7296527306271438125}
+  - {fileID: -6490818922727407802}
   m_UserColorIndex: 0
   m_Mute: 0
   m_Solo: 0
