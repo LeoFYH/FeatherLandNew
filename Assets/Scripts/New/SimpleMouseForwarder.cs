@@ -8,6 +8,7 @@ using Debug = UnityEngine.Debug;
 using TMPro;
 using AOT;
 using QFramework;
+using TMPro;
 
 public class SimpleMouseForwarder : MonoBehaviour
 {
@@ -69,6 +70,7 @@ public class SimpleMouseForwarder : MonoBehaviour
     private static float dragStartTime = 0f;
     private const float DRAG_TIME_THRESHOLD = 0.1f; // Minimum time before drag can start (100ms)
     private const float DRAG_DISTANCE_THRESHOLD = 5f; // Minimum distance in pixels before drag starts
+    public static bool isOnDesktop = false;
 
     [StructLayout(LayoutKind.Sequential)]
     private struct POINT
@@ -203,7 +205,7 @@ public class SimpleMouseForwarder : MonoBehaviour
     [MonoPInvokeCallback(typeof(LowLevelKeyboardProc))]
     private static IntPtr KeyboardHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
     {
-        if (nCode >= 0 && instance != null && instance.enableForwarding && _focusedTMPInputField != null)
+        if (nCode >= 0 && instance != null && instance.enableForwarding && _focusedTMPInputField != null && isOnDesktop)
         {
             int message = wParam.ToInt32();
             
@@ -510,7 +512,7 @@ public class SimpleMouseForwarder : MonoBehaviour
     [MonoPInvokeCallback(typeof(LowLevelMouseProc))]
     private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
     {
-        if (nCode >= 0 && instance != null && instance.enableForwarding)
+        if (nCode >= 0 && instance != null && instance.enableForwarding && isOnDesktop)
         {
             int message = wParam.ToInt32();
             MSLLHOOKSTRUCT hookStruct = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
@@ -675,8 +677,9 @@ public class SimpleMouseForwarder : MonoBehaviour
 
     private void Update()
     {
+        isOnDesktop = GetForegroundWindowTitle() == "Program Manager" || GetForegroundWindowTitle() == string.Empty;
         // Get the current foreground window handle
-        if ((GetForegroundWindowTitle() == "Program Manager" || GetForegroundWindowTitle() == string.Empty))
+        if (isOnDesktop)
         {
             if (leftButtonDown && instance.enableForwarding)
             {

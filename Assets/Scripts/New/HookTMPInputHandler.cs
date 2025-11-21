@@ -63,21 +63,6 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
         Tab
     }
 
-    private string GetForegroundWindowTitle()
-    {
-        IntPtr hwnd = GetForegroundWindow();
-        if (hwnd != IntPtr.Zero)
-        {
-            const int nChars = 256;
-            System.Text.StringBuilder Buff = new System.Text.StringBuilder(nChars);
-            if (GetWindowText(hwnd, Buff, nChars) > 0)
-            {
-                return Buff.ToString();
-            }
-        }
-        return string.Empty;
-    }
-
     void Start()
     {
         instance = this;
@@ -95,12 +80,12 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
             
         originalText = inputField != null ? inputField.text : "";
         
-        if (inputField != null)
-        {
-            inputField.onSubmit.AddListener(OnSubmit);
-            inputField.onDeselect.AddListener(OnDeselect);
-            inputField.onSelect.AddListener(OnSelect);
-        }
+        // if (inputField != null)
+        // {
+        //     inputField.onSubmit.AddListener(OnSubmit);
+        //     inputField.onDeselect.AddListener(OnDeselect);
+        //     inputField.onSelect.AddListener(OnSelect);
+        // }
     }
 
     private void DisableCaretRaycastTargets()

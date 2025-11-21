@@ -2628,7 +2628,9 @@ MonoBehaviour:
   backgroundImage: {fileID: 5602695394241880078}
   autoActivateOnClick: 1
   selectAllOnClick: 0
-  activateOnAnyClick: 1
+  enableClickToPositionCaret: 1
+  enableDebugLog: 0
+  selectionColor: {r: 0.2, g: 0.4, b: 0.8, a: 0.4}
 --- !u!1 &6825174370909514761
 GameObject:
   m_ObjectHideFlags: 0
