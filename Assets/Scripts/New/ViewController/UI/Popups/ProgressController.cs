@@ -9,16 +9,19 @@ namespace BirdGame
     {
         private void Start()
         {
+            this.GetModel<IRadioModel>().IsMuteSong.Value = false;
             this.GetSystem<IAudioSystem>().MuteSong(false);
         }
 
         public void OnBeginDrag(PointerEventData eventData)
         {
+            this.GetModel<IRadioModel>().IsMuteSong.Value = true;
             this.GetSystem<IAudioSystem>().MuteSong(true);
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
+            this.GetModel<IRadioModel>().IsMuteSong.Value = false;
             this.GetSystem<IAudioSystem>().MuteSong(false);
         }
     }
