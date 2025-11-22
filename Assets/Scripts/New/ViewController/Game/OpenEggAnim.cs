@@ -11,6 +11,7 @@ namespace BirdGame
         public SpriteRenderer sr;
         public TextMeshProUGUI nameText;
         public Transform bird;
+        public Animator lightAnim;
 
         private Action onAnimComplete;
         private bool canWait = false;
@@ -35,10 +36,16 @@ namespace BirdGame
             anim.Play("OpenEgg" + eggType);
             var config = this.GetModel<IConfigModel>().BirdConfig;
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
-            sr.sprite = config.GetBird(index, mapIndex).preview;
+            var birdConf = config.GetBird(index, mapIndex);
+            sr.sprite = birdConf.preview;
             scale = 275f / sr.sprite.rect.size.x;
             bird.transform.localScale = Vector3.zero;
-            
+            string lightString = birdConf.reality;
+            if (!string.IsNullOrEmpty(lightString))
+            {
+                lightAnim.Play("EggDestroy" + lightString);
+            }
+
             // 使用本地化系统获取鸟类名称
             string birdNameKey = config.GetBirdNameKey(index, mapIndex);
             string localizedBirdName = this.GetSystem<ILocalizationSystem>().GetString(birdNameKey);
