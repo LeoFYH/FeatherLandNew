@@ -64,37 +64,12 @@
     <Analyzer Include="D:\unity\6000.0.58f2\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Rewired\Integration\UnityUI\Editor\UnityUISetup.cs" />
-    <Compile Include="Assets\Rewired\Internal\Scripts\Editor\CustomInspectors\HardwareJoystickMapInspector.cs" />
     <Compile Include="Assets\SpritePivotEditor\Editor\SpriteAlignmentEditor.cs" />
-    <Compile Include="Assets\Rewired\Internal\Scripts\Editor\CustomInspectors\ControllerDataFilesInspector.cs" />
     <Compile Include="Assets\Scripts\New\Editor\LocalizationGlobalConfig.cs" />
-    <Compile Include="Assets\Rewired\Extras\ControlMapper\Scripts\Editor\CustomButtonInspector.cs" />
-    <Compile Include="Assets\Rewired\Internal\Scripts\Editor\UnityEditorBridge.cs" />
-    <Compile Include="Assets\Rewired\Extras\TouchControls\Scripts\Editor\MenuCommands.cs" />
-    <Compile Include="Assets\Rewired\Internal\Scripts\Editor\CustomInspectors\UserDataStore_PlayerPrefsInspector.cs" />
     <Compile Include="Assets\Scripts\New\Editor\EditorCoroutineUtility.cs" />
-    <Compile Include="Assets\Rewired\Integration\UnityUI\Editor\RewiredStandaloneInputModuleInspector.cs" />
-    <Compile Include="Assets\Rewired\Internal\Scripts\Editor\CustomInspectors\InputManagerInspector.cs" />
-    <Compile Include="Assets\Rewired\Examples\CustomPlatform\Scripts\Editor\CreateScriptableObjects.cs" />
-    <Compile Include="Assets\Rewired\Internal\Scripts\Editor\CustomInspectors\HardwareJoystickTemplateMapInspector.cs" />
-    <Compile Include="Assets\Rewired\Extras\Glyphs\Scripts\Editor\SpriteGlyphSetInspector.cs" />
-    <Compile Include="Assets\Rewired\Extras\Glyphs\Scripts\Editor\GlyphSetCollectionInspector.cs" />
-    <Compile Include="Assets\Rewired\Internal\Scripts\Editor\CustomInspectors\PlayerControllerInspector.cs" />
-    <Compile Include="Assets\Rewired\Internal\Scripts\Editor\CustomInspectors\HardwareJoystickMapCustomPlatformMapInspector.cs" />
     <Compile Include="Assets\Scripts\New\Editor\GameConfigWindow.cs" />
-    <Compile Include="Assets\Rewired\Extras\ControlMapper\Scripts\Editor\CustomSliderInspector.cs" />
     <Compile Include="Assets\Scripts\New\Editor\CursorConfigEditor.cs" />
-    <Compile Include="Assets\Rewired\Internal\Scripts\Editor\CustomInspectors\CustomInspector_External.cs" />
-    <Compile Include="Assets\Rewired\Extras\Glyphs\Scripts\Editor\EditorMenu.cs" />
-    <Compile Include="Assets\Rewired\Internal\Scripts\Editor\CustomInspectors\PlayerMouseInspector.cs" />
-    <Compile Include="Assets\Rewired\Internal\Scripts\Editor\DependencyHelpers.cs" />
     <Compile Include="Assets\SpritePivotEditor\Editor\SpritePivotEditor.cs" />
-    <Compile Include="Assets\Rewired\Extras\Glyphs\UnityUI\Scripts\Editor\EditorMenu.cs" />
-    <Compile Include="Assets\Rewired\Extras\ControlMapper\Scripts\Editor\CustomToggleInspector.cs" />
-    <Compile Include="Assets\Rewired\Extras\ControlMapper\Scripts\Editor\ControlMapperInspector.cs" />
-    <Compile Include="Assets\Rewired\Internal\Scripts\Editor\CustomInspectors\InitializerInspector.cs" />
-    <Compile Include="Assets\Rewired\Extras\Glyphs\UnityUI\Scripts\Editor\UnityUITextMeshProGlyphHelperInspector.cs" />
     <Compile Include="Assets\Scripts\New\Editor\SetPivotBottomCenter.cs" />
     <Compile Include="Assets\Scripts\New\Editor\GameSetting.cs" />
   </ItemGroup>
@@ -125,7 +100,6 @@
     <None Include="Library\PackageCache\com.unity.collab-proxy@ab839cc7d2ad\Lib\Editor\Localization\mergetool.ko.txt" />
     <None Include="Library\PackageCache\com.unity.collab-proxy@ab839cc7d2ad\Lib\Editor\Localization\mergetool.ja.txt" />
     <None Include="Library\PackageCache\com.unity.collab-proxy@ab839cc7d2ad\Lib\Editor\Localization\cm-help.ja.txt" />
-    <None Include="Assets\Rewired\Internal\Libraries\Editor\Rewired_Editor.dll" />
     <None Include="Library\PackageCache\com.unity.collab-proxy@ab839cc7d2ad\Lib\Editor\Localization\plastic-gui.en.txt" />
     <None Include="Library\PackageCache\com.unity.collab-proxy@ab839cc7d2ad\Lib\Editor\Unity.Plastic.Antlr3.Runtime.dll" />
     <None Include="Library\PackageCache\com.unity.collab-proxy@ab839cc7d2ad\Lib\Editor\Localization\configurehelper.zh-Hans.txt" />
@@ -715,10 +689,6 @@
       <HintPath>Assets\Plugins\Sirenix\Assemblies\Sirenix.Serialization.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Rewired_Editor">
-      <HintPath>Assets\Rewired\Internal\Libraries\Editor\Rewired_Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Unity.Plastic.Antlr3.Runtime">
       <HintPath>Library\PackageCache\com.unity.collab-proxy@ab839cc7d2ad\Lib\Editor\Unity.Plastic.Antlr3.Runtime.dll</HintPath>
       <Private>False</Private>
@@ -761,14 +731,6 @@
     </Reference>
     <Reference Include="DOTween">
       <HintPath>Assets\Plugins\Demigiant\DOTween\DOTween.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Rewired_Windows">
-      <HintPath>Assets\Rewired\Internal\Libraries\Runtime\Rewired_Windows.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Rewired_Core">
-      <HintPath>Assets\Rewired\Internal\Libraries\Runtime\Rewired_Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
@@ -1388,7 +1350,6 @@
     <ProjectReference Include="Unity.VisualScripting.Flow.csproj" />
     <ProjectReference Include="Unity.Rendering.LightTransport.Runtime.csproj" />
     <ProjectReference Include="Unity.Cursor.Editor.csproj" />
-    <ProjectReference Include="Rewired_Windows_Functions.csproj" />
     <ProjectReference Include="Unity.InputSystem.csproj" />
   </ItemGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
