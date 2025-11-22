@@ -38,6 +38,8 @@ namespace BirdGame
         /// </summary>
         void NextSong();
 
+        void MuteSong(bool mute);
+
         void SetAudioProgress(float value);
 
         void PlayEffect(EffectType type);
@@ -191,6 +193,11 @@ namespace BirdGame
             }
 
             PlaySong();
+        }
+
+        public void MuteSong(bool mute)
+        {
+            radioAudio.mute = mute;
         }
 
         public void SetAudioProgress(float value)
