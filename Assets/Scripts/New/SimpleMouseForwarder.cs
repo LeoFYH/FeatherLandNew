@@ -27,7 +27,6 @@ public class SimpleMouseForwarder : MonoBehaviour
     private const int WM_MOUSEMOVE = 0x0200;
 
     private const int WH_KEYBOARD_LL = 13;
-    private const int WH_GETMESSAGE = 3;
     private const int WM_KEYDOWN = 0x0100;
     private const int WM_KEYUP = 0x0101;
     private const int WM_CHAR = 0x0102;
@@ -45,15 +44,6 @@ public class SimpleMouseForwarder : MonoBehaviour
     private const uint VK_TAB = 0x09;
     private const uint VK_CAPITAL = 0x14;
 
-    private const int WM_IME_CHAR = 0x0286;
-    private const int WM_IME_COMPOSITION = 0x010F;
-    private const int WM_IME_STARTCOMPOSITION = 0x010D;
-    private const int WM_IME_ENDCOMPOSITION = 0x010E;
-    private const int WM_IME_NOTIFY = 0x0282;
-    private static bool isIMECompositionActive = false;
-    private static float lastIMECompositionEndTime = 0f;
-    private const float IME_COMPOSITION_END_DELAY = 0.1f; // 100ms delay to allow IME character to arrive
-
     private static float wheelDelta = 0f;
     private static bool isHorizontalWheel = false;
     private static Vector2 wheelMousePosition = Vector2.zero;
@@ -64,11 +54,8 @@ public class SimpleMouseForwarder : MonoBehaviour
     private static GameObject currentDragTarget = null;
 
     private static IntPtr _keyboardHookID = IntPtr.Zero;
-    private static IntPtr _getMessageHookID = IntPtr.Zero;
     private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
-    private delegate IntPtr GetMsgProc(int nCode, IntPtr wParam, IntPtr lParam);
     private static LowLevelKeyboardProc _keyboardProc = KeyboardHookCallback;
-    private static GetMsgProc _getMessageProc = GetMessageHookCallback;
     private static GameObject _focusedTMPInputField = null;
 
     private static bool isLeftMouseDragging = false;
@@ -105,25 +92,11 @@ public class SimpleMouseForwarder : MonoBehaviour
         public IntPtr dwExtraInfo;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
-    private struct MSG
-    {
-        public IntPtr hwnd;
-        public uint message;
-        public IntPtr wParam;
-        public IntPtr lParam;
-        public uint time;
-        public POINT pt;
-    }
-
     [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelMouseProc lpfn, IntPtr hMod, uint dwThreadId);
 
     [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
-
-    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern IntPtr SetWindowsHookEx(int idHook, GetMsgProc lpfn, IntPtr hMod, uint dwThreadId);
 
     [DllImport("user32.dll")]
     private static extern short GetKeyState(uint nVirtKey);
@@ -143,45 +116,6 @@ public class SimpleMouseForwarder : MonoBehaviour
 
     [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     private static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder text, int count);
-
-    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-
-    [DllImport("user32.dll")]
-    private static extern IntPtr GetActiveWindow();
-
-    [DllImport("user32.dll")]
-    private static extern IntPtr GetKeyboardLayout(uint idThread);
-
-    [DllImport("user32.dll")]
-    private static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr ProcessId);
-
-    [DllImport("imm32.dll")]
-    private static extern bool ImmIsIME(IntPtr hKL);
-
-    [DllImport("user32.dll")]
-    private static extern int ToUnicodeEx(uint wVirtKey, uint wScanCode, byte[] lpKeyState, 
-        [Out, MarshalAs(UnmanagedType.LPWStr, SizeConst = 64)] System.Text.StringBuilder pwszBuff, 
-        int cchBuff, uint wFlags, IntPtr dwhkl);
-
-    [DllImport("user32.dll")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool GetKeyboardState(byte[] lpKeyState);
-
-    [DllImport("kernel32.dll")]
-    private static extern uint GetCurrentThreadId();
-
-    [DllImport("imm32.dll")]
-    private static extern IntPtr ImmGetContext(IntPtr hWnd);
-
-    [DllImport("imm32.dll")]
-    private static extern bool ImmReleaseContext(IntPtr hWnd, IntPtr hIMC);
-
-    [DllImport("imm32.dll")]
-    private static extern int ImmGetCompositionString(IntPtr hIMC, uint dwIndex, System.Text.StringBuilder lpBuf, int dwBufLen);
-
-    private const uint GCS_COMPSTR = 0x0008;
-    private const uint GCS_RESULTSTR = 0x0800;
 
     public bool enableForwarding = true;
     public bool showDebugLog = false;
@@ -222,10 +156,7 @@ public class SimpleMouseForwarder : MonoBehaviour
         // Install keyboard hook
         _keyboardHookID = SetKeyboardHook(_keyboardProc);
 
-        // Install message hook for IME
-        _getMessageHookID = SetGetMessageHook(_getMessageProc);
-
-        Debug.Log($"[SimpleMouseForwarder] 鼠标钩子: {_hookID}, 键盘钩子: {_keyboardHookID}, 消息钩子: {_getMessageHookID}");
+        Debug.Log($"[SimpleMouseForwarder] 鼠标钩子: {_hookID}, 键盘钩子: {_keyboardHookID}");
         if (_hookID == IntPtr.Zero || _keyboardHookID == IntPtr.Zero)
         {
             Debug.LogError("[SimpleMouseForwarder] 钩子安装失败！");
@@ -233,10 +164,6 @@ public class SimpleMouseForwarder : MonoBehaviour
         else
         {
             Debug.Log("[SimpleMouseForwarder] 鼠标和键盘钩子安装成功");
-        }
-        if (_getMessageHookID == IntPtr.Zero)
-        {
-            Debug.LogWarning("[SimpleMouseForwarder] 消息钩子安装失败，IME输入可能无法正常工作");
         }
     }
 
@@ -250,151 +177,6 @@ public class SimpleMouseForwarder : MonoBehaviour
         return SetWindowsHookEx(WH_KEYBOARD_LL, proc, GetModuleHandle(Application.productName), 0);
     }
 
-    private static IntPtr SetGetMessageHook(GetMsgProc proc)
-    {
-        // Try to get Unity's window handle and install hook for its thread
-        IntPtr unityWindow = GetActiveWindow();
-        if (unityWindow == IntPtr.Zero)
-        {
-            // Fallback: try to find window by product name
-            unityWindow = FindWindow(null, Application.productName);
-        }
-        
-        uint threadId = 0;
-        if (unityWindow != IntPtr.Zero)
-        {
-            threadId = GetWindowThreadProcessId(unityWindow, IntPtr.Zero);
-            if (instance != null && instance.showDebugLog)
-            {
-                Debug.Log($"[SimpleMouseForwarder] Unity window found: {unityWindow}, Thread ID: {threadId}");
-            }
-        }
-        else
-        {
-            // Fallback to current thread
-            threadId = GetCurrentThreadId();
-            if (instance != null && instance.showDebugLog)
-            {
-                Debug.LogWarning("[SimpleMouseForwarder] Could not find Unity window, using current thread");
-            }
-        }
-        
-        return SetWindowsHookEx(WH_GETMESSAGE, proc, GetModuleHandle(Application.productName), threadId);
-    }
-
-    [MonoPInvokeCallback(typeof(GetMsgProc))]
-    private static IntPtr GetMessageHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
-    {
-        // HC_ACTION (0) means process the message
-        if (nCode == 0 && instance != null && instance.enableForwarding && _focusedTMPInputField != null && isOnDesktop)
-        {
-            MSG msg = Marshal.PtrToStructure<MSG>(lParam);
-            
-            // Handle IME messages
-            if (msg.message == WM_IME_CHAR)
-            {
-                // WM_IME_CHAR contains the final composed character (Chinese, etc.)
-                int charValue = msg.wParam.ToInt32() & 0xFFFF;
-                char character = (char)charValue;
-                
-                // Handle surrogate pairs for Unicode characters above U+FFFF
-                if (character >= 0xD800 && character <= 0xDBFF)
-                {
-                    // High surrogate - wait for low surrogate
-                    // For now, we'll handle the basic case
-                }
-                
-                if (character != '\0' && character >= 0x20)
-                {
-                    // Reset IME composition state when we receive the character
-                    isIMECompositionActive = false;
-                    lastIMECompositionEndTime = 0f;
-                    
-                    HandleIMECharacter(character);
-                    if (instance.showDebugLog)
-                    {
-                        Debug.Log($"[SimpleMouseForwarder] IME Character received: '{character}' (Unicode: {(int)character}, Value: {charValue})");
-                    }
-                    // Return non-zero to prevent the message from being processed by the window
-                    // This prevents double input
-                    return new IntPtr(1);
-                }
-            }
-            else if (msg.message == WM_CHAR)
-            {
-                // WM_CHAR can also contain IME characters after composition
-                // Check if it's a Unicode character (Chinese, etc.)
-                int charValue = msg.wParam.ToInt32() & 0xFFFF;
-                char character = (char)charValue;
-                
-                // Check if it's a Chinese/Unicode character (not ASCII)
-                if (character > 127 && character != '\0')
-                {
-                    // This might be an IME character
-                    bool isIME = IsIMEActive();
-                    if (isIME || isIMECompositionActive || (Time.time - lastIMECompositionEndTime) < IME_COMPOSITION_END_DELAY)
-                    {
-                        // Reset IME composition state when we receive the character
-                        isIMECompositionActive = false;
-                        lastIMECompositionEndTime = 0f;
-                        
-                        HandleIMECharacter(character);
-                        if (instance.showDebugLog)
-                        {
-                            Debug.Log($"[SimpleMouseForwarder] WM_CHAR IME Character: '{character}' (Unicode: {(int)character})");
-                        }
-                        // Prevent double input
-                        return new IntPtr(1);
-                    }
-                }
-            }
-            else if (msg.message == WM_IME_COMPOSITION)
-            {
-                // Track IME composition state
-                int lParamValue = msg.lParam.ToInt32();
-                // GCS_RESULTSTR (0x0800) means composition result is available
-                // GCS_COMPSTR (0x0008) means composition string is being updated
-                if ((lParamValue & 0x0800) != 0)
-                {
-                    // Composition result is ready - character will be sent via WM_IME_CHAR or WM_CHAR
-                    if (instance.showDebugLog)
-                    {
-                        Debug.Log($"[SimpleMouseForwarder] IME composition result ready, lParam: {lParamValue}");
-                    }
-                }
-                if ((lParamValue & 0x0008) != 0)
-                {
-                    // Composition string is being updated
-                    isIMECompositionActive = true;
-                    if (instance.showDebugLog)
-                    {
-                        Debug.Log($"[SimpleMouseForwarder] IME composition string updated, lParam: {lParamValue}");
-                    }
-                }
-            }
-            else if (msg.message == WM_IME_STARTCOMPOSITION)
-            {
-                isIMECompositionActive = true;
-                if (instance.showDebugLog)
-                {
-                    Debug.Log("[SimpleMouseForwarder] IME composition started");
-                }
-            }
-            else if (msg.message == WM_IME_ENDCOMPOSITION)
-            {
-                // Mark the time when composition ended
-                // Keep isIMECompositionActive true for a short time to allow WM_IME_CHAR/WM_CHAR to arrive
-                lastIMECompositionEndTime = Time.time;
-                if (instance.showDebugLog)
-                {
-                    Debug.Log("[SimpleMouseForwarder] IME composition ended, waiting for character");
-                }
-            }
-        }
-        
-        return CallNextHookEx(_getMessageHookID, nCode, wParam, lParam);
-    }
-
     [MonoPInvokeCallback(typeof(LowLevelKeyboardProc))]
     private static IntPtr KeyboardHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
     {
@@ -402,139 +184,17 @@ public class SimpleMouseForwarder : MonoBehaviour
         {
             int message = wParam.ToInt32();
             
-            // Note: Low-level keyboard hooks only receive WM_KEYDOWN, WM_KEYUP, WM_SYSKEYDOWN, WM_SYSKEYUP
-            // IME messages (WM_IME_CHAR, WM_IME_COMPOSITION, etc.) are sent to window procedures, not hooks
-            // We detect IME input by checking the keyboard layout and using ToUnicodeEx
-            
             if (message == WM_KEYDOWN)
             {
                 KBDLLHOOKSTRUCT hookStruct = Marshal.PtrToStructure<KBDLLHOOKSTRUCT>(lParam);
-                
-                // Check if IME is active
-                bool imeActive = IsIMEActive();
-                
-                // Check if we're in the delay period after IME composition ended
-                // This gives time for WM_IME_CHAR/WM_CHAR to arrive with the actual Chinese character
-                bool inIMEDelayPeriod = (Time.time - lastIMECompositionEndTime) < IME_COMPOSITION_END_DELAY;
-                
-                // During IME composition OR in delay period after composition, allow certain keys to pass through
-                if (isIMECompositionActive || inIMEDelayPeriod)
-                {
-                    // Allow number keys for character selection (during composition or delay period)
-                    if (IsNumberKey(hookStruct.vkCode))
-                    {
-                        if (instance.showDebugLog)
-                            Debug.Log($"[SimpleMouseForwarder] Allowing number key {hookStruct.vkCode} for IME (composition: {isIMECompositionActive}, delay: {inIMEDelayPeriod})");
-                        return CallNextHookEx(_keyboardHookID, nCode, wParam, lParam);
-                    }
-                    
-                    // Allow Space to commit IME composition (during composition or delay period)
-                    if (hookStruct.vkCode == 0x20) // Space
-                    {
-                        if (instance.showDebugLog)
-                            Debug.Log($"[SimpleMouseForwarder] Allowing Space to commit IME composition (composition: {isIMECompositionActive}, delay: {inIMEDelayPeriod})");
-                        return CallNextHookEx(_keyboardHookID, nCode, wParam, lParam);
-                    }
-                    
-                    // Allow Enter to commit IME composition (during composition or delay period)
-                    if (hookStruct.vkCode == 13) // Enter
-                    {
-                        if (instance.showDebugLog)
-                            Debug.Log($"[SimpleMouseForwarder] Allowing Enter to commit IME composition (composition: {isIMECompositionActive}, delay: {inIMEDelayPeriod})");
-                        return CallNextHookEx(_keyboardHookID, nCode, wParam, lParam);
-                    }
-                    
-                    // Allow arrow keys for navigation in IME candidate list (only during active composition)
-                    if (isIMECompositionActive && (hookStruct.vkCode == VK_LEFT || hookStruct.vkCode == VK_RIGHT || 
-                        hookStruct.vkCode == VK_UP || hookStruct.vkCode == VK_DOWN))
-                    {
-                        if (instance.showDebugLog)
-                            Debug.Log($"[SimpleMouseForwarder] Allowing arrow key {hookStruct.vkCode} for IME navigation");
-                        return CallNextHookEx(_keyboardHookID, nCode, wParam, lParam);
-                    }
-                }
-                
-                HandleKeyDown(hookStruct, imeActive);
-            }
-            else if (message == WM_KEYUP)
-            {
-                KBDLLHOOKSTRUCT hookStruct = Marshal.PtrToStructure<KBDLLHOOKSTRUCT>(lParam);
-                
-                // Reset IME composition state on key up if IME is no longer active and delay period has passed
-                if (!IsIMEActive() && !isIMECompositionActive && (Time.time - lastIMECompositionEndTime) > IME_COMPOSITION_END_DELAY)
-                {
-                    // Reset after delay period
-                    lastIMECompositionEndTime = 0f;
-                }
+                HandleKeyDown(hookStruct);
             }
         }
         
         return CallNextHookEx(_keyboardHookID, nCode, wParam, lParam);
     }
 
-    private static bool IsNumberKey(uint vkCode)
-    {
-        return (vkCode >= 0x30 && vkCode <= 0x39) || // 0-9
-            (vkCode >= 0x60 && vkCode <= 0x69);   // Numpad 0-9
-    }
-
-    private static char GetUnicodeCharacter(uint vkCode, uint scanCode)
-    {
-        // Get keyboard layout for the foreground window
-        IntPtr foregroundWindow = GetForegroundWindow();
-        if (foregroundWindow == IntPtr.Zero) return '\0';
-        
-        uint threadId = GetWindowThreadProcessId(foregroundWindow, IntPtr.Zero);
-        IntPtr keyboardLayout = GetKeyboardLayout(threadId);
-        
-        // Get current keyboard state
-        byte[] keyState = new byte[256];
-        if (!GetKeyboardState(keyState))
-        {
-            // Fallback: manually get key states for modifier keys
-            if ((GetKeyState(VK_SHIFT) & 0x8000) != 0) keyState[VK_SHIFT] = 0x80;
-            if ((GetKeyState(VK_CONTROL) & 0x8000) != 0) keyState[VK_CONTROL] = 0x80;
-            if ((GetKeyState(VK_MENU) & 0x8000) != 0) keyState[VK_MENU] = 0x80;
-            if ((GetKeyState(VK_CAPITAL) & 0x0001) != 0) keyState[VK_CAPITAL] = 0x01;
-        }
-        
-        // Use ToUnicodeEx to convert virtual key code to Unicode character
-        System.Text.StringBuilder buffer = new System.Text.StringBuilder(64);
-        int result = ToUnicodeEx(vkCode, scanCode, keyState, buffer, 64, 0, keyboardLayout);
-        
-        if (result > 0 && buffer.Length > 0)
-        {
-            char character = buffer[0];
-            if (instance != null && instance.showDebugLog)
-                Debug.Log($"[SimpleMouseForwarder] ToUnicodeEx: '{character}' (Unicode: {(int)character}) from VK: {vkCode}");
-            return character;
-        }
-        
-        return '\0';
-    }
-
-    private static void HandleIMECharacter(char character)
-    {
-        if (_focusedTMPInputField == null) return;
-
-        var keyData = new HookTMPInputHandler.KeyEventData
-        {
-            keyType = HookTMPInputHandler.KeyType.Character,
-            keyChar = character,
-            shiftPressed = false,
-            ctrlPressed = false,
-            altPressed = false
-        };
-
-        SendKeyEventToTMPInputField(keyData);
-        
-        if (instance.showDebugLog)
-        {
-            Debug.Log($"[SimpleMouseForwarder] IME Character: '{character}' (Unicode: {(int)character})");
-        }
-    }
-
-    private static void HandleKeyDown(KBDLLHOOKSTRUCT hookStruct, bool imeActive)
+    private static void HandleKeyDown(KBDLLHOOKSTRUCT hookStruct)
     {
         // Get modifier key states
         bool shiftPressed = (GetKeyState(VK_SHIFT) & 0x8000) != 0;
@@ -586,28 +246,7 @@ public class SimpleMouseForwarder : MonoBehaviour
                 keyData.keyType = HookTMPInputHandler.KeyType.Tab;
                 break;
             default:
-                // During IME composition, don't handle regular character keys
-                // IME characters will be handled by GetMessageHookCallback via WM_IME_CHAR
-                if (isIMECompositionActive)
-                {
-                    if (instance.showDebugLog)
-                        Debug.Log($"[SimpleMouseForwarder] Skipping key {hookStruct.vkCode} during IME composition");
-                    return;
-                }
-                
-                // For IME input (when IME is active but not composing), try ToUnicodeEx
-                char character = '\0';
-                if (imeActive && !isIMECompositionActive)
-                {
-                    // Use ToUnicodeEx to get the Unicode character
-                    character = GetUnicodeCharacter(hookStruct.vkCode, hookStruct.scanCode);
-                }
-                
-                // If ToUnicodeEx didn't return a character, fall back to regular mapping
-                if (character == '\0')
-                {
-                    character = MapVirtualKeyToCharacter(hookStruct.vkCode, shiftPressed, capsLock);
-                }
+                char character = MapVirtualKeyToCharacter(hookStruct.vkCode, shiftPressed, capsLock);
                 
                 if (character != '\0')
                 {
@@ -627,7 +266,7 @@ public class SimpleMouseForwarder : MonoBehaviour
         {
             if (keyData.keyType == HookTMPInputHandler.KeyType.Character)
             {
-                Debug.Log($"[SimpleMouseForwarder] Key: '{keyData.keyChar}' (Unicode: {(int)keyData.keyChar}, IME: {imeActive}, Shift: {shiftPressed}, CapsLock: {capsLock})");
+                Debug.Log($"[SimpleMouseForwarder] Key: '{keyData.keyChar}' (Unicode: {(int)keyData.keyChar}, Shift: {shiftPressed}, CapsLock: {capsLock})");
             }
             else
             {
@@ -638,9 +277,6 @@ public class SimpleMouseForwarder : MonoBehaviour
 
     private static char MapVirtualKeyToCharacter(uint vkCode, bool shiftPressed, bool capsLock)
     {
-        // Handle Unicode characters (Chinese, etc.)
-        // For IME input, this might not be called, but keep it for regular input
-        
         // Handle letters A-Z
         if (vkCode >= 0x41 && vkCode <= 0x5A)
         {
@@ -709,17 +345,6 @@ public class SimpleMouseForwarder : MonoBehaviour
         }
         
         return '\0';
-    }
-
-    private static bool IsIMEActive()
-    {
-        IntPtr foregroundWindow = GetForegroundWindow();
-        if (foregroundWindow == IntPtr.Zero) return false;
-        
-        uint threadId = GetWindowThreadProcessId(foregroundWindow, IntPtr.Zero);
-        IntPtr keyboardLayout = GetKeyboardLayout(threadId);
-        
-        return ImmIsIME(keyboardLayout);
     }
 
     private static void SendKeyEventToTMPInputField(HookTMPInputHandler.KeyEventData keyData)
@@ -1007,13 +632,6 @@ public class SimpleMouseForwarder : MonoBehaviour
             _keyboardHookID = IntPtr.Zero;
             Debug.Log("[SimpleMouseForwarder] 键盘钩子已卸载 (OnDisable)");
         }
-
-        if (_getMessageHookID != IntPtr.Zero)
-        {
-            UnhookWindowsHookEx(_getMessageHookID);
-            _getMessageHookID = IntPtr.Zero;
-            Debug.Log("[SimpleMouseForwarder] 消息钩子已卸载 (OnDisable)");
-        }
         
         if (instance == this)
         {
@@ -1033,12 +651,6 @@ public class SimpleMouseForwarder : MonoBehaviour
         {
             UnhookWindowsHookEx(_keyboardHookID);
             _keyboardHookID = IntPtr.Zero;
-        }
-
-        if (_getMessageHookID != IntPtr.Zero)
-        {
-            UnhookWindowsHookEx(_getMessageHookID);
-            _getMessageHookID = IntPtr.Zero;
         }
         
         instance = null;
