@@ -16,7 +16,7 @@ namespace BirdGame
         private IGameModel gameModel;
         private IConfigModel configModel;
         
-        private void Start()
+        private void Awake()
         {
             gameModel = this.GetModel<IGameModel>();
             configModel = this.GetModel<IConfigModel>();
@@ -61,8 +61,9 @@ namespace BirdGame
 
             for (int i = 0; i < configModel.ShopConfig.sceneEggs[mapIndex].eggs.Length; i++)
             {
-                var item = GameObject.Instantiate(itemPrefab, itemPrefab.transform.parent).GetComponent<ShopEggItem>();
-                item.gameObject.SetActive(true);
+                var obj = GameObject.Instantiate(itemPrefab, itemPrefab.transform.parent);
+                var item = obj.GetComponent<ShopEggItem>();
+                obj.SetActive(true);
                 item.Init(i);
             }
         }

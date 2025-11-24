@@ -72,8 +72,8 @@ namespace BirdGame
         {
             bird.localScale = Vector3.one * 0.00001f;
             var anim = DOTween.Sequence();
-            anim.Append(bird.DOScale(scale * 1.2f, 36 * Time.deltaTime).SetEase(Ease.InSine));
-            anim.Append(bird.DOScale(scale, 6 * Time.deltaTime).SetEase(Ease.OutSine));
+            anim.Append(bird.DOScale(scale * 1.2f, 6 * Time.deltaTime).SetEase(Ease.InSine));
+            anim.Append(bird.DOScale(scale, 1 * Time.deltaTime).SetEase(Ease.OutSine));
         }
     }
 }

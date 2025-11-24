@@ -462,7 +462,13 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
             hoverTimer = 0f;
         }
     }
-    
+
+    private void OnDisable()
+    {
+        tooltipObject?.SetActive(false);
+        OnMouseExit();
+    }
+
     private void CreateTooltipObject()
     {
        

@@ -114,28 +114,11 @@ namespace BirdGame
                 playTween?.Kill();
                 if (v)
                 {
-                    // 确保先完全停止之前的旋转动画
-                    rollTween?.Kill();
-                    rollTween = null;
-                    
-                    // 重置唱片旋转角度到0度
-                    roll.localRotation = Quaternion.identity;
-                    
-                    playTween = playAnim.DOLocalRotate(Vector3.zero, 0.3f).OnComplete(() =>
-                    {
-                        // 使用独立的时间缩放，不受游戏时间缩放影响
-                        rollTween = roll.DOLocalRotate(new Vector3(0, 0, -360), 5f, RotateMode.FastBeyond360)
-                            .SetEase(Ease.Linear)
-                            .SetLoops(-1)
-                            .SetUpdate(true); // 使用独立更新，不受时间缩放影响
-                    });
+                    PlaySong();
                 }
                 else
                 {
-                    // 完全停止旋转动画
-                    rollTween?.Kill();
-                    rollTween = null;
-                    playTween = playAnim.DOLocalRotate(new Vector3(0, 0, 25), 0.3f);
+                    StopSong();
                 }
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             if (radioModel.PlayingSong.Value)
@@ -161,12 +144,51 @@ namespace BirdGame
                 pauseButton.gameObject.SetActive(false);
             }
 
+            this.GetModel<IRadioModel>().IsMuteSong.Register(v =>
+            {
+                if (v)
+                {
+                    rollTween?.Pause();
+                }
+                else
+                {
+                    rollTween?.Play();
+                }
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
             var config = this.GetModel<IConfigModel>().RadioConfig;
             for (int i = 0; i < config.musicItems.Length; i++)
             {
                 var item = GameObject.Instantiate(musicListPrefab, content).GetComponent<MusicItem>();
                 item.Init(i, config.musicItems[i].songName);
             }
+        }
+
+        private void PlaySong()
+        {
+            // 确保先完全停止之前的旋转动画
+            rollTween?.Kill();
+            rollTween = null;
+                    
+            // 重置唱片旋转角度到0度
+            roll.localRotation = Quaternion.identity;
+                    
+            playTween = playAnim.DOLocalRotate(Vector3.zero, 0.3f).OnComplete(() =>
+            {
+                // 使用独立的时间缩放，不受游戏时间缩放影响
+                rollTween = roll.DOLocalRotate(new Vector3(0, 0, -360), 5f, RotateMode.FastBeyond360)
+                    .SetEase(Ease.Linear)
+                    .SetLoops(-1)
+                    .SetUpdate(true); // 使用独立更新，不受时间缩放影响
+            });
+        }
+
+        private void StopSong()
+        {
+            // 完全停止旋转动画
+            rollTween?.Kill();
+            rollTween = null;
+            playTween = playAnim.DOLocalRotate(new Vector3(0, 0, 25), 0.3f);
         }
     }
 }
