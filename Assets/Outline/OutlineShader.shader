@@ -5,7 +5,8 @@ Shader "Sprites/OutlineShader"
         [PerRendererData] _MainTex ("Sprite Texture", 2D) = "white" {}
         _Color ("Tint", Color) = (1,1,1,1)
         _OutlineColor ("Outline Color", Color) = (1,1,1,1)
-        _OutlineWidth ("Outline Width", Range(0, 10)) = 1.0
+        _OutlineWidth ("Outline Width", Range(0, 20)) = 1.0
+        _UVScale ("UV Scale", Range(1, 1.5)) = 1.0
         _AlphaThreshold ("Alpha Threshold", Range(0, 1)) = 0.5
         [MaterialToggle] PixelSnap ("Pixel snap", Float) = 0
     }
@@ -53,11 +54,13 @@ Shader "Sprites/OutlineShader"
             fixed4 _Color;
             fixed4 _OutlineColor;
             float _OutlineWidth;
+            float _UVScale;
             float _AlphaThreshold;
             
             v2f vert(appdata_t IN)
             {
                 v2f OUT;
+                // No mesh modification - pass through original vertex
                 OUT.vertex = UnityObjectToClipPos(IN.vertex);
                 OUT.texcoord = IN.texcoord;
                 OUT.color = IN.color * _Color;
@@ -71,41 +74,66 @@ Shader "Sprites/OutlineShader"
             
             fixed4 frag(v2f IN) : SV_Target
             {
-                // Sample the main texture
-                fixed4 c = tex2D(_MainTex, IN.texcoord);
+                // Scale UV towards center to shrink sprite, leaving space for outline
+                float2 texCenter = float2(0.5, 0.5);
+                float2 uvDir = IN.texcoord - texCenter;
+                float2 scaledUV = texCenter + uvDir * _UVScale;
+                scaledUV = clamp(scaledUV, float2(0.0, 0.0), float2(1.0, 1.0));
+                
+                // Sample the main texture with scaled UV
+                fixed4 c = tex2D(_MainTex, scaledUV);
                 
                 // If the current pixel is above the alpha threshold, render it normally
                 if (c.a > _AlphaThreshold)
                 {
                     c *= IN.color;
-                    c.rgb *= c.a;
+                    c.rgb *= c.a;  // Premultiply alpha for sprite blending
                     return c;
                 }
                 
-                // Otherwise, check if we should draw an outline
-                // Calculate texel size for sampling neighbors
-                float2 pixelSize = _MainTex_TexelSize.xy * _OutlineWidth*60;
+                // Current pixel is transparent (or below threshold)
+                // Simple outline algorithm: sample surrounding pixels in a circle
+                float2 pixelSize = _MainTex_TexelSize.xy;
+                int outlineWidth = (int)clamp(_OutlineWidth, 1, 20); // Limit max iterations to avoid unroll issues
                 
                 // Sample 8 directions around the current pixel
-                float outline = 0.0;
-                outline += tex2D(_MainTex, IN.texcoord + float2(pixelSize.x, 0)).a;           // Right
-                outline += tex2D(_MainTex, IN.texcoord + float2(-pixelSize.x, 0)).a;          // Left
-                outline += tex2D(_MainTex, IN.texcoord + float2(0, pixelSize.y)).a;           // Up
-                outline += tex2D(_MainTex, IN.texcoord + float2(0, -pixelSize.y)).a;          // Down
-                outline += tex2D(_MainTex, IN.texcoord + float2(pixelSize.x, pixelSize.y)).a;   // Top-Right
-                outline += tex2D(_MainTex, IN.texcoord + float2(-pixelSize.x, pixelSize.y)).a;  // Top-Left
-                outline += tex2D(_MainTex, IN.texcoord + float2(pixelSize.x, -pixelSize.y)).a;  // Bottom-Right
-                outline += tex2D(_MainTex, IN.texcoord + float2(-pixelSize.x, -pixelSize.y)).a; // Bottom-Left
+                const float2 directions[8] = {
+                    float2(1, 0), float2(-1, 0), float2(0, 1), float2(0, -1),
+                    float2(0.707, 0.707), float2(-0.707, 0.707), float2(0.707, -0.707), float2(-0.707, -0.707)
+                };
                 
-                // If any neighbor has alpha above threshold, draw the outline
-                if (outline > _AlphaThreshold)
+                bool foundForeground = false;
+                
+                // Check pixels at increasing distances up to outline width
+                // Use loop instead of unroll to handle variable iteration count
+                // Use scaledUV for outline detection to match the scaled sprite
+                [loop]
+                for (int dist = 1; dist <= outlineWidth && !foundForeground; dist++)
                 {
-                    fixed4 outlineColor = _OutlineColor * IN.color;
-                    outlineColor.rgb *= outlineColor.a;
-                    return outlineColor;
+                    [unroll(8)]
+                    for (int dir = 0; dir < 8; dir++)
+                    {
+                        float2 offset = directions[dir] * float(dist) * pixelSize;
+                        float2 sampleUV = scaledUV + offset;
+                        sampleUV = clamp(sampleUV, float2(0.0, 0.0), float2(1.0, 1.0));
+                        
+                        if (tex2D(_MainTex, sampleUV).a > _AlphaThreshold)
+                        {
+                            foundForeground = true;
+                            break;
+                        }
+                    }
                 }
                 
-                // No outline needed, discard pixel
+                // Draw outline if foreground found
+                if (foundForeground)
+                {
+                    fixed4 result = _OutlineColor * IN.color;
+                    result.a = _OutlineColor.a * IN.color.a;
+                    result.rgb *= result.a;
+                    return result;
+                }
+                
                 return fixed4(0, 0, 0, 0);
             }
             ENDCG

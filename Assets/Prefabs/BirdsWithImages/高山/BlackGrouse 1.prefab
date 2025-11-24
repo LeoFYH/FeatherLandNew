@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 343863069046991755}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.001, y: -0.001, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -197,6 +197,8 @@ MonoBehaviour:
   currFood: {fileID: 0}
   isBeingPetted: 0
   lastPetTime: 0
+  lastEatTime: 0
+  eatWaitDuration: 0
   idleLockDuration: 1
   shouldFollowMouse: 0
   agent: {fileID: 0}

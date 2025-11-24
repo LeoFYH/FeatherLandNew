@@ -8,7 +8,7 @@
 		[Header(General Settings)]
 		[MaterialToggle] _OutlineEnabled ("Outline Enabled", Float) = 1
 		[MaterialToggle] _ConnectedAlpha ("Connected Alpha", Float) = 0
-        [HideInInspector] _AlphaThreshold ("Alpha clean", Range (0, 1)) = 0
+        _AlphaThreshold ("Alpha Threshold", Range (0, 1)) = 0.5
         _Thickness ("Width (Max recommended 100)", float) = 10
 		[KeywordEnum(Solid, Gradient, Image)] _OutlineMode("Outline mode", Float) = 0
 		[KeywordEnum(Contour, Frame)] _OutlineShape("Outline shape", Float) = 0
@@ -154,7 +154,7 @@
 				int steps = 100;
 				float angle_step = 360.0 / steps;
 
-				float alphaThreshold = _AlphaThreshold / 10;
+				float alphaThreshold = _AlphaThreshold;
 				float alphaCount = _AlphaThreshold * 10;
 
 				// check if the basic points has an alpha to speed up the process and not use the for loop
@@ -207,6 +207,17 @@
 
 				fixed4 c = SampleSpriteTexture (IN.texcoord) * IN.color;
 
+				// If the current pixel is above the alpha threshold and outline is disabled, render it normally
+				if (c.a > _AlphaThreshold && _OutlineEnabled == 0)
+				{
+					c.rgb *= c.a;
+					return c;
+				}
+
+				// If the current pixel is above the alpha threshold, we'll render it normally after checking outline
+				// If below threshold, we'll only render outline if found
+				bool shouldRenderPixel = c.a > _AlphaThreshold;
+
 				c.rgb *= c.a;
 
 				fixed alpha;
@@ -236,7 +247,7 @@
 						if(_OutlineShape == 0) // contour
 						{
 							if(
-								((_OutlinePosition != 2 && _OutlineShape == 1) && c.a != 0 &&  // inside and frame
+								((_OutlinePosition != 2 && _OutlineShape == 1) && c.a > _AlphaThreshold &&  // inside and frame
 									(
 										IN.texcoord.y + thicknessY > 1 || 
 										IN.texcoord.y - thicknessY < 0 || 
@@ -246,7 +257,7 @@
 									)
 								)
 								||
-								((_OutlinePosition == 2 || _OutlineShape != 1) && c.a == 0 &&   // outside or contour
+								((_OutlinePosition == 2 || _OutlineShape != 1) && c.a <= _AlphaThreshold &&   // outside or contour
 									CheckOriginalSpriteTexture(IN.texcoord, false)
 								)
 							)
@@ -385,7 +396,7 @@
 							IN.texcoord.x + thicknessX > 1 ||
 							IN.texcoord.x - thicknessX < 0)
 						{
-							if(_OutlinePosition == 0 && c.a != 0 && _Thickness > 0)
+							if(_OutlinePosition == 0 && c.a > _AlphaThreshold && _Thickness > 0)
 							{
 								return c;
 							}
@@ -396,12 +407,15 @@
 						}
 						else
 						{
-							return c;
+							if (shouldRenderPixel)
+								return c;
+							else
+								return fixed4(0, 0, 0, 0);
 						}
 					}
 					else if(_OutlineShape == 0 && _Thickness > 0) // Contour
 					{
-						if((_OutlinePosition != 2 && _OutlineShape == 1) && c.a != 0 && // inside and frame
+						if((_OutlinePosition != 2 && _OutlineShape == 1) && c.a > _AlphaThreshold && // inside and frame
 							(
 								IN.texcoord.y + thicknessY > 1 ||
 								IN.texcoord.y - thicknessY < 0 ||
@@ -413,7 +427,7 @@
 						{
 							return outlineC;
 						}
-						else if((_OutlinePosition == 2 || _OutlineShape != 1) && c.a == 0 && // outside orcontour
+						else if((_OutlinePosition == 2 || _OutlineShape != 1) && c.a <= _AlphaThreshold && // outside orcontour
 								(
 									CheckOriginalSpriteTexture(IN.texcoord, false)
 								)
@@ -423,20 +437,32 @@
 						}
 						else
 						{
-							return c;
+							if (shouldRenderPixel)
+								return c;
+							else
+								return fixed4(0, 0, 0, 0);
 						}
 					}
 					else
 					{
-						return c;
+						if (shouldRenderPixel)
+							return c;
+						else
+							return fixed4(0, 0, 0, 0);
 					}
 				}
 				else
 				{
-					return c;
+					if (shouldRenderPixel)
+						return c;
+					else
+						return fixed4(0, 0, 0, 0);
 				}
 
-				return c;
+				if (shouldRenderPixel)
+					return c;
+				else
+					return fixed4(0, 0, 0, 0);
 				//return c;
 			}
 		ENDCG
