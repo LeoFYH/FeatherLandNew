@@ -15,6 +15,8 @@ namespace BirdGame
         DropFood,
         Stroke,
         GrowUp,
+        Buy,
+        Hatch
     }
 
     public interface IAudioSystem : ISystem
@@ -35,6 +37,8 @@ namespace BirdGame
         /// 下一首歌
         /// </summary>
         void NextSong();
+
+        void MuteSong(bool mute);
 
         void SetAudioProgress(float value);
 
@@ -164,7 +168,7 @@ namespace BirdGame
             {
                 index = Random.Range(0, configModel.RadioConfig.musicItems.Length);
             }
-
+            Debug.Log($"播放：{configModel.RadioConfig.musicItems[index].songName}");
             PlaySong();
         }
 
@@ -191,11 +195,17 @@ namespace BirdGame
             PlaySong();
         }
 
+        public void MuteSong(bool mute)
+        {
+            radioAudio.mute = mute;
+        }
+
         public void SetAudioProgress(float value)
         {
             if(radioAudio.clip == null)
                 return;
             float time = radioAudio.clip.length * value;
+            time = Mathf.Clamp(time, 0f, Mathf.Max(0f, radioAudio.clip.length - 0.01f));
             radioAudio.time = time;
         }
 
@@ -236,6 +246,14 @@ namespace BirdGame
                 case EffectType.GrowUp:
                     clip = this.GetModel<IConfigModel>().RadioConfig.effects[3].songFile;
                     group = this.GetModel<IConfigModel>().RadioConfig.effects[3].group;
+                    break;
+                case EffectType.Buy:
+                    clip = this.GetModel<IConfigModel>().RadioConfig.effects[4].songFile;
+                    group = this.GetModel<IConfigModel>().RadioConfig.effects[4].group;
+                    break;
+                case EffectType.Hatch:
+                    clip = this.GetModel<IConfigModel>().RadioConfig.effects[5].songFile;
+                    group = this.GetModel<IConfigModel>().RadioConfig.effects[5].group;
                     break;
             }
             

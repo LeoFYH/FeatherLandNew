@@ -348,11 +348,11 @@ namespace BirdGame
             else
             {
                 progressIcon.sprite = iconForFavi;
-                progressFill.fillAmount = data.bird.currentFavorability.Value * 1f / data.bird.totalFavorability;
-                data.bird.currentFavorability.Register(v =>
-                {
-                    progressFill.fillAmount = v * 1f / data.bird.totalFavorability;
-                }).UnRegisterWhenGameObjectDestroyed(gameObject);
+                progressFill.fillAmount = 1f;
+                // data.bird.currentFavorability.Register(v =>
+                // {
+                //     progressFill.fillAmount = v * 1f / data.bird.totalFavorability;
+                // }).UnRegisterWhenGameObjectDestroyed(gameObject);
                 price = data.individualPriceBig;
             }
 

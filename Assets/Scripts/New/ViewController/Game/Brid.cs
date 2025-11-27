@@ -19,7 +19,8 @@ namespace BirdGame
         public int birdIndex;
 
         public int walkArea = 3;
-
+        private int previousClickCount = 0;
+        private int previousRightClickCount = 0;
         [Header("Baby Bird Size")] public float BabyBirdSize = 0.01f;
 
         [Header("Adult Bird Size")] public float AdultBirdSize = 0.12f;
@@ -230,8 +231,9 @@ namespace BirdGame
                 
                 if (isEnter)
                 {
-                    if (Input.GetMouseButtonDown(1))
+                    if (Input.GetMouseButtonDown(1) || SimpleMouseForwarder.rightClickCount > previousRightClickCount)
                     {
+                        previousRightClickCount = SimpleMouseForwarder.rightClickCount;
                         if (!isSmall)
                         {
                             title = "Adult bird";
@@ -260,8 +262,9 @@ namespace BirdGame
                         // }
                     }
 
-                    if (Input.GetMouseButtonDown(0))
+                    if (Input.GetMouseButtonDown(0) || SimpleMouseForwarder.clickCount > previousClickCount)
                     {
+                        previousClickCount = SimpleMouseForwarder.clickCount;
                         if (_stateMachine.CurrentState == typeof(BirdIdleState) ||
                             _stateMachine.CurrentState == typeof(BirdRunState) ||
                             _stateMachine.CurrentState == typeof(BirdEatState))
@@ -388,6 +391,16 @@ namespace BirdGame
                     AddCoins();
                     AutoExp();
                 }
+            }
+
+            if (SimpleMouseForwarder.clickCount > previousClickCount)
+            {
+                previousClickCount = SimpleMouseForwarder.clickCount;
+            }
+
+            if (SimpleMouseForwarder.rightClickCount > previousRightClickCount)
+            {
+                previousRightClickCount = SimpleMouseForwarder.rightClickCount;
             }
         }
 
