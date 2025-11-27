@@ -168,7 +168,7 @@ namespace BirdGame
             {
                 index = Random.Range(0, configModel.RadioConfig.musicItems.Length);
             }
-
+            Debug.Log($"播放：{configModel.RadioConfig.musicItems[index].songName}");
             PlaySong();
         }
 
@@ -205,6 +205,7 @@ namespace BirdGame
             if(radioAudio.clip == null)
                 return;
             float time = radioAudio.clip.length * value;
+            time = Mathf.Clamp(time, 0f, Mathf.Max(0f, radioAudio.clip.length - 0.01f));
             radioAudio.time = time;
         }
 

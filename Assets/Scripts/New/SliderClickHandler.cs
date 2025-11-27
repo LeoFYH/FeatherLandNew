@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -10,14 +11,11 @@ public class SliderBarClickHandler : MonoBehaviour, IPointerClickHandler, IPoint
     
     private bool isDragging = false;
     private Vector2 previousMousePos;
-    public TextMeshProUGUI debugText;
 
-    void Start()
+    private void Start()
     {
-        if (debugText == null)
-        {
-            debugText = GameObject.Find("Debug").GetComponent<TextMeshProUGUI>();
-        }
+        if (slider == null)
+            slider = GetComponent<Slider>();
     }
 
     void Update()
@@ -45,7 +43,6 @@ public class SliderBarClickHandler : MonoBehaviour, IPointerClickHandler, IPoint
     public void OnPointerUp(PointerEventData eventData)
     {
         isDragging = false;
-        debugText.text = "isDragging: " + isDragging;
     }
 
     private void HandleSmartDrag()

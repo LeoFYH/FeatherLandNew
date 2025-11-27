@@ -80,6 +80,8 @@ namespace BirdGame
                     }
                 }
                 
+                PlayerPrefs.DeleteAll();
+                
                 // 清空内存中的数据
                this.GetSystem<ISaveSystem>().InitData();
                this.GetModel<IAccountModel>().Coins.Value = this.GetModel<IConfigModel>().ShopConfig.startCoins;
