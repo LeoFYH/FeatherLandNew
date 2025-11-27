@@ -168,7 +168,9 @@ namespace BirdGame
             {
                 index = Random.Range(0, configModel.RadioConfig.musicItems.Length);
             }
-            Debug.Log($"播放：{configModel.RadioConfig.musicItems[index].songName}");
+
+            radioModel.SongIndex = index;
+            Debug.Log($"播放：[{index}]{configModel.RadioConfig.musicItems[index].songName}");
             PlaySong();
         }
 
@@ -213,7 +215,7 @@ namespace BirdGame
         {
             radioModel.CurrentTime.Value = radioAudio.time;
             radioModel.SongProgress.Value = radioAudio.time / radioAudio.clip.length;
-            while (radioModel.SongProgress.Value < 1)
+            while (radioAudio.time < radioAudio.clip.length - 0.01f)
             {
                 radioModel.CurrentTime.Value = radioAudio.time;
                 radioModel.SongProgress.Value = radioAudio.time / radioAudio.clip.length;
