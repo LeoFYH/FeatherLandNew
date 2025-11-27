@@ -18,7 +18,7 @@ public class WallpaperModeController : MonoBehaviour
     public bool isFullscreen = false;
 
     [Tooltip("是否在启动时自动进入壁纸模式")]
-    public bool startInWallpaperMode = true;
+    public bool startInWallpaperMode = false;
 
     [Tooltip("目标显示设备索引（多显示器时使用）")]
     public int targetDisplay = 0;
@@ -174,18 +174,7 @@ public class WallpaperModeController : MonoBehaviour
     {
         ins = this;
         SetProcessDpiAwareness(); // 初始化DPI感知
-    }
-
-    /// <summary>
-    /// 初始化：获取窗口句柄并设置初始状态
-    /// </summary>
-    private void Start()
-    {
-        // 根据配置决定初始状态
-        if (startInWallpaperMode)
-            EnterWallpaperMode();
-        else
-            SetFullscreen(isFullscreen);
+        Screen.fullScreen = false;
     }
 
     /// <summary>
@@ -205,8 +194,6 @@ public class WallpaperModeController : MonoBehaviour
     /// </summary>
     public void EnterWallpaperMode()
     {
-        Debug.LogError("11111111111");
-
         // 获取Unity窗口句柄（根据PlayerSettings中的产品名称查找）
         unityWindowHandle = FindWindow(null, Application.productName);
         Debug.Log("当前应用窗口名称：" + Application.productName);

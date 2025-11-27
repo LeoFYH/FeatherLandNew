@@ -22,7 +22,7 @@ namespace BirdGame
             }
             else if (id == 1)
             {
-                // this.GetUtility<IFullScreenUtility>().WallpaperMode();
+                this.GetUtility<IFullScreenUtility>().WallpaperMode();
                 Debug.Log("WallpaperMode");
             }
             else if (id == 2)

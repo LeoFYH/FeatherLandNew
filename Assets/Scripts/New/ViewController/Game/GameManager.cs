@@ -12,6 +12,7 @@ namespace BirdGame
         float foodTimer;
         private float lastClickTime = 0f; // 记录上次点击时间
         private float clickInterval = 1f; // 点击间隔时间（1秒）
+        private int previousClickCount = 0;
 
         private void Start()
         {
@@ -29,9 +30,15 @@ namespace BirdGame
             if (IsClickingOnDecoration()) return;
 
             // 取消撒食物冷却，每次点击都能撒
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) || (SimpleMouseForwarder.clickCount > previousClickCount) )
             {
+                previousClickCount = SimpleMouseForwarder.clickCount;
                 this.GetSystem<IGameSystem>().CreateFood();
+            }
+
+            if (SimpleMouseForwarder.clickCount > previousClickCount)
+            {
+                previousClickCount = SimpleMouseForwarder.clickCount;
             }
         }
 

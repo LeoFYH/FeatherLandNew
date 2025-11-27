@@ -57,13 +57,22 @@ namespace BirdGame
             random.isOn = this.GetModel<IRadioModel>().Random.Value;
             random.onValueChanged.AddListener(isOn =>
             {
-                this.GetModel<IRadioModel>().Random.Value = isOn;
+                this.GetModel<IRadioModel>().Random.Value = !isOn;
+                if (!isOn)
+                {
+                    loop.isOn = true;
+                }
+
             });
 
             loop.isOn = !this.GetModel<IRadioModel>().Loop.Value;
             loop.onValueChanged.AddListener(isOn =>
             {
                 this.GetModel<IRadioModel>().Loop.Value = !isOn;
+                if (!isOn)
+                {
+                    random.isOn = true;
+                }
             });
             
             previousButton.onClick.AddListener(() =>

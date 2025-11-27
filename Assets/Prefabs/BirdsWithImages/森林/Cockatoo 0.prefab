@@ -228,6 +228,8 @@ MonoBehaviour:
   currFood: {fileID: 0}
   isBeingPetted: 0
   lastPetTime: 0
+  lastEatTime: 0
+  eatWaitDuration: 0
   idleLockDuration: 1
   shouldFollowMouse: 0
   agent: {fileID: 0}
@@ -457,6 +459,7 @@ MonoBehaviour:
   showDebugInfo: 0
   localizationKey: 
   useLocalization: 0
+  checkUIRaycast: 1
   onClick:
     m_PersistentCalls:
       m_Calls: []
@@ -499,3 +502,4 @@ MonoBehaviour:
   showBackground: 0
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
+  isHovering: 0

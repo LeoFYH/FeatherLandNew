@@ -246,6 +246,12 @@ namespace BirdGame
             {
                 weatherIcon.sprite = weatherSps[v];
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            
+            if (!PlayerPrefs.HasKey("ShowedTutorial"))
+            {
+                PlayerPrefs.SetString("ShowedTutorial", "true");
+                this.GetSystem<IUISystem>().ShowPopup(UIPopup.TutorialPopup);
+            }
 
             // this.RegisterEvent<ShowBranchEvent>(evt =>
             // {
