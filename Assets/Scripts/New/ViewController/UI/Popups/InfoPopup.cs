@@ -299,7 +299,7 @@ namespace BirdGame
 
                 addtoDesktop.gameObject.SetActive(false);
             });
-            addtoDesktop.gameObject.SetActive(!data.isAddedToDesktop);
+            //addtoDesktop.gameObject.SetActive(!data.isAddedToDesktop);
             // 初始化鸟名称文本和字体
             UpdateBirdNameText();
             
