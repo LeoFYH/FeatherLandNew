@@ -27,6 +27,7 @@ namespace BirdGame
                     Destroy(gameObject);
                 }
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            nameText.transform.localScale = new Vector3(0, 0, 1);
         }
 
         public void InitBird(int index, int eggType, Action onComplete)
@@ -72,8 +73,9 @@ namespace BirdGame
         {
             bird.localScale = Vector3.one * 0.00001f;
             var anim = DOTween.Sequence();
-            anim.Append(bird.DOScale(scale * 1.2f, 6 * Time.deltaTime).SetEase(Ease.InSine));
-            anim.Append(bird.DOScale(scale, 1 * Time.deltaTime).SetEase(Ease.OutSine));
+            anim.Append(bird.DOScale(scale * 1.2f, 12 * Time.deltaTime).SetEase(Ease.InSine));
+            anim.Append(bird.DOScale(scale, 2 * Time.deltaTime).SetEase(Ease.OutSine));
+            nameText.transform.DOScale(1, 0.2f);
         }
     }
 }

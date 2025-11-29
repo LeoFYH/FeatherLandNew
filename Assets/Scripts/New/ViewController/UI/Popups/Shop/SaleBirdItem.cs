@@ -11,17 +11,20 @@ namespace BirdGame
         public Image icon;
         public TextMeshProUGUI numberText;
         public TextMeshProUGUI deleteNumberText;
+        public TextMeshProUGUI coinText;
         public Button addButton;
         public Button deleteButton;
         public Button saleButton;
         private int count = 0;
         private int deleteCount = 0;
         private int id;
+        private float salePrice;
         
-        public void SetBird(int birdId, Action<int, int> action)
+        public void SetBird(int birdId, float birdPrice, Action<int, int> action)
         {
             id = birdId;
             onSaleEvent = action;
+            salePrice = birdPrice;
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             var bird = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdId, mapIndex);
             icon.sprite = bird.preview;
@@ -40,6 +43,7 @@ namespace BirdGame
                 if(deleteCount >= count)
                     return;
                 deleteCount++;
+                coinText.text = (salePrice * deleteCount).ToString("F1"); 
                 deleteNumberText.text = deleteCount.ToString();
             });
             deleteButton.onClick.AddListener(() =>
@@ -47,6 +51,7 @@ namespace BirdGame
                 if(deleteCount <= 0)
                     return;
                 deleteCount--;
+                coinText.text = (salePrice * deleteCount).ToString("F1"); 
                 deleteNumberText.text = deleteCount.ToString();
             });
             saleButton.onClick.AddListener(() =>
@@ -67,6 +72,7 @@ namespace BirdGame
             
             deleteNumberText.text = "0";
             deleteCount = 0;
+            coinText.text = "0.0";
         }
     }
 }
