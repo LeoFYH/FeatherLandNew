@@ -98,6 +98,7 @@ namespace BirdGame
         void ShowBuyConfirm(Action onConfirm);
         void ShowBuyConfirm(string price, Action onConfirm);
         void ShowExitConfirm();
+        Canvas GetCanvas();
     }
 
     public class UISystem : AbstractSystem, IUISystem
@@ -373,6 +374,11 @@ namespace BirdGame
         public void ShowExitConfirm()
         {
             ShowPopup(UIPopup.ExitConfirmPopup);
+        }
+
+        public Canvas GetCanvas()
+        {
+            return popupLayer.GetComponent<Canvas>();
         }
     }
 }

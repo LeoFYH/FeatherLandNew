@@ -35,6 +35,7 @@ namespace BirdGame
     {
         protected override void OnInit()
         {
+            LoadAssetAsync<GameObject>("OpenEggAnim", null);
         }
 
         private Dictionary<string, AsyncOperationHandle> HandleDic { get; } = new Dictionary<string, AsyncOperationHandle>();
@@ -129,7 +130,7 @@ namespace BirdGame
                     Debug.LogError($"资源加载失败: {key}");
                 }
             }
-
+            
             foreach (var handle in handles)
             {
                 Addressables.Release(handle);

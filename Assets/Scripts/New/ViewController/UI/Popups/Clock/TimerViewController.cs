@@ -9,9 +9,9 @@ namespace BirdGame
 {
     public class TimerViewController : ViewControllerBase
     {
-        public TextMeshProUGUI hourText;
-        public TextMeshProUGUI minuteText;
-        public TextMeshProUGUI secondText;
+        public TMP_InputField hourText;
+        public TMP_InputField minuteText;
+        public TMP_InputField secondText;
         public Button[] upButtons;
         public Button[] downButtons;
         public Button refreshButton;
@@ -43,6 +43,66 @@ namespace BirdGame
                 secondText.text = string.Format("{0:00}", v);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             secondText.text = string.Format("{0:00}", item.Seconds.Value);
+            
+            hourText.onEndEdit.AddListener(v =>
+            {
+                try
+                {
+                    int session = int.Parse(v);
+                    if (session is >= 0 and <= 59)
+                    {
+                        item.Hours.Value = session;
+                    }
+                    else
+                    {
+                        hourText.text = string.Format("{0:00}", item.Hours.Value);
+                    }
+                }
+                catch (Exception e)
+                {
+                    hourText.text = string.Format("{0:00}", item.Hours.Value);
+                }
+            });
+            
+            minuteText.onEndEdit.AddListener(v =>
+            {
+                try
+                {
+                    int breaks = int.Parse(v);
+                    if (breaks is >= 0 and <= 59)
+                    {
+                        item.Minutes.Value = breaks;
+                    }
+                    else
+                    {
+                        minuteText.text = string.Format("{0:00}", item.Minutes.Value);
+                    }
+                }
+                catch (Exception e)
+                {
+                    minuteText.text = string.Format("{0:00}", item.Minutes.Value);
+                }
+            });
+            
+            secondText.onEndEdit.AddListener(v =>
+            {
+                try
+                {
+                    int number = int.Parse(v);
+                    if (number is >= 0 and <= 9)
+                    {
+                        item.Seconds.Value = number;
+                    }
+                    else
+                    {
+                        secondText.text = string.Format("{0:00}", item.Seconds.Value);
+                    }
+                }
+                catch (Exception e)
+                {
+                    secondText.text = string.Format("{0:00}", item.Seconds.Value);
+                }
+            });
             
             for (int i = 0; i < 3; i++)
             {

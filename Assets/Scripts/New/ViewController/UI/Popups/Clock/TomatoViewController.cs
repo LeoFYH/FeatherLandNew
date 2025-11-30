@@ -9,9 +9,9 @@ namespace BirdGame
 {
     public class TomatoViewController : ViewControllerBase
     {
-        public TextMeshProUGUI sessionText;
-        public TextMeshProUGUI breakText;
-        public TextMeshProUGUI numberText;
+        public TMP_InputField sessionText;
+        public TMP_InputField breakText;
+        public TMP_InputField numberText;
         public Button[] upButtons;
         public Button[] downButtons;
         public Button refreshButton;
@@ -43,6 +43,65 @@ namespace BirdGame
                 numberText.text = v.ToString();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             numberText.text = item.Number.Value.ToString();
+            sessionText.onEndEdit.AddListener(v =>
+            {
+                try
+                {
+                    int session = int.Parse(v);
+                    if (session is >= 0 and <= 59)
+                    {
+                        item.SessionMinutes.Value = session;
+                    }
+                    else
+                    {
+                        sessionText.text = string.Format("{0:00}", item.SessionMinutes.Value);
+                    }
+                }
+                catch (Exception e)
+                {
+                    sessionText.text = string.Format("{0:00}", item.SessionMinutes.Value);
+                }
+            });
+            
+            breakText.onEndEdit.AddListener(v =>
+            {
+                try
+                {
+                    int breaks = int.Parse(v);
+                    if (breaks is >= 0 and <= 59)
+                    {
+                        item.BreakMinutes.Value = breaks;
+                    }
+                    else
+                    {
+                        breakText.text = string.Format("{0:00}", item.BreakMinutes.Value);
+                    }
+                }
+                catch (Exception e)
+                {
+                    breakText.text = string.Format("{0:00}", item.BreakMinutes.Value);
+                }
+            });
+            
+            numberText.onEndEdit.AddListener(v =>
+            {
+                try
+                {
+                    int number = int.Parse(v);
+                    if (number is >= 0 and <= 9)
+                    {
+                        item.Number.Value = number;
+                    }
+                    else
+                    {
+                        numberText.text = string.Format("{0:0}", item.Number.Value);
+                    }
+                }
+                catch (Exception e)
+                {
+                    numberText.text = string.Format("{0:0}", item.Number.Value);
+                }
+            });
             for (int i = 0; i < 3; i++)
             {
                 int index = i;
