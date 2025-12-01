@@ -45,5 +45,17 @@ namespace BirdGame
             onConfirm?.Invoke();
             this.GetSystem<IUISystem>().HidePopup(UIPopup.BuyConfirmPopup);
         }
+        
+        private void OnDestroy()
+        {
+            // Remove all event listeners to prevent memory leaks
+            if (closeButton != null)
+                closeButton.onClick.RemoveAllListeners();
+            if (buyButton != null)
+                buyButton.onClick.RemoveAllListeners();
+            
+            // Clean up callback reference
+            onConfirm = null;
+        }
     }
 }

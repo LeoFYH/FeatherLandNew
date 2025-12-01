@@ -32,6 +32,13 @@ namespace BirdGame
             this.GetSystem<IBirdSystem>().ClearAllBirds();
 
             this.SendEvent<ClearDecorationsEvent>();
+            
+            // Release unused assets when changing scenes to free memory
+            this.GetSystem<IAssetSystem>().ReleaseAllAssets();
+            
+            // Clear cached references
+            this.GetSystem<IGameSystem>().ClearCache();
+            
             //显示加载界面
             this.GetModel<ILoadingModel>().LoadingText.Value = "Loading Scene";
             this.GetModel<ILoadingModel>().Progress.Value = 0;

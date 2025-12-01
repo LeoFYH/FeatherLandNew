@@ -304,5 +304,12 @@ namespace BirdGame
         {
             this.GetSystem<IUISystem>().HideMapInfo();
         }
+        
+        private void OnDestroy()
+        {
+            // Remove all event listeners to prevent memory leaks
+            if (thisButton != null)
+                thisButton.onClick.RemoveAllListeners();
+        }
     }
 }

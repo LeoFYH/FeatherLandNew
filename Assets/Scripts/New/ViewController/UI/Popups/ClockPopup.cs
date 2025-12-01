@@ -243,6 +243,16 @@ namespace BirdGame
 
         private void OnDestroy()
         {
+            // Remove all event listeners to prevent memory leaks
+            if (closeButton != null)
+                closeButton.onClick.RemoveAllListeners();
+            if (stopWatchToggle != null)
+                stopWatchToggle.onValueChanged.RemoveAllListeners();
+            if (timerToggle != null)
+                timerToggle.onValueChanged.RemoveAllListeners();
+            if (tomatoToggle != null)
+                tomatoToggle.onValueChanged.RemoveAllListeners();
+            
             if (this.GetModel<IClockModel>().TimerType != TimerType.None)
             {
                 this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()

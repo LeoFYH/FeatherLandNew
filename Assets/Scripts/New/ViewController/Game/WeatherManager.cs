@@ -249,6 +249,31 @@ namespace BirdGame
         {
             this.GetModel<IBirdModel>().BirdColor.Value = birdMaterial.color;
         }
+        
+        private void OnDestroy()
+        {
+            // Kill all DOTween animations on all sprite renderers to prevent memory leaks
+            if (background != null) background.DOKill();
+            if (backgroundTrees != null) backgroundTrees.DOKill();
+            if (backgroundGrass != null) backgroundGrass.DOKill();
+            if (light != null) light.DOKill();
+            if (foregroundTree != null) foregroundTree.DOKill();
+            if (ground != null) ground.DOKill();
+            if (groundCover1 != null) groundCover1.DOKill();
+            if (groundCover2 != null) groundCover2.DOKill();
+            if (foregroundGrass != null) foregroundGrass.DOKill();
+            if (birdMaterial != null) birdMaterial.DOKill();
+            if (uiGroup != null) uiGroup.DOKill();
+            
+            // Kill tweens on others array
+            if (others != null)
+            {
+                foreach (var sr in others)
+                {
+                    if (sr != null) sr.DOKill();
+                }
+            }
+        }
     }
 
     [Serializable]

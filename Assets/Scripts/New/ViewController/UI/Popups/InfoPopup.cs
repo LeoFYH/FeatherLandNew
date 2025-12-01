@@ -406,5 +406,23 @@ namespace BirdGame
             birdName.font = this.GetSystem<ILocalizationSystem>().GetFontAsset();
             birdName.ForceMeshUpdate();
         }
+        
+        private void OnDestroy()
+        {
+            // Kill all DOTween animations to prevent memory leaks
+            var rect = transform as RectTransform;
+            if (rect != null)
+                rect.DOKill();
+            
+            // Remove all event listeners to prevent memory leaks
+            if (saleButton != null)
+                saleButton.onClick.RemoveAllListeners();
+            if (closeButton != null)
+                closeButton.onClick.RemoveAllListeners();
+            if (addtoDesktop != null)
+                addtoDesktop.onClick.RemoveAllListeners();
+            if (cutomName != null)
+                cutomName.onEndEdit.RemoveAllListeners();
+        }
     }
 }

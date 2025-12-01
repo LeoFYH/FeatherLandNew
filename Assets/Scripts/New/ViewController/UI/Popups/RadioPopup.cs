@@ -288,5 +288,14 @@ namespace BirdGame
             
             Debug.Log("=====================================");
         }
+        
+        private void OnDestroy()
+        {
+            // Remove all event listeners to prevent memory leaks
+            if (closeButton != null)
+                closeButton.onClick.RemoveAllListeners();
+            if (volumeSlider != null)
+                volumeSlider.onValueChanged.RemoveAllListeners();
+        }
     }
 }

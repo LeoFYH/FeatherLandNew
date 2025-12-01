@@ -634,5 +634,21 @@ namespace BirdGame
                 onNearOtherBird?.Invoke();
             }
         }
+        
+        private void OnDestroy()
+        {
+            // Kill all DOTween animations to prevent memory leaks
+            transform.DOKill();
+            
+            // Clean up state machine
+            if (_stateMachine != null)
+            {
+                _stateMachine = null;
+            }
+            
+            // Clean up references
+            currFood = null;
+            onNearOtherBird = null;
+        }
     }
 }

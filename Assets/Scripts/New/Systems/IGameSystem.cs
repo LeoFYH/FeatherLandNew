@@ -28,6 +28,10 @@ namespace BirdGame
         void CreateDecorations();
         void OpenUrl(string url);
         void InitAccount();
+        /// <summary>
+        /// Clear cached references (call when scene changes)
+        /// </summary>
+        void ClearCache();
     }
 
     public class GameSystem : AbstractSystem, IGameSystem
@@ -38,6 +42,13 @@ namespace BirdGame
         private GameObject currentPlacingDecoration; // 当前正在放置的装饰品
         private int currentPlacingDecorationId; // 当前正在放置的装饰品ID
         private int currentIndex;
+        
+        // Cache frequently accessed objects to avoid FindGameObjectsWithTag calls
+        private List<GameObject> cachedBirds = new List<GameObject>();
+        private List<GameObject> cachedEggs = new List<GameObject>();
+        private float lastCacheUpdateTime = 0f;
+        private const float CACHE_UPDATE_INTERVAL = 0.5f; // Update cache every 0.5 seconds
+        private Camera cachedMainCamera;
         
         [Header("食物位置偏移")]
         [Tooltip("食物落下位置相对于鼠标的偏移量")]
@@ -54,6 +65,8 @@ namespace BirdGame
         protected override void OnInit()
         {
             birdModel = this.GetModel<IBirdModel>();
+            cachedMainCamera = Camera.main;
+            
             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("Food", obj =>
             {
                 foodPrefab = obj;
@@ -62,6 +75,47 @@ namespace BirdGame
             {
                 numPrefab = obj;
             });
+            
+            // Initial cache update
+            UpdateBirdAndEggCache();
+        }
+
+        /// <summary>
+        /// Update cached bird and egg lists to avoid frequent FindGameObjectsWithTag calls
+        /// </summary>
+        private void UpdateBirdAndEggCache()
+        {
+            if (Time.realtimeSinceStartup - lastCacheUpdateTime < CACHE_UPDATE_INTERVAL)
+                return;
+
+            lastCacheUpdateTime = Time.realtimeSinceStartup;
+            
+            // Update camera cache
+            if (cachedMainCamera == null)
+                cachedMainCamera = Camera.main;
+
+            // Update bird cache - remove null references first
+            cachedBirds.RemoveAll(bird => bird == null);
+            var newBirds = GameObject.FindGameObjectsWithTag("Bird");
+            cachedBirds.Clear();
+            cachedBirds.AddRange(newBirds);
+            
+            // Update egg cache - remove null references first
+            cachedEggs.RemoveAll(egg => egg == null);
+            var newEggs = GameObject.FindGameObjectsWithTag("Egg");
+            cachedEggs.Clear();
+            cachedEggs.AddRange(newEggs);
+        }
+        
+        /// <summary>
+        /// Clear cached references (call when scene changes)
+        /// </summary>
+        public void ClearCache()
+        {
+            cachedBirds.Clear();
+            cachedEggs.Clear();
+            cachedMainCamera = null;
+            lastCacheUpdateTime = 0f;
         }
 
         public Vector3 FoodDropOffset {
@@ -132,7 +186,13 @@ namespace BirdGame
                     }
                 }
 
-                Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                // Use cached camera
+                if (cachedMainCamera == null)
+                    cachedMainCamera = Camera.main;
+                if (cachedMainCamera == null)
+                    return;
+                
+                Vector3 mouseWorldPos = cachedMainCamera.ScreenToWorldPoint(Input.mousePosition);
                 mouseWorldPos.z = 0; // 确保Z轴位置正确
                 
                 // 生成有间距的随机位置
@@ -212,20 +272,24 @@ namespace BirdGame
             // 获取鼠标位置
             Vector2 mousePosition = Input.mousePosition;
             
-            // 获取主摄像机
-            Camera mainCamera = Camera.main;
-            if (mainCamera == null)
+            // 获取主摄像机 (use cached camera)
+            if (cachedMainCamera == null)
             {
-                return false;
+                cachedMainCamera = Camera.main;
+                if (cachedMainCamera == null)
+                {
+                    return false;
+                }
             }
             
             // 将鼠标位置转换为世界坐标
-            Vector3 worldPosition = mainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, -mainCamera.transform.position.z));
+            Vector3 worldPosition = cachedMainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, -cachedMainCamera.transform.position.z));
+            
+            // Update cache if needed
+            UpdateBirdAndEggCache();
             
             // 检查是否点击到鸟，如果点击到鸟，则不生成食物
-            GameObject[] birds = GameObject.FindGameObjectsWithTag("Bird");
-            
-            foreach (var bird in birds)
+            foreach (var bird in cachedBirds)
             {
                 if (bird == null) continue;
                 
@@ -264,25 +328,27 @@ namespace BirdGame
 
         public bool IsCoverBird()
         {
+            // Update cache if needed
+            UpdateBirdAndEggCache();
+            
             // 获取鼠标位置
             Vector2 mousePosition = Input.mousePosition;
             
-            // 获取主摄像机
-            Camera mainCamera = Camera.main;
-            if (mainCamera == null)
+            // 获取主摄像机 (use cached camera)
+            if (cachedMainCamera == null)
             {
-                return false;
+                cachedMainCamera = Camera.main;
+                if (cachedMainCamera == null)
+                {
+                    return false;
+                }
             }
             
             // 将鼠标位置转换为世界坐标
-            Vector3 worldPosition = mainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, -mainCamera.transform.position.z));
+            Vector3 worldPosition = cachedMainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, -cachedMainCamera.transform.position.z));
             
-            // 查找所有带有"Bird"或"Egg"标签的GameObject
-            GameObject[] birds = GameObject.FindGameObjectsWithTag("Bird");
-            GameObject[] eggs = GameObject.FindGameObjectsWithTag("Egg");
-            
-            // 检查鸟
-            foreach (var bird in birds)
+            // 检查鸟 (use cached list)
+            foreach (var bird in cachedBirds)
             {
                 if (bird == null) continue;
                 
@@ -304,14 +370,16 @@ namespace BirdGame
                     float distance = Vector2.Distance(worldPosition, bird.transform.position);
                     if (distance < 0.5f) // 使用0.5f作为检测范围
                     {
+                        #if UNITY_EDITOR
                         Debug.Log($"通过距离检测到鸟: {bird.name}, 距离: {distance}");
+                        #endif
                         return true;
                     }
                 }
             }
             
-            // 检查蛋
-            foreach (var egg in eggs)
+            // 检查蛋 (use cached list)
+            foreach (var egg in cachedEggs)
             {
                 if (egg == null) continue;
                 
@@ -323,7 +391,9 @@ namespace BirdGame
                     // 使用OverlapPoint检测鼠标是否在碰撞器内（适用于触发器）
                     if (collider2D.OverlapPoint(worldPosition))
                     {
+                        #if UNITY_EDITOR
                         Debug.Log($"检测到蛋: {egg.name}");
+                        #endif
                         return true;
                     }
                 }
@@ -333,7 +403,9 @@ namespace BirdGame
                     float distance = Vector2.Distance(worldPosition, egg.transform.position);
                     if (distance < 0.5f) // 使用0.5f作为检测范围
                     {
+                        #if UNITY_EDITOR
                         Debug.Log($"通过距离检测到蛋: {egg.name}, 距离: {distance}");
+                        #endif
                         return true;
                     }
                 }
@@ -351,8 +423,14 @@ namespace BirdGame
         {
             if (NavigationManager.Instance == null)
                 return false;
+            
+            // Use cached camera
+            if (cachedMainCamera == null)
+                cachedMainCamera = Camera.main;
+            if (cachedMainCamera == null)
+                return false;
                 
-            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 mousePosition = cachedMainCamera.ScreenToWorldPoint(Input.mousePosition);
             
             // 检查鼠标位置是否在可导航区域（地面）
             return NavigationManager.Instance.IsPointInNavMeshArea(3, mousePosition);
@@ -448,10 +526,15 @@ namespace BirdGame
                 currentIndex = index;
                 Debug.Log("CurrentIndex: " + currentIndex);
                 
-                // 设置初始位置为鼠标位置
-                Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                mouseWorldPos.z = 0;
-                decoration.transform.position = mouseWorldPos;
+                // 设置初始位置为鼠标位置 (use cached camera)
+                if (cachedMainCamera == null)
+                    cachedMainCamera = Camera.main;
+                if (cachedMainCamera != null)
+                {
+                    Vector3 mouseWorldPos = cachedMainCamera.ScreenToWorldPoint(Input.mousePosition);
+                    mouseWorldPos.z = 0;
+                    decoration.transform.position = mouseWorldPos;
+                }
             }
             else
             {

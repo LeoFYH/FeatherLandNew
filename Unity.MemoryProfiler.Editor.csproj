@@ -16,10 +16,10 @@
     <Configurations>Debug;Release</Configurations>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>Unity.MemoryProfiler.Editor</RootNamespace>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>QFramework</AssemblyName>
+    <AssemblyName>Unity.MemoryProfiler.Editor</AssemblyName>
     <TargetFramework>netstandard2.1</TargetFramework>
     <BaseDirectory>.</BaseDirectory>
   </PropertyGroup>
@@ -28,11 +28,11 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Temp\bin\Debug\</OutputPath>
-    <DefineConstants>UNITY_6000_0_58;UNITY_6000_0;UNITY_6000;UNITY_5_3_OR_NEWER;UNITY_5_4_OR_NEWER;UNITY_5_5_OR_NEWER;UNITY_5_6_OR_NEWER;UNITY_2017_1_OR_NEWER;UNITY_2017_2_OR_NEWER;UNITY_2017_3_OR_NEWER;UNITY_2017_4_OR_NEWER;UNITY_2018_1_OR_NEWER;UNITY_2018_2_OR_NEWER;UNITY_2018_3_OR_NEWER;UNITY_2018_4_OR_NEWER;UNITY_2019_1_OR_NEWER;UNITY_2019_2_OR_NEWER;UNITY_2019_3_OR_NEWER;UNITY_2019_4_OR_NEWER;UNITY_2020_1_OR_NEWER;UNITY_2020_2_OR_NEWER;UNITY_2020_3_OR_NEWER;UNITY_2021_1_OR_NEWER;UNITY_2021_2_OR_NEWER;UNITY_2021_3_OR_NEWER;UNITY_2022_1_OR_NEWER;UNITY_2022_2_OR_NEWER;UNITY_2022_3_OR_NEWER;UNITY_2023_1_OR_NEWER;UNITY_2023_2_OR_NEWER;UNITY_2023_3_OR_NEWER;UNITY_6000_0_OR_NEWER;PLATFORM_ARCH_64;UNITY_64;UNITY_INCLUDE_TESTS;ENABLE_AR;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_EVENT_QUEUE;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_PHYSICS;ENABLE_TEXTURE_STREAMING;ENABLE_VIRTUALTEXTURING;ENABLE_LZMA;ENABLE_UNITYEVENTS;ENABLE_VR;ENABLE_WEBCAM;ENABLE_UNITYWEBREQUEST;ENABLE_WWW;ENABLE_CLOUD_SERVICES;ENABLE_CLOUD_SERVICES_ADS;ENABLE_CLOUD_SERVICES_USE_WEBREQUEST;ENABLE_CLOUD_SERVICES_CRASH_REPORTING;ENABLE_CLOUD_SERVICES_PURCHASING;ENABLE_CLOUD_SERVICES_ANALYTICS;ENABLE_CLOUD_SERVICES_BUILD;ENABLE_EDITOR_GAME_SERVICES;ENABLE_UNITY_GAME_SERVICES_ANALYTICS_SUPPORT;ENABLE_CLOUD_LICENSE;ENABLE_EDITOR_HUB_LICENSE;ENABLE_WEBSOCKET_CLIENT;ENABLE_GENERATE_NATIVE_PLUGINS_FOR_ASSEMBLIES_API;ENABLE_DIRECTOR_AUDIO;ENABLE_DIRECTOR_TEXTURE;ENABLE_MANAGED_JOBS;ENABLE_MANAGED_TRANSFORM_JOBS;ENABLE_MANAGED_ANIMATION_JOBS;ENABLE_MANAGED_AUDIO_JOBS;ENABLE_MANAGED_UNITYTLS;INCLUDE_DYNAMIC_GI;ENABLE_SCRIPTING_GC_WBARRIERS;PLATFORM_SUPPORTS_MONO;RENDER_SOFTWARE_CURSOR;ENABLE_MARSHALLING_TESTS;ENABLE_VIDEO;ENABLE_NAVIGATION_OFFMESHLINK_TO_NAVMESHLINK;ENABLE_ACCELERATOR_CLIENT_DEBUGGING;TEXTCORE_1_0_OR_NEWER;EDITOR_ONLY_NAVMESH_BUILDER_DEPRECATED;PLATFORM_STANDALONE_WIN;PLATFORM_STANDALONE;UNITY_STANDALONE_WIN;UNITY_STANDALONE;ENABLE_RUNTIME_GI;ENABLE_MOVIES;ENABLE_NETWORK;ENABLE_NVIDIA;ENABLE_AMD;ENABLE_CRUNCH_TEXTURE_COMPRESSION;ENABLE_OUT_OF_PROCESS_CRASH_HANDLER;ENABLE_CLUSTER_SYNC;ENABLE_CLUSTERINPUT;PLATFORM_UPDATES_TIME_OUTSIDE_OF_PLAYER_LOOP;GFXDEVICE_WAITFOREVENT_MESSAGEPUMP;PLATFORM_USES_EXPLICIT_MEMORY_MANAGER_INITIALIZER;PLATFORM_SUPPORTS_WAIT_FOR_PRESENTATION;PLATFORM_SUPPORTS_SPLIT_GRAPHICS_JOBS;ENABLE_MONO;NET_4_6;NET_UNITY_4_8;ENABLE_PROFILER;DEBUG;TRACE;UNITY_ASSERTIONS;UNITY_EDITOR;UNITY_EDITOR_64;UNITY_EDITOR_WIN;ENABLE_UNITY_COLLECTIONS_CHECKS;ENABLE_BURST_AOT;UNITY_TEAM_LICENSE;ENABLE_CUSTOM_RENDER_TEXTURE;ENABLE_DIRECTOR;ENABLE_LOCALIZATION;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_TILEMAP;ENABLE_TIMELINE;ENABLE_INPUT_SYSTEM;ENABLE_LEGACY_INPUT_MANAGER;TEXTCORE_FONT_ENGINE_1_5_OR_NEWER;TEXTCORE_TEXT_ENGINE_1_5_OR_NEWER;ODIN_INSPECTOR;ODIN_INSPECTOR_3;ODIN_INSPECTOR_3_1;ODIN_INSPECTOR_3_2;ODIN_INSPECTOR_3_3;STEAMWORKS_NET;CSHARP_7_OR_LATER;CSHARP_7_3_OR_NEWER</DefineConstants>
+    <DefineConstants>UNITY_6000_0_58;UNITY_6000_0;UNITY_6000;UNITY_5_3_OR_NEWER;UNITY_5_4_OR_NEWER;UNITY_5_5_OR_NEWER;UNITY_5_6_OR_NEWER;UNITY_2017_1_OR_NEWER;UNITY_2017_2_OR_NEWER;UNITY_2017_3_OR_NEWER;UNITY_2017_4_OR_NEWER;UNITY_2018_1_OR_NEWER;UNITY_2018_2_OR_NEWER;UNITY_2018_3_OR_NEWER;UNITY_2018_4_OR_NEWER;UNITY_2019_1_OR_NEWER;UNITY_2019_2_OR_NEWER;UNITY_2019_3_OR_NEWER;UNITY_2019_4_OR_NEWER;UNITY_2020_1_OR_NEWER;UNITY_2020_2_OR_NEWER;UNITY_2020_3_OR_NEWER;UNITY_2021_1_OR_NEWER;UNITY_2021_2_OR_NEWER;UNITY_2021_3_OR_NEWER;UNITY_2022_1_OR_NEWER;UNITY_2022_2_OR_NEWER;UNITY_2022_3_OR_NEWER;UNITY_2023_1_OR_NEWER;UNITY_2023_2_OR_NEWER;UNITY_2023_3_OR_NEWER;UNITY_6000_0_OR_NEWER;PLATFORM_ARCH_64;UNITY_64;UNITY_INCLUDE_TESTS;ENABLE_AR;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_EVENT_QUEUE;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_PHYSICS;ENABLE_TEXTURE_STREAMING;ENABLE_VIRTUALTEXTURING;ENABLE_LZMA;ENABLE_UNITYEVENTS;ENABLE_VR;ENABLE_WEBCAM;ENABLE_UNITYWEBREQUEST;ENABLE_WWW;ENABLE_CLOUD_SERVICES;ENABLE_CLOUD_SERVICES_ADS;ENABLE_CLOUD_SERVICES_USE_WEBREQUEST;ENABLE_CLOUD_SERVICES_CRASH_REPORTING;ENABLE_CLOUD_SERVICES_PURCHASING;ENABLE_CLOUD_SERVICES_ANALYTICS;ENABLE_CLOUD_SERVICES_BUILD;ENABLE_EDITOR_GAME_SERVICES;ENABLE_UNITY_GAME_SERVICES_ANALYTICS_SUPPORT;ENABLE_CLOUD_LICENSE;ENABLE_EDITOR_HUB_LICENSE;ENABLE_WEBSOCKET_CLIENT;ENABLE_GENERATE_NATIVE_PLUGINS_FOR_ASSEMBLIES_API;ENABLE_DIRECTOR_AUDIO;ENABLE_DIRECTOR_TEXTURE;ENABLE_MANAGED_JOBS;ENABLE_MANAGED_TRANSFORM_JOBS;ENABLE_MANAGED_ANIMATION_JOBS;ENABLE_MANAGED_AUDIO_JOBS;ENABLE_MANAGED_UNITYTLS;INCLUDE_DYNAMIC_GI;ENABLE_SCRIPTING_GC_WBARRIERS;PLATFORM_SUPPORTS_MONO;RENDER_SOFTWARE_CURSOR;ENABLE_MARSHALLING_TESTS;ENABLE_VIDEO;ENABLE_NAVIGATION_OFFMESHLINK_TO_NAVMESHLINK;ENABLE_ACCELERATOR_CLIENT_DEBUGGING;TEXTCORE_1_0_OR_NEWER;EDITOR_ONLY_NAVMESH_BUILDER_DEPRECATED;PLATFORM_STANDALONE_WIN;PLATFORM_STANDALONE;UNITY_STANDALONE_WIN;UNITY_STANDALONE;ENABLE_RUNTIME_GI;ENABLE_MOVIES;ENABLE_NETWORK;ENABLE_NVIDIA;ENABLE_AMD;ENABLE_CRUNCH_TEXTURE_COMPRESSION;ENABLE_OUT_OF_PROCESS_CRASH_HANDLER;ENABLE_CLUSTER_SYNC;ENABLE_CLUSTERINPUT;PLATFORM_UPDATES_TIME_OUTSIDE_OF_PLAYER_LOOP;GFXDEVICE_WAITFOREVENT_MESSAGEPUMP;PLATFORM_USES_EXPLICIT_MEMORY_MANAGER_INITIALIZER;PLATFORM_SUPPORTS_WAIT_FOR_PRESENTATION;PLATFORM_SUPPORTS_SPLIT_GRAPHICS_JOBS;ENABLE_MONO;NET_4_6;NET_UNITY_4_8;ENABLE_PROFILER;DEBUG;TRACE;UNITY_ASSERTIONS;UNITY_EDITOR;UNITY_EDITOR_64;UNITY_EDITOR_WIN;ENABLE_UNITY_COLLECTIONS_CHECKS;ENABLE_BURST_AOT;UNITY_TEAM_LICENSE;ENABLE_CUSTOM_RENDER_TEXTURE;ENABLE_DIRECTOR;ENABLE_LOCALIZATION;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_TILEMAP;ENABLE_TIMELINE;ENABLE_INPUT_SYSTEM;ENABLE_LEGACY_INPUT_MANAGER;TEXTCORE_FONT_ENGINE_1_5_OR_NEWER;TEXTCORE_TEXT_ENGINE_1_5_OR_NEWER;ODIN_INSPECTOR;ODIN_INSPECTOR_3;ODIN_INSPECTOR_3_1;ODIN_INSPECTOR_3_2;ODIN_INSPECTOR_3_3;STEAMWORKS_NET;MEMORY_PROFILER_API_PUBLIC;UNMANAGED_NATIVE_HASHMAP_AVAILABLE;S2AVAILABLE;CSHARP_7_OR_LATER;CSHARP_7_3_OR_NEWER;UNITY_EDITOR_ONLY_COMPILATION</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>0169;USG0001</NoWarn>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -41,7 +41,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>0169;USG0001</NoWarn>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <NoStandardLibraries>true</NoStandardLibraries>
@@ -54,7 +54,7 @@
     <UnityProjectGenerator>Package</UnityProjectGenerator>
     <UnityProjectGeneratorVersion>2.0.23</UnityProjectGeneratorVersion>
     <UnityProjectGeneratorStyle>SDK</UnityProjectGeneratorStyle>
-    <UnityProjectType>Game:1</UnityProjectType>
+    <UnityProjectType>Editor:5</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows64:19</UnityBuildTarget>
     <UnityVersion>6000.0.58f2</UnityVersion>
   </PropertyGroup>
@@ -64,11 +64,267 @@
     <Analyzer Include="D:\unity\6000.0.58f2\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\QFramework\Framework\Scripts\QFramework.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Cached\ObjectData.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Cached\Managed\ManagedDataCrawler.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\UIElements\ToolbarDropDownButton.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\CaptureToolbar\CaptureToolbarViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\MemoryMap\MemoryMapBreakdownViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Reader\LowLevel\LowLevelFileReader.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\MemoryMap\MemoryMapBreakdownModel.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\IAnalysisViewSelectable.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemoryProfilerWindow.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analytics\EditorAnalyticsService.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\ViewControllerSystem\ContainerViewControllers\TabBarController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\Data\BaseProfilerModuleSummaryBuilder.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Data\Filtering\ITableFilter.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\AllTrackedMemory\Table\AllTrackedMemoryTableMode.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\Data\IMemorySummaryModelBuilder.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Cached\Managed\ManagedConnection.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\PathsToRoot\ManagedObjectInspectorItem.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Data\TreeModel.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\Data\UnityObjectsMemorySummaryModelBuilder.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Utilities\EditorUtilityCompatibilityHelper.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\ResidentMemorySummary\ResidentMemorySummaryViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Cached\Managed\FieldLayoutInfo.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\Controls\TopIssues\SnapshotIssuesViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Controls\ActivityIndicator.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\UnityObjects\Breakdown\UnityObjectsBreakdownViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Controls\MemoryBarElement.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Utilities\BitConverterExt.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\PathsToRoot\ManagedObjectInspector.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Utilities\NativeArrayAlgorithms.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\LoadedSnapshots\LoadedSnapshotsViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Data\Filtering\ScopedFilter.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Utilities\NativeAllocationTools.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Utilities\PlatformsHelper.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\AllTrackedMemory\Comparison\AllTrackedMemoryComparisonTableModelBuilder.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\DetailView\PageDetailsViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\MemoryMap\MemoryMapBreakdownModelBuilder.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\SnapshotDataService.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Utilities\DictionaryExtensions.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Utilities\NativeHashMapExtensions.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Diagnostics\Diagnostics.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\MemoryProfilerSettings.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Controls\MemoryBar.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\UnityObjects\Comparison\Cells\CountDeltaCell.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\DetailView\TypeDetailsViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Reader\QueriedSnapshot\IFileReader.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Controls\ProgressBar.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\Data\ResidentMemorySummaryModelBuilder.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Utilities\ExportUtility.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\AllTrackedMemory\Table\AllTrackedMemoryTableViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Data\Filtering\ITextFilter.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Cached\ObjectConnection.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Reader\QueriedSnapshot\FileReader.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\UIElements\DropDownButton.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Containers\NestedDynamicArray.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\UnityObjects\Comparison\Data\UnityObjectsComparisonModel.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\AssemblyInfo.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\PathsToRoot\PathsToRootUtil.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\AnalysisTabBarController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemoryProfilerWindowContent.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\FileSystemWatcherUnity.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Cached\Managed\ManagedObjectInfo.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Data\Filtering\ContainsTextFilter.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Reader\IReader.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\Data\IMemoryProfilerModuleSummaryModelBuilder.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Utilities\PathHelpers.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Cached\Managed\StringTools.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\PathsToRoot\SelectedItemDetailsForTypesAndObjects.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Utilities\EditorGUICompatibilityHelper.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Utilities\EnumExtensions.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Cached\Managed\ManagedData.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Utilities\MemorySizeTreeNode.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Containers\CollectionsCompatibility\NativeHashMap.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\MemoryProfilerSettingsEditor.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Utilities\MemorySize.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\UnityObjects\Data\UnityObjectsModelBuilder.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Utilities\IconUtility.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\AllTrackedMemory\Data\AllTrackedMemoryModelBuilder.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\Controls\TopIssues\SnapshotIssuesModel.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Cached\Managed\StructArrayCrawlerJobChunk.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Data\Filtering\MatchesAllTextFilter.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\PathsToRoot\PathsToRootDetailView.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Utilities\UIElementsHelper.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\PathsToRoot\UnifiedUnityObjectInfo.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\ScreenshotsManager.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\AllTrackedMemory\Breakdown\AllTrackedMemoryBreakdownViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\ProgressBar\ProgressBar.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\DetailView\DetailsViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\UIElements\Ribbon\RibbonButton.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Data\Filtering\MatchesEntityIdFilter.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\AsyncWorker.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\SnapshotFilesList\SnapshotFilesListViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analytics\DebugAnalyticsService.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Containers\DynamicArray.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Reader\QueriedSnapshot\FormatDataTypes.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Cached\ProcessedNativeRoots.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Controls\DetailedSizeBar.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Comparison\Data\IComparableItemData.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\DetailView\SimpleDetailsViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\SnapshotFile\SnapshotFileBaseViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analytics\MemoryProfilerAnalytics.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\AllTrackedMemory\Table\Cells\AllTrackedMemoryDescriptionCell.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\UnsupportedSnapshotVersionException.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Comparison\ComparisonViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Utilities\VMTools.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\SnapshotFilesList\SnapshotFileListModel.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\UnityObjects\Comparison\Data\UnityObjectsComparisonModelBuilder.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Cached\CachedSnapshot.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Utilities\ArrayTools.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\UnityObjects\Comparison\Cells\DeltaBarCell.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\FileData\SnapshotFileModelBuilder.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Utilities\ManagedObjectsTools.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\FeatureUnavailable\FeatureUnavailableViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\PathsToRoot\PathsToRootDetailViewItem.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Cached\Managed\FieldLayouts.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\Controls\SummaryBar\MemorySummaryBarViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\UIElements\Ribbon\Ribbon.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Icons.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\GenericMemorySummary\GenericMemorySummaryViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\Controls\TopIssues\SnapshotIssuesModelBuilder.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Containers\MetaDataHelpers.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Utilities\NativeObjectsTools.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\Data\AllMemoryInEditorSummaryModelBuilder.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\UnityObjects\Table\UnityObjectsTableViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\BreakdownDetailsViewControllerFactory.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Data\TreeModelUtility.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\CallstacksTreeWindow.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\ViewControllerSystem\ViewControllerUtility.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Reader\LowLevel\ReadCommandBufferUtils.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\BreakdownViewController\BreakdownViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Containers\DynamicBlockArray.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\ViewControllerSystem\ViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\SnapshotFilesListItem\SnapshotFileTreeItemViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Cached\Managed\StaticFieldsCrawlerJobChunk.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\NoData\NoDataViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\PathsToRoot\SelectedItemDetailsPanel.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Data\Filtering\ScopedContainsTextFilter.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Data\Filtering\IScopedFilter.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\Data\UnityObjectsMemoryInEditorSummaryModelBuilder.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Utilities\EditorSelectionAndEntityIdUtilities.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Reader\QueriedSnapshot\Block.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Reader\QueriedSnapshot\ReadError.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Reader\QueriedSnapshot\EntryType.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Comparison\Data\ComparisonTableModel.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Styles.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Cached\Managed\BytesAndOffset.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Controls\MemorySizeTooltipBuilder.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\AllTrackedMemory\Data\AllTrackedMemoryModel.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Utilities\EnumerationStatus.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\UnityObjects\Data\UnityObjectsModel.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Data\Filtering\IEntityIdFilter.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Data\Filtering\MatchesTextFilter.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Containers\UnsafeDataUtility.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\Data\AllMemorySummaryModelBuilder.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Utilities\IEnumeratorExtensions.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Utilities\CallstacksUtility.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\PathsToRoot\MultiColumnHeaderWithTruncateTypeName.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\SnapshotFilesList\SnapshotFileListModelBuilder.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analytics\IAnalyticsService.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\PlayerConnectionService.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\IMemorySummaryViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\DetailView\ISelectionDetails.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\Data\MemorySummaryModel.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Utilities\PlayerConnectionCompatibilityHelper.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\FileData\SnapshotFileModel.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\Data\ManagedMemorySummaryModelBuilder.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Reader\QueriedSnapshot\GenericReadOperation.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\LoadedSnapshotsItem\LoadedSnapshotsItemViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Cached\Managed\ChunkedParallelArrayCrawlerJob.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Cached\Managed\ReferenceArrayCrawlerJobChunk.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\Data\ResidentMemoryInEditorSummaryModelBuilder.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Containers\BlockList.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\Controls\SummaryLegend\MemorySummaryLegendViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\PathsToRoot\DetailFormatter.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\UnityObjects\Comparison\UnityObjectsComparisonViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Cached\Managed\ArrayInfo.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\SummaryTextContent.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\UIElements\InfoBox\InfoBox.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\MemorySnapshot\Reader\QueriedSnapshot\Entry.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\ViewControllerSystem\TreeViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\UIElements\ObjectOrTypeLabel\ObjectOrTypeLabel.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\UIElements\BackgroundPattern.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\DetailView\ObjectDetailsViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Comparison\Data\TreeComparisonBuilder.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\SummaryViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\MemoryProfilerViewController.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\IsExternalInit.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\Data\GCAllocMemorySummaryModelBuilder.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Utilities\EditorAssetFinderUtility.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\UnityObjects\Table\Cells\UnityObjectsDescriptionCell.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Controls\ActivityIndicatorOverlay.cs" />
+    <Compile Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\AllTrackedMemory\Comparison\AllTrackedMemoryComparisonViewController.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\QFramework\Framework\Scripts\link.xml" />
-    <None Include="Assets\QFramework\Framework\Scripts\QFramework.asmdef" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\UnityObjects\Comparison\Cells\CountDeltaCell.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\NoData\NoDataView.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\GenericMemorySummary\GenericMemorySummaryView.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\BreakdownViewController\BreakdownView.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\SnapshotFilesList\SnapshotFilesListView.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\UnityObjects\Comparison\UnityObjectsComparisonView.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\AllTrackedMemory\Table\Cells\AllTrackedMemoryDescriptionCell.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\Controls\TopIssues\SnapshotIssuesView.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\Controls\SummaryBar\MemorySummaryBarView.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\Controls\SummaryLegend\MemorySummaryLegendSizeCellTemplate.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\UnityObjects\Comparison\UnityObjectsComparisonView.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\UIElements\InfoBox\InfoBox.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\ResidentMemorySummary\ResidentMemoryDetailsView.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\Controls\TopIssues\SnapshotIssuesView.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\UnityObjects\Table\UnityObjectsTableView.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\UnityObjects\Comparison\Cells\DeltaBarCell.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\SummaryView.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\NoData\NoDataView.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\DetailView\ObjectDetailsView.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\SharedWithModuleView.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\Controls\SummaryLegend\MemorySummaryLegendNameCellTemplate.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\AllTrackedMemory\Table\Cells\AllTrackedMemoryDescriptionCell.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\LoadedSnapshots\LoadedSnapshotsView.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\DetailView\SimpleDetailsView.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\SnapshotFilesListItem\SnapshotFileTreeItemView.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\UnityObjects\Comparison\Cells\DeltaBarCell.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\DetailView\TypeDetailsView.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\UnityObjects\Table\UnityObjectsTableView.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\UIElements\ObjectOrTypeLabel\ObjectOrTypeLabel.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\DetailView\ObjectDetailsView.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\ResidentMemorySummary\ResidentMemoryDetailsView.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\SnapshotFilesListItem\SnapshotFileTreeItemView.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\BreakdownViewController\BreakdownView.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\UIElements\Ribbon\Ribbon.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\AnalysisTabBarView.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\UIElements\Ribbon\Ribbon.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\PathsToRoot\SelectedItemDetailsGroupedItem.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\DetailView\DetailsView.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\SnapshotFilesList\SnapshotFilesListView.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Comparison\ComparisonView.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\AllTrackedMemory\Table\AllTrackedMemoryTableView.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\DetailView\TypeDetailsView.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\SummaryView.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\UIElements\ObjectOrTypeLabel\ObjectOrTypeLabel.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Shared\Comparison\ComparisonView.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\UnityObjects\Comparison\Cells\CountDeltaCell.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\MemoryProfilerView.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\LoadedSnapshotsItem\LoadedSnapshotsItemView.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\DetailView\DetailsView.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\Controls\SummaryLegend\MemorySummaryLegendView.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\AllTrackedMemory\Table\AllTrackedMemoryTableView.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\UIElements\InfoBox\InfoBox.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\PathsToRoot\SelectedItemDetailsGroup.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\Controls\SummaryLegend\MemorySummaryLegendColumnTemplate.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\AnalysisTabBarView.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\MemoryMap\MemoryMapBreakdownView.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\DetailView\SimpleDetailsView.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\LoadedSnapshotsItem\LoadedSnapshotsItemView.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\Summary\GenericMemorySummary\GenericMemorySummaryView.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\MemoryProfilerView.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\CaptureToolbar\CaptureToolbarView.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\CaptureToolbar\CaptureToolbarView.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\MemoryMap\MemoryMapBreakdownView.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\UnityObjects\Table\Cells\UnityObjectsDescriptionCell.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\LoadedSnapshots\LoadedSnapshotsView.uxml" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Analysis\Breakdowns\UnityObjects\Table\Cells\UnityObjectsDescriptionCell.uss" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\Unity.MemoryProfiler.Editor.asmdef" />
+    <None Include="Library\PackageCache\com.unity.memoryprofiler@077eae9ba83a\Editor\UI\Workbench\SnapshotFilesList\SnapshotFilesListViewItem.uxml" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -77,6 +333,10 @@
     </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>D:\unity\6000.0.58f2\Editor\Data\Managed\UnityEngine\UnityEngine.AIModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AMDModule">
+      <HintPath>D:\unity\6000.0.58f2\Editor\Data\Managed\UnityEngine\UnityEngine.AMDModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ARModule">
@@ -193,6 +453,10 @@
     </Reference>
     <Reference Include="UnityEngine.MultiplayerModule">
       <HintPath>D:\unity\6000.0.58f2\Editor\Data\Managed\UnityEngine\UnityEngine.MultiplayerModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.NVIDIAModule">
+      <HintPath>D:\unity\6000.0.58f2\Editor\Data\Managed\UnityEngine\UnityEngine.NVIDIAModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ParticleSystemModule">
@@ -1137,10 +1401,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="Unity.EditorCoroutines.Editor.csproj" />
+    <ProjectReference Include="Unity.MemoryProfiler.csproj" />
+    <ProjectReference Include="Unity.Collections.csproj" />
+    <ProjectReference Include="Unity.Burst.csproj" />
+    <ProjectReference Include="Unity.Profiling.Core.csproj" />
+    <ProjectReference Include="Unity.Mathematics.csproj" />
     <ProjectReference Include="UnityEditor.UI.csproj" />
     <ProjectReference Include="UnityEngine.UI.csproj" />
-    <ProjectReference Include="UnityEditor.TestRunner.csproj" />
     <ProjectReference Include="UnityEngine.TestRunner.csproj" />
+    <ProjectReference Include="UnityEditor.TestRunner.csproj" />
   </ItemGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
   <ItemGroup>

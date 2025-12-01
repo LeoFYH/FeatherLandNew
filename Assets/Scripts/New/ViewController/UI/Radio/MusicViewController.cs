@@ -199,5 +199,30 @@ namespace BirdGame
             rollTween = null;
             playTween = playAnim.DOLocalRotate(new Vector3(0, 0, 25), 0.3f);
         }
+        
+        private void OnDestroy()
+        {
+            // Kill all DOTween animations
+            playTween?.Kill();
+            rollTween?.Kill();
+            playTween = null;
+            rollTween = null;
+            
+            // Remove all event listeners to prevent memory leaks
+            if (progressSlider != null)
+                progressSlider.onValueChanged.RemoveAllListeners();
+            if (random != null)
+                random.onValueChanged.RemoveAllListeners();
+            if (loop != null)
+                loop.onValueChanged.RemoveAllListeners();
+            if (previousButton != null)
+                previousButton.onClick.RemoveAllListeners();
+            if (nextButton != null)
+                nextButton.onClick.RemoveAllListeners();
+            if (playButton != null)
+                playButton.onClick.RemoveAllListeners();
+            if (pauseButton != null)
+                pauseButton.onClick.RemoveAllListeners();
+        }
     }
 }

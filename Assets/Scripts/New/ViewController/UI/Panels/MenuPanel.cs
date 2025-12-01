@@ -298,6 +298,41 @@ namespace BirdGame
             
             timeItem.anchoredPosition = new Vector2(0f, 254f);
         }
+        
+        private void OnDestroy()
+        {
+            // Kill all DOTween animations to prevent memory leaks
+            anim?.Kill();
+            timeAnim?.Kill();
+            contentAnim?.Kill();
+            anim = null;
+            timeAnim = null;
+            contentAnim = null;
+            
+            // Remove all event listeners to prevent memory leaks
+            if (debugButton != null)
+                debugButton.onClick.RemoveAllListeners();
+            if (toDoButton != null)
+                toDoButton.onClick.RemoveAllListeners();
+            if (radioButton != null)
+                radioButton.onClick.RemoveAllListeners();
+            if (settingButton != null)
+                settingButton.onClick.RemoveAllListeners();
+            if (shopButton != null)
+                shopButton.onClick.RemoveAllListeners();
+            if (tomatoButton != null)
+                tomatoButton.onClick.RemoveAllListeners();
+            if (illustratedButton != null)
+                illustratedButton.onClick.RemoveAllListeners();
+            if (illustratedButton1 != null)
+                illustratedButton1.onClick.RemoveAllListeners();
+            if (mapButton != null)
+                mapButton.onClick.RemoveAllListeners();
+            if (externalLinkButton != null)
+                externalLinkButton.onClick.RemoveAllListeners();
+            if (weatherButton != null)
+                weatherButton.onClick.RemoveAllListeners();
+        }
 
         private void ShowBranch()
         {

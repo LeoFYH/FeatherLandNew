@@ -354,5 +354,22 @@ namespace BirdGame
             int index = languages.IndexOf(currentLanguage);
             languageDropdown.value = index;
         }
+        
+        private void OnDestroy()
+        {
+            // Remove all event listeners to prevent memory leaks
+            if (closeButton != null)
+                closeButton.onClick.RemoveAllListeners();
+            if (tutorialButton != null)
+                tutorialButton.onClick.RemoveAllListeners();
+            if (quitButton != null)
+                quitButton.onClick.RemoveAllListeners();
+            if (clearSaveButton != null)
+                clearSaveButton.onClick.RemoveAllListeners();
+            if (screenDropdown != null)
+                screenDropdown.onValueChanged.RemoveAllListeners();
+            if (languageDropdown != null)
+                languageDropdown.onValueChanged.RemoveAllListeners();
+        }
     }
 }

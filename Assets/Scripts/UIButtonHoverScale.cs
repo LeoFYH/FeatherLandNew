@@ -465,7 +465,10 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
 
     private void OnDisable()
     {
-        tooltipObject?.SetActive(false);
+        if (tooltipObject != null)
+        {
+            tooltipObject.SetActive(false);
+        }
         OnMouseExit();
     }
 
@@ -597,10 +600,18 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
     
     void OnDestroy()
     {
+        // Clean up tooltip object
         if (tooltipObject != null)
         {
-            DestroyImmediate(tooltipObject);
+            Destroy(tooltipObject);
+            tooltipObject = null;
         }
+        
+        // Clean up references
+        tooltipText = null;
+        backgroundImage = null;
+        canvas = null;
+        localizationSystem = null;
     }
     
     /// <summary>

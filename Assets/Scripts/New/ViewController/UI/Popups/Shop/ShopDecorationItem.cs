@@ -272,5 +272,12 @@ namespace BirdGame
         {
             this.GetSystem<IUISystem>().HideDecorationInfo();
         }
+        
+        private void OnDestroy()
+        {
+            // Remove all event listeners to prevent memory leaks
+            if (buyButton != null)
+                buyButton.onClick.RemoveAllListeners();
+        }
     }
 }

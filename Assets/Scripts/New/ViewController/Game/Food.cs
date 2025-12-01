@@ -101,5 +101,14 @@ namespace BirdGame
             // 完全透明后销毁
             this.GetSystem<IGameSystem>().RecycleFood(this);
         }
+        
+        private void OnDestroy()
+        {
+            // Stop all coroutines to prevent memory leaks
+            StopAllCoroutines();
+            
+            // Kill any active DOTween animations
+            transform.DOKill();
+        }
     }
 }

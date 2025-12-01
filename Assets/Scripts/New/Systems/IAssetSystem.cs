@@ -27,6 +27,10 @@ namespace BirdGame
         /// </summary>
         /// <param name="assetName"></param>
         void ReleaseAsset(string assetName);
+        /// <summary>
+        /// 释放所有资源（场景切换时使用）
+        /// </summary>
+        void ReleaseAllAssets();
 
         IEnumerator PreloadEssentialAssets(Action<float> onProgress, Action onCpmplete);
     }
@@ -38,17 +42,36 @@ namespace BirdGame
         }
 
         private Dictionary<string, AsyncOperationHandle> HandleDic { get; } = new Dictionary<string, AsyncOperationHandle>();
+        private Dictionary<string, float> lastAccessTime = new Dictionary<string, float>();
+        private const float ASSET_CLEANUP_INTERVAL = 60f; // Cleanup unused assets every 60 seconds
+        private const float ASSET_UNUSED_TIME = 300f; // Release assets unused for 5 minutes
+        private float lastCleanupTime = 0f;
 
         public async void LoadAssetAsync<T>(string assetName, Action<T> onCompleted, Action<float> onProgress = null)
         {
+            // Periodic cleanup of unused assets
+            if (Time.realtimeSinceStartup - lastCleanupTime > ASSET_CLEANUP_INTERVAL)
+            {
+                CleanupUnusedAssets();
+                lastCleanupTime = Time.realtimeSinceStartup;
+            }
+
             if (HandleDic.ContainsKey(assetName))
             {
+                lastAccessTime[assetName] = Time.realtimeSinceStartup;
                 onCompleted?.Invoke((T)HandleDic[assetName].Result);
                 return;
             }
+            
+            // Only log in editor to reduce memory allocations
+            #if UNITY_EDITOR
             Debug.Log(assetName);
+            #endif
+            
             var handle = Addressables.LoadAssetAsync<T>(assetName);
             HandleDic.Add(assetName, handle);
+            lastAccessTime[assetName] = Time.realtimeSinceStartup;
+            
             while (!handle.IsDone)
             {
                 onProgress?.Invoke(handle.PercentComplete);
@@ -65,6 +88,9 @@ namespace BirdGame
                 Debug.LogError($"资源加载失败: {assetName}");
                 onProgress?.Invoke(1f);
                 onCompleted?.Invoke(default(T)); // 传递默认值，让UI层处理
+                // Clean up failed handle
+                HandleDic.Remove(assetName);
+                lastAccessTime.Remove(assetName);
             }
         }
 
@@ -73,6 +99,48 @@ namespace BirdGame
             if (HandleDic.Remove(assetName, out var handle))
             {
                 Addressables.Release(handle);
+            }
+            lastAccessTime.Remove(assetName);
+        }
+
+        /// <summary>
+        /// Clean up assets that haven't been accessed for a while
+        /// </summary>
+        private void CleanupUnusedAssets()
+        {
+            float currentTime = Time.realtimeSinceStartup;
+            List<string> assetsToRelease = new List<string>();
+
+            foreach (var kvp in lastAccessTime)
+            {
+                if (currentTime - kvp.Value > ASSET_UNUSED_TIME)
+                {
+                    assetsToRelease.Add(kvp.Key);
+                }
+            }
+
+            foreach (var assetName in assetsToRelease)
+            {
+                ReleaseAsset(assetName);
+            }
+
+            if (assetsToRelease.Count > 0)
+            {
+                #if UNITY_EDITOR
+                Debug.Log($"释放了 {assetsToRelease.Count} 个未使用的资源");
+                #endif
+            }
+        }
+
+        /// <summary>
+        /// Force cleanup all assets (use when changing scenes)
+        /// </summary>
+        public void ReleaseAllAssets()
+        {
+            var keys = new List<string>(HandleDic.Keys);
+            foreach (var key in keys)
+            {
+                ReleaseAsset(key);
             }
         }
 
