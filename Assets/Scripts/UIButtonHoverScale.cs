@@ -259,6 +259,8 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
             onMouseExit?.Invoke();
         }
 
+        UpdateTooltipPosition();
+
         if (SimpleMouseForwarder.clickCount > previousClickCount)
         {
             previousClickCount = SimpleMouseForwarder.clickCount;
@@ -442,7 +444,6 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
             
             isHovering = true;
             hoverTimer = 0f;
-           
         }
     }
     
@@ -549,16 +550,17 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
     
     private void UpdateTooltipPosition()
     {
-        if (tooltipObject == null) return;
+        if (tooltipObject == null || !tooltipObject.activeSelf) return;
         
         Vector2 buttonPos;
         
         if (useRectTransform)
         {
-            // 使用RectTransform获取位置（适用于UI元素）
-            RectTransform buttonRect = GetComponent<RectTransform>();
-            if (buttonRect == null) return;
-            buttonPos = buttonRect.position;
+            // // 使用RectTransform获取位置（适用于UI元素）
+            // RectTransform buttonRect = GetComponent<RectTransform>();
+            // if (buttonRect == null) return;
+            // buttonPos = buttonRect.position;
+            buttonPos = Input.mousePosition;
         }
         else
         {
@@ -567,13 +569,14 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
                 return;
             }
             
-            // 使用Transform获取位置（适用于GameObject）
-            Transform buttonTransform = transform;
-            if (buttonTransform == null) return;
-            
-            // 将世界坐标转换为屏幕坐标
-            Vector3 screenPos = Camera.main.WorldToScreenPoint(buttonTransform.position);
-            buttonPos = screenPos;
+            // // 使用Transform获取位置（适用于GameObject）
+            // Transform buttonTransform = transform;
+            // if (buttonTransform == null) return;
+            //
+            // // 将世界坐标转换为屏幕坐标
+            // Vector3 screenPos = Camera.main.WorldToScreenPoint(buttonTransform.position);
+            // buttonPos = screenPos;
+            buttonPos = Input.mousePosition;
         }
         
         // 计算提示框位置（按钮位置上方50像素）
@@ -582,7 +585,7 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         // 设置tooltip位置
         RectTransform tooltipRect = tooltipObject.GetComponent<RectTransform>();
         if (tooltipRect == null) return;
-        
+       
         tooltipRect.position = tooltipPos;
     }
 

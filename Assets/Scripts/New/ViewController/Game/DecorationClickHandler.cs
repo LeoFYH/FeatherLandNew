@@ -1,6 +1,7 @@
 using System;
 using DG.Tweening;
 using QFramework;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace BirdGame
@@ -9,6 +10,8 @@ namespace BirdGame
     {
         private int decorationId;
         public int decorationIndex;
+        [TableList(ShowIndexLabels = true, AlwaysExpanded = true)]
+        public DecorationEffect[] effects;
 
         private SpriteRenderer sr;
 
@@ -33,6 +36,20 @@ namespace BirdGame
                 ani.Append(sr.DOColor(Color.black, 0.5f));
                 ani.Append(sr.DOColor(Color.white, 0.5f));
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            if (effects != null && effects.Length > 0)
+            {
+                for (int i = 0; i < effects.Length; i++)
+                {
+                    if (effects[i].type == DecorationEffectType.FlyPosition && effects[i].flyPosition != null)
+                    {
+                        if (!this.GetModel<IBirdModel>().FlyPositions.Contains(effects[i].flyPosition))
+                        {
+                            this.GetModel<IBirdModel>().FlyPositions.Add(effects[i].flyPosition);
+                        }
+                    }
+                }
+            }
         }
 
         private void OnMouseOver()
@@ -56,5 +73,36 @@ namespace BirdGame
             //this.GetSystem<IGameSystem>().DestroyDecoration(decorationId, gameObject);
             this.GetSystem<IUISystem>().ShowMouseMenu(decorationId, decorationIndex, transform.parent.gameObject);
         }
+
+        private void OnDestroy()
+        {
+            if (effects != null && effects.Length > 0)
+            {
+                for (int i = 0; i < effects.Length; i++)
+                {
+                    if (effects[i].type == DecorationEffectType.FlyPosition && effects[i].flyPosition != null)
+                    {
+                        if (this.GetModel<IBirdModel>().FlyPositions.Contains(effects[i].flyPosition))
+                        {
+                            this.GetModel<IBirdModel>().FlyPositions.Remove(effects[i].flyPosition);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    [Serializable]
+    public class DecorationEffect
+    {
+        public DecorationEffectType type;
+
+        [ShowIf("@type==DecorationEffectType.FlyPosition")]
+        public Transform flyPosition;
+    }
+
+    public enum DecorationEffectType
+    {
+        FlyPosition,
     }
 } 
