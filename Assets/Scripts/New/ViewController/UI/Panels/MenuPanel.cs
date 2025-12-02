@@ -16,7 +16,7 @@ namespace BirdGame
         public Button toDoButton;
         public Button radioButton;
         public Button settingButton;
-        public Button shopButton;
+        public Toggle shopToggle;
         public Button tomatoButton;
         public Button illustratedButton;
         public Button illustratedButton1;
@@ -110,13 +110,17 @@ namespace BirdGame
                 Debug.LogError("设置按钮未分配，请检查MenuPanel预制体");
             }
             
-            if (shopButton != null)
+            if (shopToggle != null)
             {
+                shopToggle.isOn = false;
                 Debug.Log("绑定shopButton事件");
-                shopButton.onClick.AddListener(() =>
+                shopToggle.onValueChanged.AddListener(isOn =>
                 {
                     Debug.Log("shopButton被点击");
-                    uiSystem.ShowPopup(UIPopup.ShopPopup);
+                    if (isOn)
+                        uiSystem.ShowPopup(UIPopup.ShopPopup);
+                    else 
+                        uiSystem.HidePopup(UIPopup.ShopPopup);
                 });
             }
             else

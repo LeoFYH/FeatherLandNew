@@ -9,7 +9,6 @@ namespace BirdGame
 {
     public class IllustratedPopup : UIBase
     {
-        public Button closeButton;
         public Transform illustratedContent;
         public GameObject[] illustratedItemPrefabs;
         public TextMeshProUGUI birdNameText;
@@ -24,85 +23,15 @@ namespace BirdGame
         public GameObject skinPrefab;
         public Animator animator;
 
-        [Header("点击外部关闭设置")]
-        public Transform barTransform;  // Bar对象，用于检测点击区域
-
         private List<GameObject> skinItems = new List<GameObject>();
         private int currentSelectedIndex = 0; // 记录当前选中的鸟类索引
         
-        void Update()
-        {
-            // 检测鼠标点击
-            if (Input.GetMouseButtonDown(0))
-            {
-                CheckClickOutside();
-            }
-        }
-        
-        /// <summary>
-        /// 检测是否点击了图鉴外部区域
-        /// </summary>
-        private void CheckClickOutside()
-        {
-            // 检查是否点击了UI元素
-            if (!EventSystem.current.IsPointerOverGameObject())
-            {
-                // 没有点击UI元素，关闭图鉴
-                this.GetSystem<IUISystem>().HidePopup(UIPopup.IllustratedPopup);
-                return;
-            }
-            
-            // 获取鼠标位置
-            Vector2 mousePosition = Input.mousePosition;
-            
-            // 检查是否点击了Bar区域
-            if (barTransform != null)
-            {
-                RectTransform barRect = barTransform.GetComponent<RectTransform>();
-                if (barRect != null)
-                {
-                    // 将鼠标位置转换为Bar的本地坐标
-                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                        barRect, mousePosition, null, out Vector2 localPoint))
-                    {
-                        // 检查点击是否在Bar区域内
-                        if (barRect.rect.Contains(localPoint))
-                        {
-                            // 点击在Bar区域内，不关闭
-                            return;
-                        }
-                    }
-                }
-            }
-            
-            // 检查是否点击了关闭按钮
-            if (closeButton != null)
-            {
-                RectTransform closeRect = closeButton.GetComponent<RectTransform>();
-                if (closeRect != null)
-                {
-                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                        closeRect, mousePosition, null, out Vector2 localPoint))
-                    {
-                        if (closeRect.rect.Contains(localPoint))
-                        {
-                            // 点击了关闭按钮，不在这里处理
-                            return;
-                        }
-                    }
-                }
-            }
-            
-            // 点击了UI元素但不在图鉴区域内，关闭图鉴
-            this.GetSystem<IUISystem>().HidePopup(UIPopup.IllustratedPopup);
-        }
-
         private void Start()
         {
-            closeButton.onClick.AddListener(() =>
-            {
-                this.GetSystem<IUISystem>().HidePopup(UIPopup.IllustratedPopup);
-            });
+            // closeButton.onClick.AddListener(() =>
+            // {
+            //     this.GetSystem<IUISystem>().HidePopup(UIPopup.IllustratedPopup);
+            // });
             
             // 注册语言切换事件
             this.RegisterEvent<ChangeLanguageEvent>(evt =>

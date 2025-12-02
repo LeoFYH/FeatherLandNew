@@ -18,7 +18,6 @@ namespace BirdGame
         [DllImport("kernel32.dll")]
         private static extern void ExitProcess(int ExitCode);
         
-        public Button closeButton;
         public TMP_Dropdown screenDropdown;
         public TMP_Dropdown languageDropdown;
         public Button quitButton;
@@ -166,10 +165,6 @@ namespace BirdGame
             quitY = quitRect.anchoredPosition.y;
             languageY = languageRect.anchoredPosition.y;
             
-            closeButton.onClick.AddListener(() =>
-            {
-                this.GetSystem<IUISystem>().HidePopup(UIPopup.SettingPopup);
-            });
             tutorialButton.onClick.AddListener(() =>
             {
                 this.GetSystem<IUISystem>().ShowPopup(UIPopup.TutorialPopup);

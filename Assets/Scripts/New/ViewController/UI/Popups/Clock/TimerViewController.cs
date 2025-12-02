@@ -56,11 +56,17 @@ namespace BirdGame
                     else
                     {
                         hourText.text = string.Format("{0:00}", item.Hours.Value);
+                        var rect = hourText.textComponent.GetComponent<RectTransform>();
+                        rect.sizeDelta = Vector2.zero;
+                        rect.anchoredPosition = Vector2.zero;
                     }
                 }
                 catch (Exception e)
                 {
                     hourText.text = string.Format("{0:00}", item.Hours.Value);
+                    var rect = hourText.textComponent.GetComponent<RectTransform>();
+                    rect.sizeDelta = Vector2.zero;
+                    rect.anchoredPosition = Vector2.zero;
                 }
             });
             
@@ -76,11 +82,17 @@ namespace BirdGame
                     else
                     {
                         minuteText.text = string.Format("{0:00}", item.Minutes.Value);
+                        var rect = minuteText.textComponent.GetComponent<RectTransform>();
+                        rect.sizeDelta = Vector2.zero;
+                        rect.anchoredPosition = Vector2.zero;
                     }
                 }
                 catch (Exception e)
                 {
                     minuteText.text = string.Format("{0:00}", item.Minutes.Value);
+                    var rect = minuteText.textComponent.GetComponent<RectTransform>();
+                    rect.sizeDelta = Vector2.zero;
+                    rect.anchoredPosition = Vector2.zero;
                 }
             });
             
@@ -96,11 +108,17 @@ namespace BirdGame
                     else
                     {
                         secondText.text = string.Format("{0:00}", item.Seconds.Value);
+                        var rect = secondText.textComponent.GetComponent<RectTransform>();
+                        rect.sizeDelta = Vector2.zero;
+                        rect.anchoredPosition = Vector2.zero;
                     }
                 }
                 catch (Exception e)
                 {
                     secondText.text = string.Format("{0:00}", item.Seconds.Value);
+                    var rect = secondText.textComponent.GetComponent<RectTransform>();
+                    rect.sizeDelta = Vector2.zero;
+                    rect.anchoredPosition = Vector2.zero;
                 }
             });
             

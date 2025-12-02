@@ -117,26 +117,26 @@ namespace BirdGame
             
         }
 
-        void Update()
-        {
-            bool mouseIsOverButton = IsMouseOverButton();
-
-            if (mouseIsOverButton != mouseWasOverButton)
-            {
-                if (mouseIsOverButton && !isHovering)
-                {
-                    // 鼠标进入按钮
-                    OnMouseEnter();
-                }
-                else if (!mouseIsOverButton && isHovering)
-                {
-                    // 鼠标离开按钮
-                    OnMouseExit();
-                }
-            }
-            
-            mouseWasOverButton = mouseIsOverButton;
-        }
+        // void Update()
+        // {
+        //     bool mouseIsOverButton = IsMouseOverButton();
+        //
+        //     if (mouseIsOverButton != mouseWasOverButton)
+        //     {
+        //         if (mouseIsOverButton && !isHovering)
+        //         {
+        //             // 鼠标进入按钮
+        //             OnMouseEnter();
+        //         }
+        //         else if (!mouseIsOverButton && isHovering)
+        //         {
+        //             // 鼠标离开按钮
+        //             OnMouseExit();
+        //         }
+        //     }
+        //     
+        //     mouseWasOverButton = mouseIsOverButton;
+        // }
 
         private bool IsMouseOverButton()
         {

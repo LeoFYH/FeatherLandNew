@@ -9,7 +9,6 @@ namespace BirdGame
 {
     public class ShopPopup : UIBase
     {
-        public Button closeButton;
         public Toggle eggToggle;
         public Toggle decorationToggle;
         public Toggle toolsToggle;
@@ -78,8 +77,6 @@ namespace BirdGame
                     barImage.sprite = normalBar;
             });
             saleBirdToggle.onValueChanged.AddListener(isOn => { saleBirdContent.SetActive(isOn); });
-
-            closeButton.onClick.AddListener(() => { this.GetSystem<IUISystem>().HidePopup(UIPopup.ShopPopup); });
 
             StartCoroutine(InitDelay());
         }

@@ -11,7 +11,7 @@ namespace BirdGame
         [Header("Scale Constraints")] public float minScale = 0.5f;
         public float maxScale = 3.0f;
 
-        [Header("Resize Settings")] public float resizeSensitivity = 0.01f; // 缩放灵敏度
+        [Header("Resize Settings")] public float resizeSensitivity = 0.0008f; // 缩放灵敏度
 
         private Vector3 originalScale;
         private Vector2 originalPosition;

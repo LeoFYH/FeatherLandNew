@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using DG.Tweening;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -43,7 +44,7 @@ namespace BirdGame
                 numberText.text = v.ToString();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             numberText.text = item.Number.Value.ToString();
-            sessionText.onEndEdit.AddListener(v =>
+            sessionText.onSubmit.AddListener(v =>
             {
                 try
                 {
@@ -55,15 +56,21 @@ namespace BirdGame
                     else
                     {
                         sessionText.text = string.Format("{0:00}", item.SessionMinutes.Value);
+                        var rect = sessionText.textComponent.GetComponent<RectTransform>();
+                        rect.sizeDelta = Vector2.zero;
+                        rect.anchoredPosition = Vector2.zero;
                     }
                 }
                 catch (Exception e)
                 {
                     sessionText.text = string.Format("{0:00}", item.SessionMinutes.Value);
+                    var rect = sessionText.textComponent.GetComponent<RectTransform>();
+                    rect.sizeDelta = Vector2.zero;
+                    rect.anchoredPosition = Vector2.zero;
                 }
             });
             
-            breakText.onEndEdit.AddListener(v =>
+            breakText.onSubmit.AddListener(v =>
             {
                 try
                 {
@@ -75,15 +82,21 @@ namespace BirdGame
                     else
                     {
                         breakText.text = string.Format("{0:00}", item.BreakMinutes.Value);
+                        var rect = breakText.textComponent.GetComponent<RectTransform>();
+                        rect.sizeDelta = Vector2.zero;
+                        rect.anchoredPosition = Vector2.zero;
                     }
                 }
                 catch (Exception e)
                 {
                     breakText.text = string.Format("{0:00}", item.BreakMinutes.Value);
+                    var rect = breakText.textComponent.GetComponent<RectTransform>();
+                    rect.sizeDelta = Vector2.zero;
+                    rect.anchoredPosition = Vector2.zero;
                 }
             });
             
-            numberText.onEndEdit.AddListener(v =>
+            numberText.onSubmit.AddListener(v =>
             {
                 try
                 {
@@ -95,11 +108,17 @@ namespace BirdGame
                     else
                     {
                         numberText.text = string.Format("{0:0}", item.Number.Value);
+                        var rect = numberText.textComponent.GetComponent<RectTransform>();
+                        rect.sizeDelta = Vector2.zero;
+                        rect.anchoredPosition = Vector2.zero;
                     }
                 }
                 catch (Exception e)
                 {
                     numberText.text = string.Format("{0:0}", item.Number.Value);
+                    var rect = numberText.textComponent.GetComponent<RectTransform>();
+                    rect.sizeDelta = Vector2.zero;
+                    rect.anchoredPosition = Vector2.zero;
                 }
             });
             for (int i = 0; i < 3; i++)
