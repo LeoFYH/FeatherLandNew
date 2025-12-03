@@ -172,7 +172,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -200,6 +200,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e7d675b0c7d402f82a42c4c0759f620, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  closeButton: {fileID: 0}
   content: {fileID: 8292951776429765902}
   itemPrefab: {fileID: 6829766879316153355, guid: bdb7b780436250948bd82242063540db, type: 3}

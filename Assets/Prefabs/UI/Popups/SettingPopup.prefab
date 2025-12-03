@@ -2605,7 +2605,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -2633,7 +2633,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a419d511c7f44aadac31644815e4b837, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  closeButton: {fileID: 0}
   screenDropdown: {fileID: 7058865102772022381}
   languageDropdown: {fileID: 3436336708907365180}
   quitButton: {fileID: 5266309596220624670}

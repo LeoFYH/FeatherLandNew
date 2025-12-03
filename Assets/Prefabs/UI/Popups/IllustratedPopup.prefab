@@ -747,7 +747,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -775,7 +775,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a44ebda2a3d14265b7b569d135bb08e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  closeButton: {fileID: 0}
   illustratedContent: {fileID: 904896063462016593}
   illustratedItemPrefabs:
   - {fileID: 7631882502085490900, guid: 27616a728f4fb8d40b3ae60e7f3c10fa, type: 3}
@@ -792,7 +791,6 @@ MonoBehaviour:
   skinContent: {fileID: 1970663820620278410}
   skinPrefab: {fileID: 5566325955820234992, guid: 462778da0d73eb747bb36af5e4301747, type: 3}
   animator: {fileID: 6688413675065809541}
-  barTransform: {fileID: 1067855532331404398}
 --- !u!1 &1986834853005911148
 GameObject:
   m_ObjectHideFlags: 0

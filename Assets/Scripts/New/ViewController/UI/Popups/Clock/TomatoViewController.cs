@@ -59,6 +59,9 @@ namespace BirdGame
                         var rect = sessionText.textComponent.GetComponent<RectTransform>();
                         rect.sizeDelta = Vector2.zero;
                         rect.anchoredPosition = Vector2.zero;
+                        var caretRect = sessionText.transform.Find("Text Area/Caret") as RectTransform;
+                        caretRect.sizeDelta = Vector2.zero;
+                        caretRect.anchoredPosition = Vector2.zero;
                     }
                 }
                 catch (Exception e)
@@ -67,6 +70,9 @@ namespace BirdGame
                     var rect = sessionText.textComponent.GetComponent<RectTransform>();
                     rect.sizeDelta = Vector2.zero;
                     rect.anchoredPosition = Vector2.zero;
+                    var caretRect = sessionText.transform.Find("Text Area/Caret") as RectTransform;
+                    caretRect.sizeDelta = Vector2.zero;
+                    caretRect.anchoredPosition = Vector2.zero;
                 }
             });
             
@@ -85,6 +91,9 @@ namespace BirdGame
                         var rect = breakText.textComponent.GetComponent<RectTransform>();
                         rect.sizeDelta = Vector2.zero;
                         rect.anchoredPosition = Vector2.zero;
+                        var caretRect = breakText.transform.Find("Text Area/Caret") as RectTransform;
+                        caretRect.sizeDelta = Vector2.zero;
+                        caretRect.anchoredPosition = Vector2.zero;
                     }
                 }
                 catch (Exception e)
@@ -93,6 +102,9 @@ namespace BirdGame
                     var rect = breakText.textComponent.GetComponent<RectTransform>();
                     rect.sizeDelta = Vector2.zero;
                     rect.anchoredPosition = Vector2.zero;
+                    var caretRect = breakText.transform.Find("Text Area/Caret") as RectTransform;
+                    caretRect.sizeDelta = Vector2.zero;
+                    caretRect.anchoredPosition = Vector2.zero;
                 }
             });
             
@@ -111,6 +123,9 @@ namespace BirdGame
                         var rect = numberText.textComponent.GetComponent<RectTransform>();
                         rect.sizeDelta = Vector2.zero;
                         rect.anchoredPosition = Vector2.zero;
+                        var caretRect = numberText.transform.Find("Text Area/Caret") as RectTransform;
+                        caretRect.sizeDelta = Vector2.zero;
+                        caretRect.anchoredPosition = Vector2.zero;
                     }
                 }
                 catch (Exception e)
@@ -119,6 +134,9 @@ namespace BirdGame
                     var rect = numberText.textComponent.GetComponent<RectTransform>();
                     rect.sizeDelta = Vector2.zero;
                     rect.anchoredPosition = Vector2.zero;
+                    var caretRect = numberText.transform.Find("Text Area/Caret") as RectTransform;
+                    caretRect.sizeDelta = Vector2.zero;
+                    caretRect.anchoredPosition = Vector2.zero;
                 }
             });
             for (int i = 0; i < 3; i++)

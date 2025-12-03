@@ -224,10 +224,10 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         mouseWasOverButton = mouseIsOverButton;
         
         // 处理鼠标点击事件（独立于tooltip逻辑）
-        if (isHovering && (Input.GetMouseButtonDown(0) || (SimpleMouseForwarder.clickCount > previousClickCount)) && !disabled)
+        if (isHovering && Input.GetMouseButtonDown(0))// || (SimpleMouseForwarder.clickCount > previousClickCount)) && !disabled)
         {
-            previousClickCount = SimpleMouseForwarder.clickCount;
-            Debug.Log($"[{gameObject.name}] 鼠标点击检测到，触发onClick事件");
+            // previousClickCount = SimpleMouseForwarder.clickCount;
+            // Debug.Log($"[{gameObject.name}] 鼠标点击检测到，触发onClick事件");
             try
             {
                 onClick?.Invoke();
@@ -261,10 +261,10 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
 
         UpdateTooltipPosition();
 
-        if (SimpleMouseForwarder.clickCount > previousClickCount)
-        {
-            previousClickCount = SimpleMouseForwarder.clickCount;
-        }
+        // if (SimpleMouseForwarder.clickCount > previousClickCount)
+        // {
+        //     previousClickCount = SimpleMouseForwarder.clickCount;
+        // }
     }
 
     /// <summary>
