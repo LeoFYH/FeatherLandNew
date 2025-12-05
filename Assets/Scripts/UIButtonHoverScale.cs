@@ -224,10 +224,10 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         mouseWasOverButton = mouseIsOverButton;
         
         // 处理鼠标点击事件（独立于tooltip逻辑）
-        if (isHovering && Input.GetMouseButtonDown(0))// || (SimpleMouseForwarder.clickCount > previousClickCount)) && !disabled)
+        if (isHovering && (Input.GetMouseButtonDown(0) || (SimpleMouseForwarder.clickCount > previousClickCount)) && !disabled)
         {
-            // previousClickCount = SimpleMouseForwarder.clickCount;
-            // Debug.Log($"[{gameObject.name}] 鼠标点击检测到，触发onClick事件");
+            previousClickCount = SimpleMouseForwarder.clickCount;
+            Debug.Log($"[{gameObject.name}] 鼠标点击检测到，触发onClick事件");
             try
             {
                 onClick?.Invoke();
@@ -259,12 +259,10 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
             onMouseExit?.Invoke();
         }
 
-        UpdateTooltipPosition();
-
-        // if (SimpleMouseForwarder.clickCount > previousClickCount)
-        // {
-        //     previousClickCount = SimpleMouseForwarder.clickCount;
-        // }
+        if (SimpleMouseForwarder.clickCount > previousClickCount)
+        {
+            previousClickCount = SimpleMouseForwarder.clickCount;
+        }
     }
 
     /// <summary>
@@ -444,6 +442,7 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
             
             isHovering = true;
             hoverTimer = 0f;
+           
         }
     }
     
@@ -467,7 +466,9 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
     private void OnDisable()
     {
         if (tooltipObject != null)
-            tooltipObject?.SetActive(false);
+        {
+            tooltipObject.SetActive(false);
+        }
         OnMouseExit();
     }
 
@@ -550,17 +551,16 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
     
     private void UpdateTooltipPosition()
     {
-        if (tooltipObject == null || !tooltipObject.activeSelf) return;
+        if (tooltipObject == null) return;
         
         Vector2 buttonPos;
         
         if (useRectTransform)
         {
-            // // 使用RectTransform获取位置（适用于UI元素）
-            // RectTransform buttonRect = GetComponent<RectTransform>();
-            // if (buttonRect == null) return;
-            // buttonPos = buttonRect.position;
-            buttonPos = Input.mousePosition;
+            // 使用RectTransform获取位置（适用于UI元素）
+            RectTransform buttonRect = GetComponent<RectTransform>();
+            if (buttonRect == null) return;
+            buttonPos = buttonRect.position;
         }
         else
         {
@@ -569,14 +569,13 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
                 return;
             }
             
-            // // 使用Transform获取位置（适用于GameObject）
-            // Transform buttonTransform = transform;
-            // if (buttonTransform == null) return;
-            //
-            // // 将世界坐标转换为屏幕坐标
-            // Vector3 screenPos = Camera.main.WorldToScreenPoint(buttonTransform.position);
-            // buttonPos = screenPos;
-            buttonPos = Input.mousePosition;
+            // 使用Transform获取位置（适用于GameObject）
+            Transform buttonTransform = transform;
+            if (buttonTransform == null) return;
+            
+            // 将世界坐标转换为屏幕坐标
+            Vector3 screenPos = Camera.main.WorldToScreenPoint(buttonTransform.position);
+            buttonPos = screenPos;
         }
         
         // 计算提示框位置（按钮位置上方50像素）
@@ -585,7 +584,7 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         // 设置tooltip位置
         RectTransform tooltipRect = tooltipObject.GetComponent<RectTransform>();
         if (tooltipRect == null) return;
-       
+        
         tooltipRect.position = tooltipPos;
     }
 
@@ -601,10 +600,18 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
     
     void OnDestroy()
     {
+        // Clean up tooltip object
         if (tooltipObject != null)
         {
-            DestroyImmediate(tooltipObject);
+            Destroy(tooltipObject);
+            tooltipObject = null;
         }
+        
+        // Clean up references
+        tooltipText = null;
+        backgroundImage = null;
+        canvas = null;
+        localizationSystem = null;
     }
     
     /// <summary>
