@@ -24,7 +24,7 @@ namespace BirdGame
                 icon.color = Color.black;
             }
 
-            icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.08f;
+            icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.2f;
         }
 
         private void Start()

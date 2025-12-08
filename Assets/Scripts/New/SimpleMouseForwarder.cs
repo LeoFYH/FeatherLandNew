@@ -125,27 +125,6 @@ public class SimpleMouseForwarder : MonoBehaviour
     private static Vector2 mousePosition = Vector2.zero;
     private static SimpleMouseForwarder instance;
 
-    // private void Awake()
-    // {
-    //     instance = this;
-        
-    //     // Install mouse hook
-    //     _hookID = SetHook(_proc);
-        
-    //     // Install keyboard hook
-    //     _keyboardHookID = SetKeyboardHook(_keyboardProc);
-
-    //     Debug.Log($"[SimpleMouseForwarder] 鼠标钩子: {_hookID}, 键盘钩子: {_keyboardHookID}");
-    //     if (_hookID == IntPtr.Zero || _keyboardHookID == IntPtr.Zero)
-    //     {
-    //         Debug.LogError("[SimpleMouseForwarder] 钩子安装失败！");
-    //     }
-    //     else
-    //     {
-    //         Debug.Log("[SimpleMouseForwarder] 鼠标和键盘钩子安装成功");
-    //     }
-    // }
-
     private void OnEnable()
     {
         instance = this;
@@ -397,18 +376,45 @@ public class SimpleMouseForwarder : MonoBehaviour
                     if (timeSinceMouseDown >= DRAG_TIME_THRESHOLD && distanceMoved > DRAG_DISTANCE_THRESHOLD)
                     {
                         isLeftMouseDragging = true;
+                        
+                        // Find scroll rect target if not already found
+                        if (currentDragTarget == null)
+                        {
+                            currentDragTarget = FindScrollRectTarget(currentMousePosition);
+                        }
+                        
+                        if (instance.showDebugLog && currentDragTarget != null)
+                        {
+                            Debug.Log($"[SimpleMouseForwarder] 开始拖动，目标: {currentDragTarget.name}");
+                        }
                     }
                 }
                 
-                // Track mouse movement for other dragging (sliders, etc.)
-                if (isMouseDown && currentDragTarget != null)
+                // If dragging, calculate delta and forward to scroll rect
+                if (isLeftMouseDragging && currentDragTarget != null)
                 {
-                    ForwardDragToUI(currentDragTarget);
+                    Vector2 delta = currentMousePosition - lastMousePosition;
+                    ForwardDragToScrollRect(currentDragTarget, delta);
+                    
+                    if (instance.showDebugLog)
+                    {
+                        Debug.Log($"[SimpleMouseForwarder] 拖动中 Delta: {delta}");
+                    }
                 }
+                
                 lastMousePosition = currentMousePosition;
             }
             else if (message == WM_LBUTTONUP)
             {
+                if (isLeftMouseDragging && currentDragTarget != null)
+                {
+                    // End drag
+                    if (instance.showDebugLog)
+                    {
+                        Debug.Log($"[SimpleMouseForwarder] 拖动结束");
+                    }
+                }
+                
                 // Reset drag state
                 isMouseDown = false;
                 isLeftMouseDragging = false;
@@ -472,6 +478,43 @@ public class SimpleMouseForwarder : MonoBehaviour
         }
         
         return null;
+    }
+
+    private static GameObject FindScrollRectTarget(Vector2 screenPosition)
+    {
+        if (EventSystem.current == null) return null;
+        
+        PointerEventData pointerData = new PointerEventData(EventSystem.current)
+        {
+            position = screenPosition,
+            button = PointerEventData.InputButton.Left
+        };
+        
+        var raycastResults = new System.Collections.Generic.List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerData, raycastResults);
+        
+        foreach (var result in raycastResults)
+        {
+            // Look for scroll rect mouse wheel handlers
+            ScrollRectMouseWheelHandler scrollHandler = result.gameObject.GetComponent<ScrollRectMouseWheelHandler>();
+            if (scrollHandler != null && scrollHandler.enableDragScrolling)
+            {
+                return result.gameObject;
+            }
+        }
+        
+        return null;
+    }
+
+    private static void ForwardDragToScrollRect(GameObject target, Vector2 delta)
+    {
+        if (target == null) return;
+        
+        ScrollRectMouseWheelHandler handler = target.GetComponent<ScrollRectMouseWheelHandler>();
+        if (handler != null)
+        {
+            handler.ReceiveDragDelta(delta);
+        }
     }
 
     private static void ForwardDragToUI(GameObject target)
