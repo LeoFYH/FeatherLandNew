@@ -12,20 +12,16 @@ namespace BirdGame
     {
         public Image weatherIcon;
         public Button weatherButton;
-        public Sprite[] weatherSps;
-        public Button toDoButton;
-        public Button radioButton;
-        public Button settingButton;
-        public Toggle shopToggle;
-        public Button tomatoButton;
-        public Button illustratedButton;
-        public Button illustratedButton1;
-        public Button mapButton;
+        //public Sprite[] weatherSps;
+        public Toggle noteToggle;
+        public Toggle radioToggle;
+        public Toggle settingButton;
+        public Toggle shopButton;
+        public Toggle clockToggle;
+        public Toggle illustratedButton;
+        public Toggle mapButton;
         public Button externalLinkButton; // 新增外部链接按钮
         public TextMeshProUGUI coinsNum;
-        public RectTransform branch;
-        public CanvasGroup group1;
-        public CanvasGroup group2;
         public RectTransform timeItem;
         public TextMeshProUGUI timeText;
         public GameObject[] weatherItems;
@@ -34,7 +30,6 @@ namespace BirdGame
 
         private Sequence anim;
         private Tweener timeAnim;
-        private bool isShowBranch;
         private bool isShowWeatherItems = false;
         private Tweener contentAnim;
         
@@ -68,121 +63,91 @@ namespace BirdGame
             }
             Debug.Log("IUISystem获取成功");
             
-            if (toDoButton != null)
+            noteToggle.onValueChanged.AddListener(isOn =>
             {
-                Debug.Log($"绑定toDoButton事件 - 按钮名称: {toDoButton.name}, 激活状态: {toDoButton.gameObject.activeInHierarchy}");
-                toDoButton.onClick.AddListener(() =>
+                if (isOn)
                 {
-                    Debug.Log("toDoButton被点击");
                     uiSystem.ShowPopup(UIPopup.NotePopup);
-                });
-            }
-            else
-            {
-                Debug.LogWarning("toDoButton未分配");
-            }
-            
-            if (radioButton != null)
-            {
-                Debug.Log("绑定radioButton事件");
-                radioButton.onClick.AddListener(() =>
+                }
+                else
                 {
-                    Debug.Log("radioButton被点击");
+                    uiSystem.HidePopup(UIPopup.NotePopup);
+                }
+            });
+            
+            radioToggle.onValueChanged.AddListener(isOn =>
+            {
+                if (isOn)
+                {
                     uiSystem.ShowPopup(UIPopup.RadioPopup);
-                });
-            }
-            else
-            {
-                Debug.LogWarning("radioButton未分配");
-            }
-            
-            if (settingButton != null)
-            {
-                Debug.Log($"绑定settingButton事件 - 按钮名称: {settingButton.name}, 激活状态: {settingButton.gameObject.activeInHierarchy}");
-                settingButton.onClick.AddListener(() =>
+                }
+                else
                 {
-                    Debug.Log("设置按钮被点击，尝试打开设置弹窗");
-                    uiSystem.ShowPopup(UIPopup.SettingPopup);
-                });
-            }
-            else
-            {
-                Debug.LogError("设置按钮未分配，请检查MenuPanel预制体");
-            }
+                    uiSystem.HidePopup(UIPopup.RadioPopup);
+                }
+            });
             
-            if (shopToggle != null)
+            clockToggle.onValueChanged.AddListener(isOn =>
             {
-                shopToggle.isOn = false;
-                Debug.Log("绑定shopButton事件");
-                shopToggle.onValueChanged.AddListener(isOn =>
+                if (isOn)
                 {
-                    Debug.Log("shopButton被点击");
-                    if (isOn)
-                        uiSystem.ShowPopup(UIPopup.ShopPopup);
-                    else 
-                        uiSystem.HidePopup(UIPopup.ShopPopup);
-                });
-            }
-            else
-            {
-                Debug.LogWarning("shopButton未分配");
-            }
-            
-            if (tomatoButton != null)
-            {
-                Debug.Log("绑定tomatoButton事件");
-                tomatoButton.onClick.AddListener(() =>
-                {
-                    Debug.Log("tomatoButton被点击");
                     uiSystem.ShowPopup(UIPopup.ClockPopup);
-                });
-            }
-            else
-            {
-                Debug.LogWarning("tomatoButton未分配");
-            }
-            
-            if (illustratedButton != null)
-            {
-                Debug.Log("绑定illustratedButton事件");
-                illustratedButton.onClick.AddListener(() =>
+                }
+                else
                 {
-                    Debug.Log("illustratedButton被点击");
+                    uiSystem.HidePopup(UIPopup.ClockPopup);
+                }
+            });
+
+            settingButton.onValueChanged.AddListener(isOn =>
+            {
+                if (isOn)
+                {
+                    uiSystem.ShowPopup(UIPopup.SettingPopup);
+                }
+                else
+                {
+                    uiSystem.HidePopup(UIPopup.SettingPopup);
+                }
+            });
+               
+            shopButton.onValueChanged.AddListener(isOn =>
+            {
+                if (isOn)
+                {
+                    uiSystem.ShowPopup(UIPopup.ShopPopup);
+                }
+                else
+                {
+                    uiSystem.HidePopup(UIPopup.ShopPopup);
+                }
+            });
+
+
+            illustratedButton.onValueChanged.AddListener(isOn =>
+            {
+                if (isOn)
+                {
                     uiSystem.ShowPopup(UIPopup.IllustratedPopup);
-                });
-            }
-            else
-            {
-                Debug.LogWarning("illustratedButton未分配");
-            }
-            
-            if (illustratedButton1 != null)
-            {
-                Debug.Log("绑定illustratedButton1事件");
-                illustratedButton1.onClick.AddListener(() =>
+                }
+                else
                 {
-                    Debug.Log("illustratedButton1被点击");
-                    uiSystem.ShowPopup(UIPopup.IllustratedPopup);
-                });
-            }
-            else
-            {
-                Debug.LogWarning("illustratedButton1未分配");
-            }
+                    uiSystem.HidePopup(UIPopup.IllustratedPopup);
+                }
+            });
+                
             
-            if (mapButton != null)
+            mapButton.onValueChanged.AddListener(isOn =>
             {
-                Debug.Log("绑定mapButton事件");
-                mapButton.onClick.AddListener(() =>
+                if (isOn)
                 {
-                    Debug.Log("mapButton被点击");
-                    
-                });
-            }
-            else
-            {
-                Debug.LogWarning("mapButton未分配");
-            }
+                    uiSystem.ShowPopup(UIPopup.MapPopup);
+                }
+                else
+                {
+                    uiSystem.HidePopup(UIPopup.MapPopup);
+                }
+            });
             
             // 外部链接按钮点击事件
             if (externalLinkButton != null)
@@ -245,10 +210,10 @@ namespace BirdGame
                 coinsNum.text = v.ToString("F1");
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
-            weatherIcon.sprite = weatherSps[this.GetModel<IGameModel>().WeatherIndex.Value];
+            //weatherIcon.sprite = weatherSps[this.GetModel<IGameModel>().WeatherIndex.Value];
             this.GetModel<IGameModel>().WeatherIndex.Register(v =>
             {
-                weatherIcon.sprite = weatherSps[v];
+                //weatherIcon.sprite = weatherSps[v];
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
             if (!PlayerPrefs.HasKey("ShowedTutorial"))
@@ -302,38 +267,7 @@ namespace BirdGame
             
             timeItem.anchoredPosition = new Vector2(0f, 254f);
         }
-
-        private void ShowBranch()
-        {
-            isShowBranch = true;
-            anim?.Kill();
-            group1.alpha = 0;
-            group2.alpha = 0;
-            var rect1 = group1.transform as RectTransform;
-            var rect2 = group2.transform as RectTransform;
-            branch.anchoredPosition = new Vector2(403.8f, -166.61f);
-            rect1.anchoredPosition = new Vector2(50f, -2f);
-            rect2.anchoredPosition = new Vector2(50f, -115f);
-            anim = DOTween.Sequence();
-            anim.Append(branch.DOAnchorPosX(0, 0.5f).SetEase(Ease.InSine));
-            anim.Append(rect1.DOAnchorPosY(-22f, 0.3f).SetEase(Ease.Linear));
-            anim.Join(group1.DOFade(1f, 0.3f).SetEase(Ease.Linear));
-            anim.Append(rect2.DOAnchorPosY(-135f, 0.3f).SetEase(Ease.Linear));
-            anim.Join(group2.DOFade(1f, 0.3f).SetEase(Ease.Linear));
-            anim.OnComplete(() =>
-            {
-                this.GetSystem<IAudioSystem>().InitEnvironments();
-            });
-        }
-
-        private void HideBranch()
-        {
-            isShowBranch = false;
-            anim?.Kill();
-            anim = DOTween.Sequence();
-            anim.Append(branch.DOAnchorPosX(403.8f, 0.5f).SetEase(Ease.OutSine));
-        }
-
+        
         /// <summary>
         /// 打开外部链接
         /// </summary>

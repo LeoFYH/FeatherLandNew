@@ -1,11 +1,13 @@
-﻿using QFramework;
+﻿using System;
+using QFramework;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace BirdGame
 {
     public class EnvironmentViewController : ViewControllerBase
     {
-        public Slider[] environmentVolumes;
+        public ToggleItem[] environmentVolumes;
         private bool isUpdatingSlider = false; // 防止循环更新的标志
         
         private void Start()
@@ -26,7 +28,7 @@ namespace BirdGame
                         if (!isUpdatingSlider && index < environmentVolumes.Length)
                         {
                             isUpdatingSlider = true;
-                            environmentVolumes[index].value = v;
+                            environmentVolumes[index].slider.value = v;
                             isUpdatingSlider = false;
                         }
                     }).UnRegisterWhenGameObjectDestroyed(gameObject);
@@ -39,16 +41,33 @@ namespace BirdGame
             var radioModel = this.GetModel<IRadioModel>();
             if (index < radioModel.EnvironmentVolumes.Count)
             {
-                environmentVolumes[index].value = radioModel.EnvironmentVolumes[index].Value;
+                environmentVolumes[index].slider.value = radioModel.EnvironmentVolumes[index].Value;
             }
             
-            environmentVolumes[index].onValueChanged.AddListener(v =>
+            environmentVolumes[index].slider.onValueChanged.AddListener(v =>
             {
                 if (!isUpdatingSlider && index < radioModel.EnvironmentVolumes.Count)
                 {
                     radioModel.EnvironmentVolumes[index].Value = v;
                 }
             });
+            
+            environmentVolumes[index].toggle.onValueChanged.AddListener(isOn =>
+            {
+                environmentVolumes[index].slider.gameObject.SetActive(isOn);
+                environmentVolumes[index].icon.SetActive(isOn);
+            });
+            
+            environmentVolumes[index].slider.gameObject.SetActive(false);
+            environmentVolumes[index].icon.SetActive(false);
         }
+    }
+
+    [Serializable]
+    public class ToggleItem
+    {
+        public Slider slider;
+        public GameObject icon;
+        public Toggle toggle;
     }
 }
