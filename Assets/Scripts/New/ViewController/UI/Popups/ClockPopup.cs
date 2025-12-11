@@ -15,6 +15,7 @@ namespace BirdGame
         public GameObject stopWatch;
         public GameObject timer;
         public GameObject tomato;
+        public Button closeButton;
 
         private void Start()
         {
@@ -34,6 +35,11 @@ namespace BirdGame
             tomatoToggle.onValueChanged.AddListener(isOn =>
             {
                 tomato.SetActive(isOn);
+            });
+            
+            closeButton.onClick.AddListener(() =>
+            {
+                this.GetSystem<IUISystem>().SendEvent<OnClockCloseEvent>();
             });
 
             // 设置番茄钟为默认模式

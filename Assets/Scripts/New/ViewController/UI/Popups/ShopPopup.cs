@@ -20,6 +20,7 @@ namespace BirdGame
         public Image barImage;
         public Sprite eggBar;
         public Sprite normalBar;
+        public Button closeButton;
 
         // 标签文本组件
         public LocalizationText eggToggleText;
@@ -38,6 +39,11 @@ namespace BirdGame
                 toolsToggleText.SetKey("Tools");
             if (saleBirdToggleText != null)
                 saleBirdToggleText.SetKey("SaleBird");
+            
+            closeButton.onClick.AddListener(() =>
+            {
+                this.GetSystem<IUISystem>().SendEvent<OnShopCloseEvent>();
+            });
 
             // buyButton.onClick.AddListener(() =>
             // {

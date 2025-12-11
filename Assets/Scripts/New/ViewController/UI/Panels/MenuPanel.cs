@@ -10,7 +10,6 @@ namespace BirdGame
 {
     public class MenuPanel : UIBase
     {
-        public Image weatherIcon;
         public Button weatherButton;
         //public Sprite[] weatherSps;
         public Toggle noteToggle;
@@ -32,6 +31,11 @@ namespace BirdGame
         private Tweener timeAnim;
         private bool isShowWeatherItems = false;
         private Tweener contentAnim;
+
+        private float shopPosX;
+        private float illustratedPosX;
+        private float weatherPosX;
+        private float mapPosX;
         
         public override void OnShowPanel()
         {
@@ -46,6 +50,11 @@ namespace BirdGame
 
         private void Start()
         {
+            shopPosX = shopButton.GetComponent<RectTransform>().anchoredPosition.x;
+            illustratedPosX = illustratedButton.GetComponent<RectTransform>().anchoredPosition.x;
+            weatherPosX = weatherButton.GetComponent<RectTransform>().anchoredPosition.x;
+            mapPosX = mapButton.GetComponent<RectTransform>().anchoredPosition.x;
+            
             Debug.Log("MenuPanel Start方法开始执行");
             Debug.Log($"MenuPanel GameObject名称: {gameObject.name}");
             Debug.Log($"MenuPanel 激活状态: {gameObject.activeInHierarchy}");
@@ -148,6 +157,41 @@ namespace BirdGame
                     uiSystem.HidePopup(UIPopup.MapPopup);
                 }
             });
+
+            this.RegisterEvent<OnClockCloseEvent>(v =>
+            {
+                clockToggle.isOn = false;
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            this.RegisterEvent<OnIllustratedCloseEvent>(v =>
+            {
+                illustratedButton.isOn = false;
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            this.RegisterEvent<OnMapCloseEvent>(v =>
+            {
+                mapButton.isOn = false;
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            this.RegisterEvent<OnNoteCloseEvent>(evt =>
+            {
+                noteToggle.isOn = false;
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            this.RegisterEvent<OnRadioCloseEvent>(evt =>
+            {
+                radioToggle.isOn = false;
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            this.RegisterEvent<OnSettingCloseEvent>(evt =>
+            {
+                settingButton.isOn = false;
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            this.RegisterEvent<OnShopCloseEvent>(evt =>
+            {
+                shopButton.isOn = false;
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
             // 外部链接按钮点击事件
             if (externalLinkButton != null)
@@ -241,10 +285,18 @@ namespace BirdGame
                 if (evt.show)
                 {
                     timeAnim = timeItem.DOAnchorPosY(0f, 0.2f).SetEase(Ease.InSine);
+                    shopButton.GetComponent<RectTransform>().DOAnchorPosX(shopPosX - 300, 0.3f);
+                    illustratedButton.GetComponent<RectTransform>().DOAnchorPosX(illustratedPosX - 300, 0.3f);
+                    weatherButton.GetComponent<RectTransform>().DOAnchorPosX(weatherPosX + 300, 0.3f);
+                    mapButton.GetComponent<RectTransform>().DOAnchorPosX(mapPosX + 300, 0.3f);
                 }
                 else
                 {
                     timeAnim = timeItem.DOAnchorPosY(254f, 0.2f).SetEase(Ease.OutSine);
+                    shopButton.GetComponent<RectTransform>().DOAnchorPosX(shopPosX, 0.3f);
+                    illustratedButton.GetComponent<RectTransform>().DOAnchorPosX(illustratedPosX, 0.3f);
+                    weatherButton.GetComponent<RectTransform>().DOAnchorPosX(weatherPosX, 0.3f);
+                    mapButton.GetComponent<RectTransform>().DOAnchorPosX(mapPosX, 0.3f);
                 }
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             this.GetModel<IClockModel>().TomatoItem.TimeString.Register(v =>

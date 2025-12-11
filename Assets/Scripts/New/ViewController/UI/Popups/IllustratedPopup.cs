@@ -22,6 +22,7 @@ namespace BirdGame
         public Transform skinContent;
         public GameObject skinPrefab;
         public Animator animator;
+        public Button closeButton;
 
         private List<GameObject> skinItems = new List<GameObject>();
         private int currentSelectedIndex = 0; // 记录当前选中的鸟类索引
@@ -42,6 +43,11 @@ namespace BirdGame
                     UpdateBirdNameText();
                 }
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            
+            closeButton.onClick.AddListener(() =>
+            {
+                this.GetSystem<IUISystem>().SendEvent<OnIllustratedCloseEvent>();
+            });
             
             //var config = this.GetModel<IConfigModel>().BirdConfig;
             var config = this.GetModel<IConfigModel>().BirdConfig;

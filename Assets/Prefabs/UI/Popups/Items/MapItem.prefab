@@ -401,7 +401,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -5820118502184449216, guid: 505c0d9674fe2d444b86b6b700bddd8a, type: 3}
+  m_Sprite: {fileID: 6862801978356250847, guid: 71020d660dba6664990739e58997f77e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -470,3 +470,7 @@ MonoBehaviour:
   mapText: {fileID: 3294885006165606306}
   priceObject: {fileID: 283852687679931328}
   priceText: {fileID: 7201119480537741471}
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  checkUIRaycast: 1
+  useRectTransform: 1

@@ -15,6 +15,7 @@ namespace BirdGame
         public GameObject scheduleBar;
         public GameObject diaryBar;
         public TMP_InputField dayText;  // 改为TMP_InputField
+        public Button closeButton;
         
         private void Start()
         {
@@ -31,6 +32,11 @@ namespace BirdGame
                 diaryBar.SetActive(true);
                 scheduleToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-645.6f, 396.9f);
                 diaryToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-410.8f, 411.2f);
+            });
+            
+            closeButton.onClick.AddListener(() =>
+            {
+                this.GetSystem<IUISystem>().SendEvent<OnNoteCloseEvent>();
             });
             
             // 设置day text，只显示保存的自定义文本，如果没有保存过则为空

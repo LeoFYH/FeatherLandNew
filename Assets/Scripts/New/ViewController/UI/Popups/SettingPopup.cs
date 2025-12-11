@@ -25,6 +25,7 @@ namespace BirdGame
         public Button clearSaveButton; // 添加清除存档按钮
         public Sprite itemSprite;
         public Sprite[] dropSps;
+        public Button closeButton;
 
         private List<SystemLanguage> languages = new List<SystemLanguage>();
         private bool isScreenExpend = false;
@@ -173,6 +174,11 @@ namespace BirdGame
             {
                 // 显示退出确认弹窗，询问是否填写问卷
                 this.GetSystem<IUISystem>().ShowExitConfirm();
+            });
+            
+            closeButton.onClick.AddListener(() =>
+            {
+                this.GetSystem<IUISystem>().SendEvent<OnSettingCloseEvent>();
             });
             
             // 添加清除存档按钮的点击监听器
