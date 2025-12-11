@@ -26,6 +26,8 @@ namespace BirdGame
         public GameObject[] weatherItems;
         public RectTransform content;
         public Button debugButton;
+        public GameObject viewGroup;
+        public Toggle viewToggle;
 
         private Sequence anim;
         private Tweener timeAnim;
@@ -192,6 +194,15 @@ namespace BirdGame
             {
                 shopButton.isOn = false;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            if (!viewGroup.activeSelf)
+                viewGroup.gameObject.SetActive(true);
+            viewToggle.isOn = true;
+            
+            viewToggle.onValueChanged.AddListener(isOn =>
+            {
+                viewGroup.SetActive(isOn);
+            });
             
             // 外部链接按钮点击事件
             if (externalLinkButton != null)
