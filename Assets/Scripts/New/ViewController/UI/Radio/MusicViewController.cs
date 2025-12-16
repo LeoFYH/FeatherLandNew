@@ -49,16 +49,16 @@ namespace BirdGame
                 pauseButton.gameObject.SetActive(true);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
-            random.isOn = !this.GetModel<IRadioModel>().Random.Value;
+            random.isOn = this.GetModel<IRadioModel>().Random.Value;
             random.onValueChanged.AddListener(isOn =>
             {
-                this.GetModel<IRadioModel>().Random.Value = !isOn;
+                this.GetModel<IRadioModel>().Random.Value = isOn;
             });
 
-            loop.isOn = !this.GetModel<IRadioModel>().Loop.Value;
+            loop.isOn = this.GetModel<IRadioModel>().Loop.Value;
             loop.onValueChanged.AddListener(isOn =>
             {
-                this.GetModel<IRadioModel>().Loop.Value = !isOn;
+                this.GetModel<IRadioModel>().Loop.Value = isOn;
             });
             
             previousButton.onClick.AddListener(() =>

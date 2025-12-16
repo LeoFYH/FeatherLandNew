@@ -191,6 +191,10 @@ namespace BirdGame
                 Refresh(true);
                 this.GetModel<IClockModel>().TimerType = TimerType.Tomato;
                 this.SendCommand<StopOtherTimerCommand>();
+                this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
+                {
+                    show = true
+                });
             });
             this.RegisterEvent<StopTomatoEvent>(evt =>
             {
@@ -292,6 +296,11 @@ namespace BirdGame
                     show = false
                 });
                 Refresh(false);
+                item.Timer.Value = 0;
+                item.SessionMinutes.Value = 0;
+                item.BreakMinutes.Value = 0;
+                item.Number.Value = 0;
+                item.TimerType.Value = TomatoTimerType.Session;
             });
 
             for (int i = 0; i < audioToggles.Length; i++)

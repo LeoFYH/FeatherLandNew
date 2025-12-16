@@ -670,7 +670,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &6449595474253309093
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4355,10 +4355,10 @@ RectTransform:
   - {fileID: 559212922576480825}
   m_Father: {fileID: 6292494674052331060}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 371.25, y: -47.425}
-  m_SizeDelta: {x: 52.5, y: 54}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4602761557500072963
 CanvasRenderer:
@@ -6826,10 +6826,10 @@ RectTransform:
   - {fileID: 2458512744754885464}
   m_Father: {fileID: 6292494674052331060}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 303.45, y: -47.425}
-  m_SizeDelta: {x: 52.5, y: 54}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8018424986095868187
 CanvasRenderer:
@@ -7006,7 +7006,6 @@ GameObject:
   - component: {fileID: 6856348798978281483}
   - component: {fileID: 7630226627065787126}
   - component: {fileID: 3973327828261452681}
-  - component: {fileID: 920843237583898023}
   m_Layer: 0
   m_Name: stop watch
   m_TagString: Untagged
@@ -7138,47 +7137,6 @@ MonoBehaviour:
   backgroundSelected: {fileID: -4374190598441886070, guid: 3b3302ff096ae594b80df540809d38c3, type: 3}
   graphicUnselect: {fileID: -47918832158873100, guid: 951d7f5d3fb005842a86046c8e7e6d1a, type: 3}
   graphicSelected: {fileID: 8882997917914439943, guid: 5d0b54d6a3458b54db3c1cb02a1703af, type: 3}
---- !u!114 &920843237583898023
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2788467277249946773}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isScaleOn: 1
-  hoverScale: 1.1
-  animTime: 0.1
-  useRectTransform: 1
-  detectionRange: 1
-  autoAdjustDetectionRange: 1
-  showDebugInfo: 0
-  localizationKey: Stop Watch
-  useLocalization: 1
-  checkUIRaycast: 1
-  onClick:
-    m_PersistentCalls:
-      m_Calls: []
-  onMouseEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  onMouseExit:
-    m_PersistentCalls:
-      m_Calls: []
-  textOffset: {x: 0, y: 50}
-  showDelay: 0.5
-  showTooltip: 1
-  textColor: {r: 1, g: 1, b: 1, a: 1}
-  fontSize: 30
-  fontStyle: 1
-  showBackground: 1
-  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
-  backgroundPadding: {x: 10, y: 5}
-  isHovering: 0
 --- !u!1 &2829177915578542027
 GameObject:
   m_ObjectHideFlags: 0
@@ -7191,7 +7149,6 @@ GameObject:
   - component: {fileID: 6999894882407015070}
   - component: {fileID: 2436852419150195014}
   - component: {fileID: 2171494069116294164}
-  - component: {fileID: 4956066162638895226}
   m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -7246,7 +7203,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Stop
+  m_text: 'Stop/Clear
 
 '
   m_isRightToLeft: 0
@@ -7331,19 +7288,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e984ebdff2b4348b2d29ab8ce8e9038, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &4956066162638895226
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2829177915578542027}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Key: Stop
 --- !u!1 &2834617147050443835
 GameObject:
   m_ObjectHideFlags: 0
@@ -8586,10 +8530,10 @@ RectTransform:
   - {fileID: 555602792899895770}
   m_Father: {fileID: 6292494674052331060}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 167.85, y: -47.425}
-  m_SizeDelta: {x: 52.5, y: 54}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4432170020013356308
 CanvasRenderer:
@@ -11336,10 +11280,10 @@ RectTransform:
   - {fileID: 7698949152310612690}
   m_Father: {fileID: 6292494674052331060}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 32.25, y: -47.425}
-  m_SizeDelta: {x: 52.5, y: 54}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6139746375339533707
 CanvasRenderer:
@@ -12033,10 +11977,10 @@ RectTransform:
   - {fileID: 197304538000779590}
   m_Father: {fileID: 6292494674052331060}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 235.65, y: -47.425}
-  m_SizeDelta: {x: 52.5, y: 54}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4899164472307039560
 CanvasRenderer:
@@ -13265,7 +13209,6 @@ GameObject:
   - component: {fileID: 5232442580878161655}
   - component: {fileID: 1905285548442735773}
   - component: {fileID: 941453601175803896}
-  - component: {fileID: 5163561746157726369}
   m_Layer: 0
   m_Name: timer
   m_TagString: Untagged
@@ -13397,47 +13340,6 @@ MonoBehaviour:
   backgroundSelected: {fileID: -4374190598441886070, guid: 3b3302ff096ae594b80df540809d38c3, type: 3}
   graphicUnselect: {fileID: 3601416536118913386, guid: 43a0e465b561ea54d94015277174f649, type: 3}
   graphicSelected: {fileID: 8845943600231904251, guid: 58084360c95d3954fbc4ba035ce64331, type: 3}
---- !u!114 &5163561746157726369
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5947431931481892465}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isScaleOn: 1
-  hoverScale: 1.1
-  animTime: 0.1
-  useRectTransform: 1
-  detectionRange: 1
-  autoAdjustDetectionRange: 1
-  showDebugInfo: 0
-  localizationKey: Timer
-  useLocalization: 1
-  checkUIRaycast: 1
-  onClick:
-    m_PersistentCalls:
-      m_Calls: []
-  onMouseEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  onMouseExit:
-    m_PersistentCalls:
-      m_Calls: []
-  textOffset: {x: 0, y: 50}
-  showDelay: 0.5
-  showTooltip: 1
-  textColor: {r: 1, g: 1, b: 1, a: 1}
-  fontSize: 30
-  fontStyle: 1
-  showBackground: 1
-  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
-  backgroundPadding: {x: 10, y: 5}
-  isHovering: 0
 --- !u!1 &5951052784808542026
 GameObject:
   m_ObjectHideFlags: 0
@@ -14650,10 +14552,10 @@ RectTransform:
   - {fileID: 4221119654340880857}
   m_Father: {fileID: 6292494674052331060}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 100.05, y: -47.425}
-  m_SizeDelta: {x: 52.5, y: 54}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7610909858678647193
 CanvasRenderer:
@@ -17977,7 +17879,6 @@ GameObject:
   - component: {fileID: 6620813775617870511}
   - component: {fileID: 2043161678381756969}
   - component: {fileID: 3661292078517796414}
-  - component: {fileID: 4475291137433161849}
   m_Layer: 0
   m_Name: Pomodoro clock
   m_TagString: Untagged
@@ -18109,47 +18010,6 @@ MonoBehaviour:
   backgroundSelected: {fileID: -4374190598441886070, guid: 3b3302ff096ae594b80df540809d38c3, type: 3}
   graphicUnselect: {fileID: -2357058601933079530, guid: b62f1442625cc5049b8079eef92e22ec, type: 3}
   graphicSelected: {fileID: -664906356735497961, guid: c89cbad72ef363f4293be34e0c9e4fbf, type: 3}
---- !u!114 &4475291137433161849
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8551364408589174725}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isScaleOn: 1
-  hoverScale: 1.1
-  animTime: 0.1
-  useRectTransform: 1
-  detectionRange: 1
-  autoAdjustDetectionRange: 1
-  showDebugInfo: 0
-  localizationKey: Pomodoro Clock
-  useLocalization: 1
-  checkUIRaycast: 1
-  onClick:
-    m_PersistentCalls:
-      m_Calls: []
-  onMouseEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  onMouseExit:
-    m_PersistentCalls:
-      m_Calls: []
-  textOffset: {x: 0, y: 50}
-  showDelay: 0.5
-  showTooltip: 1
-  textColor: {r: 1, g: 1, b: 1, a: 1}
-  fontSize: 30
-  fontStyle: 1
-  showBackground: 1
-  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
-  backgroundPadding: {x: 10, y: 5}
-  isHovering: 0
 --- !u!1 &8785049974844062892
 GameObject:
   m_ObjectHideFlags: 0
@@ -18358,7 +18218,6 @@ GameObject:
   - component: {fileID: 3926283426611828379}
   - component: {fileID: 3422958807378337873}
   - component: {fileID: 6690286053535046893}
-  - component: {fileID: 2727714575006951230}
   m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -18413,7 +18272,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Stop
+  m_text: 'Stop/Clear
 
 '
   m_isRightToLeft: 0
@@ -18498,19 +18357,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e984ebdff2b4348b2d29ab8ce8e9038, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &2727714575006951230
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8829653622312232531}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Key: Stop
 --- !u!1 &8860075554116123061
 GameObject:
   m_ObjectHideFlags: 0

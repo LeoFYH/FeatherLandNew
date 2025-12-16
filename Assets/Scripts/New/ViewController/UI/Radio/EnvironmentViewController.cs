@@ -54,12 +54,13 @@ namespace BirdGame
             
             environmentVolumes[index].toggle.onValueChanged.AddListener(isOn =>
             {
-                environmentVolumes[index].slider.gameObject.SetActive(isOn);
+                //environmentVolumes[index].slider.gameObject.SetActive(isOn);
                 environmentVolumes[index].icon.SetActive(isOn);
+                radioModel.EnvironmentMutes[index].Value = isOn;
             });
             
-            environmentVolumes[index].slider.gameObject.SetActive(false);
-            environmentVolumes[index].icon.SetActive(false);
+            environmentVolumes[index].icon.SetActive(radioModel.EnvironmentMutes[index].Value);
+            environmentVolumes[index].toggle.isOn = radioModel.EnvironmentMutes[index].Value;
         }
     }
 

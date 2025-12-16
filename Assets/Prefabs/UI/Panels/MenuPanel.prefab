@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 6824514300179966910}
   - component: {fileID: 7610940271758299990}
   - component: {fileID: 4199026761063824762}
-  - component: {fileID: 7886558309187851492}
   - component: {fileID: 4780737901360466006}
   m_Layer: 5
   m_Name: NoteToggle
@@ -98,7 +97,7 @@ MonoBehaviour:
   detectionRange: 1
   autoAdjustDetectionRange: 1
   showDebugInfo: 0
-  localizationKey: SHOPKEY
+  localizationKey: NOTEBOOKKEY
   useLocalization: 1
   checkUIRaycast: 1
   onClick:
@@ -110,28 +109,16 @@ MonoBehaviour:
   onMouseExit:
     m_PersistentCalls:
       m_Calls: []
-  textOffset: {x: 0, y: 150}
+  textOffset: {x: 0, y: 50}
   showDelay: 0.5
-  showTooltip: 0
+  showTooltip: 1
   textColor: {r: 1, g: 1, b: 1, a: 1}
-  fontSize: 40
-  fontStyle: 1
+  fontSize: 25
+  fontStyle: 0
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
---- !u!114 &7886558309187851492
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 94702110380492303}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 558851de400c4c1f8414222e30161cc1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &4780737901360466006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -442,6 +429,7 @@ GameObject:
   - component: {fileID: 5558941176769646603}
   - component: {fileID: 707723388593710286}
   - component: {fileID: 5772913894975710614}
+  - component: {fileID: 5792784658498526238}
   m_Layer: 5
   m_Name: ShopButton
   m_TagString: Untagged
@@ -555,6 +543,47 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 0
+--- !u!114 &5792784658498526238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 209583512461631260}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 1
+  hoverScale: 1.1
+  animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  showDebugInfo: 0
+  localizationKey: SHOPKEY
+  useLocalization: 1
+  checkUIRaycast: 1
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls: []
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 25
+  fontStyle: 0
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
+  isHovering: 0
 --- !u!1 &396927526642392072
 GameObject:
   m_ObjectHideFlags: 0
@@ -1495,7 +1524,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -230}
+  m_AnchoredPosition: {x: 0, y: -315}
   m_SizeDelta: {x: 400, y: 110}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &113098242137688611
@@ -2169,7 +2198,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7705296927774537720
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2810,7 +2839,6 @@ GameObject:
   - component: {fileID: 7648784148711023913}
   - component: {fileID: 6410129200679659723}
   - component: {fileID: 8591652613503023915}
-  - component: {fileID: 9166049059225157331}
   - component: {fileID: 1337173987301918705}
   m_Layer: 5
   m_Name: MusicToggle
@@ -2896,7 +2924,7 @@ MonoBehaviour:
   detectionRange: 1
   autoAdjustDetectionRange: 1
   showDebugInfo: 0
-  localizationKey: SHOPKEY
+  localizationKey: RADIOKEY
   useLocalization: 1
   checkUIRaycast: 1
   onClick:
@@ -2908,28 +2936,16 @@ MonoBehaviour:
   onMouseExit:
     m_PersistentCalls:
       m_Calls: []
-  textOffset: {x: 0, y: 150}
+  textOffset: {x: 0, y: 50}
   showDelay: 0.5
-  showTooltip: 0
+  showTooltip: 1
   textColor: {r: 1, g: 1, b: 1, a: 1}
-  fontSize: 40
-  fontStyle: 1
+  fontSize: 25
+  fontStyle: 0
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
---- !u!114 &9166049059225157331
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3787668565844912990}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 558851de400c4c1f8414222e30161cc1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1337173987301918705
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2990,6 +3006,7 @@ GameObject:
   - component: {fileID: 2685148882078382667}
   - component: {fileID: 7985651338791730218}
   - component: {fileID: 8416074484676417523}
+  - component: {fileID: 7882458221052775462}
   m_Layer: 5
   m_Name: IllustratedButton
   m_TagString: Untagged
@@ -3103,6 +3120,47 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 0
+--- !u!114 &7882458221052775462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3955603769211749441}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 1
+  hoverScale: 1.1
+  animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  showDebugInfo: 0
+  localizationKey: BOOKKEY
+  useLocalization: 1
+  checkUIRaycast: 1
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls: []
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 25
+  fontStyle: 0
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
+  isHovering: 0
 --- !u!1 &4291053874780780973
 GameObject:
   m_ObjectHideFlags: 0
@@ -4151,6 +4209,7 @@ GameObject:
   - component: {fileID: 7103965806471406397}
   - component: {fileID: 530825771507221552}
   - component: {fileID: 670174266089374583}
+  - component: {fileID: 2160884002228910952}
   m_Layer: 5
   m_Name: SettingButton
   m_TagString: Untagged
@@ -4263,6 +4322,47 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 0
+--- !u!114 &2160884002228910952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5592588052942518516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 1
+  hoverScale: 1.1
+  animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  showDebugInfo: 0
+  localizationKey: SETTINGKEY
+  useLocalization: 1
+  checkUIRaycast: 1
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls: []
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 25
+  fontStyle: 0
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
+  isHovering: 0
 --- !u!1 &5634660051002685781
 GameObject:
   m_ObjectHideFlags: 0
@@ -4316,7 +4416,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &9211889954958300751
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5033,6 +5133,7 @@ GameObject:
   - component: {fileID: 7169042557884193148}
   - component: {fileID: 77603682426194956}
   - component: {fileID: 124844076394129884}
+  - component: {fileID: 8194878324209975095}
   m_Layer: 5
   m_Name: WeatherIcon
   m_TagString: Untagged
@@ -5142,6 +5243,47 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8194878324209975095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6536987362346141445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 1
+  hoverScale: 1.1
+  animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  showDebugInfo: 0
+  localizationKey: WeatherButton
+  useLocalization: 1
+  checkUIRaycast: 1
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls: []
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 25
+  fontStyle: 0
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
+  isHovering: 0
 --- !u!1 &6576888212394274134
 GameObject:
   m_ObjectHideFlags: 0
@@ -5747,6 +5889,7 @@ GameObject:
   - component: {fileID: 2406743995910275955}
   - component: {fileID: 2208836872790742297}
   - component: {fileID: 5066892050673860270}
+  - component: {fileID: 6842727869978473618}
   m_Layer: 5
   m_Name: MapButton
   m_TagString: Untagged
@@ -5860,6 +6003,47 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 0
+--- !u!114 &6842727869978473618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7564161181850799338}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 1
+  hoverScale: 1.1
+  animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  showDebugInfo: 0
+  localizationKey: MAPKEY
+  useLocalization: 1
+  checkUIRaycast: 1
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls: []
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 25
+  fontStyle: 0
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
+  isHovering: 0
 --- !u!1 &7616151524826141430
 GameObject:
   m_ObjectHideFlags: 0
@@ -5872,7 +6056,6 @@ GameObject:
   - component: {fileID: 2497169342910796937}
   - component: {fileID: 818386849500622443}
   - component: {fileID: 8268455510673077112}
-  - component: {fileID: 4807013017869969492}
   - component: {fileID: 667887962907108147}
   m_Layer: 5
   m_Name: ClockToggle
@@ -5958,7 +6141,7 @@ MonoBehaviour:
   detectionRange: 1
   autoAdjustDetectionRange: 1
   showDebugInfo: 0
-  localizationKey: SHOPKEY
+  localizationKey: Pomodoro Clock
   useLocalization: 1
   checkUIRaycast: 1
   onClick:
@@ -5970,28 +6153,16 @@ MonoBehaviour:
   onMouseExit:
     m_PersistentCalls:
       m_Calls: []
-  textOffset: {x: 0, y: 150}
+  textOffset: {x: 0, y: 50}
   showDelay: 0.5
-  showTooltip: 0
+  showTooltip: 1
   textColor: {r: 1, g: 1, b: 1, a: 1}
-  fontSize: 40
-  fontStyle: 1
+  fontSize: 25
+  fontStyle: 0
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
---- !u!114 &4807013017869969492
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7616151524826141430}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 558851de400c4c1f8414222e30161cc1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &667887962907108147
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6207,7 +6378,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &9112737514352499660
 RectTransform:
   m_ObjectHideFlags: 0

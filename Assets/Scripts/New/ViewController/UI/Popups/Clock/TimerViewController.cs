@@ -168,6 +168,10 @@ namespace BirdGame
                 Refresh(true);
                 this.GetModel<IClockModel>().TimerType = TimerType.Timer;
                 this.SendCommand<StopOtherTimerCommand>();
+                this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
+                {
+                    show = true
+                });
             });
             stopButton.onClick.AddListener(() =>
             {
@@ -180,6 +184,10 @@ namespace BirdGame
                 {
                     show = false
                 });
+                item.Timer = 0;
+                item.Hours.Value = 0;
+                item.Minutes.Value = 0;
+                item.Seconds.Value = 0;
             });
 
             this.RegisterEvent<StopTimerEvent>(evt =>

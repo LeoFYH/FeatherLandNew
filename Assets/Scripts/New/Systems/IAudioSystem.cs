@@ -372,6 +372,7 @@ namespace BirdGame
                     saveModel.environmentVolumes.Add(0);
                 }
                 radioModel.EnvironmentVolumes.Add(new BindableProperty<float>());
+                radioModel.EnvironmentMutes.Add(new BindableProperty<bool>());
                 audio.loop = true;
                 
                 // 根据环境音效名称设置默认音量
@@ -409,6 +410,13 @@ namespace BirdGame
                         audio.volume = v * radioModel.Volume.Value;
                     }
                 });
+                radioModel.EnvironmentMutes[index].Register(v =>
+                {
+                    if (!environmentFadeCoroutines.ContainsKey(index))
+                    {
+                        audio.mute = v;
+                    }
+                });
             }
 
             //effectAudio.outputAudioMixerGroup = config.effectMixer.FindMatchingGroups(String.Empty)[0];
@@ -434,6 +442,7 @@ namespace BirdGame
             while (radioModel.EnvironmentVolumes.Count < environmentCount)
             {
                 radioModel.EnvironmentVolumes.Add(new BindableProperty<float>());
+                radioModel.EnvironmentMutes.Add(new BindableProperty<bool>());
             }
             
             // 停止所有正在进行的淡入淡出协程
