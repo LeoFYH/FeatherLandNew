@@ -23,15 +23,15 @@ namespace BirdGame
             {
                 scheduleBar.SetActive(true);
                 diaryBar.SetActive(false);
-                scheduleToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-645.6f, 411.2f);
-                diaryToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-410.8f, 396.9f);
+                scheduleToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-131.9f, 386f);
+                diaryToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(21.6f, 360.6f);
             });
             diaryToggle.onClick.AddListener(() =>
             {
                 scheduleBar.SetActive(false);
                 diaryBar.SetActive(true);
-                scheduleToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-645.6f, 396.9f);
-                diaryToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-410.8f, 411.2f);
+                scheduleToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-131.9f, 360.6f);
+                diaryToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(21.6f, 386f);
             });
             
             closeButton.onClick.AddListener(() =>
@@ -68,8 +68,8 @@ namespace BirdGame
             
             diaryBar.SetActive(true);
             scheduleBar.SetActive(false);
-            scheduleToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-645.6f, 396.9f);
-            diaryToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-410.8f, 411.2f);
+            scheduleToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-131.9f, 360.6f);
+            diaryToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(21.6f, 386f);
         }
         
         /// <summary>

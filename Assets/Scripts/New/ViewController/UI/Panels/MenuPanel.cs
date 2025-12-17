@@ -28,6 +28,7 @@ namespace BirdGame
         public Button debugButton;
         public GameObject viewGroup;
         public Toggle viewToggle;
+        public RectTransform itemRect;
 
         private Sequence anim;
         private Tweener timeAnim;
@@ -56,6 +57,7 @@ namespace BirdGame
             illustratedPosX = illustratedButton.GetComponent<RectTransform>().anchoredPosition.x;
             weatherPosX = weatherButton.GetComponent<RectTransform>().anchoredPosition.x;
             mapPosX = mapButton.GetComponent<RectTransform>().anchoredPosition.x;
+            itemRect.anchoredPosition = new Vector2(0, -220);
             
             Debug.Log("MenuPanel Start方法开始执行");
             Debug.Log($"MenuPanel GameObject名称: {gameObject.name}");
@@ -300,6 +302,7 @@ namespace BirdGame
                     illustratedButton.GetComponent<RectTransform>().DOAnchorPosX(illustratedPosX - 300, 0.3f);
                     weatherButton.GetComponent<RectTransform>().DOAnchorPosX(weatherPosX + 300, 0.3f);
                     mapButton.GetComponent<RectTransform>().DOAnchorPosX(mapPosX + 300, 0.3f);
+                    itemRect.DOAnchorPosX(470, 0.3f);
                 }
                 else
                 {
@@ -308,6 +311,7 @@ namespace BirdGame
                     illustratedButton.GetComponent<RectTransform>().DOAnchorPosX(illustratedPosX, 0.3f);
                     weatherButton.GetComponent<RectTransform>().DOAnchorPosX(weatherPosX, 0.3f);
                     mapButton.GetComponent<RectTransform>().DOAnchorPosX(mapPosX, 0.3f);
+                    itemRect.DOAnchorPosX(0, 0.3f);
                 }
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             this.GetModel<IClockModel>().TomatoItem.TimeString.Register(v =>
