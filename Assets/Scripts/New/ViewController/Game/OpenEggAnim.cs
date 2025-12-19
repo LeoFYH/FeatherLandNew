@@ -39,7 +39,7 @@ namespace BirdGame
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             var birdConf = config.GetBird(index, mapIndex);
             sr.sprite = birdConf.preview;
-            scale = 275f / sr.sprite.rect.size.x;
+            scale = 70f / sr.sprite.rect.size.x;
             bird.transform.localScale = Vector3.zero;
             string lightString = birdConf.reality;
             if (!string.IsNullOrEmpty(lightString))
