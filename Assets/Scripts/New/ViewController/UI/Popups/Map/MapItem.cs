@@ -104,8 +104,11 @@ namespace BirdGame
                     }
                     else
                     {
-                        string text = this.GetSystem<ILocalizationSystem>().GetString("Insufficient coins");
-                        this.GetSystem<IUISystem>().ShowPrompt(text);
+                        // string text = this.GetSystem<ILocalizationSystem>().GetString("Insufficient coins");
+                        // this.GetSystem<IUISystem>().ShowPrompt(text);
+                        this.GetModel<IGameModel>().BuyMapCost =
+                            this.GetModel<IConfigModel>().MapConfig.maps[mapIndex].cost;
+                        this.GetSystem<IUISystem>().ShowPopup(UIPopup.BuyFailPopup);
                     }
 
                     return;

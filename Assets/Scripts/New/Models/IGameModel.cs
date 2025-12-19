@@ -24,6 +24,7 @@ namespace BirdGame
         BindableProperty<bool> IsHatchingFinished { get; }
         int CurrentHatchingBirdIndex { get; set; }
         int OpenEggIndex { get; set; }
+        int BuyMapCost { get; set; }
     }
 
     public class GameModel : AbstractModel, IGameModel
@@ -53,6 +54,7 @@ namespace BirdGame
         public BindableProperty<bool> IsHatchingFinished { get; } = new BindableProperty<bool>();
         public int CurrentHatchingBirdIndex { get; set; } = -1;
         public int OpenEggIndex { get; set; } = -1;
+        public int BuyMapCost { get; set; }
         public int EggInfoIndex { get; set; }
     }
 }
