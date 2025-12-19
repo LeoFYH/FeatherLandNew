@@ -57,12 +57,6 @@ namespace BirdGame
             this.GetSystem<ISteamSystem>().RunCallbacks();
             
             CheckCursor();
-
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                this.GetSystem<IUISystem>().HideAllPopups();
-                this.GetSystem<IUISystem>().ShowPopup(UIPopup.SettingPopup);
-            }
             
             if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
             {

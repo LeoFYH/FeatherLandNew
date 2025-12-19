@@ -334,7 +334,23 @@ namespace BirdGame
             
             timeItem.anchoredPosition = new Vector2(0f, 254f);
         }
-        
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                noteToggle.isOn = false;
+                radioToggle.isOn = false;
+                shopButton.isOn = false;
+                clockToggle.isOn = false;
+                illustratedButton.isOn = false;
+                mapButton.isOn = false;
+                settingButton.isOn = true;
+                //this.GetSystem<IUISystem>().HideAllPopups();
+                //this.GetSystem<IUISystem>().ShowPopup(UIPopup.SettingPopup);
+            }
+        }
+
         /// <summary>
         /// 打开外部链接
         /// </summary>

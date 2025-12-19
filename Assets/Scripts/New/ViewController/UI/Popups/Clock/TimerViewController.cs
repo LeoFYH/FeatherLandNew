@@ -289,6 +289,7 @@ namespace BirdGame
 
         private IEnumerator StartTimer()
         {
+            float timer = 0;
             var item = this.GetModel<IClockModel>().TimerItem;
             var frame = new WaitForFixedUpdate();
             while (item.Timer > 0)
@@ -300,6 +301,7 @@ namespace BirdGame
                 item.TimeString.Value = string.Format("{0:00}:{1:00}:{2:00}", item.Hours.Value, item.Minutes.Value,
                     item.Seconds.Value);
                 yield return frame;
+                timer += Time.deltaTime;
                 item.Timer -= Time.fixedDeltaTime;
             }
 
@@ -313,6 +315,10 @@ namespace BirdGame
 
             this.GetModel<IClockModel>().TimerType = TimerType.None;
             this.GetModel<IClockModel>().TimerItem.TimerCoroutine = null;
+            int coins = (int)(timer / 5);
+            this.GetModel<IAccountModel>().Coins.Value += coins;
+            this.GetModel<IAccountModel>().AddedCoins = coins;
+            this.GetSystem<IUISystem>().ShowPopup(UIPopup.AddCoinPopup);
             this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
             {
                 show = false

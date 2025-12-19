@@ -503,6 +503,7 @@ namespace BirdGame
 
         private IEnumerator StartTimer()
         {
+            float timer = 0;
             var item = this.GetModel<IClockModel>().TomatoItem;
             item.TotalNumber = item.Number.Value;
             var frame = new WaitForFixedUpdate();
@@ -534,6 +535,7 @@ namespace BirdGame
                 {
                     item.Timer.Value -= Time.fixedDeltaTime;
                 }
+                timer += Time.fixedDeltaTime;
                 if (item.Timer.Value <= 0)
                 {
                     if (item.TimerType.Value == TomatoTimerType.Session)
@@ -562,7 +564,10 @@ namespace BirdGame
                     }
                 }
             }
-
+            int coins = (int)(timer / 5);
+            this.GetModel<IAccountModel>().Coins.Value += coins;
+            this.GetModel<IAccountModel>().AddedCoins = coins;
+            this.GetSystem<IUISystem>().ShowPopup(UIPopup.AddCoinPopup);
             this.GetModel<IClockModel>().TomatoItem.TimerCoroutine = null;
             this.GetSystem<IMonoSystem>().SendEvent<TomatoOverEvent>();
             this.GetModel<IClockModel>().TimerType = TimerType.None;

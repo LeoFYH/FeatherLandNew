@@ -31,7 +31,9 @@ namespace BirdGame
         MapPopup,
         BuyConfirmPopup,
         HatchingBirdPopup,
-        ExitConfirmPopup
+        ExitConfirmPopup,
+        BuyFailPopup,
+        AddCoinPopup
     }
 
     public interface IUISystem : ISystem
