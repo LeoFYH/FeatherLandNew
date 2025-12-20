@@ -38,7 +38,7 @@ namespace BirdGame
             if (toolsToggleText != null)
                 toolsToggleText.SetKey("Tools");
             if (saleBirdToggleText != null)
-                saleBirdToggleText.SetKey("SaleBird");
+                saleBirdToggleText.SetKey("SaleBirds");
             
             closeButton.onClick.AddListener(() =>
             {

@@ -377,26 +377,29 @@ MonoBehaviour:
     - icon: {fileID: -1196716382573312124, guid: 2188b2416a3540547b887296393f1963, type: 3}
       type: 0
       selectionName: Seed
-      description: 
+      description: 'Acceleration of bird growth: low'
       descriptionKey: SeedKey
       price: 0
       foodScale: 0.04
+      addValue: 0.1
       addCount: 0
     - icon: {fileID: -3520649881568307650, guid: c53a4b854fc13b246880f045ae7f38b1, type: 3}
       type: 0
       selectionName: Grain
-      description: 
+      description: 'Acceleration of bird growth: medium'
       descriptionKey: GrainKey
       price: 300
       foodScale: 0.06
+      addValue: 0.2
       addCount: 0
     - icon: {fileID: 4495422397181781673, guid: 2a09792a324f4874196f98f9c4eb95a7, type: 3}
       type: 0
       selectionName: Bean
-      description: 
+      description: 'Acceleration of bird growth: lhigh'
       descriptionKey: BeanKey
       price: 300
       foodScale: 0.06
+      addValue: 0.3
       addCount: 0
   - name: Bird Max Count
     isVisible: 0
@@ -408,6 +411,7 @@ MonoBehaviour:
       descriptionKey: 
       price: 0
       foodScale: 1
+      addValue: 0.1
       addCount: 5
     - icon: {fileID: 0}
       type: 1
@@ -416,6 +420,7 @@ MonoBehaviour:
       descriptionKey: 
       price: 0
       foodScale: 1
+      addValue: 0.1
       addCount: 10
     - icon: {fileID: 0}
       type: 1
@@ -424,4 +429,5 @@ MonoBehaviour:
       descriptionKey: 
       price: 0
       foodScale: 1
+      addValue: 0.1
       addCount: 15

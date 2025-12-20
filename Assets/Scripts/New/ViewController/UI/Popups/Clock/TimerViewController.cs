@@ -315,10 +315,11 @@ namespace BirdGame
 
             this.GetModel<IClockModel>().TimerType = TimerType.None;
             this.GetModel<IClockModel>().TimerItem.TimerCoroutine = null;
-            int coins = (int)(timer / 5);
+            int coins = (int)(timer / 300 );
             this.GetModel<IAccountModel>().Coins.Value += coins;
             this.GetModel<IAccountModel>().AddedCoins = coins;
-            this.GetSystem<IUISystem>().ShowPopup(UIPopup.AddCoinPopup);
+            if(coins > 0)
+                this.GetSystem<IUISystem>().ShowPopup(UIPopup.AddCoinPopup);
             this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
             {
                 show = false

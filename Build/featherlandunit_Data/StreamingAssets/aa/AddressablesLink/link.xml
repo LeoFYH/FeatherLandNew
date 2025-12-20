@@ -9,6 +9,7 @@
     <type fullname="BirdGame.ButtonAnim" preserve="all" />
     <type fullname="BirdGame.ButtonAnimSp" preserve="all" />
     <type fullname="BirdGame.BuyConfirmPopup" preserve="all" />
+    <type fullname="BirdGame.BuyFailPopup" preserve="all" />
     <type fullname="BirdGame.ClockPopup" preserve="all" />
     <type fullname="BirdGame.ConservativeLanguageLimitInputField" preserve="all" />
     <type fullname="BirdGame.CursorConfig" preserve="all" />
@@ -50,6 +51,7 @@
     <type fullname="BirdGame.NotePopup" preserve="all" />
     <type fullname="BirdGame.NotwalkableController" preserve="all" />
     <type fullname="BirdGame.OpenEggAnim" preserve="all" />
+    <type fullname="BirdGame.PointerEvent" preserve="all" />
     <type fullname="BirdGame.PromptPopup" preserve="all" />
     <type fullname="BirdGame.RadioConfig" preserve="all" />
     <type fullname="BirdGame.RadioPopup" preserve="all" />
@@ -120,7 +122,6 @@
   </assembly>
   <assembly fullname="Unity.ResourceManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
     <type fullname="UnityEngine.ResourceManagement.ResourceProviders.AssetBundleProvider" preserve="all" />
-    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.AtlasSpriteProvider" preserve="all" />
     <type fullname="UnityEngine.ResourceManagement.ResourceProviders.BundledAssetProvider" preserve="all" />
     <type fullname="UnityEngine.ResourceManagement.ResourceProviders.InstanceProvider" preserve="all" />
     <type fullname="UnityEngine.ResourceManagement.ResourceProviders.SceneProvider" preserve="all" />

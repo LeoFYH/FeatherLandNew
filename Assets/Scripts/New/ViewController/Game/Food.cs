@@ -10,6 +10,7 @@ namespace BirdGame
         public bool isTargeted = false;
         public bool isDisabling = false;
         public int hp = 1;
+        public float addValue;
         float y;
         private SpriteRenderer spriteRenderer;
         private float fadeDuration = 4f; // 总淡出时间
