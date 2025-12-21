@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Bird
+  m_EditorClassIdentifier: 
+  m_GroupName: Bird
+  m_GUID: a9e84cdb2a32947458b7eeec140a2e3a
+  m_SerializeEntries:
+  - m_GUID: 02931304290770042954846a9a99f784
+    m_Address: BirdConfig
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Config
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 101a309229cab07409a8aa1bd34d334d
+    m_Address: BirdMaterial
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 490ae9ab7dbe0fa4b8f5adc11314d38a
+    m_Address: IllustratedPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - popup
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 5a7a9994457a81944973db6c6dc3ffb7, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 0e41bac8703fa904b82bdd80c4353615, type: 2}
+    - {fileID: 11400000, guid: da71386b3465d2940b87e2496cfde5c4, type: 2}

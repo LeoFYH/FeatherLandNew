@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -16,9 +15,13 @@ namespace BirdGame
 
         private int currentNoteIndex;
         private List<NoteItem> items = new List<NoteItem>();
+        private ContentSizeFitter sizeFitter;
+        private RectTransform inputRect;
         
         private void Start()
         {
+            sizeFitter = noteInput.GetComponent<ContentSizeFitter>();
+            inputRect = noteInput.GetComponent<RectTransform>();
             var data = this.GetModel<ISaveModel>().NoteData;
             var group = content.GetComponent<ToggleGroup>();
             this.RegisterEvent<RefreshNoteIndexEvent>(evt =>
@@ -43,6 +46,29 @@ namespace BirdGame
             {
                 data.bookList[currentNoteIndex].noteText = text;
             });
+
+            noteInput.onValueChanged.AddListener(v =>
+            {
+                if (string.IsNullOrEmpty(v))
+                {
+                    sizeFitter.enabled = false;
+                    inputRect.sizeDelta = new Vector2(404f, 54.31f);
+                }
+                else
+                {
+                    sizeFitter.enabled = true;
+                }
+            });
+            
+            if (string.IsNullOrEmpty(noteInput.text))
+            {
+                sizeFitter.enabled = false;
+                inputRect.sizeDelta = new Vector2(404f, 54.31f);
+            }
+            else
+            {
+                sizeFitter.enabled = true;
+            }
 
             int count = data.bookList.Count;
             if (count == 0)

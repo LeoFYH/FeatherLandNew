@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -72,7 +73,19 @@ namespace BirdGame
                     scheduleInput.textComponent.fontWeight = FontWeight.Medium; // 正常粗体
                     scheduleInput.textComponent.outlineWidth = 0f; // 移除描边
                 }
-                this.GetModel<ISaveModel>().ScheduleData.scheduleList[scheduleIndex].isCompleted = isOn;
+
+                var data = this.GetModel<ISaveModel>().ScheduleData.scheduleList[scheduleIndex];
+                if (!data.isCompleted)
+                {
+                    data.isCompleted = isOn;
+                    var sec = (DateTime.Now - data.StartTime).TotalSeconds;
+                    int coins = (int)(sec / 300);
+                    this.GetModel<IAccountModel>().Coins.Value += coins;
+                    this.GetModel<IAccountModel>().AddedCoins = coins;
+                    if(coins > 0)
+                        this.GetSystem<IUISystem>().ShowPopup(UIPopup.AddCoinPopup);
+                }
+                
             });
             
             deleteButton.onClick.AddListener(() =>

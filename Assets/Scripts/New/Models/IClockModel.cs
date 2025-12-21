@@ -51,9 +51,9 @@ namespace BirdGame
     public class TomatoItem
     {
         public Coroutine TimerCoroutine { get; set; }
-        public BindableProperty<int> SessionMinutes { get; } = new BindableProperty<int>();
-        public BindableProperty<int> BreakMinutes { get; } = new BindableProperty<int>();
-        public BindableProperty<int> Number { get; } = new BindableProperty<int>();
+        public BindableProperty<int> SessionMinutes { get; } = new BindableProperty<int>(1);
+        public BindableProperty<int> BreakMinutes { get; } = new BindableProperty<int>(1);
+        public BindableProperty<int> Number { get; } = new BindableProperty<int>(1);
         public BindableProperty<string> TimeString { get; } = new BindableProperty<string>();
         public int TotalNumber { get; set; }
         public BindableProperty<float> Timer { get; } = new BindableProperty<float>();

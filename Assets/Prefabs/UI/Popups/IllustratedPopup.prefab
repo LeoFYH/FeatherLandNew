@@ -356,8 +356,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scrollRect: {fileID: 1397797469386364897}
   mouseWheelSensitivity: 1
+  dragSensitivity: 1
   invertScrollDirection: 0
   horizontalScrollWithShift: 1
+  enableDragScrolling: 1
+  momentumDecayRate: 0.95
+  minMomentumThreshold: 0.01
 --- !u!1 &1286753362091564037
 GameObject:
   m_ObjectHideFlags: 0
@@ -537,7 +541,7 @@ GameObject:
   - component: {fileID: 966906752220398126}
   m_Layer: 0
   m_Name: CloseButton
-  m_TagString: Untagged
+  m_TagString: Click
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

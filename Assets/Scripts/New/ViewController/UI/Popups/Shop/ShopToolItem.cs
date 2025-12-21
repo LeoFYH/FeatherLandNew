@@ -49,7 +49,7 @@ namespace BirdGame
             var sp = item.selections[gameModel.SelectedToolDic[index].Value].icon;
             icon.sprite = sp;
             if (sp != null)
-                icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.3f;
+                icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size;
             Debug.Log("名称：" + item.name);
             itemName.SetKey(item.name);
             selectName.SetKey(item.selections[gameModel.SelectedToolDic[index].Value].selectionName);

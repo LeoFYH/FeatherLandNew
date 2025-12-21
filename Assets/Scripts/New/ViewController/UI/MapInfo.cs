@@ -23,7 +23,7 @@ namespace BirdGame
         private void Start()
         {
             thisRect = transform as RectTransform;
-            SetPos();
+            //SetPos();
         }
 
         // private void Update()
