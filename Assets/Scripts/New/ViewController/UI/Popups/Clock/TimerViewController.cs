@@ -318,8 +318,6 @@ namespace BirdGame
             int coins = (int)(timer / 300 );
             this.GetModel<IAccountModel>().Coins.Value += coins;
             this.GetModel<IAccountModel>().AddedCoins = coins;
-            if(coins > 0)
-                this.GetSystem<IUISystem>().ShowPopup(UIPopup.AddCoinPopup);
             this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
             {
                 show = false

@@ -295,6 +295,7 @@ namespace BirdGame
             Debug.Log("Enter");
             //this.GetSystem<IUISystem>().ShowMapInfo(mapIndex);
             infoItem.SetActive(true);
+            infoItem.GetComponent<MapInfo>().Init(mapIndex);
         }
 
         public void OnMouseExit()

@@ -567,10 +567,6 @@ namespace BirdGame
             int coins = (int)(timer / 300);
             this.GetModel<IAccountModel>().Coins.Value += coins;
             this.GetModel<IAccountModel>().AddedCoins = coins;
-            if (coins > 0)
-            {
-                this.GetSystem<IUISystem>().ShowPopup(UIPopup.AddCoinPopup);
-            }
             this.GetModel<IClockModel>().TomatoItem.TimerCoroutine = null;
             this.GetSystem<IMonoSystem>().SendEvent<TomatoOverEvent>();
             this.GetModel<IClockModel>().TimerType = TimerType.None;
