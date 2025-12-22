@@ -553,13 +553,17 @@ namespace BirdGame
                         item.TimerType.Value = TomatoTimerType.Session;
                         item.Timer.Value = item.SessionMinutes.Value * 60;
                         item.CurrentTimer += item.BreakMinutes.Value * 60;
-                        //触发Break结束提醒
-                        this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForBreak;
-                        this.SendCommand<AlertCommand>();
-
+                        
                         if (item.Number.Value <= 0)
                         {
+                            this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForTimer;
+                            this.SendCommand<AlertCommand>();
                             break;
+                        }
+                        else
+                        {
+                            this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForBreak;
+                            this.SendCommand<AlertCommand>();
                         }
                     }
                 }
