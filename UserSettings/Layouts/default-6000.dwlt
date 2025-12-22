@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 3440
     height: 1299
   m_ShowMode: 4
-  m_Title: Project
+  m_Title: Audio Mixer
   m_RootView: {fileID: 3}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -128,7 +128,7 @@ MonoBehaviour:
   m_MinSize: {x: 400, y: 100}
   m_MaxSize: {x: 32384, y: 16192}
   vertical: 0
-  controlID: 25
+  controlID: 129
   draggingID: 0
 --- !u!114 &6
 MonoBehaviour:
@@ -175,7 +175,7 @@ MonoBehaviour:
   m_MinSize: {x: 100, y: 100}
   m_MaxSize: {x: 8096, y: 16192}
   vertical: 1
-  controlID: 113
+  controlID: 130
   draggingID: 0
 --- !u!114 &8
 MonoBehaviour:
@@ -427,9 +427,9 @@ MonoBehaviour:
     m_OverlaysVisible: 1
   m_MixersTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: fe5fffff
-    m_LastClickedID: -40962
-    m_ExpandedIDs: ae44feffe4d3000070e3000012eb343c
+    m_SelectedIDs: 7c6b0000
+    m_LastClickedID: 27516
+    m_ExpandedIDs: ae44feff0c6d0000e4d3000070e3000012eb343c
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -545,7 +545,7 @@ MonoBehaviour:
       oldMaxSizes: 
       oldSplitSize: 0
     m_HorizontalSplitter:
-      ID: 308
+      ID: 156
       splitterInitialOffset: 221.33334
       currentActiveSplitter: -1
       realSizes:
@@ -688,9 +688,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: c85fffff
+      m_SelectedIDs: 7e6b0000
       m_LastClickedID: 0
-      m_ExpandedIDs: c663ffff
+      m_ExpandedIDs: 36fbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -811,7 +811,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - "Assets/Audios/\u97F3\u6548"
+    - Assets/Audios
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -821,16 +821,16 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - "Assets/Audios/\u97F3\u6548"
+  - Assets/Audios
   m_LastFoldersGridSize: 16
   m_LastProjectPath: /Users/mac/Documents/FetherLand_Unity/FeatherLandNew
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: aeb80000
-    m_LastClickedID: 47278
-    m_ExpandedIDs: 0000000048b800004ab800004cb8000000ca9a3b
+    m_SelectedIDs: e87a0000
+    m_LastClickedID: 31464
+    m_ExpandedIDs: 00000000e67a0000e87a0000ea7a000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -859,7 +859,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 0000000048b800004ab800004cb80000
+    m_ExpandedIDs: 00000000e67a0000e87a0000ea7a0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -887,8 +887,8 @@ MonoBehaviour:
   m_ListAreaState:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 0
-    m_ExpandedInstanceIDs: ecea0000e41cfeff4621feff401bfeffae44feffb2cc0000f6ce000086c700007c0802000467010064f60000c6f900006e66010032680100fe5fffff
+    m_HadKeyboardFocusLastEvent: 1
+    m_ExpandedInstanceIDs: ecea0000e41cfeff4621feff401bfeffae44feffb2cc0000f6ce000086c700007c0802000467010064f60000c6f900006e66010032680100fe5fffffdc5300000c6d00007c6b0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1627,7 +1627,7 @@ MonoBehaviour:
   m_Position:
     m_Target: {x: 348.06537, y: 3258.7456, z: -166.57806}
     speed: 2
-    m_Value: {x: 0, y: 0, z: 0}
+    m_Value: {x: 348.06537, y: 3258.7456, z: -166.57806}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1679,7 +1679,7 @@ MonoBehaviour:
   m_Size:
     m_Target: 16667.746
     speed: 2
-    m_Value: 10
+    m_Value: 16667.746
   m_Ortho:
     m_Target: 1
     speed: 2
