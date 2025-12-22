@@ -208,12 +208,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5939173566926052051}
   - {fileID: 1367718497336150726}
   - {fileID: 9172934006471919632}
   - {fileID: 2744457270346801372}
   - {fileID: 5061739554369009032}
   - {fileID: 7477456981685051522}
+  - {fileID: 5939173566926052051}
   - {fileID: 4986298323565163121}
   - {fileID: 115365591931574018}
   m_Father: {fileID: 8698942516715530620}
@@ -461,7 +461,7 @@ GameObject:
   - component: {fileID: 27059665695913545}
   m_Layer: 5
   m_Name: Text (TMP)
-  m_TagString: Untagged
+  m_TagString: Click
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -836,7 +836,7 @@ GameObject:
   - component: {fileID: 3017079461539660910}
   m_Layer: 5
   m_Name: DragMove
-  m_TagString: Untagged
+  m_TagString: Click
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -857,8 +857,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000030518, y: 375.82}
-  m_SizeDelta: {x: 544.5, y: 89.853}
+  m_AnchoredPosition: {x: -16.5, y: 342.39}
+  m_SizeDelta: {x: 511.5, y: 53.495}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8083635576110763716
 CanvasRenderer:
@@ -911,6 +911,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 4418678690209648098}
+  margin: 5
 --- !u!1 &4230648470109002155
 GameObject:
   m_ObjectHideFlags: 0
@@ -925,7 +926,7 @@ GameObject:
   - component: {fileID: 4116622754720693596}
   m_Layer: 5
   m_Name: InputField (TMP) (1)
-  m_TagString: Untagged
+  m_TagString: Click
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1101,7 +1102,7 @@ GameObject:
   - component: {fileID: 4710673704307531508}
   m_Layer: 5
   m_Name: Text Area
-  m_TagString: Untagged
+  m_TagString: Click
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1155,7 +1156,7 @@ GameObject:
   - component: {fileID: 5368811041544650454}
   m_Layer: 5
   m_Name: DiaryButton
-  m_TagString: Untagged
+  m_TagString: Click
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1277,7 +1278,7 @@ GameObject:
   - component: {fileID: 2317746065618408808}
   m_Layer: 5
   m_Name: Text (TMP)
-  m_TagString: Untagged
+  m_TagString: Click
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1439,7 +1440,7 @@ GameObject:
   - component: {fileID: 4299222212542330181}
   m_Layer: 5
   m_Name: Text
-  m_TagString: Untagged
+  m_TagString: Click
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1695,7 +1696,7 @@ GameObject:
   - component: {fileID: 8022011877555518011}
   m_Layer: 5
   m_Name: Button
-  m_TagString: Untagged
+  m_TagString: Click
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1895,7 +1896,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &7477456981685051522
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1958,7 +1959,7 @@ GameObject:
   - component: {fileID: 8597701235917597392}
   m_Layer: 5
   m_Name: ScheduleButton
-  m_TagString: Untagged
+  m_TagString: Click
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2079,7 +2080,7 @@ GameObject:
   - component: {fileID: 5060567974241748928}
   m_Layer: 5
   m_Name: DragAspect
-  m_TagString: Untagged
+  m_TagString: Click
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2171,7 +2172,7 @@ GameObject:
   - component: {fileID: 517165270133378138}
   m_Layer: 5
   m_Name: closeButton
-  m_TagString: Untagged
+  m_TagString: Click
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2378,12 +2379,9 @@ GameObject:
   - component: {fileID: 295722143069175434}
   - component: {fileID: 5602695394241880078}
   - component: {fileID: 443200199510589659}
-  - component: {fileID: 604258138833663575}
-  - component: {fileID: 2330826247862055486}
-  - component: {fileID: 5230595027206741196}
   m_Layer: 5
   m_Name: InputField (TMP)
-  m_TagString: Untagged
+  m_TagString: Click
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2406,7 +2404,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 35.2307, y: 306.59033}
-  m_SizeDelta: {x: 404, y: 54.31}
+  m_SizeDelta: {x: 404, y: 597.41}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &295722143069175434
 CanvasRenderer:
@@ -2532,7 +2530,7 @@ MonoBehaviour:
   m_CaretColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_CustomCaretColor: 0
   m_SelectionColor: {r: 0.65882355, g: 0.80784315, b: 1, a: 0.7529412}
-  m_Text: sdsdasdasdas
+  m_Text: fsdfsdfsd
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
@@ -2547,53 +2545,6 @@ MonoBehaviour:
   isAlert: 0
   m_InputValidator: {fileID: 0}
   m_ShouldActivateOnSelect: 1
---- !u!114 &604258138833663575
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6719473648503006831}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb1b56db600a444282e7dc01bc87ac44, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerId: 0
-  newlineActionName: Newline
---- !u!114 &2330826247862055486
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6719473648503006831}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0cd32b78703b01942a960e74fd4518ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inputField: {fileID: 443200199510589659}
-  backgroundImage: {fileID: 5602695394241880078}
-  autoActivateOnClick: 1
-  selectAllOnClick: 0
-  enableClickToPositionCaret: 1
-  enableDebugLog: 0
-  selectionColor: {r: 0.2, g: 0.4, b: 0.8, a: 0.4}
---- !u!114 &5230595027206741196
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6719473648503006831}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 0
-  m_VerticalFit: 2
 --- !u!1 &6825174370909514761
 GameObject:
   m_ObjectHideFlags: 0
@@ -2608,7 +2559,7 @@ GameObject:
   - component: {fileID: 4722920176416360301}
   m_Layer: 5
   m_Name: Text
-  m_TagString: Untagged
+  m_TagString: Click
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2660,7 +2611,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "sdsdasdasdas\u200B"
+  m_text: "fsdfsdfsd\u200B"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f7ffd71761713684a94dc40f5e30b830, type: 2}
   m_sharedMaterial: {fileID: 4111881798330064937, guid: f7ffd71761713684a94dc40f5e30b830, type: 2}
@@ -2757,7 +2708,7 @@ GameObject:
   - component: {fileID: 9129139757579477924}
   m_Layer: 5
   m_Name: Placeholder
-  m_TagString: Untagged
+  m_TagString: Click
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2989,7 +2940,7 @@ GameObject:
   - component: {fileID: 6080468541942729190}
   m_Layer: 5
   m_Name: Placeholder
-  m_TagString: Untagged
+  m_TagString: Click
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3074,7 +3025,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 6
+  m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
@@ -3146,7 +3097,7 @@ GameObject:
   - component: {fileID: 8844736809302455287}
   m_Layer: 5
   m_Name: AddButton
-  m_TagString: Untagged
+  m_TagString: Click
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3264,7 +3215,7 @@ GameObject:
   - component: {fileID: 9043026560884299520}
   m_Layer: 5
   m_Name: Text Area
-  m_TagString: Untagged
+  m_TagString: Click
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

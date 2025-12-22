@@ -32,13 +32,13 @@ namespace BirdGame
         {
             // 设置标签文本的本地化key
             if (eggToggleText != null)
-                eggToggleText.SetKey("Egg");
+                eggToggleText.SetKey("Eggs");
             if (decorationToggleText != null)
                 decorationToggleText.SetKey("Decoration");
             if (toolsToggleText != null)
                 toolsToggleText.SetKey("Tools");
             if (saleBirdToggleText != null)
-                saleBirdToggleText.SetKey("SaleBird");
+                saleBirdToggleText.SetKey("Sell Birds");
             
             closeButton.onClick.AddListener(() =>
             {

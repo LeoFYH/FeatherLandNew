@@ -63,7 +63,9 @@ namespace BirdGame
                 // 检查是否点击到UI元素
                 if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
                 {
-                    this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Click);
+                    if (UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject != null &&
+                        UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.CompareTag("Click"))
+                        this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Click);
                     return;
                 }
                 

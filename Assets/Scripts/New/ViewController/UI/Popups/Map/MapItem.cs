@@ -17,6 +17,7 @@ namespace BirdGame
         public bool autoAdjustDetectionRange = true;  // 自动调整检测范围
         public bool checkUIRaycast = true;
         public bool useRectTransform = true;  // 是否使用RectTransform，对于GameObject设为false
+        public GameObject infoItem;
         
         private Button thisButton;
         private int mapIndex;
@@ -53,6 +54,8 @@ namespace BirdGame
 
         private void Start()
         {
+            if(infoItem.activeSelf)
+                infoItem.SetActive(false);
             thisButton = GetComponent<Button>();
             thisButton.onClick.AddListener(() =>
             {
@@ -290,7 +293,9 @@ namespace BirdGame
             isEnter = true;
             isHovering = true;
             Debug.Log("Enter");
-            this.GetSystem<IUISystem>().ShowMapInfo(mapIndex);
+            //this.GetSystem<IUISystem>().ShowMapInfo(mapIndex);
+            infoItem.SetActive(true);
+            infoItem.GetComponent<MapInfo>().Init(mapIndex);
         }
 
         public void OnMouseExit()
@@ -300,12 +305,8 @@ namespace BirdGame
             isEnter = false;
             isHovering = false;
             Debug.Log("Exit");
-            this.GetSystem<IUISystem>().HideMapInfo();
-        }
-
-        private void OnDisable()
-        {
-            this.GetSystem<IUISystem>().HideMapInfo();
+            infoItem.SetActive(false);
+            //this.GetSystem<IUISystem>().HideMapInfo();
         }
     }
 }

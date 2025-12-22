@@ -179,6 +179,7 @@ namespace BirdGame
     public class ScheduleItemData
     {
         public string scheduleText;
+        public DateTime StartTime = DateTime.Now;
         public bool isCompleted;
     }
 }

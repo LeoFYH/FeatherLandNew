@@ -308,17 +308,16 @@ namespace BirdGame
             item.Hours.Value = 0;
             item.Minutes.Value = 0;
             item.Seconds.Value = 0;
+            this.GetModel<IClockModel>().TimerType = TimerType.None;
+            this.GetModel<IClockModel>().TimerItem.TimerCoroutine = null;
+            int coins = (int)(timer / 300 );
+            this.GetModel<IAccountModel>().Coins.Value += coins;
+            this.GetModel<IAccountModel>().AddedCoins = coins;
             //此处触发提醒
             this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForTimer;
             this.SendCommand<AlertCommand>();
             this.GetSystem<IMonoSystem>().SendEvent<TimerOverEvent>();
 
-            this.GetModel<IClockModel>().TimerType = TimerType.None;
-            this.GetModel<IClockModel>().TimerItem.TimerCoroutine = null;
-            int coins = (int)(timer / 5);
-            this.GetModel<IAccountModel>().Coins.Value += coins;
-            this.GetModel<IAccountModel>().AddedCoins = coins;
-            this.GetSystem<IUISystem>().ShowPopup(UIPopup.AddCoinPopup);
             this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
             {
                 show = false

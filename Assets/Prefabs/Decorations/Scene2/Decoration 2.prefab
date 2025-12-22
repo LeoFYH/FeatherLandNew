@@ -17,7 +17,7 @@ GameObject:
   m_TagString: Decoration
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4
   m_IsActive: 1
 --- !u!4 &6176381423275381836
 Transform:
@@ -102,6 +102,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   decorationIndex: 0
+  effects: []
 --- !u!60 &524291022262379566
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -140,7 +141,7 @@ PolygonCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 1}
-    oldSize: {x: 13.27, y: 2.64}
+    oldSize: {x: 13.2699995, y: 2.643633}
     newSize: {x: 5.54, y: 5.86}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -267,7 +268,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4
   m_IsActive: 1
 --- !u!4 &8295158473250630222
 Transform:

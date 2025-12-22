@@ -312,6 +312,8 @@ namespace BirdGame
         public int price;
         [LabelText("食物大小"), HorizontalGroup("Content"), VerticalGroup("Content/Info"), Range(0.01f, 5f), ShowIf("@type==ToolType.Food")]
         public float foodScale = 1f;
+        [LabelText("成长值加成"), HorizontalGroup("Content"), VerticalGroup("Content/Info"), ShowIf("@type==ToolType.Food")]
+        public float addValue = 0.1f;
         [LabelText("增加鸟的容量大小"), HorizontalGroup("Content"), VerticalGroup("Content/Info"), ShowIf("@type==ToolType.BirdMaxCount")]
         public int addCount;
         

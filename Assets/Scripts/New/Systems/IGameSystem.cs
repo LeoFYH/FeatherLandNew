@@ -122,7 +122,8 @@ namespace BirdGame
                                 {
                                     spriteRenderer.sprite = selection.icon;
                                 }
-                                
+
+                                food.addValue = selection.addValue;
                                 // 设置食物大小
                                 food.transform.localScale = Vector3.one * selection.foodScale;
                                 break;

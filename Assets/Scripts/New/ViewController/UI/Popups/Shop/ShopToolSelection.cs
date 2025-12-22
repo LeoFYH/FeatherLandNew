@@ -22,7 +22,7 @@ namespace BirdGame
             var sp = this.GetModel<IConfigModel>().ShopConfig.tools[itemIndex].selections[selectIndex].icon;
             icon.sprite = sp;
             if (sp != null)
-                icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.1f;
+                icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.3f;
         }
 
         private void Start()

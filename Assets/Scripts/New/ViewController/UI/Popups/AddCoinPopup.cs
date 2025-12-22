@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace BirdGame
 {
-    public class AddCoinPopup : ViewControllerBase
+    public class AddCoinPopup : UIBase
     {
         public TextMeshProUGUI infoText;
         public Button closeButton;
@@ -17,7 +17,7 @@ namespace BirdGame
                 this.GetSystem<IUISystem>().HidePopup(UIPopup.AddCoinPopup);
             });
 
-            infoText.text = $"Add {this.GetModel<IAccountModel>().AddedCoins} coins.";
+            infoText.text = $"Focus succeed! {this.GetModel<IAccountModel>().AddedCoins} Bonus Coin Earned!";
         }
     }
 }
