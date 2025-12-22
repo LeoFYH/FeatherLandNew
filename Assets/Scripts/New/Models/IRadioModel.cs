@@ -15,6 +15,8 @@ namespace BirdGame
         BindableProperty<float> TotalTime { get; }
         BindableProperty<float> CurrentTime { get; }
         List<BindableProperty<float>> EnvironmentVolumes { get; }
+        List<BindableProperty<bool>> EnvironmentMutes { get; }
+        BindableProperty<bool> IsMuteSong { get; }
     }
 
     public class RadioModel : AbstractModel, IRadioModel
@@ -33,5 +35,7 @@ namespace BirdGame
         public BindableProperty<float> TotalTime { get; } = new BindableProperty<float>();
         public BindableProperty<float> CurrentTime { get; } = new BindableProperty<float>();
         public List<BindableProperty<float>> EnvironmentVolumes { get; } = new List<BindableProperty<float>>();
+        public List<BindableProperty<bool>> EnvironmentMutes { get; } = new List<BindableProperty<bool>>();
+        public BindableProperty<bool> IsMuteSong { get; } = new BindableProperty<bool>();
     }
 }

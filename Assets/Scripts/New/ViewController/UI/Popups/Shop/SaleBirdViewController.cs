@@ -24,7 +24,8 @@ namespace BirdGame
                 else
                 {
                     var item = GameObject.Instantiate(itemPrefab, content).GetComponent<SaleBirdItem>();
-                    item.SetBird(bird.birdType, OnSaleBird);
+                    float price = bird.bird.isSmall ? bird.individualPriceSmall : bird.individualPriceBig;
+                    item.SetBird(bird.birdType, price, OnSaleBird);
                     birds.Add(bird.birdType, new BirdScaleData() { item = item });
                     birds[bird.birdType].AddBird(bird);
                 }

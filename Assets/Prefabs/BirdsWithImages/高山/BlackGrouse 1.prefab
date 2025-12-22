@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 343863069046991755}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.001, y: -0.001, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -56,7 +56,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 101a309229cab07409a8aa1bd34d334d, type: 2}
+  - {fileID: 2100000, guid: 1536d60d51475f34b82d8112ea67bb7b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -197,6 +197,8 @@ MonoBehaviour:
   currFood: {fileID: 0}
   isBeingPetted: 0
   lastPetTime: 0
+  lastEatTime: 0
+  eatWaitDuration: 0
   idleLockDuration: 1
   shouldFollowMouse: 0
   agent: {fileID: 0}
@@ -469,6 +471,7 @@ MonoBehaviour:
   showBackground: 0
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
+  isHovering: 0
 --- !u!1 &7077765267814181376
 GameObject:
   m_ObjectHideFlags: 0

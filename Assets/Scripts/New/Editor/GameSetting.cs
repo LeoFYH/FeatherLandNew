@@ -49,6 +49,7 @@ namespace BirdGame.Editor
             {
                 File.Delete(path);
             }
+            PlayerPrefs.DeleteAll();
             EditorUtility.DisplayDialog("提示", "存档已清理！", "ok");
         }
     }

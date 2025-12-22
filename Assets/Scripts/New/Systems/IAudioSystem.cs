@@ -38,6 +38,8 @@ namespace BirdGame
         /// </summary>
         void NextSong();
 
+        void MuteSong(bool mute);
+
         void SetAudioProgress(float value);
 
         void PlayEffect(EffectType type);
@@ -167,6 +169,8 @@ namespace BirdGame
                 index = Random.Range(0, configModel.RadioConfig.musicItems.Length);
             }
 
+            radioModel.SongIndex = index;
+            Debug.Log($"播放：[{index}]{configModel.RadioConfig.musicItems[index].songName}");
             PlaySong();
         }
 
@@ -193,11 +197,17 @@ namespace BirdGame
             PlaySong();
         }
 
+        public void MuteSong(bool mute)
+        {
+            radioAudio.mute = mute;
+        }
+
         public void SetAudioProgress(float value)
         {
             if(radioAudio.clip == null)
                 return;
             float time = radioAudio.clip.length * value;
+            time = Mathf.Clamp(time, 0f, Mathf.Max(0f, radioAudio.clip.length - 0.01f));
             radioAudio.time = time;
         }
 
@@ -205,7 +215,7 @@ namespace BirdGame
         {
             radioModel.CurrentTime.Value = radioAudio.time;
             radioModel.SongProgress.Value = radioAudio.time / radioAudio.clip.length;
-            while (radioModel.SongProgress.Value < 1)
+            while (radioAudio.time < radioAudio.clip.length - 0.01f)
             {
                 radioModel.CurrentTime.Value = radioAudio.time;
                 radioModel.SongProgress.Value = radioAudio.time / radioAudio.clip.length;
@@ -362,6 +372,7 @@ namespace BirdGame
                     saveModel.environmentVolumes.Add(0);
                 }
                 radioModel.EnvironmentVolumes.Add(new BindableProperty<float>());
+                radioModel.EnvironmentMutes.Add(new BindableProperty<bool>());
                 audio.loop = true;
                 
                 // 根据环境音效名称设置默认音量
@@ -399,6 +410,13 @@ namespace BirdGame
                         audio.volume = v * radioModel.Volume.Value;
                     }
                 });
+                radioModel.EnvironmentMutes[index].Register(v =>
+                {
+                    if (!environmentFadeCoroutines.ContainsKey(index))
+                    {
+                        audio.mute = v;
+                    }
+                });
             }
 
             //effectAudio.outputAudioMixerGroup = config.effectMixer.FindMatchingGroups(String.Empty)[0];
@@ -424,6 +442,7 @@ namespace BirdGame
             while (radioModel.EnvironmentVolumes.Count < environmentCount)
             {
                 radioModel.EnvironmentVolumes.Add(new BindableProperty<float>());
+                radioModel.EnvironmentMutes.Add(new BindableProperty<bool>());
             }
             
             // 停止所有正在进行的淡入淡出协程

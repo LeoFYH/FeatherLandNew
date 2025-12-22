@@ -16,6 +16,8 @@
     <type fullname="BirdGame.DecorationClickHandler" preserve="all" />
     <type fullname="BirdGame.DecorationContentViewController" preserve="all" />
     <type fullname="BirdGame.DecorationInfoPopup" preserve="all" />
+    <type fullname="BirdGame.DragAspect" preserve="all" />
+    <type fullname="BirdGame.DragMove" preserve="all" />
     <type fullname="BirdGame.Egg" preserve="all" />
     <type fullname="BirdGame.EggContentViewController" preserve="all" />
     <type fullname="BirdGame.EggInfo" preserve="all" />
@@ -33,7 +35,6 @@
     <type fullname="BirdGame.InfoPopup" preserve="all" />
     <type fullname="BirdGame.LoadingPanel" preserve="all" />
     <type fullname="BirdGame.LocalizationConfig" preserve="all" />
-    <type fullname="BirdGame.LocalizationImage" preserve="all" />
     <type fullname="BirdGame.LocalizationText" preserve="all" />
     <type fullname="BirdGame.MapConfig" preserve="all" />
     <type fullname="BirdGame.MapInfo" preserve="all" />
@@ -76,13 +77,17 @@
     <type fullname="CameraManager" preserve="all" />
     <type fullname="Feather" preserve="all" />
     <type fullname="FullscreenTest" preserve="all" />
+    <type fullname="HookTMPInputHandler" preserve="all" />
     <type fullname="NavigationManager" preserve="all" />
     <type fullname="NumPanel" preserve="all" />
+    <type fullname="ScrollRectMouseWheelHandler" preserve="all" />
+    <type fullname="SliderBarClickHandler" preserve="all" />
     <type fullname="UIButtonHoverScale" preserve="all" />
     <type fullname="WalkableArea" preserve="all" />
     <type fullname="BirdGame.AudioItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.BirdClassItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.CursorItem" preserve="nothing" serialized="true" />
+    <type fullname="BirdGame.DecorationEffect" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.DecorationItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.EggBirdItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.EggItem" preserve="nothing" serialized="true" />
@@ -92,6 +97,7 @@
     <type fullname="BirdGame.SceneDecoration" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.SceneEgg" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.SpriteItem" preserve="nothing" serialized="true" />
+    <type fullname="BirdGame.ToggleItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.ToolItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.ToolSelection" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.Weather" preserve="nothing" serialized="true" />

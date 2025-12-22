@@ -18,7 +18,8 @@ namespace BirdGame.Editor
         public enum Page
         {
             语言设置,
-            翻译设置
+            翻译设置,
+            Excel设置
         }
 
         [Title("本地化配置", Bold = true)] [HorizontalGroup("config"), ReadOnly, OnInspectorInit("InitConfig")]
@@ -130,10 +131,10 @@ namespace BirdGame.Editor
         [LabelText("翻译服务"), ShowIf("@page==Page.翻译设置"), BoxGroup("Setting")]
         public TranslationService translationService = TranslationService.Ollama;
         
-        [LabelText("ChatGPT API Key"), ShowIf("@translationService==TranslationService.ChatGPT"), BoxGroup("Setting")]
+        [LabelText("ChatGPT API Key"), ShowIf("@translationService==TranslationService.ChatGPT&&page==Page.翻译设置"), BoxGroup("Setting")]
         public string chatGPTApiKey = "";
         
-        [LabelText("Ollama模型"), ShowIf("@translationService==TranslationService.Ollama"), BoxGroup("Setting")]
+        [LabelText("Ollama模型"), ShowIf("@translationService==TranslationService.Ollama&&page==Page.翻译设置"), BoxGroup("Setting")]
         public string selectModel = "llama3:latest";
         
         public enum TranslationService
@@ -263,6 +264,53 @@ namespace BirdGame.Editor
                 Debug.LogError($"❌ Ollama连接异常: {e.Message}");
                 Debug.LogError("请确保Ollama已正确安装");
             }
+        }
+
+        [ShowIf("@page==Page.Excel设置"), BoxGroup("Excel"), FolderPath(ParentFolder = "Assets/Scripts/New/Editor/Excels", RequireExistingPath = true, AbsolutePath = true)]
+        public string excelPath;
+
+        [ShowIf("@page==Page.Excel设置&&!string.IsNullOrEmpty(excelPath)"), BoxGroup("Excel"), Button("导出Excel")]
+        private void OnExportExcel()
+        {
+            List<string[]> rowData = new List<string[]>();
+            rowData.Add(new string[] { "key", "英文", "简体中文" });
+            int wordCount = wordKeys.Count;
+            if (wordCount == 0)
+            {
+                EditorUtility.DisplayDialog("错误", "language数据未加载！", "ok");
+                return;
+            }
+
+            for (int i = 0; i < wordCount; i++)
+            {
+                rowData.Add(new string[]{words[0].keys[i], words[0].values[i], words[1].values[i]});
+            }
+
+            StringBuilder sb = new StringBuilder();
+        
+            foreach (string[] row in rowData)
+            {
+                for (int i = 0; i < row.Length; i++)
+                {
+                    // 处理包含逗号或引号的内容
+                    string cell = row[i];
+                    if (cell.Contains(",") || cell.Contains("\"") || cell.Contains("\n"))
+                    {
+                        cell = $"\"{cell.Replace("\"", "\"\"")}\"";
+                    }
+                    sb.Append(cell);
+                
+                    if (i < row.Length - 1)
+                    {
+                        sb.Append(",");
+                    }
+                }
+                sb.AppendLine();
+            }
+        
+            // 保存文件
+            string filePath = Path.Combine(excelPath, "data.csv");
+            File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
         }
 
         [OnInspectorGUI]

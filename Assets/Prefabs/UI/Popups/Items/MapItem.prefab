@@ -104,7 +104,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -243,7 +243,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -371,7 +371,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 20, y: 26}
+  m_SizeDelta: {x: 40, y: 52}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9048072964001205145
 CanvasRenderer:
@@ -401,7 +401,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -5820118502184449216, guid: 505c0d9674fe2d444b86b6b700bddd8a, type: 3}
+  m_Sprite: {fileID: 6862801978356250847, guid: 71020d660dba6664990739e58997f77e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -470,3 +470,7 @@ MonoBehaviour:
   mapText: {fileID: 3294885006165606306}
   priceObject: {fileID: 283852687679931328}
   priceText: {fileID: 7201119480537741471}
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  checkUIRaycast: 1
+  useRectTransform: 1

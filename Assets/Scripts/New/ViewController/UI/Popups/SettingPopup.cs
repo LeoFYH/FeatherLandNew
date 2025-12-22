@@ -18,7 +18,6 @@ namespace BirdGame
         [DllImport("kernel32.dll")]
         private static extern void ExitProcess(int ExitCode);
         
-        public Button closeButton;
         public TMP_Dropdown screenDropdown;
         public TMP_Dropdown languageDropdown;
         public Button quitButton;
@@ -26,6 +25,7 @@ namespace BirdGame
         public Button clearSaveButton; // 添加清除存档按钮
         public Sprite itemSprite;
         public Sprite[] dropSps;
+        public Button closeButton;
 
         private List<SystemLanguage> languages = new List<SystemLanguage>();
         private bool isScreenExpend = false;
@@ -79,6 +79,8 @@ namespace BirdGame
                         Debug.Log($"已删除存档文件: {fileName}");
                     }
                 }
+                
+                PlayerPrefs.DeleteAll();
                 
                 // 清空内存中的数据
                this.GetSystem<ISaveSystem>().InitData();
@@ -164,10 +166,6 @@ namespace BirdGame
             quitY = quitRect.anchoredPosition.y;
             languageY = languageRect.anchoredPosition.y;
             
-            closeButton.onClick.AddListener(() =>
-            {
-                this.GetSystem<IUISystem>().HidePopup(UIPopup.SettingPopup);
-            });
             tutorialButton.onClick.AddListener(() =>
             {
                 this.GetSystem<IUISystem>().ShowPopup(UIPopup.TutorialPopup);
@@ -176,6 +174,11 @@ namespace BirdGame
             {
                 // 显示退出确认弹窗，询问是否填写问卷
                 this.GetSystem<IUISystem>().ShowExitConfirm();
+            });
+            
+            closeButton.onClick.AddListener(() =>
+            {
+                this.GetSystem<IUISystem>().SendEvent<OnSettingCloseEvent>();
             });
             
             // 添加清除存档按钮的点击监听器
@@ -202,9 +205,7 @@ namespace BirdGame
                 }
                 else if (id == 1)
                 {
-                    // this.GetUtility<IFullScreenUtility>().WallpaperMode();
-                    //暂时关闭壁纸模式
-                  // WallpaperModeController.ins.EnterWallpaperMode();
+                    this.GetUtility<IFullScreenUtility>().WallpaperMode();
                     Debug.Log("WallpaperMode");
                 }
                 else if (id == 2)

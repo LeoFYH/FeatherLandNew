@@ -13,7 +13,6 @@ namespace BirdGame
         public GameObject bookPrefab;
         public Button addButton;
         public TMP_InputField noteInput;
-        public Button deleteButton;
 
         private int currentNoteIndex;
         private List<NoteItem> items = new List<NoteItem>();
@@ -33,7 +32,7 @@ namespace BirdGame
                 var item = GameObject.Instantiate(bookPrefab, content).GetComponent<NoteItem>();
                 int index = items.Count;
                 item.transform.SetSiblingIndex(index);
-                item.Init(index, group);
+                item.Init(index, group, OnCloseNote);
                 items.Add(item);
                 data.bookList.Add(new BookData());
                 currentNoteIndex = index;
@@ -43,30 +42,6 @@ namespace BirdGame
             noteInput.onEndEdit.AddListener(text =>
             {
                 data.bookList[currentNoteIndex].noteText = text;
-            });
-            
-            deleteButton.onClick.AddListener(() =>
-            {
-                if(items.Count <= 1)
-                    return;
-                if (currentNoteIndex >= items.Count)
-                {
-                    return;
-                }
-
-                var item = items[currentNoteIndex];
-                items.RemoveAt(currentNoteIndex);
-                GameObject.Destroy(item.gameObject);
-                data.bookList.RemoveAt(currentNoteIndex);
-                for (int i = currentNoteIndex; i < items.Count; i++)
-                {
-                    items[i].ResetIndex(i);
-                }
-
-                if (items.Count <= currentNoteIndex)
-                    currentNoteIndex = items.Count - 1;
-                items[currentNoteIndex].thisToggle.isOn = true;
-                noteInput.text = data.bookList[currentNoteIndex].noteText;
             });
 
             int count = data.bookList.Count;
@@ -79,7 +54,7 @@ namespace BirdGame
             {
                 var item = GameObject.Instantiate(bookPrefab, content).GetComponent<NoteItem>();
                 item.transform.SetSiblingIndex(i);
-                item.Init(i, group);
+                item.Init(i, group, OnCloseNote);
                 items.Add(item);
             }
 
@@ -87,6 +62,32 @@ namespace BirdGame
             items[0].thisToggle.isOn = true;
             noteInput.text = data.bookList[currentNoteIndex].noteText;
         }
-        
+
+
+        private void OnCloseNote(int noteIndex)
+        {
+            var data = this.GetModel<ISaveModel>().NoteData;
+            
+            if(items.Count <= 1)
+                return;
+            if (noteIndex >= items.Count)
+            {
+                return;
+            }
+
+            var item = items[noteIndex];
+            items.RemoveAt(noteIndex);
+            GameObject.Destroy(item.gameObject);
+            data.bookList.RemoveAt(noteIndex);
+            for (int i = noteIndex; i < items.Count; i++)
+            {
+                items[i].ResetIndex(i);
+            }
+
+            // if (items.Count <= currentNoteIndex)
+            //     currentNoteIndex = items.Count - 1;
+            // items[currentNoteIndex].thisToggle.isOn = true;
+            // noteInput.text = data.bookList[currentNoteIndex].noteText;
+        }
     }
 }

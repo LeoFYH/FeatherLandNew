@@ -10,33 +10,35 @@ namespace BirdGame
 {
     public class MenuPanel : UIBase
     {
-        public Image weatherIcon;
         public Button weatherButton;
-        public Sprite[] weatherSps;
-        public Button toDoButton;
-        public Button radioButton;
-        public Button settingButton;
-        public Button shopButton;
-        public Button tomatoButton;
-        public Button illustratedButton;
-        public Button illustratedButton1;
-        public Button mapButton;
+        //public Sprite[] weatherSps;
+        public Toggle noteToggle;
+        public Toggle radioToggle;
+        public Toggle settingButton;
+        public Toggle shopButton;
+        public Toggle clockToggle;
+        public Toggle illustratedButton;
+        public Toggle mapButton;
         public Button externalLinkButton; // 新增外部链接按钮
         public TextMeshProUGUI coinsNum;
-        public RectTransform branch;
-        public CanvasGroup group1;
-        public CanvasGroup group2;
         public RectTransform timeItem;
         public TextMeshProUGUI timeText;
         public GameObject[] weatherItems;
         public RectTransform content;
         public Button debugButton;
+        public GameObject viewGroup;
+        public Toggle viewToggle;
+        public RectTransform itemRect;
 
         private Sequence anim;
         private Tweener timeAnim;
-        private bool isShowBranch;
         private bool isShowWeatherItems = false;
         private Tweener contentAnim;
+
+        private float shopPosX;
+        private float illustratedPosX;
+        private float weatherPosX;
+        private float mapPosX;
         
         public override void OnShowPanel()
         {
@@ -51,6 +53,12 @@ namespace BirdGame
 
         private void Start()
         {
+            shopPosX = shopButton.GetComponent<RectTransform>().anchoredPosition.x;
+            illustratedPosX = illustratedButton.GetComponent<RectTransform>().anchoredPosition.x;
+            weatherPosX = weatherButton.GetComponent<RectTransform>().anchoredPosition.x;
+            mapPosX = mapButton.GetComponent<RectTransform>().anchoredPosition.x;
+            itemRect.anchoredPosition = new Vector2(0, -220);
+            
             Debug.Log("MenuPanel Start方法开始执行");
             Debug.Log($"MenuPanel GameObject名称: {gameObject.name}");
             Debug.Log($"MenuPanel 激活状态: {gameObject.activeInHierarchy}");
@@ -68,117 +76,135 @@ namespace BirdGame
             }
             Debug.Log("IUISystem获取成功");
             
-            if (toDoButton != null)
+            noteToggle.onValueChanged.AddListener(isOn =>
             {
-                Debug.Log($"绑定toDoButton事件 - 按钮名称: {toDoButton.name}, 激活状态: {toDoButton.gameObject.activeInHierarchy}");
-                toDoButton.onClick.AddListener(() =>
+                if (isOn)
                 {
-                    Debug.Log("toDoButton被点击");
                     uiSystem.ShowPopup(UIPopup.NotePopup);
-                });
-            }
-            else
-            {
-                Debug.LogWarning("toDoButton未分配");
-            }
-            
-            if (radioButton != null)
-            {
-                Debug.Log("绑定radioButton事件");
-                radioButton.onClick.AddListener(() =>
+                }
+                else
                 {
-                    Debug.Log("radioButton被点击");
+                    uiSystem.HidePopup(UIPopup.NotePopup);
+                }
+            });
+            
+            radioToggle.onValueChanged.AddListener(isOn =>
+            {
+                if (isOn)
+                {
                     uiSystem.ShowPopup(UIPopup.RadioPopup);
-                });
-            }
-            else
-            {
-                Debug.LogWarning("radioButton未分配");
-            }
-            
-            if (settingButton != null)
-            {
-                Debug.Log($"绑定settingButton事件 - 按钮名称: {settingButton.name}, 激活状态: {settingButton.gameObject.activeInHierarchy}");
-                settingButton.onClick.AddListener(() =>
+                }
+                else
                 {
-                    Debug.Log("设置按钮被点击，尝试打开设置弹窗");
-                    uiSystem.ShowPopup(UIPopup.SettingPopup);
-                });
-            }
-            else
-            {
-                Debug.LogError("设置按钮未分配，请检查MenuPanel预制体");
-            }
+                    uiSystem.HidePopup(UIPopup.RadioPopup);
+                }
+            });
             
-            if (shopButton != null)
+            clockToggle.onValueChanged.AddListener(isOn =>
             {
-                Debug.Log("绑定shopButton事件");
-                shopButton.onClick.AddListener(() =>
+                if (isOn)
                 {
-                    Debug.Log("shopButton被点击");
-                    uiSystem.ShowPopup(UIPopup.ShopPopup);
-                });
-            }
-            else
-            {
-                Debug.LogWarning("shopButton未分配");
-            }
-            
-            if (tomatoButton != null)
-            {
-                Debug.Log("绑定tomatoButton事件");
-                tomatoButton.onClick.AddListener(() =>
-                {
-                    Debug.Log("tomatoButton被点击");
                     uiSystem.ShowPopup(UIPopup.ClockPopup);
-                });
-            }
-            else
-            {
-                Debug.LogWarning("tomatoButton未分配");
-            }
-            
-            if (illustratedButton != null)
-            {
-                Debug.Log("绑定illustratedButton事件");
-                illustratedButton.onClick.AddListener(() =>
+                }
+                else
                 {
-                    Debug.Log("illustratedButton被点击");
+                    uiSystem.HidePopup(UIPopup.ClockPopup);
+                }
+            });
+
+            settingButton.onValueChanged.AddListener(isOn =>
+            {
+                if (isOn)
+                {
+                    uiSystem.ShowPopup(UIPopup.SettingPopup);
+                }
+                else
+                {
+                    uiSystem.HidePopup(UIPopup.SettingPopup);
+                }
+            });
+               
+            shopButton.onValueChanged.AddListener(isOn =>
+            {
+                if (isOn)
+                {
+                    uiSystem.ShowPopup(UIPopup.ShopPopup);
+                }
+                else
+                {
+                    uiSystem.HidePopup(UIPopup.ShopPopup);
+                }
+            });
+
+
+            illustratedButton.onValueChanged.AddListener(isOn =>
+            {
+                if (isOn)
+                {
                     uiSystem.ShowPopup(UIPopup.IllustratedPopup);
-                });
-            }
-            else
-            {
-                Debug.LogWarning("illustratedButton未分配");
-            }
-            
-            if (illustratedButton1 != null)
-            {
-                Debug.Log("绑定illustratedButton1事件");
-                illustratedButton1.onClick.AddListener(() =>
+                }
+                else
                 {
-                    Debug.Log("illustratedButton1被点击");
-                    uiSystem.ShowPopup(UIPopup.IllustratedPopup);
-                });
-            }
-            else
-            {
-                Debug.LogWarning("illustratedButton1未分配");
-            }
+                    uiSystem.HidePopup(UIPopup.IllustratedPopup);
+                }
+            });
+                
             
-            if (mapButton != null)
+            mapButton.onValueChanged.AddListener(isOn =>
             {
-                Debug.Log("绑定mapButton事件");
-                mapButton.onClick.AddListener(() =>
+                if (isOn)
                 {
-                    Debug.Log("mapButton被点击");
-                    
-                });
-            }
-            else
+                    uiSystem.ShowPopup(UIPopup.MapPopup);
+                }
+                else
+                {
+                    uiSystem.HidePopup(UIPopup.MapPopup);
+                }
+            });
+
+            this.RegisterEvent<OnClockCloseEvent>(v =>
             {
-                Debug.LogWarning("mapButton未分配");
-            }
+                clockToggle.isOn = false;
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            this.RegisterEvent<OnIllustratedCloseEvent>(v =>
+            {
+                illustratedButton.isOn = false;
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            this.RegisterEvent<OnMapCloseEvent>(v =>
+            {
+                mapButton.isOn = false;
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            this.RegisterEvent<OnNoteCloseEvent>(evt =>
+            {
+                noteToggle.isOn = false;
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            this.RegisterEvent<OnRadioCloseEvent>(evt =>
+            {
+                radioToggle.isOn = false;
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            this.RegisterEvent<OnSettingCloseEvent>(evt =>
+            {
+                settingButton.isOn = false;
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            this.RegisterEvent<OnShopCloseEvent>(evt =>
+            {
+                shopButton.isOn = false;
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            if (!viewGroup.activeSelf)
+                viewGroup.gameObject.SetActive(true);
+            viewToggle.isOn = true;
+            
+            viewToggle.onValueChanged.AddListener(isOn =>
+            {
+                viewGroup.SetActive(isOn);
+            });
             
             // 外部链接按钮点击事件
             if (externalLinkButton != null)
@@ -235,17 +261,23 @@ namespace BirdGame
             content.anchoredPosition = new Vector2(400, 0);
             
             var accountModel = this.GetModel<IAccountModel>();
-            coinsNum.text = accountModel.Coins.Value.ToString("F2");
+            coinsNum.text = accountModel.Coins.Value.ToString("F1");
             accountModel.Coins.Register(v =>
             {
-                coinsNum.text = v.ToString("F2");
+                coinsNum.text = v.ToString("F1");
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
-            weatherIcon.sprite = weatherSps[this.GetModel<IGameModel>().WeatherIndex.Value];
+            //weatherIcon.sprite = weatherSps[this.GetModel<IGameModel>().WeatherIndex.Value];
             this.GetModel<IGameModel>().WeatherIndex.Register(v =>
             {
-                weatherIcon.sprite = weatherSps[v];
+                //weatherIcon.sprite = weatherSps[v];
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            
+            if (!PlayerPrefs.HasKey("ShowedTutorial"))
+            {
+                PlayerPrefs.SetString("ShowedTutorial", "true");
+                this.GetSystem<IUISystem>().ShowPopup(UIPopup.TutorialPopup);
+            }
 
             // this.RegisterEvent<ShowBranchEvent>(evt =>
             // {
@@ -266,10 +298,20 @@ namespace BirdGame
                 if (evt.show)
                 {
                     timeAnim = timeItem.DOAnchorPosY(0f, 0.2f).SetEase(Ease.InSine);
+                    shopButton.GetComponent<RectTransform>().DOAnchorPosX(shopPosX - 300, 0.3f);
+                    illustratedButton.GetComponent<RectTransform>().DOAnchorPosX(illustratedPosX - 300, 0.3f);
+                    weatherButton.GetComponent<RectTransform>().DOAnchorPosX(weatherPosX + 300, 0.3f);
+                    mapButton.GetComponent<RectTransform>().DOAnchorPosX(mapPosX + 300, 0.3f);
+                    itemRect.DOAnchorPosX(470, 0.3f);
                 }
                 else
                 {
                     timeAnim = timeItem.DOAnchorPosY(254f, 0.2f).SetEase(Ease.OutSine);
+                    shopButton.GetComponent<RectTransform>().DOAnchorPosX(shopPosX, 0.3f);
+                    illustratedButton.GetComponent<RectTransform>().DOAnchorPosX(illustratedPosX, 0.3f);
+                    weatherButton.GetComponent<RectTransform>().DOAnchorPosX(weatherPosX, 0.3f);
+                    mapButton.GetComponent<RectTransform>().DOAnchorPosX(mapPosX, 0.3f);
+                    itemRect.DOAnchorPosX(0, 0.3f);
                 }
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             this.GetModel<IClockModel>().TomatoItem.TimeString.Register(v =>
@@ -293,35 +335,20 @@ namespace BirdGame
             timeItem.anchoredPosition = new Vector2(0f, 254f);
         }
 
-        private void ShowBranch()
+        private void Update()
         {
-            isShowBranch = true;
-            anim?.Kill();
-            group1.alpha = 0;
-            group2.alpha = 0;
-            var rect1 = group1.transform as RectTransform;
-            var rect2 = group2.transform as RectTransform;
-            branch.anchoredPosition = new Vector2(403.8f, -166.61f);
-            rect1.anchoredPosition = new Vector2(50f, -2f);
-            rect2.anchoredPosition = new Vector2(50f, -115f);
-            anim = DOTween.Sequence();
-            anim.Append(branch.DOAnchorPosX(0, 0.5f).SetEase(Ease.InSine));
-            anim.Append(rect1.DOAnchorPosY(-22f, 0.3f).SetEase(Ease.Linear));
-            anim.Join(group1.DOFade(1f, 0.3f).SetEase(Ease.Linear));
-            anim.Append(rect2.DOAnchorPosY(-135f, 0.3f).SetEase(Ease.Linear));
-            anim.Join(group2.DOFade(1f, 0.3f).SetEase(Ease.Linear));
-            anim.OnComplete(() =>
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
-                this.GetSystem<IAudioSystem>().InitEnvironments();
-            });
-        }
-
-        private void HideBranch()
-        {
-            isShowBranch = false;
-            anim?.Kill();
-            anim = DOTween.Sequence();
-            anim.Append(branch.DOAnchorPosX(403.8f, 0.5f).SetEase(Ease.OutSine));
+                noteToggle.isOn = false;
+                radioToggle.isOn = false;
+                shopButton.isOn = false;
+                clockToggle.isOn = false;
+                illustratedButton.isOn = false;
+                mapButton.isOn = false;
+                settingButton.isOn = true;
+                //this.GetSystem<IUISystem>().HideAllPopups();
+                //this.GetSystem<IUISystem>().ShowPopup(UIPopup.SettingPopup);
+            }
         }
 
         /// <summary>

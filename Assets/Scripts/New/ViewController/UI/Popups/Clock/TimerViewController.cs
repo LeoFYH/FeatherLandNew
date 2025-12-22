@@ -9,9 +9,9 @@ namespace BirdGame
 {
     public class TimerViewController : ViewControllerBase
     {
-        public TextMeshProUGUI hourText;
-        public TextMeshProUGUI minuteText;
-        public TextMeshProUGUI secondText;
+        public TMP_InputField hourText;
+        public TMP_InputField minuteText;
+        public TMP_InputField secondText;
         public Button[] upButtons;
         public Button[] downButtons;
         public Button refreshButton;
@@ -44,6 +44,102 @@ namespace BirdGame
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             secondText.text = string.Format("{0:00}", item.Seconds.Value);
             
+            hourText.onEndEdit.AddListener(v =>
+            {
+                try
+                {
+                    int session = int.Parse(v);
+                    if (session is >= 0 and <= 59)
+                    {
+                        item.Hours.Value = session;
+                    }
+                    else
+                    {
+                        hourText.text = string.Format("{0:00}", item.Hours.Value);
+                        var rect = hourText.textComponent.GetComponent<RectTransform>();
+                        rect.sizeDelta = Vector2.zero;
+                        rect.anchoredPosition = Vector2.zero;
+                        var caretRect = hourText.transform.Find("Text Area/Caret") as RectTransform;
+                        caretRect.sizeDelta = Vector2.zero;
+                        caretRect.anchoredPosition = Vector2.zero;
+                    }
+                }
+                catch (Exception e)
+                {
+                    hourText.text = string.Format("{0:00}", item.Hours.Value);
+                    var rect = hourText.textComponent.GetComponent<RectTransform>();
+                    rect.sizeDelta = Vector2.zero;
+                    rect.anchoredPosition = Vector2.zero;
+                    var caretRect = hourText.transform.Find("Text Area/Caret") as RectTransform;
+                    caretRect.sizeDelta = Vector2.zero;
+                    caretRect.anchoredPosition = Vector2.zero;
+                }
+            });
+            
+            minuteText.onEndEdit.AddListener(v =>
+            {
+                try
+                {
+                    int breaks = int.Parse(v);
+                    if (breaks is >= 0 and <= 59)
+                    {
+                        item.Minutes.Value = breaks;
+                    }
+                    else
+                    {
+                        minuteText.text = string.Format("{0:00}", item.Minutes.Value);
+                        var rect = minuteText.textComponent.GetComponent<RectTransform>();
+                        rect.sizeDelta = Vector2.zero;
+                        rect.anchoredPosition = Vector2.zero;
+                        var caretRect = minuteText.transform.Find("Text Area/Caret") as RectTransform;
+                        caretRect.sizeDelta = Vector2.zero;
+                        caretRect.anchoredPosition = Vector2.zero;
+                    }
+                }
+                catch (Exception e)
+                {
+                    minuteText.text = string.Format("{0:00}", item.Minutes.Value);
+                    var rect = minuteText.textComponent.GetComponent<RectTransform>();
+                    rect.sizeDelta = Vector2.zero;
+                    rect.anchoredPosition = Vector2.zero;
+                    var caretRect = minuteText.transform.Find("Text Area/Caret") as RectTransform;
+                    caretRect.sizeDelta = Vector2.zero;
+                    caretRect.anchoredPosition = Vector2.zero;
+                }
+            });
+            
+            secondText.onEndEdit.AddListener(v =>
+            {
+                try
+                {
+                    int number = int.Parse(v);
+                    if (number is >= 0 and <= 9)
+                    {
+                        item.Seconds.Value = number;
+                    }
+                    else
+                    {
+                        secondText.text = string.Format("{0:00}", item.Seconds.Value);
+                        var rect = secondText.textComponent.GetComponent<RectTransform>();
+                        rect.sizeDelta = Vector2.zero;
+                        rect.anchoredPosition = Vector2.zero;
+                        var caretRect = secondText.transform.Find("Text Area/Caret") as RectTransform;
+                        caretRect.sizeDelta = Vector2.zero;
+                        caretRect.anchoredPosition = Vector2.zero;
+                    }
+                }
+                catch (Exception e)
+                {
+                    secondText.text = string.Format("{0:00}", item.Seconds.Value);
+                    var rect = secondText.textComponent.GetComponent<RectTransform>();
+                    rect.sizeDelta = Vector2.zero;
+                    rect.anchoredPosition = Vector2.zero;
+                    var caretRect = secondText.transform.Find("Text Area/Caret") as RectTransform;
+                    caretRect.sizeDelta = Vector2.zero;
+                    caretRect.anchoredPosition = Vector2.zero;
+                }
+            });
+            
             for (int i = 0; i < 3; i++)
             {
                 int index = i;
@@ -72,6 +168,10 @@ namespace BirdGame
                 Refresh(true);
                 this.GetModel<IClockModel>().TimerType = TimerType.Timer;
                 this.SendCommand<StopOtherTimerCommand>();
+                this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
+                {
+                    show = true
+                });
             });
             stopButton.onClick.AddListener(() =>
             {
@@ -84,6 +184,10 @@ namespace BirdGame
                 {
                     show = false
                 });
+                item.Timer = 0;
+                item.Hours.Value = 0;
+                item.Minutes.Value = 0;
+                item.Seconds.Value = 0;
             });
 
             this.RegisterEvent<StopTimerEvent>(evt =>
@@ -185,6 +289,7 @@ namespace BirdGame
 
         private IEnumerator StartTimer()
         {
+            float timer = 0;
             var item = this.GetModel<IClockModel>().TimerItem;
             var frame = new WaitForFixedUpdate();
             while (item.Timer > 0)
@@ -196,6 +301,7 @@ namespace BirdGame
                 item.TimeString.Value = string.Format("{0:00}:{1:00}:{2:00}", item.Hours.Value, item.Minutes.Value,
                     item.Seconds.Value);
                 yield return frame;
+                timer += Time.deltaTime;
                 item.Timer -= Time.fixedDeltaTime;
             }
 
@@ -209,6 +315,10 @@ namespace BirdGame
 
             this.GetModel<IClockModel>().TimerType = TimerType.None;
             this.GetModel<IClockModel>().TimerItem.TimerCoroutine = null;
+            int coins = (int)(timer / 5);
+            this.GetModel<IAccountModel>().Coins.Value += coins;
+            this.GetModel<IAccountModel>().AddedCoins = coins;
+            this.GetSystem<IUISystem>().ShowPopup(UIPopup.AddCoinPopup);
             this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
             {
                 show = false

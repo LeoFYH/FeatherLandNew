@@ -56,7 +56,10 @@ namespace BirdGame
         public BindableProperty<int> Number { get; } = new BindableProperty<int>();
         public BindableProperty<string> TimeString { get; } = new BindableProperty<string>();
         public int TotalNumber { get; set; }
-        public float Timer { get; set; }
+        public BindableProperty<float> Timer { get; } = new BindableProperty<float>();
+        public bool IsPause { get; set; }
+        public bool IsSkip { get; set; }
+        public float CurrentTimer { get; set; }
 
         public BindableProperty<TomatoTimerType> TimerType { get; } =
             new BindableProperty<TomatoTimerType>(TomatoTimerType.Session);

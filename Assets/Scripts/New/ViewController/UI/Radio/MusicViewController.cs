@@ -8,9 +8,7 @@ namespace BirdGame
 {
     public class MusicViewController : ViewControllerBase
     {
-        public RectTransform roll;
-        public RectTransform playAnim;
-        public Slider progressSlider;
+        public Image progressSlider;
         public Button previousButton;
         public Button nextButton;
         public Button playButton;
@@ -23,9 +21,6 @@ namespace BirdGame
 
         public Transform content;
         public GameObject musicListPrefab;
-
-        private Tweener playTween;
-        private Tweener rollTween;
         
         private void Start()
         {
@@ -38,14 +33,14 @@ namespace BirdGame
 
             radioModel.SongProgress.Register(v =>
             {
-                progressSlider.value = v;
+                progressSlider.fillAmount = v;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
-            progressSlider.value = radioModel.SongProgress.Value;
+            progressSlider.fillAmount = radioModel.SongProgress.Value;
             
-            progressSlider.onValueChanged.AddListener(v =>
-            {
-                this.GetSystem<IAudioSystem>().SetAudioProgress(v);
-            });
+            // progressSlider.onValueChanged.AddListener(v =>
+            // {
+            //     this.GetSystem<IAudioSystem>().SetAudioProgress(v);
+            // });
             
             // 监听从列表点击歌曲的事件
             this.RegisterEvent<SongChangedFromListEvent>(evt =>
@@ -60,10 +55,10 @@ namespace BirdGame
                 this.GetModel<IRadioModel>().Random.Value = isOn;
             });
 
-            loop.isOn = !this.GetModel<IRadioModel>().Loop.Value;
+            loop.isOn = this.GetModel<IRadioModel>().Loop.Value;
             loop.onValueChanged.AddListener(isOn =>
             {
-                this.GetModel<IRadioModel>().Loop.Value = !isOn;
+                this.GetModel<IRadioModel>().Loop.Value = isOn;
             });
             
             previousButton.onClick.AddListener(() =>
@@ -111,55 +106,17 @@ namespace BirdGame
 
             radioModel.PlayingSong.Register(v =>
             {
-                playTween?.Kill();
-                if (v)
-                {
-                    // 确保先完全停止之前的旋转动画
-                    rollTween?.Kill();
-                    rollTween = null;
-                    
-                    // 重置唱片旋转角度到0度
-                    roll.localRotation = Quaternion.identity;
-                    
-                    playTween = playAnim.DOLocalRotate(Vector3.zero, 0.3f).OnComplete(() =>
-                    {
-                        // 使用独立的时间缩放，不受游戏时间缩放影响
-                        rollTween = roll.DOLocalRotate(new Vector3(0, 0, -360), 5f, RotateMode.FastBeyond360)
-                            .SetEase(Ease.Linear)
-                            .SetLoops(-1)
-                            .SetUpdate(true); // 使用独立更新，不受时间缩放影响
-                    });
-                }
-                else
-                {
-                    // 完全停止旋转动画
-                    rollTween?.Kill();
-                    rollTween = null;
-                    playTween = playAnim.DOLocalRotate(new Vector3(0, 0, 25), 0.3f);
-                }
+                playButton.gameObject.SetActive(!v);
+                pauseButton.gameObject.SetActive(v);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
-            if (radioModel.PlayingSong.Value)
+            
+            playButton.gameObject.SetActive(!radioModel.PlayingSong.Value);
+            pauseButton.gameObject.SetActive(radioModel.PlayingSong.Value);
+
+            this.GetModel<IRadioModel>().IsMuteSong.Register(v =>
             {
-                playAnim.localRotation = Quaternion.identity;
-                roll.localRotation = Quaternion.identity; // 确保唱片初始角度为0
-                playTween = playAnim.DOLocalRotate(Vector3.zero, 0.3f).OnComplete(() =>
-                {
-                    // 使用独立的时间缩放，不受游戏时间缩放影响
-                    rollTween = roll.DOLocalRotate(new Vector3(0, 0, -360), 5f, RotateMode.FastBeyond360)
-                        .SetEase(Ease.Linear)
-                        .SetLoops(-1)
-                        .SetUpdate(true); // 使用独立更新，不受时间缩放影响
-                });
-                playButton.gameObject.SetActive(false);
-                pauseButton.gameObject.SetActive(true);
-            }
-            else
-            {
-                playAnim.localRotation = Quaternion.Euler(0, 0, 25f);
-                roll.localRotation = Quaternion.identity; // 确保唱片初始角度为0
-                playButton.gameObject.SetActive(true);
-                pauseButton.gameObject.SetActive(false);
-            }
+                
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
             var config = this.GetModel<IConfigModel>().RadioConfig;
             for (int i = 0; i < config.musicItems.Length; i++)
