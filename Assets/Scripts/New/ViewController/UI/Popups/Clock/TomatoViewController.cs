@@ -303,9 +303,9 @@ namespace BirdGame
                 item.TimerType.Value = TomatoTimerType.Session;
             });
 
-            for (int i = 0; i < audioToggles.Length; i++)
+            for (var i = 0; i < audioToggles.Length; i++)
             {
-                int index = i;
+                var index = i;
                 audioToggles[i].onValueChanged.AddListener(isOn =>
                 {
                     OnToggleValueChanged(index, isOn);
@@ -326,6 +326,11 @@ namespace BirdGame
         private void OnEnable()
         {
             Refresh(this.GetModel<IClockModel>().TomatoItem.TimerCoroutine != null);
+        }
+
+        private void OnDisable()
+        {
+            this.GetSystem<IAudioSystem>().StopAlert();
         }
 
         private void InitLineAndText()
@@ -585,6 +590,7 @@ namespace BirdGame
             if (isOn)
             {
                 this.GetModel<IClockModel>().TomatoItem.AudioSelected.Value = index;
+                this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForSession;
                 this.GetSystem<IAudioSystem>().PlayAlert();
             }
         }

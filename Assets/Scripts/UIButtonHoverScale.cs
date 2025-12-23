@@ -119,6 +119,7 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
     public bool isHovering = false;
     private float hoverTimer = 0f;
     private bool disabled;
+    private RectTransform thisRect;
     
     // 鼠标检测
     private bool mouseWasOverButton = false;
@@ -133,6 +134,7 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
     
     void Start()
     {
+        thisRect = this.GetSystem<IUISystem>().GetCanvas().GetComponent<RectTransform>();
         //测试
         showTooltip = true;
         showBackground = false;
@@ -185,7 +187,9 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
     void Update()
     {
         if (disabled) return;
-        
+
+        SetPos();
+
         // 检测鼠标是否真的在按钮上
         bool mouseIsOverButton = IsMouseOverButton();
         
@@ -246,7 +250,7 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
             if (hoverTimer >= showDelay && tooltipObject != null)
             {
                 tooltipObject.SetActive(true);
-                UpdateTooltipPosition();
+                //UpdateTooltipPosition();
                 UpdateTooltipText();
                //Debug.Log("显示悬浮提示: " + hoverText);
             }
@@ -262,6 +266,27 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         if (SimpleMouseForwarder.clickCount > previousClickCount)
         {
             previousClickCount = SimpleMouseForwarder.clickCount;
+        }
+    }
+    
+    private void SetPos()
+    {
+        if (tooltipObject == null) return;
+        
+        Vector2 pos;
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(thisRect, Input.mousePosition, null, out pos))
+        {
+            // 考虑Canvas的pivot偏移
+            Vector2 canvasSize = thisRect.rect.size;
+            Vector2 canvasPivot = thisRect.pivot;
+                
+            // 调整坐标到Canvas中心为原点
+            Vector2 adjustedPosition = new Vector2(
+                pos.x + canvasSize.x * (0.5f - canvasPivot.x),
+                pos.y + canvasSize.y * (0.5f - canvasPivot.y)
+            );
+
+            tooltipObject.GetComponent<RectTransform>().anchoredPosition = adjustedPosition + Vector2.up * 10;
         }
     }
 
@@ -495,8 +520,8 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         
         // 添加RectTransform组件（UI元素必需）
         RectTransform tooltipRect = tooltipObject.AddComponent<RectTransform>();
-        tooltipRect.anchorMin = new Vector2(0, 0);
-        tooltipRect.anchorMax = new Vector2(0, 0);
+        tooltipRect.anchorMin = new Vector2(0.5f, 0.5f);
+        tooltipRect.anchorMax = new Vector2(0.5f, 0.5f);
         tooltipRect.pivot = new Vector2(0.5f, 0.5f);
         
         // 创建背景

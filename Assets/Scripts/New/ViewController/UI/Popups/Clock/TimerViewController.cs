@@ -197,12 +197,12 @@ namespace BirdGame
                 item.TimerCoroutine = null;
                 Refresh(false);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
-            for (int i = 0; i < audioToggles.Length; i++)
+            for (var i = 0; i < audioToggles.Length; i++)
             {
-                int index = i;
+                var id = i;
                 audioToggles[i].onValueChanged.AddListener(isOn =>
                 {
-                    OnToggleValueChanged(index, isOn);
+                    OnToggleValueChanged(id, isOn);
                 });
             }
             volumeSlider.onValueChanged.AddListener(v =>
@@ -220,6 +220,11 @@ namespace BirdGame
         private void OnEnable()
         {
             Refresh(this.GetModel<IClockModel>().TimerItem.TimerCoroutine != null);
+        }
+
+        private void OnDisable()
+        {
+            this.GetSystem<IAudioSystem>().StopAlert();
         }
 
         private void Refresh(bool isTiming)
@@ -329,6 +334,7 @@ namespace BirdGame
             if (isOn)
             {
                 this.GetModel<IClockModel>().TimerItem.AudioSelected.Value = index;
+                this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForTimer;
                 this.GetSystem<IAudioSystem>().PlayAlert();
             }
         }
