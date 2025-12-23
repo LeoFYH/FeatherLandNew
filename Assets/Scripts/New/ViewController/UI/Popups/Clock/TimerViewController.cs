@@ -329,6 +329,7 @@ namespace BirdGame
             if (isOn)
             {
                 this.GetModel<IClockModel>().TimerItem.AudioSelected.Value = index;
+                this.GetSystem<IAudioSystem>().PlayAlert();
             }
         }
     }

@@ -585,6 +585,7 @@ namespace BirdGame
             if (isOn)
             {
                 this.GetModel<IClockModel>().TomatoItem.AudioSelected.Value = index;
+                this.GetSystem<IAudioSystem>().PlayAlert();
             }
         }
     }

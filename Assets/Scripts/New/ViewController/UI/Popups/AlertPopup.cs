@@ -23,19 +23,19 @@ namespace BirdGame
                     .Append($"Focus succeed! {this.GetModel<IAccountModel>().AddedCoins} Bonus Coin Earned!")
                     .ToString();
                 icon.sprite = sps[0];
-                icon.GetComponent<RectTransform>().sizeDelta = new Vector2(sps[0].rect.x, sps[0].rect.y) * 0.5f;
+                icon.GetComponent<RectTransform>().sizeDelta = new Vector2(sps[0].rect.size.x, sps[0].rect.size.y) * 0.5f;
             }
             else if (type == AlertType.TimeUpForSession)
             {
                 alertText.SetKey("Time to have a break!");
                 icon.sprite = sps[0];
-                icon.GetComponent<RectTransform>().sizeDelta = new Vector2(sps[0].rect.x, sps[0].rect.y) * 0.5f;
+                icon.GetComponent<RectTransform>().sizeDelta = new Vector2(sps[0].rect.size.x, sps[0].rect.size.y) * 0.5f;
             }
             else
             {
                 alertText.SetKey("Time to work!");
                 icon.sprite = sps[1];
-                icon.GetComponent<RectTransform>().sizeDelta = new Vector2(sps[0].rect.x, sps[0].rect.y) * 0.5f;
+                icon.GetComponent<RectTransform>().sizeDelta = new Vector2(sps[0].rect.size.x, sps[0].rect.size.y) * 0.5f;
             }
             
             closeButton.onClick.AddListener(OnCloseClick);
