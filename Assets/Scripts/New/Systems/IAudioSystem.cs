@@ -54,7 +54,7 @@ namespace BirdGame
         /// <summary>
         /// 播放提醒
         /// </summary>
-        void PlayAlert();
+        void PlayAlert(bool once = false);
         /// <summary>
         /// 停止提醒
         /// </summary>
@@ -308,7 +308,7 @@ namespace BirdGame
             PlaySong();
         }
 
-        public void PlayAlert()
+        public void PlayAlert(bool once = false)
         {
             if (alertAudio == null)
             {

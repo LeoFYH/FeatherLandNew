@@ -11,7 +11,7 @@ namespace BirdGame
         public Transform content;
         public GameObject bookPrefab;
         public Button addButton;
-        public TMP_InputField noteInput;
+        public InputField noteInput;
 
         private int currentNoteIndex;
         private List<NoteItem> items = new List<NoteItem>();
