@@ -10,38 +10,83 @@ namespace BirdGame
         public RectTransform target;
         public float margin = 5f;
         
+        [Header("Hook Settings")] public bool enableHookSupport = true; // 启用钩子支持
+        
         private Vector2 originalPosition;
         private Vector2 deltaPosition;
+        private bool isDraggingFromHook = false;
         
+        void Start()
+        {
+            if (target == null)
+                target = GetComponent<RectTransform>();
+        }
 
         public void OnBeginDrag(PointerEventData eventData)
+        {
+            if (isDraggingFromHook) return; // 如果正在从钩子拖动，忽略EventSystem事件
+            
+            BeginDragInternal(eventData.position, eventData.pressEventCamera);
+        }
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            if (isDraggingFromHook) return; // 如果正在从钩子拖动，忽略EventSystem事件
+            
+            DragInternal(eventData.position, eventData.pressEventCamera);
+        }
+
+        public void OnEndDrag(PointerEventData eventData)
+        {
+            if (isDraggingFromHook) return; // 如果正在从钩子拖动，忽略EventSystem事件
+        }
+        
+        // Hook信号接收方法
+        public void ReceiveDragBegin(Vector2 screenPosition)
+        {
+            if (!enableHookSupport) return;
+            
+            isDraggingFromHook = true;
+            BeginDragInternal(screenPosition, null);
+        }
+
+        public void ReceiveDrag(Vector2 screenPosition)
+        {
+            if (!enableHookSupport || !isDraggingFromHook) return;
+            
+            DragInternal(screenPosition, null);
+        }
+
+        public void ReceiveDragEnd()
+        {
+            if (!enableHookSupport) return;
+            
+            isDraggingFromHook = false;
+        }
+        
+        private void BeginDragInternal(Vector2 screenPosition, Camera eventCamera)
         {
             originalPosition = target.anchoredPosition;
             Vector2 localPoint;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 target.parent as RectTransform, 
-                eventData.position, 
-                eventData.pressEventCamera, 
+                screenPosition, 
+                eventCamera, 
                 out localPoint);
             deltaPosition = originalPosition - localPoint;
         }
-
-        public void OnDrag(PointerEventData eventData)
+        
+        private void DragInternal(Vector2 screenPosition, Camera eventCamera)
         {
             Vector2 localPoint;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 target.parent as RectTransform, 
-                eventData.position, 
-                eventData.pressEventCamera, 
+                screenPosition, 
+                eventCamera, 
                 out localPoint);
             
             target.anchoredPosition = localPoint + deltaPosition;
             LimitToScreenBounds();
-        }
-
-        public void OnEndDrag(PointerEventData eventData)
-        {
-            
         }
         
         private void LimitToScreenBounds()
