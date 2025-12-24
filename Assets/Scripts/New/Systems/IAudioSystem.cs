@@ -335,7 +335,7 @@ namespace BirdGame
 
         public void StopAlert()
         {
-            if(alertAudio.isPlaying)
+            if(alertAudio!= null && alertAudio.isPlaying)
                 alertAudio.Stop();
         }
 
