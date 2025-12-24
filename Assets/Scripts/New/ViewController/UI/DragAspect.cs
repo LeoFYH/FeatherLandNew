@@ -12,12 +12,15 @@ namespace BirdGame
         public float maxScale = 3.0f;
 
         [Header("Resize Settings")] public float resizeSensitivity = 0.0008f; // 缩放灵敏度
+        
+        [Header("Hook Settings")] public bool enableHookSupport = true; // 启用钩子支持
 
         private Vector3 originalScale;
         private Vector2 originalPosition;
         private Vector2 originalMousePosition;
         private RectTransform parentRectTransform;
         private Vector2 originalSize;
+        private bool isDraggingFromHook = false;
 
         void Start()
         {
@@ -30,24 +33,61 @@ namespace BirdGame
 
         public void OnBeginDrag(PointerEventData eventData)
         {
+            if (isDraggingFromHook) return; // 如果正在从钩子拖动，忽略EventSystem事件
+            
+            BeginDragInternal(eventData.position, eventData.pressEventCamera);
+        }
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            if (isDraggingFromHook) return; // 如果正在从钩子拖动，忽略EventSystem事件
+            
+            DragInternal(eventData.position, eventData.pressEventCamera);
+        }
+
+        // Hook信号接收方法
+        public void ReceiveDragBegin(Vector2 screenPosition)
+        {
+            if (!enableHookSupport) return;
+            
+            isDraggingFromHook = true;
+            BeginDragInternal(screenPosition, null);
+        }
+
+        public void ReceiveDrag(Vector2 screenPosition)
+        {
+            if (!enableHookSupport || !isDraggingFromHook) return;
+            
+            DragInternal(screenPosition, null);
+        }
+
+        public void ReceiveDragEnd()
+        {
+            if (!enableHookSupport) return;
+            
+            isDraggingFromHook = false;
+        }
+
+        private void BeginDragInternal(Vector2 screenPosition, Camera eventCamera)
+        {
             originalScale = targetRectTransform.localScale;
             originalPosition = targetRectTransform.anchoredPosition;
 
             // 获取鼠标在父级Canvas中的位置
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 parentRectTransform,
-                eventData.position,
-                eventData.pressEventCamera,
+                screenPosition,
+                eventCamera,
                 out originalMousePosition);
         }
 
-        public void OnDrag(PointerEventData eventData)
+        private void DragInternal(Vector2 screenPosition, Camera eventCamera)
         {
             // 获取当前鼠标在父级Canvas中的位置
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 parentRectTransform,
-                eventData.position,
-                eventData.pressEventCamera,
+                screenPosition,
+                eventCamera,
                 out Vector2 currentMousePosition);
 
             // 计算鼠标移动的差值

@@ -1814,6 +1814,7 @@ GameObject:
   - component: {fileID: 201857875001789656}
   - component: {fileID: 6434776630368536794}
   - component: {fileID: 8437924666795326384}
+  - component: {fileID: 486439856526533695}
   m_Layer: 5
   m_Name: InputField (Legacy)
   m_TagString: Untagged
@@ -1948,6 +1949,25 @@ MonoBehaviour:
   m_CaretWidth: 1
   m_ReadOnly: 0
   m_ShouldActivateOnSelect: 1
+--- !u!114 &486439856526533695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5642548671463442930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 103cf03ae4bb05847bbc9e99cbbe81a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputField: {fileID: 8437924666795326384}
+  backgroundImage: {fileID: 6434776630368536794}
+  autoActivateOnClick: 1
+  selectAllOnClick: 0
+  enableClickToPositionCaret: 1
+  enableDebugLog: 0
+  selectionColor: {r: 0.2, g: 0.4, b: 0.8, a: 0.4}
 --- !u!1 &5727975231143820576
 GameObject:
   m_ObjectHideFlags: 0
@@ -2363,7 +2383,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.3584906, g: 0.2597051, b: 0.18149993, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -3110,7 +3130,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 0.5}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
