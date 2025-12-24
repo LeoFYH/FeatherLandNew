@@ -339,6 +339,7 @@ namespace BirdGame
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
+                this.GetSystem<IUISystem>().HideAllPopups();
                 noteToggle.isOn = false;
                 radioToggle.isOn = false;
                 shopButton.isOn = false;
@@ -346,7 +347,6 @@ namespace BirdGame
                 illustratedButton.isOn = false;
                 mapButton.isOn = false;
                 settingButton.isOn = true;
-                //this.GetSystem<IUISystem>().HideAllPopups();
                 //this.GetSystem<IUISystem>().ShowPopup(UIPopup.SettingPopup);
             }
         }
