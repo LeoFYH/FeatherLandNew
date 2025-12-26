@@ -346,7 +346,7 @@ namespace BirdGame
                 clockToggle.isOn = false;
                 illustratedButton.isOn = false;
                 mapButton.isOn = false;
-                settingButton.isOn = true;
+                settingButton.isOn = false;
                 //this.GetSystem<IUISystem>().ShowPopup(UIPopup.SettingPopup);
             }
         }
