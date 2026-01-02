@@ -22,6 +22,7 @@ namespace BirdGame
         public TextMeshProUGUI priceText;
         public TMP_InputField cutomName;
         public Button addtoDesktop;
+        public Button editorButton;
 
         [Header("点击外部关闭设置")]
         public Transform contentTransform;  // 主要内容区域，用于检测点击区域
@@ -283,7 +284,10 @@ namespace BirdGame
             {
                 UpdateBirdNameText();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
-            
+            editorButton.onClick.AddListener(()=>
+            {
+                cutomName.ActivateInputField();
+            });
             
             int index = this.GetModel<IGameModel>().CurrentSelectedBirdIndex;
             var data = this.GetModel<IBirdModel>().BirdList[index];
