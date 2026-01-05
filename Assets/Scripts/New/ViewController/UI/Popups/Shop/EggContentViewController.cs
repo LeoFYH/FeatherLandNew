@@ -34,7 +34,7 @@ namespace BirdGame
                 int currentCount = configModel.ShopConfig.sceneEggs[mapIndex].eggs[gameModel.ShopEggSelectIndex.Value]
                     .birdCount;
                 int maxCount = this.GetModel<IConfigModel>().BirdConfig.maxBirdCount;
-                int addedCount = this.GetModel<ISaveModel>().AccountData.addedMaxBirdValue;
+                int addedCount = this.GetModel<IBirdModel>().AddedBirdCount;
                 if (currentCount + this.GetModel<IBirdModel>().BirdList.Count > maxCount + addedCount)
                 {
                     string text = this.GetSystem<ILocalizationSystem>().GetString("MaxEggLimitKey");

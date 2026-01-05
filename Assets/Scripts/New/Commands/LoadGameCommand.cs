@@ -103,6 +103,25 @@ namespace BirdGame
             this.GetSystem<ISaveSystem>().InitData();
             this.GetSystem<IGameSystem>().InitAccount();
             InitializeDefaultFood();
+            var saveModel = this.GetModel<ISaveModel>();
+            var birdModel = this.GetModel<IBirdModel>();
+            if (saveModel.AccountData.tools.Count <= 1)
+            {
+                birdModel.AddedBirdCount = 0;
+            }
+            else if( saveModel.AccountData.tools[1].unlockedList == null || saveModel.AccountData.tools[1].unlockedList.Count ==0)
+            {
+                birdModel.AddedBirdCount = 0;
+            }
+            else
+            {
+                birdModel.AddedBirdCount = 0;
+                for (int i = 0; i < saveModel.AccountData.tools[1].unlockedList.Count; i++)
+                {
+                    birdModel.AddedBirdCount += 10;
+                }
+            }
+            
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             this.GetSystem<ISceneSystem>().LoadScene(mapIndex, progress =>
             {

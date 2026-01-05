@@ -53,17 +53,26 @@ namespace BirdGame
             Debug.Log("名称：" + item.name);
             itemName.SetKey(item.name);
             selectName.SetKey(item.selections[gameModel.SelectedToolDic[index].Value].selectionName);
-            
-            // 优先使用descriptionKey，如果没有设置则使用description
-            var selectedTool = item.selections[gameModel.SelectedToolDic[index].Value];
-            if (!string.IsNullOrEmpty(selectedTool.descriptionKey))
-            {
-                description.SetKey(selectedTool.descriptionKey);
+            if (item.selections[0].type == ToolType.BirdMaxCount)
+            { 
+                int current = this.GetModel<IConfigModel>().BirdConfig.maxBirdCount +
+                              this.GetModel<IBirdModel>().AddedBirdCount;
+                description.SetKey($"Upgrade forest bird capacity to {item.selections[gameModel.SelectedToolDic[index].Value].selectionName}.\n<i>Current bird capacity:{current}</i>");
             }
             else
             {
-                description.SetKey(selectedTool.description);
+                // 优先使用descriptionKey，如果没有设置则使用description
+                var selectedTool = item.selections[gameModel.SelectedToolDic[index].Value];
+                if (!string.IsNullOrEmpty(selectedTool.descriptionKey))
+                {
+                    description.SetKey(selectedTool.descriptionKey);
+                }
+                else
+                {
+                    description.SetKey(selectedTool.description);
+                }
             }
+
             if (item.selections[0].type == ToolType.Food)
             {
                 bool isInitialPurchased = saveModel.AccountData.tools[itemIndex].unlockedList
@@ -98,10 +107,10 @@ namespace BirdGame
             else if (item.selections[0].type == ToolType.BirdMaxCount)
             {
                 bool isInitialPurchased = saveModel.AccountData.tools[itemIndex].unlockedList
-                    .Contains(gameModel.SelectedToolDic[index].Value);
+                    .Contains(gameModel.SelectedToolDic[index].Value + 1);
                 if (isInitialPurchased)
                 {
-                    priceText.text = "equipped";
+                    priceText.text = "Purchased";
                     buyButton.enabled = false;
                 }
                 else
@@ -123,13 +132,14 @@ namespace BirdGame
                     {
                        continue; 
                     }
-
+                    
                     if (!initFirst)
                     {
                         initFirst = true;
                     }
                     else
                     {
+                        select.SetActive(false);
                         var toggle = select.GetComponent<Toggle>();
                         toggle.enabled = false;
                         toggle.graphic.gameObject.SetActive(false);
@@ -139,25 +149,29 @@ namespace BirdGame
 
             gameModel.SelectedToolDic[itemIndex].Register(v =>
             {
-                var sp = item.selections[v].icon;
-                icon.sprite = sp;
-                if(sp != null)
-                    icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.3f;
-                selectName.SetKey(item.selections[v].selectionName);
                 selectName.SetKey(item.selections[v].selectionName);
                 
                 // 优先使用descriptionKey，如果没有设置则使用description
                 var selectedTool = item.selections[v];
-                if (!string.IsNullOrEmpty(selectedTool.descriptionKey))
+                if(item.selections[v].type == ToolType.Food)
                 {
-                    description.SetKey(selectedTool.descriptionKey);
+                    description.SetKey(!string.IsNullOrEmpty(selectedTool.descriptionKey)
+                    ? selectedTool.descriptionKey
+                    : selectedTool.description);
+                    
                 }
                 else
                 {
-                    description.SetKey(selectedTool.description);
+                    int current = this.GetModel<IConfigModel>().BirdConfig.maxBirdCount +
+                                  this.GetModel<IBirdModel>().AddedBirdCount;
+                    description.SetKey($"Upgrade forest bird capacity to {item.selections[v].selectionName}.\n<i>Current bird capacity:{current}</i>");
                 }
                 if (item.selections[0].type == ToolType.Food)
                 {
+                    var sp = item.selections[v].icon;
+                    icon.sprite = sp;
+                    if(sp != null)
+                        icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size;
                     // 检查食物状态，决定显示内容
                     bool isPurchased = saveModel.AccountData.tools[index].unlockedList.Contains(v);
                     bool isEquipped = saveModel.AccountData.tools[index].equipedId == v;
@@ -180,10 +194,10 @@ namespace BirdGame
                 }
                 else if(item.selections[0].type == ToolType.BirdMaxCount)
                 {
-                    bool isPurchased = saveModel.AccountData.tools[index].unlockedList.Contains(v);
+                    bool isPurchased = saveModel.AccountData.tools[index].unlockedList.Contains(v + 1);
                     if (isPurchased)
                     {
-                        priceText.text = "equipped";
+                        priceText.text = "Purchased";
                         buyButton.enabled = false;
                     }
                     else
@@ -229,6 +243,10 @@ namespace BirdGame
                 
                 // 检查是否已经购买过
                 bool isPurchased = saveModel.AccountData.tools[itemIndex].unlockedList.Contains(selectedToolIndex);
+                if (toolItem.selections[0].type == ToolType.BirdMaxCount)
+                {
+                    isPurchased = saveModel.AccountData.tools[itemIndex].unlockedList.Contains(selectedToolIndex + 1);
+                }
                 
                 if (!isPurchased)
                 {
@@ -242,7 +260,7 @@ namespace BirdGame
                             this.GetModel<IAccountModel>().Coins.Value -= price;
 
                             // 添加到已购买列表
-                            saveModel.AccountData.tools[itemIndex].unlockedList.Add(selectedToolIndex);
+                            
 
                             saveModel.AccountData.tools[itemIndex].equipedId = selectedToolIndex;
                             // 根据工具类型应用不同的效果
@@ -252,6 +270,7 @@ namespace BirdGame
                                 string text = this.GetSystem<ILocalizationSystem>()
                                     .GetString("Purchase successful! Food skins are equipped:");
                                 this.GetSystem<IUISystem>().ShowPrompt($"{text} {selectedTool.selectionName}");
+                                saveModel.AccountData.tools[itemIndex].unlockedList.Add(selectedToolIndex);
                                 //this.GetSystem<IUISystem>().ShowPrompt($"购买成功！食物皮肤已装备: {selectedTool.selectionName}");
                             }
                             else if (toolItem.name.ToLower() == "cursor")
@@ -260,10 +279,13 @@ namespace BirdGame
                                 string text = this.GetSystem<ILocalizationSystem>()
                                     .GetString("Purchase successful! Cursor skins are equipped:");
                                 this.GetSystem<IUISystem>().ShowPrompt($"{text} {selectedTool.selectionName}");
+                                saveModel.AccountData.tools[itemIndex].unlockedList.Add(selectedToolIndex);
                             }
                             else if (toolItem.selections[0].type == ToolType.BirdMaxCount)
                             {
-                                this.GetModel<ISaveModel>().AccountData.addedMaxBirdValue += selectedTool.addCount;
+                                saveModel.AccountData.tools[itemIndex].unlockedList.Add(selectedToolIndex + 1);
+                                this.GetModel<IBirdModel>().AddedBirdCount += 10;
+                                //this.GetModel<ISaveModel>().AccountData.addedMaxBirdValue += selectedTool.addCount;
                                 //this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
                                 bool initFirst = false;
                                 for (int i = 0; i < selections.Count; i++)
@@ -291,7 +313,8 @@ namespace BirdGame
                             }
                             
                             UpdateButtonState();
-                            this.GetSystem<IUISystem>().HidePopup(UIPopup.ShopPopup);
+                            //this.GetSystem<IUISystem>().HidePopup(UIPopup.ShopPopup);
+                            this.GetSystem<IGameSystem>().SendEvent<OnShopCloseEvent>();
                         });
                     }
                     else
@@ -318,7 +341,8 @@ namespace BirdGame
                     }
                     
                     UpdateButtonState();
-                    this.GetSystem<IUISystem>().HidePopup(UIPopup.ShopPopup);
+                    //this.GetSystem<IUISystem>().HidePopup(UIPopup.ShopPopup);
+                    this.GetSystem<IGameSystem>().SendEvent<OnShopCloseEvent>();
                 }
             });
         }
