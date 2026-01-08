@@ -68,6 +68,8 @@ namespace BirdGame
         /// <param name="weatherIndex">天气索引：0=晴天, 1=雨天, 2=夜晚, 3=黄昏, 4=其他</param>
         /// <param name="useFade">是否使用淡入淡出效果，默认为true</param>
         void SetEnvironmentVolumesByWeather(int weatherIndex, bool useFade = true);
+
+        void RandomPlayPetting();
     }
 
     public class AudioSystem : AbstractSystem, IAudioSystem
@@ -78,6 +80,7 @@ namespace BirdGame
         private AudioSource effectAudio;
         private AudioSource birdAudio;
         private AudioSource alertAudio;
+        private AudioSource pettingAudio;
         private bool isEnvironmentInited = false;
         private GameObject obj;
         private Coroutine musicPlayingCoroutine = null;
@@ -96,6 +99,8 @@ namespace BirdGame
             birdAudio = obj.AddComponent<AudioSource>();
             birdAudio.loop = false;
             radioAudio.volume = radioModel.Volume.Value;
+            pettingAudio = obj.AddComponent<AudioSource>();
+            pettingAudio.loop = false;
             radioModel.Volume.Register(v =>
             {
                 radioAudio.volume = v;
@@ -566,7 +571,15 @@ namespace BirdGame
                 }
             }
         }
-        
+
+        public void RandomPlayPetting()
+        {
+            var config = this.GetModel<IConfigModel>().RadioConfig;
+            int index = Random.Range(0, config.pettingClips.Length);
+            pettingAudio.clip = config.pettingClips[index];
+            pettingAudio.Play();
+        }
+
         /// <summary>
         /// 环境音淡入淡出协程
         /// </summary>

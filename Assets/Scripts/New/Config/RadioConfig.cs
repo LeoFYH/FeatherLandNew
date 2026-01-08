@@ -17,6 +17,8 @@ namespace BirdGame
 
         [Title("Clock提示音乐库"), Space(10), TableList(ShowIndexLabels = true, AlwaysExpanded = true)] 
         public AudioItem[] alertClips;
+
+        public AudioClip[] pettingClips;
     }
 
     [Serializable]

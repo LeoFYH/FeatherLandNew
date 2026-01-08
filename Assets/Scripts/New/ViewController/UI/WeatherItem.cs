@@ -10,9 +10,10 @@ namespace BirdGame
 
         public void Start()
         {
-            GetComponent<Button>().onClick.AddListener(() =>
+            GetComponent<Toggle>().onValueChanged.AddListener(isOn =>
             {
-                this.SendCommand(new ChangeWeatherCommand(index));
+                if (isOn)
+                    this.SendCommand(new ChangeWeatherCommand(index));
             });
         }
     }

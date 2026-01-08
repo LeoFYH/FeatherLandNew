@@ -11,6 +11,8 @@ namespace BirdGame
     public class MenuPanel : UIBase
     {
         public Button weatherButton;
+
+        public Image weatherImage;
         //public Sprite[] weatherSps;
         public Toggle noteToggle;
         public Toggle radioToggle;
@@ -57,7 +59,7 @@ namespace BirdGame
             illustratedPosX = illustratedButton.GetComponent<RectTransform>().anchoredPosition.x;
             weatherPosX = weatherButton.GetComponent<RectTransform>().anchoredPosition.x;
             mapPosX = mapButton.GetComponent<RectTransform>().anchoredPosition.x;
-            itemRect.anchoredPosition = new Vector2(0, -220);
+            itemRect.anchoredPosition = new Vector2(36.5f, -220);
             
             Debug.Log("MenuPanel Start方法开始执行");
             Debug.Log($"MenuPanel GameObject名称: {gameObject.name}");
@@ -220,21 +222,23 @@ namespace BirdGame
                 contentAnim?.Kill();
                 if (!isShowWeatherItems)
                 {
-                    for (int i = 0; i < weatherItems.Length; i++)
-                    {
-                        if (i == this.GetModel<IGameModel>().WeatherIndex.Value)
-                        {
-                            weatherItems[i].SetActive(false);
-                        }
-                        else if (!weatherItems[i].activeSelf)
-                        {
-                            weatherItems[i].SetActive(true);
-                        }
-                    }
+                    // for (int i = 0; i < weatherItems.Length; i++)
+                    // {
+                    //     if (i == this.GetModel<IGameModel>().WeatherIndex.Value)
+                    //     {
+                    //         weatherItems[i].SetActive(false);
+                    //     }
+                    //     else if (!weatherItems[i].activeSelf)
+                    //     {
+                    //         weatherItems[i].SetActive(true);
+                    //     }
+                    // }
 
                     content.anchoredPosition = new Vector2(400, 0);
                     content.gameObject.SetActive(true);
                     contentAnim = content.DOAnchorPosX(0, 0.3f);
+                    weatherImage.color= Color.white;
+                    itemRect.gameObject.SetActive(true);
                 }
                 else
                 {
@@ -243,10 +247,14 @@ namespace BirdGame
                     {
                         content.gameObject.SetActive(false);
                     });
+                    weatherImage.color = Color.clear;
+                    itemRect.gameObject.SetActive(false);
                 }
 
                 isShowWeatherItems = !isShowWeatherItems;
             });
+            weatherImage.color= Color.clear;
+            itemRect.gameObject.SetActive(false);
 
             this.RegisterEvent<HideWeatherContentEvent>(evt =>
             {
@@ -256,6 +264,8 @@ namespace BirdGame
                     content.gameObject.SetActive(false);
                 });
                 isShowWeatherItems = false;
+                weatherImage.color= Color.clear;
+                itemRect.gameObject.SetActive(false);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
             content.anchoredPosition = new Vector2(400, 0);
@@ -302,7 +312,7 @@ namespace BirdGame
                     illustratedButton.GetComponent<RectTransform>().DOAnchorPosX(illustratedPosX - 300, 0.3f);
                     weatherButton.GetComponent<RectTransform>().DOAnchorPosX(weatherPosX + 300, 0.3f);
                     mapButton.GetComponent<RectTransform>().DOAnchorPosX(mapPosX + 300, 0.3f);
-                    itemRect.DOAnchorPosX(470, 0.3f);
+                    itemRect.DOAnchorPosX(336.5f, 0.3f);
                 }
                 else
                 {
@@ -311,7 +321,7 @@ namespace BirdGame
                     illustratedButton.GetComponent<RectTransform>().DOAnchorPosX(illustratedPosX, 0.3f);
                     weatherButton.GetComponent<RectTransform>().DOAnchorPosX(weatherPosX, 0.3f);
                     mapButton.GetComponent<RectTransform>().DOAnchorPosX(mapPosX, 0.3f);
-                    itemRect.DOAnchorPosX(0, 0.3f);
+                    itemRect.DOAnchorPosX(36.5f, 0.3f);
                 }
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             this.GetModel<IClockModel>().TomatoItem.TimeString.Register(v =>
