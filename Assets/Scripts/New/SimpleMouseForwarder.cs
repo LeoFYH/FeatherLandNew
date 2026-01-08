@@ -65,6 +65,7 @@ namespace BirdGame
         private static LowLevelKeyboardProc _keyboardProc = KeyboardHookCallback;
         private static GameObject _focusedTMPInputField = null;
         private static GameObject _focusedLegacyInputField = null;
+        private static GameObject _currentHoveredPointerEvent = null;
 
         private static bool isLeftMouseDragging = false;
         private static Vector2 dragStartPosition;
@@ -505,6 +506,29 @@ namespace BirdGame
                         }
                     }
 
+                    // Handle PointerEvent enter/exit
+                    GameObject pointerEventTarget = FindPointerEventTarget(currentMousePosition);
+                    
+                    // Check if we're entering a new PointerEvent
+                    if (pointerEventTarget != null && pointerEventTarget != _currentHoveredPointerEvent)
+                    {
+                        // Exit the previous one if exists
+                        if (_currentHoveredPointerEvent != null)
+                        {
+                            HandlePointerExit(_currentHoveredPointerEvent, currentMousePosition);
+                        }
+                        
+                        // Enter the new one
+                        _currentHoveredPointerEvent = pointerEventTarget;
+                        HandlePointerEnter(_currentHoveredPointerEvent, currentMousePosition);
+                    }
+                    // Check if we're exiting the current PointerEvent
+                    else if (_currentHoveredPointerEvent != null && pointerEventTarget != _currentHoveredPointerEvent)
+                    {
+                        HandlePointerExit(_currentHoveredPointerEvent, currentMousePosition);
+                        _currentHoveredPointerEvent = null;
+                    }
+
                     lastMousePosition = currentMousePosition;
                 }
                 else if (message == WM_LBUTTONUP)
@@ -523,6 +547,25 @@ namespace BirdGame
                             if (dragMove != null && dragMove.enableHookSupport)
                             {
                                 dragMove.ReceiveDragEnd();
+                            }
+                            else
+                            {
+                                // Check if it's a slider handler
+                                SliderBarClickHandler sliderHandler = currentDragTarget.GetComponent<SliderBarClickHandler>();
+                                if (sliderHandler != null && EventSystem.current != null)
+                                {
+                                    PointerEventData pointerData = new PointerEventData(EventSystem.current)
+                                    {
+                                        position = currentMousePosition,
+                                        button = PointerEventData.InputButton.Left
+                                    };
+                                    ExecuteEvents.Execute(currentDragTarget, pointerData, ExecuteEvents.pointerUpHandler);
+                                    
+                                    if (instance.showDebugLog)
+                                    {
+                                        Debug.Log($"[SimpleMouseForwarder] 滑块鼠标释放: {currentDragTarget.name}");
+                                    }
+                                }
                             }
                         }
                     }
@@ -643,6 +686,37 @@ namespace BirdGame
             return null;
         }
 
+        private static GameObject FindPointerEventTarget(Vector2 screenPosition)
+        {
+            if (EventSystem.current == null) return null;
+
+            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            {
+                position = screenPosition,
+                button = PointerEventData.InputButton.Left
+            };
+
+            var raycastResults = new System.Collections.Generic.List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointerData, raycastResults);
+
+            foreach (var result in raycastResults)
+            {
+                // Look for PointerEvent handlers on the hit object or any of its parents
+                Transform current = result.gameObject.transform;
+                while (current != null)
+                {
+                    BirdGame.PointerEvent pointerEvent = current.GetComponent<BirdGame.PointerEvent>();
+                    if (pointerEvent != null)
+                    {
+                        return current.gameObject;
+                    }
+                    current = current.parent;
+                }
+            }
+
+            return null;
+        }
+
         private static void ForwardDragToScrollRect(GameObject target, Vector2 delta)
         {
             if (target == null) return;
@@ -689,6 +763,40 @@ namespace BirdGame
             }
         }
 
+        private static void HandlePointerEnter(GameObject target, Vector2 screenPosition)
+        {
+            if (target == null || EventSystem.current == null) return;
+
+            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            {
+                position = screenPosition
+            };
+
+            ExecuteEvents.Execute(target, pointerData, ExecuteEvents.pointerEnterHandler);
+
+            if (instance != null && instance.showDebugLog)
+            {
+                Debug.Log($"[SimpleMouseForwarder] 指针进入: {target.name}");
+            }
+        }
+
+        private static void HandlePointerExit(GameObject target, Vector2 screenPosition)
+        {
+            if (target == null || EventSystem.current == null) return;
+
+            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            {
+                position = screenPosition
+            };
+
+            ExecuteEvents.Execute(target, pointerData, ExecuteEvents.pointerExitHandler);
+
+            if (instance != null && instance.showDebugLog)
+            {
+                Debug.Log($"[SimpleMouseForwarder] 指针离开: {target.name}");
+            }
+        }
+
         private string GetForegroundWindowTitle()
         {
             IntPtr hwnd = GetForegroundWindow();
@@ -732,6 +840,15 @@ namespace BirdGame
                     {
                         Debug.Log($"[SimpleMouseForwarder] 转发右键点击到Unity EventSystem: {mousePosition}");
                     }
+                }
+            }
+            else
+            {
+                // Clear hovered pointer event when not on desktop
+                if (_currentHoveredPointerEvent != null)
+                {
+                    HandlePointerExit(_currentHoveredPointerEvent, currentMousePosition);
+                    _currentHoveredPointerEvent = null;
                 }
             }
         }
