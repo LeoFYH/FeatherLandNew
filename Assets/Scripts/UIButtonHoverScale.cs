@@ -165,15 +165,28 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
 
         if (showTooltip)
         {
-            // 获取或创建Canvas
-            canvas = FindFirstObjectByType<Canvas>();
+            // 确保使用与thisRect相同的Canvas，避免不同地图使用不同Canvas导致位置错误
+            if (thisRect != null)
+            {
+                canvas = thisRect.GetComponent<Canvas>();
+                if (canvas == null)
+                {
+                    canvas = thisRect.GetComponentInParent<Canvas>();
+                }
+            }
+            
+            // 如果还是找不到，尝试查找（备用方案）
+            if (canvas == null)
+            {
+                canvas = FindFirstObjectByType<Canvas>();
+            }
+            
             if (canvas == null)
             {
                 Debug.LogWarning("未找到Canvas，无法显示悬浮提示！");
                 return;
             }
             
-           
             // 创建悬浮提示对象
             CreateTooltipObject();
             
@@ -271,23 +284,74 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
     
     private void SetPos()
     {
-        if (tooltipObject == null) return;
+        if (tooltipObject == null || thisRect == null) return;
+        
+        RectTransform tooltipRect = tooltipObject.GetComponent<RectTransform>();
+        if (tooltipRect == null) return;
+        
+        // 获取Canvas组件以确定正确的相机参数
+        Canvas targetCanvas = thisRect.GetComponent<Canvas>();
+        if (targetCanvas == null)
+        {
+            targetCanvas = thisRect.GetComponentInParent<Canvas>();
+        }
+        
+        Camera canvasCamera = null;
+        if (targetCanvas != null)
+        {
+            // 根据Canvas渲染模式确定相机
+            if (targetCanvas.renderMode == RenderMode.ScreenSpaceCamera || targetCanvas.renderMode == RenderMode.WorldSpace)
+            {
+                canvasCamera = targetCanvas.worldCamera;
+            }
+            // ScreenSpaceOverlay模式时canvasCamera保持为null
+        }
+        
+        // 获取tooltip的父级RectTransform
+        RectTransform tooltipParentRect = tooltipRect.parent as RectTransform;
         
         Vector2 pos;
-        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(thisRect, Input.mousePosition, null, out pos))
+        // 如果tooltip的父级就是thisRect，直接转换
+        if (tooltipParentRect == thisRect)
         {
-            // 考虑Canvas的pivot偏移
-            Vector2 canvasSize = thisRect.rect.size;
-            Vector2 canvasPivot = thisRect.pivot;
-                
-            // 调整坐标到Canvas中心为原点
-            Vector2 adjustedPosition = new Vector2(
-                pos.x + canvasSize.x * (0.5f - canvasPivot.x),
-                pos.y + canvasSize.y * (0.5f - canvasPivot.y)
-            );
-
-            tooltipObject.GetComponent<RectTransform>().anchoredPosition = adjustedPosition + Vector2.up * 10;
+            if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(thisRect, Input.mousePosition, canvasCamera, out pos))
+            {
+                return;
+            }
         }
+        else if (tooltipParentRect != null)
+        {
+            // tooltip的父级和thisRect不同，需要坐标转换
+            // 先转换到thisRect的本地坐标
+            if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(thisRect, Input.mousePosition, canvasCamera, out Vector2 thisRectPos))
+            {
+                return;
+            }
+            
+            // 将thisRect的本地坐标转换为世界坐标
+            Vector3 worldPos = thisRect.TransformPoint(thisRectPos);
+            
+            // 将世界坐标转换为tooltip父级的本地坐标
+            if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                tooltipParentRect, 
+                RectTransformUtility.WorldToScreenPoint(canvasCamera != null ? canvasCamera : Camera.main, worldPos), 
+                canvasCamera, 
+                out pos))
+            {
+                return;
+            }
+        }
+        else
+        {
+            // tooltip没有RectTransform父级，直接使用thisRect的坐标
+            if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(thisRect, Input.mousePosition, canvasCamera, out pos))
+            {
+                return;
+            }
+        }
+        
+        // 设置位置，添加小偏移避免遮挡鼠标
+        tooltipRect.anchoredPosition = pos + Vector2.up * 10;
     }
 
     /// <summary>
@@ -504,18 +568,40 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         // 获取Canvas（如果还没有获取）
         if (canvas == null)
         {
-            canvas = FindFirstObjectByType<Canvas>();
+            // 优先使用与thisRect相同的Canvas
+            if (thisRect != null)
+            {
+                canvas = thisRect.GetComponent<Canvas>();
+                if (canvas == null)
+                {
+                    canvas = thisRect.GetComponentInParent<Canvas>();
+                }
+            }
+            
+            // 如果还是找不到，尝试查找（备用方案）
             if (canvas == null)
             {
-                
+                canvas = FindFirstObjectByType<Canvas>();
+            }
+            
+            if (canvas == null)
+            {
+                Debug.LogWarning("未找到Canvas，无法创建悬浮提示！");
                 return;
             }
-           
         }
         
-        // 创建主对象
+        // 创建主对象，确保使用与thisRect相同的Canvas
         tooltipObject = new GameObject("Tooltip");
-        tooltipObject.transform.SetParent(canvas.transform, false);
+        // 优先作为thisRect的子对象，确保在同一坐标系
+        if (thisRect != null)
+        {
+            tooltipObject.transform.SetParent(thisRect, false);
+        }
+        else
+        {
+            tooltipObject.transform.SetParent(canvas.transform, false);
+        }
         tooltipObject.SetActive(false);
         
         // 添加RectTransform组件（UI元素必需）
