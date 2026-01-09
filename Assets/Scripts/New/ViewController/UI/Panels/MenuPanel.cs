@@ -367,15 +367,18 @@ namespace BirdGame
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                this.GetSystem<IUISystem>().HideAllPopups();
-                noteToggle.isOn = false;
-                radioToggle.isOn = false;
-                shopButton.isOn = false;
-                clockToggle.isOn = false;
-                illustratedButton.isOn = false;
-                mapButton.isOn = false;
-                settingButton.isOn = false;
-                //this.GetSystem<IUISystem>().ShowPopup(UIPopup.SettingPopup);
+                // 检查设置界面是否已经打开
+                var settingPopup = this.GetSystem<IUISystem>().GetPopup<UIBase>(UIPopup.SettingPopup);
+                if (settingPopup != null)
+                {
+                    // 如果已经打开，则关闭
+                    settingButton.isOn = false;
+                }
+                else
+                {
+                    // 如果没打开，则打开
+                    settingButton.isOn = true;
+                }
             }
         }
 
