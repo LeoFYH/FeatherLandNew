@@ -93,7 +93,7 @@ namespace BirdGame
 
                         accountData.sceneDecorationInfos[mapIndex].decorations[id].position.Add(pos);
                         string text = this.GetSystem<ILocalizationSystem>()
-                            .GetString("Purchase successful! The ornament has been placed in the designated place");
+                            .GetString("Purchase successful! The decoration has been placed!");
                         this.GetSystem<IUISystem>().ShowPrompt(text);
                         //this.GetSystem<IUISystem>().ShowPrompt("购买成功！装饰品已放置在指定位置");
 

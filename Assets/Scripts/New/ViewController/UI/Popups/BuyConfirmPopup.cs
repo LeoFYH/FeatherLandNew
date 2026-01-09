@@ -2,6 +2,7 @@
 using DG.Tweening;
 using QFramework;
 using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace BirdGame
@@ -26,9 +27,23 @@ namespace BirdGame
 
         private void Start()
         {
-            closeButton.onClick.AddListener(OnCloseClick);
+            if (closeButton != null)
+            {
+                closeButton.onClick.AddListener(OnCloseClick);
+            }
+            else
+            {
+                Debug.LogError("BuyConfirmPopup: closeButton 未在 Inspector 中配置！");
+            }
             
-            buyButton.onClick.AddListener(OnBuyClick);
+            if (buyButton != null)
+            {
+                buyButton.onClick.AddListener(OnBuyClick);
+            }
+            else
+            {
+                Debug.LogError("BuyConfirmPopup: buyButton 未在 Inspector 中配置！");
+            }
         }
 
         public void OnCloseClick()
