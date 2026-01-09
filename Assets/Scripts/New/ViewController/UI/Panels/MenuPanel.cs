@@ -42,6 +42,8 @@ namespace BirdGame
         private float weatherPosX;
         private float mapPosX;
         
+        private bool isSyncingShopButton = false; // 标志位：正在同步 shopButton 状态，避免重复调用 HidePopup
+        
         public override void OnShowPanel()
         {
             
@@ -128,6 +130,12 @@ namespace BirdGame
                
             shopButton.onValueChanged.AddListener(isOn =>
             {
+                if (isSyncingShopButton)
+                {
+                    // 正在同步状态，跳过这次调用
+                    return;
+                }
+                
                 if (isOn)
                 {
                     uiSystem.ShowPopup(UIPopup.ShopPopup);
@@ -196,7 +204,17 @@ namespace BirdGame
 
             this.RegisterEvent<OnShopCloseEvent>(evt =>
             {
+                // 设置标志位，避免在设置 isOn = false 时触发 onValueChanged 导致重复调用 HidePopup
+                isSyncingShopButton = true;
+                
+                // 关闭商店（如果存在）
+                uiSystem.HidePopup(UIPopup.ShopPopup);
+                
+                // 同步 Toggle 状态（由于标志位，不会触发 onValueChanged 中的 HidePopup）
                 shopButton.isOn = false;
+                
+                // 重置标志位
+                isSyncingShopButton = false;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
             if (!viewGroup.activeSelf)

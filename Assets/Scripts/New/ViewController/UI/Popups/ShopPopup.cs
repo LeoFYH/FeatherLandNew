@@ -42,7 +42,8 @@ namespace BirdGame
             
             closeButton.onClick.AddListener(() =>
             {
-                this.GetSystem<IUISystem>().SendEvent<OnShopCloseEvent>();
+                // 统一使用 IGameSystem 发送事件，确保与其他地方一致
+                this.GetSystem<IGameSystem>().SendEvent<OnShopCloseEvent>();
             });
 
             // buyButton.onClick.AddListener(() =>

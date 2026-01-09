@@ -96,6 +96,9 @@ namespace BirdGame
                             .GetString("Purchase successful! The decoration has been placed!");
                         this.GetSystem<IUISystem>().ShowPrompt(text);
                         //this.GetSystem<IUISystem>().ShowPrompt("购买成功！装饰品已放置在指定位置");
+                        
+                        // 统一通过事件关闭商店，确保 shopButton 状态同步
+                        this.GetSystem<IGameSystem>().SendEvent<OnShopCloseEvent>();
 
                     });
                 }

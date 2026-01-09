@@ -49,7 +49,8 @@ namespace BirdGame
                     {
                         this.GetModel<IAccountModel>().Coins.Value -= price;
                         this.SendCommand<CreateBirdCommand>();
-                        this.GetSystem<IUISystem>().HidePopup(UIPopup.ShopPopup);
+                        // 统一通过事件关闭商店，确保 shopButton 状态同步
+                        this.GetSystem<IGameSystem>().SendEvent<OnShopCloseEvent>();
                     });
                 }
                 else
