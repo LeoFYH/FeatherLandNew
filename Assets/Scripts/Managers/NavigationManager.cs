@@ -1,9 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using BirdGame;
 using NavMeshPlus.Components;
+using QFramework;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
-public class NavigationManager : MonoBehaviour
+public class NavigationManager : ViewControllerBase
 {
     private static NavigationManager _instance;
 
@@ -19,8 +23,10 @@ public class NavigationManager : MonoBehaviour
     public int maxTries = 30;
     public PolygonCollider2D[] areas;
     public GameObject[] notWalkAreas;
+    public GameObject[] expendAreas;
     
     private NavMeshSurface surface;
+    private bool isExpend;
     private Dictionary<int, WalkableArea> colliderDic = new Dictionary<int, WalkableArea>();
 
     private void Awake()
@@ -41,6 +47,34 @@ public class NavigationManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        RefreshArea();
+    }
+
+    private void Update()
+    {
+        if(expendAreas == null|| expendAreas.Length == 0)
+            return;
+        
+        if (!isExpend && this.GetModel<IBirdModel>().BirdList.Count >= 20)
+        {
+            foreach (var area in expendAreas)
+            {
+                area.SetActive(true);
+            }
+
+            isExpend = true;
+            RefreshArea();
+        }
+    }
+
+    private void RefreshArea()
+    {
+        surface.RemoveData();
+        surface.BuildNavMesh();
+    }
+
     public WalkableArea GetWalkableArea(int area)
     {
         if (!colliderDic.ContainsKey(area))
@@ -59,8 +93,7 @@ public class NavigationManager : MonoBehaviour
             return;
         }
         notWalkAreas[index].SetActive(true);
-        surface.RemoveData();
-        surface.BuildNavMesh();
+        RefreshArea();
     }
 
     public void DisableNotWalk(int index)
@@ -71,10 +104,8 @@ public class NavigationManager : MonoBehaviour
             return;
         }
         notWalkAreas[index].SetActive(false);
-        surface.RemoveData();
-        surface.BuildNavMesh();
+        RefreshArea();
     }
-    
     
 
     public bool IsPointInNavMeshArea(int area, Vector3 position)

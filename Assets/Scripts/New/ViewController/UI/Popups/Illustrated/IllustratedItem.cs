@@ -34,7 +34,8 @@ namespace BirdGame
                 {
                     var sp = this.GetModel<IConfigModel>().BirdConfig.GetBird(id, mapIndex).preview;
                     icon.sprite = sp;
-                    var size = sp.rect.size * 0.4f;
+                    float scale = 56f / sp.rect.height;
+                    var size = new Vector2(sp.rect.width, sp.rect.height) * scale;
                     icon.GetComponent<RectTransform>().sizeDelta = size;
                     return;
                 }
@@ -48,7 +49,8 @@ namespace BirdGame
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             var sp = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).preview;
             icon.sprite = sp;
-            var size = sp.rect.size * 0.4f;
+            float scale = 56f / sp.rect.height;
+            var size = new Vector2(sp.rect.width, sp.rect.height) * scale;
             icon.GetComponent<RectTransform>().sizeDelta = size;
             icon.color = Color.black;
         }

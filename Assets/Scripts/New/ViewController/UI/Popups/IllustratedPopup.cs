@@ -147,7 +147,8 @@ namespace BirdGame
             // animator.runtimeAnimatorController.animationClips[0] = birdInfo.idleClip;
             // Debug.Log(animator.runtimeAnimatorController.animationClips[0]);
             //birdPreview.sprite = birdInfo.preview;
-            birdPreview.GetComponent<RectTransform>().sizeDelta = birdInfo.preview.rect.size * 0.6f;
+            float scale =  150f / birdInfo.preview.rect.height;
+            birdPreview.GetComponent<RectTransform>().sizeDelta = new Vector2(birdInfo.preview.rect.width, birdInfo.preview.rect.height) * scale;
             
             bool isUnlocked = this.GetModel<ISaveModel>().IllustratedData.birds.Contains(index);
             
