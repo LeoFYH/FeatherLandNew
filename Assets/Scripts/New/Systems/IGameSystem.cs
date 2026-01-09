@@ -519,18 +519,71 @@ namespace BirdGame
 
         public void DestroyDecoration(int decorationId, int index, GameObject decorationObject)
         {
-            // 销毁装饰品对象
-            GameObject.Destroy(decorationObject);
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             var accountData = this.GetModel<ISaveModel>().AccountData;
-            if(accountData.sceneDecorationInfos[mapIndex].decorations[decorationId].count > 0)
-                accountData.sceneDecorationInfos[mapIndex].decorations[decorationId].position.RemoveAt(index);
-            accountData.sceneDecorationInfos[mapIndex].decorations[decorationId].count--;
-            if (accountData.sceneDecorationInfos[mapIndex].decorations[decorationId].count <= 0)
+            var positionList = accountData.sceneDecorationInfos[mapIndex].decorations[decorationId].position;
+            
+            // 通过装饰对象的实际位置在 position 列表中查找对应的索引，而不是使用传入的 index
+            // 因为删除第一个装饰后，后续装饰的索引会前移，但 decorationIndex 不会自动更新
+            Vector3 decorationPos = decorationObject.transform.position;
+            int actualIndex = -1;
+            float minDistance = float.MaxValue;
+            const float positionTolerance = 0.1f; // 位置匹配的容差
+            
+            // 查找最接近的位置索引
+            for (int i = 0; i < positionList.Count; i++)
             {
-                accountData.sceneDecorationInfos[mapIndex].decorations[decorationId].count = 0;
+                float distance = Vector3.Distance(decorationPos, positionList[i]);
+                if (distance < positionTolerance && distance < minDistance)
+                {
+                    minDistance = distance;
+                    actualIndex = i;
+                }
             }
-            Debug.Log($"销毁装饰品 {decorationId}，剩余数量: {accountData.sceneDecorationInfos[mapIndex].decorations[decorationId].count}");
+            
+            // 如果找不到匹配的位置，使用传入的 index（但需要检查边界）
+            if (actualIndex == -1)
+            {
+                if (index >= 0 && index < positionList.Count)
+                {
+                    actualIndex = index;
+                }
+                else
+                {
+                    Debug.LogWarning($"无法找到装饰品 {decorationId} 对应的位置索引，使用最后一个索引");
+                    if (positionList.Count > 0)
+                    {
+                        actualIndex = positionList.Count - 1;
+                    }
+                    else
+                    {
+                        Debug.LogError($"装饰品 {decorationId} 的 position 列表为空，无法删除");
+                        return;
+                    }
+                }
+            }
+            
+            // 销毁装饰品对象
+            GameObject.Destroy(decorationObject);
+            
+            // 从列表中删除对应的位置（使用实际找到的索引）
+            if (actualIndex >= 0 && actualIndex < positionList.Count)
+            {
+                positionList.RemoveAt(actualIndex);
+                accountData.sceneDecorationInfos[mapIndex].decorations[decorationId].count--;
+                
+                // 确保 count 不为负数
+                if (accountData.sceneDecorationInfos[mapIndex].decorations[decorationId].count < 0)
+                {
+                    accountData.sceneDecorationInfos[mapIndex].decorations[decorationId].count = 0;
+                }
+                
+                Debug.Log($"销毁装饰品 {decorationId}，使用索引 {actualIndex}（传入索引: {index}），剩余数量: {accountData.sceneDecorationInfos[mapIndex].decorations[decorationId].count}");
+            }
+            else
+            {
+                Debug.LogError($"装饰品 {decorationId} 删除失败：索引 {actualIndex} 超出范围（列表大小: {positionList.Count}）");
+            }
         }
 
         public void PlaceDecoration()

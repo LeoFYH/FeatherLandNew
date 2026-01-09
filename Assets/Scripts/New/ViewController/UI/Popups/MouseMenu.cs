@@ -35,8 +35,19 @@ namespace BirdGame
         {
             deleteButton.onClick.AddListener(() =>
             {
-                this.GetSystem<IGameSystem>().DestroyDecoration(decorationId, decorationIndex, deleteObject);
-                this.GetSystem<IUISystem>().HideMouseMenu();
+                try
+                {
+                    this.GetSystem<IGameSystem>().DestroyDecoration(decorationId, decorationIndex, deleteObject);
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"删除装饰品时发生错误: {e.Message}");
+                }
+                finally
+                {
+                    // 确保无论成功或失败都关闭菜单
+                    this.GetSystem<IUISystem>().HideMouseMenu();
+                }
             });
         }
 
