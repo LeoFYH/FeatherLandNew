@@ -18,6 +18,9 @@ namespace BirdGame
 
         protected override void OnExecute()
         {
+            // 切换地图时关闭所有popup界面
+            this.GetSystem<IUISystem>().HideAllPopups();
+            
             this.SendEvent<ClearFoodEvent>();
             var gameModel = this.GetModel<IGameModel>();
             gameModel.CurrentTent = null;
