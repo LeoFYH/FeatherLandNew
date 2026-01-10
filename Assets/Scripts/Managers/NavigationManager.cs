@@ -24,6 +24,7 @@ public class NavigationManager : ViewControllerBase
     public PolygonCollider2D[] areas;
     public GameObject[] notWalkAreas;
     public GameObject[] expendAreas;
+    public PolygonCollider2D[] notLandings;
     
     private NavMeshSurface surface;
     private bool isExpend;
@@ -181,6 +182,15 @@ public class NavigationManager : ViewControllerBase
         var triangle = matchingTriangles[Random.Range(0, matchingTriangles.Count)];
         Vector3 point = RandomPointInTriangle(triangle.Item1, triangle.Item2, triangle.Item3);
         point.z = 0f; // 2D 强制处理
+
+        if (notLandings != null)
+        {
+            for (int i = 0; i < notLandings.Length; i++)
+            {
+                if (notLandings[i].OverlapPoint(point))
+                    return GetRandomTarget(area);
+            }
+        }
 
         return point;
     }
