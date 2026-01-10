@@ -16,6 +16,7 @@ namespace BirdGame
 
         public override void OnEnter()
         {
+            _brid.sr.sortingOrder = 5;
             _brid.anim.SetBool("Fly", true);
             _brid.anim.SetBool("IsTakeOff", false);
             _brid.anim.Play("FlyFromBranch");
@@ -46,7 +47,7 @@ namespace BirdGame
             DOTween.Sequence().AppendCallback(() =>
             {
                 _brid.transform.DOScale(_brid.AdultBirdSize, time).SetEase(Ease.Linear);
-                _brid.sr.sortingOrder = 3;
+                //_brid.sr.sortingOrder = 3;
 
                 var anim = DOTween.Sequence();
                 anim.Append(_brid.transform.DOMove(target, time).SetEase(Ease.Linear));
@@ -55,6 +56,7 @@ namespace BirdGame
                     _brid.anim.SetBool("IsTakeOff", true);
                     _brid.anim.SetBool("Fly", false);
                     //_brid.anim.Play("Landing");
+                    _brid.sr.sortingOrder = 5;
                 });
                 //anim.AppendInterval(2f);
                 anim.OnComplete(() =>
