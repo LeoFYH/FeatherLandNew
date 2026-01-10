@@ -70,10 +70,11 @@ public class NavigationManager : ViewControllerBase
         }
     }
 
-    private void RefreshArea()
+    public void RefreshArea()
     {
         surface.RemoveData();
         surface.BuildNavMesh();
+        Debug.Log("Build");
     }
 
     public WalkableArea GetWalkableArea(int area)

@@ -75,6 +75,10 @@ namespace BirdGame
 
             if (item.selections[0].type == ToolType.Food)
             {
+                while (saveModel.AccountData.tools.Count <= itemIndex)
+                {
+                    saveModel.AccountData.tools.Add(new ToolInfo());
+                }
                 bool isInitialPurchased = saveModel.AccountData.tools[itemIndex].unlockedList
                     .Contains(gameModel.SelectedToolDic[index].Value);
                 bool isInitialEquipped = saveModel.AccountData.tools[itemIndex].equipedId ==

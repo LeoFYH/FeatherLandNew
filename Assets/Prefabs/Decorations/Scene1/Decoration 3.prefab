@@ -101,7 +101,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a026a736a4bb4843aace3cf51ec3a1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decorationIndex: 0
+  sceneId: 0
+  decorationIndex: 3
   effects: []
 --- !u!60 &7149505083618974007
 PolygonCollider2D:
@@ -237,6 +238,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2574244487561079595}
+  - component: {fileID: 8911403977587701832}
   m_Layer: 0
   m_Name: Decoration 3
   m_TagString: Untagged
@@ -260,3 +262,16 @@ Transform:
   - {fileID: 7869225300203206793}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8911403977587701832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2929794707948516033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e7b12167b7b43e199ad04d957758cc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  notWalkableIndex: 2

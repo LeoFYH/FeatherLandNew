@@ -133,7 +133,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a026a736a4bb4843aace3cf51ec3a1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decorationIndex: 0
+  sceneId: 0
+  decorationIndex: 2
   effects: []
 --- !u!61 &2625390637440487850
 BoxCollider2D:
@@ -173,7 +174,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0}
-    oldSize: {x: 4.1109767, y: 11.02}
+    oldSize: {x: 4.11, y: 11.02}
     newSize: {x: 5.54, y: 5.86}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
