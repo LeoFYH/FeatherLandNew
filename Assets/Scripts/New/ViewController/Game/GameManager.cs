@@ -13,6 +13,8 @@ namespace BirdGame
         private float lastClickTime = 0f; // 记录上次点击时间
         private float clickInterval = 1f; // 点击间隔时间（1秒）
         private int previousClickCount = 0;
+        private float lastTime;
+        private bool isDown;
 
         private void Start()
         {
@@ -30,9 +32,22 @@ namespace BirdGame
             if (IsClickingOnDecoration()) return;
 
             // 取消撒食物冷却，每次点击都能撒
-            if (Input.GetMouseButtonDown(0) || (SimpleMouseForwarder.clickCount > previousClickCount) )
+            if (Input.GetMouseButtonDown(0))
             {
-                previousClickCount = SimpleMouseForwarder.clickCount;
+                //previousClickCount = SimpleMouseForwarder.clickCount;
+                this.GetSystem<IGameSystem>().CreateFood();
+                lastTime = Time.time;
+                isDown = true;
+            }
+
+            if (Input.GetMouseButtonUp(0))
+            {
+                isDown = false;
+            }
+
+            if (isDown && Time.time - lastTime >= 0.2f)
+            {
+                lastTime = Time.time;
                 this.GetSystem<IGameSystem>().CreateFood();
             }
 
@@ -51,10 +66,15 @@ namespace BirdGame
                 
                 foreach (var hit in hits)
                 {
+                    var handler = hit.collider.GetComponent<DecorationClickHandler>();
                     // 检查是否点击到装饰物（通过检查是否有DecorationClickHandler或DecorationDrag组件）
-                    if (hit.collider.GetComponent<DecorationClickHandler>() != null || 
+                    if (handler != null || 
                         hit.collider.GetComponent<DecorationDrag>() != null)
                     {
+                        if (handler != null && handler.canFeed)
+                        {
+                            continue;
+                        }
                         return true;
                     }
                 }

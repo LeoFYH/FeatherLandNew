@@ -11,6 +11,7 @@ namespace BirdGame
         public int sceneId;
         private int decorationId;
         public int decorationIndex;
+        public bool canFeed;
         [TableList(ShowIndexLabels = true, AlwaysExpanded = true)]
         public DecorationEffect[] effects;
 
