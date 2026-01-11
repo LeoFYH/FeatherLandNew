@@ -19,8 +19,11 @@ namespace BirdGame
             if (type == AlertType.TimeUpForTimer)
             {
                 string value = this.GetSystem<ILocalizationSystem>().GetString("Time's Up!");
+                string value1 = this.GetSystem<ILocalizationSystem>()
+                    .GetString("Focus succeed! {0} Bonus Coin Earned!");
+                string value2 = string.Format(value1, this.GetModel<IAccountModel>().AddedCoins);
                 alertText.ThisText.text = new StringBuilder().Append(value)
-                    .Append($"Focus succeed! {this.GetModel<IAccountModel>().AddedCoins} Bonus Coin Earned!")
+                    .Append(value2)
                     .ToString();
                 icon.sprite = sps[0];
                 icon.GetComponent<RectTransform>().sizeDelta = new Vector2(sps[0].rect.size.x, sps[0].rect.size.y) * 0.5f;

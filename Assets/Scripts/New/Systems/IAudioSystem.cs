@@ -212,7 +212,7 @@ namespace BirdGame
             if(radioAudio.clip == null)
                 return;
             float time = radioAudio.clip.length * value;
-            time = Mathf.Clamp(time, 0f, Mathf.Max(0f, radioAudio.clip.length - 0.01f));
+            time = Mathf.Clamp(time, 0f, Mathf.Max(0f, radioAudio.clip.length - 0.1f));
             radioAudio.time = time;
         }
 
@@ -220,7 +220,7 @@ namespace BirdGame
         {
             radioModel.CurrentTime.Value = radioAudio.time;
             radioModel.SongProgress.Value = radioAudio.time / radioAudio.clip.length;
-            while (radioAudio.time < radioAudio.clip.length - 0.01f)
+            while (radioAudio.time <= radioAudio.clip.length - 0.1f)
             {
                 radioModel.CurrentTime.Value = radioAudio.time;
                 radioModel.SongProgress.Value = radioAudio.time / radioAudio.clip.length;

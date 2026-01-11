@@ -1724,7 +1724,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Key: 
+  Key: Min
 --- !u!1 &421321370133286014
 GameObject:
   m_ObjectHideFlags: 0
@@ -2113,7 +2113,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Key: 
+  Key: Hour
 --- !u!1 &698632719163241560
 GameObject:
   m_ObjectHideFlags: 0
@@ -2125,6 +2125,8 @@ GameObject:
   - component: {fileID: 7906565767168014220}
   - component: {fileID: 3507675625464018012}
   - component: {fileID: 4040608685789519080}
+  - component: {fileID: 6655659600811627671}
+  - component: {fileID: 7441482520603509065}
   m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Click
@@ -2250,6 +2252,31 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &6655659600811627671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 698632719163241560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e984ebdff2b4348b2d29ab8ce8e9038, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7441482520603509065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 698632719163241560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Key: STOPWATCH
 --- !u!1 &699593860351335366
 GameObject:
   m_ObjectHideFlags: 0
@@ -3156,6 +3183,7 @@ GameObject:
   - component: {fileID: 7046840582343803320}
   - component: {fileID: 2851265226459971908}
   - component: {fileID: 6747130643718795423}
+  - component: {fileID: 9055718159232818136}
   m_Layer: 0
   m_Name: Title (1)
   m_TagString: Untagged
@@ -3293,6 +3321,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e984ebdff2b4348b2d29ab8ce8e9038, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &9055718159232818136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1071900860879453401}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Key: Sessions overview
 --- !u!1 &1075508295478826007
 GameObject:
   m_ObjectHideFlags: 0
@@ -4891,6 +4932,8 @@ GameObject:
   - component: {fileID: 4493917161800797474}
   - component: {fileID: 1301039039295229676}
   - component: {fileID: 2475381548418795795}
+  - component: {fileID: 7666348854003057602}
+  - component: {fileID: 5908332887882463924}
   m_Layer: 0
   m_Name: Text (TMP) (2)
   m_TagString: Click
@@ -5016,6 +5059,31 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &7666348854003057602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2024434136418927458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e984ebdff2b4348b2d29ab8ce8e9038, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5908332887882463924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2024434136418927458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Key: POMODORO
 --- !u!1 &2025363388302942253
 GameObject:
   m_ObjectHideFlags: 0
@@ -5178,7 +5246,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Key: 
+  Key: Min
 --- !u!1 &2052951475053871816
 GameObject:
   m_ObjectHideFlags: 0
@@ -6499,7 +6567,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Key: 
+  Key: Sec
 --- !u!1 &2409756504773892662
 GameObject:
   m_ObjectHideFlags: 0
@@ -6778,6 +6846,8 @@ GameObject:
   - component: {fileID: 2436339048327017795}
   - component: {fileID: 3865559913909133627}
   - component: {fileID: 824759766367704419}
+  - component: {fileID: 4287526890081972081}
+  - component: {fileID: 2314414976311904733}
   m_Layer: 0
   m_Name: Text (TMP) (1)
   m_TagString: Click
@@ -6903,6 +6973,31 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &4287526890081972081
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2497810655043467293}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e984ebdff2b4348b2d29ab8ce8e9038, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2314414976311904733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2497810655043467293}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Key: TIMER
 --- !u!1 &2510121388916692608
 GameObject:
   m_ObjectHideFlags: 0
@@ -7561,6 +7656,7 @@ GameObject:
   - component: {fileID: 6999894882407015070}
   - component: {fileID: 2436852419150195014}
   - component: {fileID: 2171494069116294164}
+  - component: {fileID: 6764032826600136184}
   m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Click
@@ -7700,6 +7796,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e984ebdff2b4348b2d29ab8ce8e9038, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &6764032826600136184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2829177915578542027}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Key: Stop/Clear
 --- !u!1 &2834617147050443835
 GameObject:
   m_ObjectHideFlags: 0
@@ -8743,7 +8852,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Key: 
+  Key: Times
 --- !u!1 &3305154544188732185
 GameObject:
   m_ObjectHideFlags: 0
@@ -9387,7 +9496,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Key: 
+  Key: Repeat
 --- !u!1 &3724512624125067510
 GameObject:
   m_ObjectHideFlags: 0
@@ -10442,7 +10551,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Key: 
+  Key: Min
 --- !u!1 &4436234585808496592
 GameObject:
   m_ObjectHideFlags: 0
@@ -12265,7 +12374,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Key: 
+  Key: Skip
 --- !u!1 &5484756037779333912
 GameObject:
   m_ObjectHideFlags: 0
@@ -12428,7 +12537,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Key: 
+  Key: Min
 --- !u!1 &5499303793199466670
 GameObject:
   m_ObjectHideFlags: 0
@@ -13120,7 +13229,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Key: 
+  Key: Hour
 --- !u!1 &5899061195349388109
 GameObject:
   m_ObjectHideFlags: 0
@@ -14563,7 +14672,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Key: 
+  Key: Session
 --- !u!1 &6311973602267058033
 GameObject:
   m_ObjectHideFlags: 0
@@ -15781,7 +15890,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Key: 
+  Key: Cancel
 --- !u!1 &6894833889671695016
 GameObject:
   m_ObjectHideFlags: 0
@@ -15944,7 +16053,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Key: 
+  Key: Sec
 --- !u!1 &6925121623846375646
 GameObject:
   m_ObjectHideFlags: 0
@@ -17346,7 +17455,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Key: 
+  Key: Breaks
 --- !u!1 &7997638681875632653
 GameObject:
   m_ObjectHideFlags: 0
@@ -17651,7 +17760,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Key: 
+  Key: Start/Pause
 --- !u!1 &8194685743388740232
 GameObject:
   m_ObjectHideFlags: 0
@@ -18708,6 +18817,7 @@ GameObject:
   - component: {fileID: 3926283426611828379}
   - component: {fileID: 3422958807378337873}
   - component: {fileID: 6690286053535046893}
+  - component: {fileID: 3186804381002690033}
   m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Click
@@ -18847,6 +18957,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e984ebdff2b4348b2d29ab8ce8e9038, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3186804381002690033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8829653622312232531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Key: Stop/Clear
 --- !u!1 &8860075554116123061
 GameObject:
   m_ObjectHideFlags: 0

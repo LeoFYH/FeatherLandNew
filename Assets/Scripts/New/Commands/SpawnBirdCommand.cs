@@ -1,4 +1,5 @@
-﻿using QFramework;
+﻿using System.Collections.Generic;
+using QFramework;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -24,7 +25,26 @@ namespace BirdGame
             if (isBird)
                 val = eggIndex;
             else
-                val = RandomGetBirdIndex();
+            {
+                int maxCount = this.GetModel<IBirdModel>().AddedBirdCount +
+                               this.GetModel<IConfigModel>().BirdConfig.maxBirdCount;
+                if (maxCount - this.GetModel<IBirdModel>().BirdList.Count <= 5)
+                {
+                    var list = GetUnlockedBirds();
+                    if (list.Count == 0)
+                    {
+                        val = RandomGetBirdIndex();
+                    }
+                    else
+                    {
+                        val = list[0];
+                    }
+                }
+                else
+                {
+                    val = RandomGetBirdIndex();
+                }
+            }
             CheckIllustratedUpdate(val);
             int eggtype = this.GetModel<IGameModel>().ShopEggSelectIndex.Value;
             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("OpenEggAnim", obj =>
@@ -37,6 +57,23 @@ namespace BirdGame
                     CreateBird(val);
                 });
             });
+        }
+
+        private List<int> GetUnlockedBirds()
+        {
+            List<int> list = new List<int>();
+            var config = this.GetModel<IConfigModel>().ShopConfig;
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            for (int i = 0; i < config.sceneEggs[mapIndex].eggs[eggIndex].birds.Length; i++)
+            {
+                int id = config.sceneEggs[mapIndex].eggs[eggIndex].birds[i].birdType;
+                if (!this.GetModel<ISaveModel>().IllustratedData.birds.Contains(id))
+                {
+                    list.Add(id);
+                }
+            }
+
+            return list;
         }
 
         private void CreateBird(int birdIndex)
@@ -52,6 +89,10 @@ namespace BirdGame
             agent.enabled = false;
 
             var point = NavigationManager.Instance.GetRandomTarget(3);
+            while (!IsPointInScreen2D(point))
+            {
+                point = NavigationManager.Instance.GetRandomTarget(3);
+            }
             go.transform.position = new Vector3(point.x, point.y, 0);
             // 更新 GameManager 的未开启蛋数量
             this.GetModel<IBirdModel>().UnopenEggs--;
@@ -61,6 +102,15 @@ namespace BirdGame
                 this.GetSystem<IUISystem>().HideMask();
                 this.SendEvent<EnableButtonEvent>();
             }
+        }
+        
+        private bool IsPointInScreen2D(Vector3 worldPoint)
+        {
+            Vector3 viewportPoint = Camera.main.WorldToViewportPoint(worldPoint);
+            // 只判断x和y，忽略z
+            bool inScreen = viewportPoint.x >= 0 && viewportPoint.x <= 1 && 
+                            viewportPoint.y >= 0 && viewportPoint.y <= 1;
+            return inScreen;
         }
 
         private void CheckIllustratedUpdate(int birdIndex)

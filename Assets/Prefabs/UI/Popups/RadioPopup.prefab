@@ -1124,7 +1124,7 @@ MonoBehaviour:
   showDelay: 0.5
   showTooltip: 1
   textColor: {r: 1, g: 1, b: 1, a: 1}
-  fontSize: 16
+  fontSize: 30
   fontStyle: 0
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
@@ -1826,7 +1826,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6110004297430286856}
   toggleTransition: 1
   graphic: {fileID: 17245793079649034}
-  m_Group: {fileID: 0}
+  m_Group: {fileID: 7346735270138337748}
   onValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1866,7 +1866,7 @@ MonoBehaviour:
   showDelay: 0.5
   showTooltip: 1
   textColor: {r: 1, g: 1, b: 1, a: 1}
-  fontSize: 16
+  fontSize: 30
   fontStyle: 0
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
@@ -2223,7 +2223,7 @@ MonoBehaviour:
   showDelay: 0.5
   showTooltip: 1
   textColor: {r: 1, g: 1, b: 1, a: 1}
-  fontSize: 16
+  fontSize: 30
   fontStyle: 0
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
@@ -2775,6 +2775,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3579115680755268507}
+  - component: {fileID: 7346735270138337748}
   m_Layer: 5
   m_Name: Control
   m_TagString: Untagged
@@ -2809,6 +2810,19 @@ RectTransform:
   m_AnchoredPosition: {x: 252, y: -17}
   m_SizeDelta: {x: 581, y: 142.75}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &7346735270138337748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3929501255832740193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fafe2cfe61f6974895a912c3755e8f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AllowSwitchOff: 1
 --- !u!1 &3936263290952792178
 GameObject:
   m_ObjectHideFlags: 0
@@ -2903,7 +2917,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3137255, g: 0.3137255, b: 0.3137255, a: 0.39215687}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.39215687}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5107,7 +5121,7 @@ MonoBehaviour:
   showDelay: 0.5
   showTooltip: 1
   textColor: {r: 1, g: 1, b: 1, a: 1}
-  fontSize: 16
+  fontSize: 30
   fontStyle: 0
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
@@ -5653,7 +5667,7 @@ MonoBehaviour:
   showDelay: 0.5
   showTooltip: 1
   textColor: {r: 1, g: 1, b: 1, a: 1}
-  fontSize: 16
+  fontSize: 30
   fontStyle: 0
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
@@ -5815,7 +5829,7 @@ MonoBehaviour:
   showDelay: 0.5
   showTooltip: 1
   textColor: {r: 1, g: 1, b: 1, a: 1}
-  fontSize: 16
+  fontSize: 30
   fontStyle: 0
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
@@ -6932,7 +6946,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8313961740575593889}
   toggleTransition: 1
   graphic: {fileID: 6279278977633874133}
-  m_Group: {fileID: 0}
+  m_Group: {fileID: 7346735270138337748}
   onValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -6972,7 +6986,7 @@ MonoBehaviour:
   showDelay: 0.5
   showTooltip: 1
   textColor: {r: 1, g: 1, b: 1, a: 1}
-  fontSize: 16
+  fontSize: 30
   fontStyle: 0
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
@@ -7745,7 +7759,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.31446534, g: 0.31446534, b: 0.31446534, a: 0.39215687}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.39215687}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
