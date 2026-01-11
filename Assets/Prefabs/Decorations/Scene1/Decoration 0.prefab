@@ -31,6 +31,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1106457741889068223}
+  - {fileID: 2976590193480867296}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3201239484416915758
@@ -46,6 +47,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   notWalkableIndex: 0
+--- !u!1 &1551552144379533925
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2976590193480867296}
+  m_Layer: 0
+  m_Name: Position
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2976590193480867296
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1551552144379533925}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.686, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8737252440241035818}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2072404922187548957
 GameObject:
   m_ObjectHideFlags: 0
@@ -147,8 +179,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a026a736a4bb4843aace3cf51ec3a1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sceneId: 0
   decorationIndex: 0
-  effects: []
+  effects:
+  - type: 0
+    flyPosition: {fileID: 2976590193480867296}
 --- !u!60 &63456346555431041
 PolygonCollider2D:
   m_ObjectHideFlags: 0

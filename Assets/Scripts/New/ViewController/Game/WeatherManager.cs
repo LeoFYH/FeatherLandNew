@@ -245,10 +245,6 @@ namespace BirdGame
             });
         }
         
-
-
-
-
         private void Update()
         {
             this.GetModel<IBirdModel>().BirdColor.Value = birdMaterial.color;

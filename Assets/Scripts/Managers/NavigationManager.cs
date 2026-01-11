@@ -25,6 +25,7 @@ public class NavigationManager : ViewControllerBase
     public GameObject[] notWalkAreas;
     public GameObject[] expendAreas;
     public PolygonCollider2D[] notLandings;
+    public GameObject[] decorationWalkableAreas;
     
     private NavMeshSurface surface;
     private bool isExpend;
@@ -98,6 +99,17 @@ public class NavigationManager : ViewControllerBase
         RefreshArea();
     }
 
+    public void EnableAddedArea(int index)
+    {
+        if (decorationWalkableAreas == null || decorationWalkableAreas.Length <= index)
+        {
+            Debug.Log("区域超出索引！");
+            return;
+        }
+        decorationWalkableAreas[index].SetActive(true);
+        RefreshArea();
+    }
+
     public void DisableNotWalk(int index)
     {
         if (notWalkAreas == null || notWalkAreas.Length <= index)
@@ -109,6 +121,16 @@ public class NavigationManager : ViewControllerBase
         RefreshArea();
     }
     
+    public void DisableAddedArea(int index)
+    {
+        if (decorationWalkableAreas == null || decorationWalkableAreas.Length <= index)
+        {
+            Debug.Log("区域超出索引！");
+            return;
+        }
+        decorationWalkableAreas[index].SetActive(false);
+        RefreshArea();
+    }
 
     public bool IsPointInNavMeshArea(int area, Vector3 position)
     {
