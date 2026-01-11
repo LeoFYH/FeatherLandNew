@@ -21,6 +21,10 @@ namespace BirdGame
             gameModel = this.GetModel<IGameModel>();
             configModel = this.GetModel<IConfigModel>();
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            if (gameModel.ShopEggSelectIndex.Value >= configModel.ShopConfig.sceneEggs[mapIndex].eggs.Length)
+            {
+                gameModel.ShopEggSelectIndex.Value = 0;
+            }
             eggView.sprite = configModel.ShopConfig.sceneEggs[mapIndex].eggs[gameModel.ShopEggSelectIndex.Value].eggSp;
             priceText.text = configModel.ShopConfig.sceneEggs[mapIndex].eggs[gameModel.ShopEggSelectIndex.Value].price.ToString();
             gameModel.ShopEggSelectIndex.Register(v =>
@@ -38,7 +42,7 @@ namespace BirdGame
                 if (currentCount + this.GetModel<IBirdModel>().BirdList.Count > maxCount + addedCount)
                 {
                     string text = this.GetSystem<ILocalizationSystem>().GetString("MaxEggLimitKey");
-                    this.GetSystem<IUISystem>().ShowPrompt($"{text} {this.GetModel<IBirdModel>().BirdList.Count}/{maxCount + addedCount}");
+                    this.GetSystem<IUISystem>().ShowPrompt($"{text} ({this.GetModel<IBirdModel>().BirdList.Count}/{maxCount + addedCount})");
                     return;
                 }
 
