@@ -85,6 +85,7 @@ namespace BirdGame
                         // if(random == 1) // 10个数中随机到1时去吃食物
                         // {
                         _brid.currFood = food;
+                        food.isTargeted = true;
                         if(_brid.isSmall)
                             currMachine.ChangeState<BirdEatState>();
                         else
