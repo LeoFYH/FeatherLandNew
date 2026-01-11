@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 using QFramework;
+using Sirenix.Utilities.Editor;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -33,10 +35,25 @@ namespace BirdGame
                     var list = GetUnlockedBirds();
                     if (list.Count == 0)
                     {
+                        Debug.Log("该鸟蛋已全部解锁");
                         val = RandomGetBirdIndex();
                     }
                     else
                     {
+                        var sb = new StringBuilder();
+                        sb.Append("未解锁的鸟: ");
+                        var config = this.GetModel<IConfigModel>().BirdConfig;
+                        int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+                        foreach (var id in list)
+                        {
+                            sb.Append(id);
+                            sb.Append(" ");
+                            sb.Append(config.GetBirdName(id, mapIndex));
+                            sb.Append(", ");
+                        }
+
+                        sb.Append(".");
+                        Debug.Log(sb.ToString());
                         val = list[0];
                     }
                 }
