@@ -1213,8 +1213,8 @@ PolygonCollider2D:
     m_Paths:
     - - {x: -1.3832662, y: -6.350247}
       - {x: -7.4702353, y: -6.3718443}
-      - {x: -16.256924, y: -6.1538925}
-      - {x: -15.677816, y: -3.2728965}
+      - {x: -19.321522, y: -6.0079575}
+      - {x: -18.961311, y: -2.6161973}
       - {x: -7.9747653, y: -3.762333}
       - {x: -3.6957526, y: -2.7255232}
       - {x: 10.553896, y: -5.1801634}
@@ -2165,6 +2165,104 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 1
+--- !u!1 &3516531518179830987
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8709398053034062706}
+  - component: {fileID: 8969024346425562905}
+  m_Layer: 0
+  m_Name: NotLanding
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8709398053034062706
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3516531518179830987}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: -5.97}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8529019136283133914}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!60 &8969024346425562905
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3516531518179830987}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 9.544923, y: -0.14242502}
+      - {x: 7.977972, y: -0.28377858}
+      - {x: 6.9714723, y: 0.96426606}
+      - {x: 6.160722, y: 0.06450558}
+      - {x: 4.3624625, y: 0.036265433}
+      - {x: 3.6954722, y: -1.0878398}
+      - {x: 2.8477888, y: -1.0481999}
+      - {x: 0.8845725, y: 0.12674999}
+      - {x: -0.5928259, y: -1.0237837}
+      - {x: -9.823591, y: -0.9840824}
+      - {x: -10.9303, y: 0.5457262}
+      - {x: -13.0528755, y: 0.5543244}
+      - {x: -13.077747, y: -1.2438871}
+      - {x: -0.75132316, y: -1.5653802}
+      - {x: 11.156435, y: -1.2791892}
+      - {x: 13.370879, y: -1.3237102}
+      - {x: 13.417151, y: -0.3813428}
+      - {x: 11.843531, y: 1.2243812}
+      - {x: 10.057858, y: -0.4597034}
+  m_UseDelaunayMesh: 0
 --- !u!1 &3660548062220355691
 GameObject:
   m_ObjectHideFlags: 0
@@ -3224,6 +3322,7 @@ Transform:
   - {fileID: 4949487783404346790}
   - {fileID: 340930379214780635}
   - {fileID: 3731590036333332892}
+  - {fileID: 8709398053034062706}
   m_Father: {fileID: 1487015292255430802}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5604777591177046371
@@ -5226,8 +5325,8 @@ PolygonCollider2D:
     - - {x: -1.3832662, y: -6.350247}
       - {x: -7.3633437, y: -5.908654}
       - {x: -5.301143, y: -3.2109659}
-      - {x: 5.7492094, y: -2.752531}
-      - {x: 5.847576, y: -6.204679}
+      - {x: 10.531818, y: -2.752531}
+      - {x: 11.064966, y: -6.1425653}
   m_UseDelaunayMesh: 0
 --- !u!114 &6400887645600813538
 MonoBehaviour:
