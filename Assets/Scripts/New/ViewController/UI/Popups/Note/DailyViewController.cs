@@ -18,6 +18,7 @@ namespace BirdGame
         
         private void Start()
         {
+            ((Text)noteInput.placeholder).text = this.GetSystem<ILocalizationSystem>().GetString("EnterText");
             var data = this.GetModel<ISaveModel>().NoteData;
             var group = content.GetComponent<ToggleGroup>();
             this.RegisterEvent<RefreshNoteIndexEvent>(evt =>

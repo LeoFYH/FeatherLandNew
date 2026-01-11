@@ -106,6 +106,7 @@ namespace BirdGame
                 }
                 else
                 {
+                    _brid.sr.sortingOrder = 50;
                     currMachine.ChangeState<BirdIdleState>();
                 }
             }

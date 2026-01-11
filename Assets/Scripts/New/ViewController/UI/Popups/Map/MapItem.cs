@@ -28,7 +28,7 @@ namespace BirdGame
         public void Init(int index, Vector2 position)
         {
             mapIndex = index;
-            mapText.text = this.GetModel<IConfigModel>().MapConfig.maps[index].mapName;
+            mapText.text = this.GetSystem<ILocalizationSystem>().GetString(this.GetModel<IConfigModel>().MapConfig.maps[index].mapName);
             GetComponent<RectTransform>().anchoredPosition = position;
             
             // 依次解锁显示逻辑：
@@ -61,7 +61,8 @@ namespace BirdGame
             {
                 if (!this.GetModel<IConfigModel>().MapConfig.maps[mapIndex].purchasable)
                 {
-                    this.GetSystem<IUISystem>().ShowPrompt("Habitat is developing!");
+                    string v = this.GetSystem<ILocalizationSystem>().GetString("Habitat is developing!");
+                    this.GetSystem<IUISystem>().ShowPrompt(v);
                     return;
                 }
 

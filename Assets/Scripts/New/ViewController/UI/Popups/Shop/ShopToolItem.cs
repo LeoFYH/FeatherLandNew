@@ -14,7 +14,7 @@ namespace BirdGame
         public LocalizationText itemName;
         public LocalizationText selectName;
         public LocalizationText description;
-        public TextMeshProUGUI priceText;
+        public LocalizationText priceText;
         public Button buyButton;
         public TextMeshProUGUI buyButtonText;
         public GameObject selectionPrefab;
@@ -57,7 +57,9 @@ namespace BirdGame
             { 
                 int current = this.GetModel<IConfigModel>().BirdConfig.maxBirdCount +
                               this.GetModel<IBirdModel>().AddedBirdCount;
-                description.SetKey($"Upgrade forest bird capacity to {item.selections[gameModel.SelectedToolDic[index].Value].selectionName}.\n<i>Current bird capacity:{current}</i>");
+                string str1 = this.GetSystem<ILocalizationSystem>().GetString("Upgrade forest bird capacity to");
+                string str2 = this.GetSystem<ILocalizationSystem>().GetString("Current bird capacity");
+                description.SetKey($"{str1} {item.selections[gameModel.SelectedToolDic[index].Value].selectionName}.\n<i>{str2}:{current}</i>");
             }
             else
             {
@@ -65,7 +67,9 @@ namespace BirdGame
                 var selectedTool = item.selections[gameModel.SelectedToolDic[index].Value];
                 if (!string.IsNullOrEmpty(selectedTool.descriptionKey))
                 {
-                    description.SetKey(selectedTool.descriptionKey);
+                    string str1 = this.GetSystem<ILocalizationSystem>().GetString(selectedTool.descriptionKey);
+                    string str2 = this.GetSystem<ILocalizationSystem>().GetString(selectedTool.description);
+                    description.ThisText.text = $"{str1}\n{str2}";
                 }
                 else
                 {
@@ -87,17 +91,17 @@ namespace BirdGame
                 if (isInitialEquipped)
                 {
                     // 已装备：显示"equipped"
-                    priceText.text = "equipped";
+                    priceText.SetKey("equipped");
                 }
                 else if (isInitialPurchased)
                 {
                     // 已购买但未装备：显示"equip"
-                    priceText.text = "equip";
+                    priceText.SetKey("equip");
                 }
                 else
                 {
                     // 未购买：显示价格
-                    priceText.text = item.selections[gameModel.SelectedToolDic[index].Value].price.ToString();
+                    priceText.ThisText.text = item.selections[gameModel.SelectedToolDic[index].Value].price.ToString();
                 }
                 for (int i = 0; i < item.selections.Length; i++)
                 {
@@ -114,13 +118,13 @@ namespace BirdGame
                     .Contains(gameModel.SelectedToolDic[index].Value + 1);
                 if (isInitialPurchased)
                 {
-                    priceText.text = "Purchased";
+                    priceText.SetKey("Purchased");
                     buyButton.enabled = false;
                 }
                 else
                 {
                     buyButton.enabled = true;
-                    priceText.text = item.selections[gameModel.SelectedToolDic[index].Value].price.ToString();
+                    priceText.ThisText.text = item.selections[gameModel.SelectedToolDic[index].Value].price.ToString();
                 }
 
                 bool initFirst = false;
@@ -159,16 +163,24 @@ namespace BirdGame
                 var selectedTool = item.selections[v];
                 if(item.selections[v].type == ToolType.Food)
                 {
-                    description.SetKey(!string.IsNullOrEmpty(selectedTool.descriptionKey)
-                    ? selectedTool.descriptionKey
-                    : selectedTool.description);
-                    
+                    if (!string.IsNullOrEmpty(selectedTool.descriptionKey))
+                    {
+                        string str1 = this.GetSystem<ILocalizationSystem>().GetString(selectedTool.descriptionKey);
+                        string str2 = this.GetSystem<ILocalizationSystem>().GetString(selectedTool.description);
+                        description.ThisText.text = $"{str1}\n{str2}";
+                    }
+                    else
+                    {
+                        description.SetKey(selectedTool.description);
+                    }
                 }
                 else
                 {
                     int current = this.GetModel<IConfigModel>().BirdConfig.maxBirdCount +
                                   this.GetModel<IBirdModel>().AddedBirdCount;
-                    description.SetKey($"Upgrade forest bird capacity to {item.selections[v].selectionName}.\n<i>Current bird capacity:{current}</i>");
+                    string str1 = this.GetSystem<ILocalizationSystem>().GetString("Upgrade forest bird capacity to");
+                    string str2 = this.GetSystem<ILocalizationSystem>().GetString("Current bird capacity");
+                    description.SetKey($"{str1} {item.selections[gameModel.SelectedToolDic[index].Value].selectionName}.\n<i>{str2}:{current}</i>");
                 }
                 if (item.selections[0].type == ToolType.Food)
                 {
@@ -183,17 +195,17 @@ namespace BirdGame
                     if (isEquipped)
                     {
                         // 已装备：显示"equipped"
-                        priceText.text = "equipped";
+                        priceText.SetKey("equipped");
                     }
                     else if (isPurchased)
                     {
                         // 已购买但未装备：显示"equip"
-                        priceText.text = "equip";
+                        priceText.SetKey("equip");
                     }
                     else
                     {
                         // 未购买：显示价格
-                        priceText.text = selectedTool.price.ToString();
+                        priceText.ThisText.text = selectedTool.price.ToString();
                     }
                 }
                 else if(item.selections[0].type == ToolType.BirdMaxCount)
@@ -201,12 +213,12 @@ namespace BirdGame
                     bool isPurchased = saveModel.AccountData.tools[index].unlockedList.Contains(v + 1);
                     if (isPurchased)
                     {
-                        priceText.text = "Purchased";
+                        priceText.SetKey("Purchased");
                         buyButton.enabled = false;
                     }
                     else
                     {
-                        priceText.text = selectedTool.price.ToString();
+                        priceText.ThisText.text = selectedTool.price.ToString();
                         buyButton.enabled = true;
                     }
                 }
