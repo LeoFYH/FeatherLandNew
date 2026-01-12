@@ -468,7 +468,8 @@ namespace BirdGame
             if (index < decorationItem.fixedPositions.Length)
             {
                 Debug.LogWarning("设置位置");
-                decoration.transform.position = decorationItem.fixedPositions[index];
+                decoration.transform.localPosition = decorationItem.fixedPositions[index];
+                decoration.GetComponentsInChildren<Transform>()[1].localPosition = Vector3.zero;
             }
             currentIndex = index;
             DecorationClickHandler clickHandler = decoration.GetComponentInChildren<DecorationClickHandler>();
@@ -630,6 +631,7 @@ namespace BirdGame
                 accountData.sceneDecorationInfos.Add(new SceneDecorationInfo());
             }
             int count = accountData.sceneDecorationInfos[mapIndex].decorations.Count;
+            Dictionary<int, int> decount = new Dictionary<int, int>();
             for (int i = 0; i < count; i++)
             {
                 if (accountData.sceneDecorationInfos[mapIndex].decorations[i].position == null)
@@ -666,7 +668,6 @@ namespace BirdGame
                     // clickHandler.Initialize(i, j);
                     
                     var decoration = GameObject.Instantiate(decorationItem.prefab);
-                    
                     DecorationClickHandler clickHandler = decoration.GetComponentInChildren<DecorationClickHandler>();
                     clickHandler.Initialize(i, j);
                     if (accountData.sceneDecorationInfos[mapIndex].decorations[i].position.Count <= j)
