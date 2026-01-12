@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using Debug = UnityEngine.Debug;
@@ -66,6 +67,7 @@ namespace BirdGame
         private static GameObject _focusedTMPInputField = null;
         private static GameObject _focusedLegacyInputField = null;
         private static GameObject _currentHoveredPointerEvent = null;
+        private static HashSet<GameObject> _currentHoveredUIElements = new HashSet<GameObject>();
 
         private static bool isLeftMouseDragging = false;
         private static Vector2 dragStartPosition;
@@ -506,7 +508,36 @@ namespace BirdGame
                         }
                     }
 
-                    // Handle PointerEvent enter/exit
+                    // Handle all UI elements enter/exit (Buttons, Toggles, etc.)
+                    HashSet<GameObject> currentUIElements = FindAllUIElementsUnderMouse(currentMousePosition);
+                    
+                    // Exit all UI elements that are no longer under the mouse
+                    var elementsToExit = new List<GameObject>(_currentHoveredUIElements);
+                    foreach (var element in elementsToExit)
+                    {
+                        if (element != null && !currentUIElements.Contains(element))
+                        {
+                            HandlePointerExit(element, currentMousePosition);
+                            _currentHoveredUIElements.Remove(element);
+                        }
+                        else if (element == null)
+                        {
+                            // Object was destroyed, just remove from set
+                            _currentHoveredUIElements.Remove(element);
+                        }
+                    }
+                    
+                    // Enter all new UI elements under the mouse
+                    foreach (var element in currentUIElements)
+                    {
+                        if (!_currentHoveredUIElements.Contains(element))
+                        {
+                            HandlePointerEnter(element, currentMousePosition);
+                            _currentHoveredUIElements.Add(element);
+                        }
+                    }
+
+                    // Handle PointerEvent enter/exit (for backward compatibility)
                     GameObject pointerEventTarget = FindPointerEventTarget(currentMousePosition);
                     
                     // Check if we're entering a new PointerEvent
@@ -717,6 +748,54 @@ namespace BirdGame
             return null;
         }
 
+        private static HashSet<GameObject> FindAllUIElementsUnderMouse(Vector2 screenPosition)
+        {
+            HashSet<GameObject> uiElements = new HashSet<GameObject>();
+            
+            if (EventSystem.current == null) return uiElements;
+
+            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            {
+                position = screenPosition,
+                button = PointerEventData.InputButton.Left
+            };
+
+            var raycastResults = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointerData, raycastResults);
+
+            foreach (var result in raycastResults)
+            {
+                // Add all UI elements that can receive pointer events
+                // This includes Buttons, Toggles, and any other Selectable components
+                GameObject obj = result.gameObject;
+                
+                // Check if the object or any parent has a Selectable component (Button, Toggle, etc.)
+                Transform current = obj.transform;
+                while (current != null)
+                {
+                    Selectable selectable = current.GetComponent<Selectable>();
+                    if (selectable != null && selectable.interactable)
+                    {
+                        uiElements.Add(current.gameObject);
+                        break; // Only add the topmost selectable in the hierarchy
+                    }
+                    
+                    // Also check for IPointerEnterHandler/IPointerExitHandler implementations
+                    // This catches custom components that handle pointer events
+                    if (current.GetComponent<IPointerEnterHandler>() != null || 
+                        current.GetComponent<IPointerExitHandler>() != null)
+                    {
+                        uiElements.Add(current.gameObject);
+                        break; // Only add the topmost handler in the hierarchy
+                    }
+                    
+                    current = current.parent;
+                }
+            }
+
+            return uiElements;
+        }
+
         private static void ForwardDragToScrollRect(GameObject target, Vector2 delta)
         {
             if (target == null) return;
@@ -841,9 +920,74 @@ namespace BirdGame
                         Debug.Log($"[SimpleMouseForwarder] 转发右键点击到Unity EventSystem: {mousePosition}");
                     }
                 }
+
+                // Validate that all currently hovered UI elements are still valid
+                // This handles cases where the mouse left the window, object was destroyed, or mouse moved too fast
+                HashSet<GameObject> currentUIElements = FindAllUIElementsUnderMouse(currentMousePosition);
+                
+                // Exit all UI elements that are no longer valid or no longer under the mouse
+                var elementsToExit = new List<GameObject>(_currentHoveredUIElements);
+                foreach (var element in elementsToExit)
+                {
+                    if (element == null)
+                    {
+                        // Object was destroyed, just remove from set
+                        _currentHoveredUIElements.Remove(element);
+                    }
+                    else if (!element.activeInHierarchy || !currentUIElements.Contains(element))
+                    {
+                        HandlePointerExit(element, currentMousePosition);
+                        _currentHoveredUIElements.Remove(element);
+                    }
+                }
+                
+                // Enter all new UI elements under the mouse
+                foreach (var element in currentUIElements)
+                {
+                    if (!_currentHoveredUIElements.Contains(element))
+                    {
+                        HandlePointerEnter(element, currentMousePosition);
+                        _currentHoveredUIElements.Add(element);
+                    }
+                }
+
+                // Validate that the currently hovered pointer event is still valid
+                // This handles cases where the mouse left the window, object was destroyed, or mouse moved too fast
+                if (_currentHoveredPointerEvent != null)
+                {
+                    // Check if the object still exists and is active
+                    if (!_currentHoveredPointerEvent.activeInHierarchy)
+                    {
+                        // Object was destroyed or disabled, clear the hovered state
+                        HandlePointerExit(_currentHoveredPointerEvent, currentMousePosition);
+                        _currentHoveredPointerEvent = null;
+                    }
+                    else
+                    {
+                        // Verify that the mouse is still actually over the object
+                        GameObject currentPointerEventTarget = FindPointerEventTarget(currentMousePosition);
+                        if (currentPointerEventTarget != _currentHoveredPointerEvent)
+                        {
+                            // Mouse is no longer over the object, trigger exit
+                            HandlePointerExit(_currentHoveredPointerEvent, currentMousePosition);
+                            _currentHoveredPointerEvent = null;
+                        }
+                    }
+                }
             }
             else
             {
+                // Clear all hovered UI elements when not on desktop
+                var elementsToExit = new List<GameObject>(_currentHoveredUIElements);
+                foreach (var element in elementsToExit)
+                {
+                    if (element != null)
+                    {
+                        HandlePointerExit(element, currentMousePosition);
+                    }
+                }
+                _currentHoveredUIElements.Clear();
+                
                 // Clear hovered pointer event when not on desktop
                 if (_currentHoveredPointerEvent != null)
                 {
@@ -944,6 +1088,24 @@ namespace BirdGame
                 Debug.Log("[SimpleMouseForwarder] 键盘钩子已卸载 (OnDisable)");
             }
 
+            // Clear all hovered UI elements when component is disabled
+            var elementsToExit = new List<GameObject>(_currentHoveredUIElements);
+            foreach (var element in elementsToExit)
+            {
+                if (element != null)
+                {
+                    HandlePointerExit(element, currentMousePosition);
+                }
+            }
+            _currentHoveredUIElements.Clear();
+            
+            // Clear hovered pointer event when component is disabled
+            if (_currentHoveredPointerEvent != null)
+            {
+                HandlePointerExit(_currentHoveredPointerEvent, currentMousePosition);
+                _currentHoveredPointerEvent = null;
+            }
+
             if (instance == this)
             {
                 instance = null;
@@ -962,6 +1124,24 @@ namespace BirdGame
             {
                 UnhookWindowsHookEx(_keyboardHookID);
                 _keyboardHookID = IntPtr.Zero;
+            }
+
+            // Clear all hovered UI elements when component is destroyed
+            var elementsToExit = new List<GameObject>(_currentHoveredUIElements);
+            foreach (var element in elementsToExit)
+            {
+                if (element != null)
+                {
+                    HandlePointerExit(element, currentMousePosition);
+                }
+            }
+            _currentHoveredUIElements.Clear();
+            
+            // Clear hovered pointer event when component is destroyed
+            if (_currentHoveredPointerEvent != null)
+            {
+                HandlePointerExit(_currentHoveredPointerEvent, currentMousePosition);
+                _currentHoveredPointerEvent = null;
             }
 
             instance = null;
