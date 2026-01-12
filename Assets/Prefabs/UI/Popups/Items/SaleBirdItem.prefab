@@ -1736,7 +1736,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8595341991499203615
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1754,8 +1754,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 160, y: -102}
-  m_SizeDelta: {x: 397, y: 116}
+  m_AnchoredPosition: {x: 160, y: -106.15}
+  m_SizeDelta: {x: 112.5, y: 36}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3695625203427204317
 CanvasRenderer:
@@ -1785,7 +1785,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 425080986341774567, guid: 5568efd8beae1ad4a95e1979b9fa1edd, type: 3}
+  m_Sprite: {fileID: -1331662771705909115, guid: 1aa2bf54239e7374387bc46d3b136fe5, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1814,7 +1814,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -1824,8 +1824,8 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: -4117881023469739028, guid: 9fa8944590ceede4aaee5fb56880d3f9, type: 3}
+    m_PressedSprite: {fileID: -4117881023469739028, guid: 9fa8944590ceede4aaee5fb56880d3f9, type: 3}
     m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
