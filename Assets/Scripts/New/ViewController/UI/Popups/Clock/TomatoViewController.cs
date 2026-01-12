@@ -71,7 +71,8 @@ namespace BirdGame
                 try
                 {
                     int session = int.Parse(v);
-                    if (session is >= 0 and <= 59)
+                    // 工作时长上限为 60 分钟
+                    if (session is >= 0 and <= 60)
                     {
                         item.SessionMinutes.Value = session;
                     }
@@ -103,7 +104,8 @@ namespace BirdGame
                 try
                 {
                     int breaks = int.Parse(v);
-                    if (breaks is >= 0 and <= 59)
+                    // 休息时长上限为 60 分钟
+                    if (breaks is >= 0 and <= 60)
                     {
                         item.BreakMinutes.Value = breaks;
                     }
@@ -135,12 +137,14 @@ namespace BirdGame
                 try
                 {
                     int number = int.Parse(v);
-                    if (number is >= 0 and <= 9)
+                    // 最大 session 数量限制为 4
+                    if (number is >= 0 and <= 4)
                     {
                         item.Number.Value = number;
                     }
                     else
                     {
+                        // 如果输入大于 4，恢复为当前值（无效输入）
                         numberText.text = string.Format("{0:0}", item.Number.Value);
                         var rect = numberText.textComponent.GetComponent<RectTransform>();
                         rect.sizeDelta = Vector2.zero;
@@ -183,6 +187,22 @@ namespace BirdGame
             });
             startButton.onClick.AddListener(() =>
             {
+                // 在开始计时前，先同步输入框的值到模型（确保键盘输入的值被正确读取）
+                // 这样即使用户输入后直接点击 start，值也能正确同步
+                if (int.TryParse(sessionText.text, out int session) && session >= 0 && session <= 60)
+                {
+                    item.SessionMinutes.Value = session;
+                }
+                if (int.TryParse(breakText.text, out int breaks) && breaks >= 0 && breaks <= 60)
+                {
+                    item.BreakMinutes.Value = breaks;
+                }
+                if (int.TryParse(numberText.text, out int number) && number >= 0 && number <= 4)
+                {
+                    item.Number.Value = number;
+                }
+                
+                // 验证值是否有效
                 if (item.SessionMinutes.Value == 0 || item.BreakMinutes.Value == 0 || item.Number.Value == 0) 
                     return;
                 item.TimerCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(StartTimer());
@@ -302,7 +322,12 @@ namespace BirdGame
                 item.Timer.Value = 0;
                 item.SessionMinutes.Value = 0;
                 item.BreakMinutes.Value = 0;
-                item.Number.Value = 0;
+                // 恢复 Number 为上一次设定的值（TotalNumber），而不是设置为 0
+                // 如果 TotalNumber 还没有被设置（用户还没有开始过计时），则保持当前值不变
+                if (item.TotalNumber > 0)
+                {
+                    item.Number.Value = item.TotalNumber;
+                }
                 item.TimerType.Value = TomatoTimerType.Session;
             });
 
@@ -478,15 +503,27 @@ namespace BirdGame
             var item = this.GetModel<IClockModel>().TomatoItem;
             if (index == 0)
             {
-                item.SessionMinutes.Value++;
+                // 工作时长上限为 60 分钟
+                if (item.SessionMinutes.Value < 60)
+                {
+                    item.SessionMinutes.Value++;
+                }
             }
             else if (index == 1)
             {
-                item.BreakMinutes.Value++;
+                // 休息时长上限为 60 分钟
+                if (item.BreakMinutes.Value < 60)
+                {
+                    item.BreakMinutes.Value++;
+                }
             }
             else if (index == 2)
             {
-                item.Number.Value++;
+                // 最大 session 数量限制为 4
+                if (item.Number.Value < 4)
+                {
+                    item.Number.Value++;
+                }
             }
         }
 
@@ -495,18 +532,39 @@ namespace BirdGame
             var item = this.GetModel<IClockModel>().TomatoItem;
             if (index == 0)
             {
+                // 如果为 0，按减号会变成 60（循环效果）
                 if (item.SessionMinutes.Value > 0)
+                {
                     item.SessionMinutes.Value--;
+                }
+                else
+                {
+                    item.SessionMinutes.Value = 60;
+                }
             }
             else if (index == 1)
             {
+                // 如果为 0，按减号会变成 60（循环效果）
                 if (item.BreakMinutes.Value > 0)
+                {
                     item.BreakMinutes.Value--;
+                }
+                else
+                {
+                    item.BreakMinutes.Value = 60;
+                }
             }
             else if (index == 2)
             {
+                // 如果为 0，按减号会变成 4（循环效果，因为最大值为 4）
                 if (item.Number.Value > 0)
+                {
                     item.Number.Value--;
+                }
+                else
+                {
+                    item.Number.Value = 4;
+                }
             }
         }
 
@@ -581,6 +639,12 @@ namespace BirdGame
             this.GetModel<IAccountModel>().Coins.Value += coins;
             this.GetModel<IAccountModel>().AddedCoins = coins;
             this.GetModel<IClockModel>().TomatoItem.TimerCoroutine = null;
+            // 恢复 Number 为上一次设定的值（TotalNumber），就像 SessionMinutes 和 BreakMinutes 一样
+            // 这样用户下次使用时，Number 会保持上一次设定的值，而不是变成 0
+            if (item.TotalNumber > 0)
+            {
+                item.Number.Value = item.TotalNumber;
+            }
             this.GetSystem<IMonoSystem>().SendEvent<TomatoOverEvent>();
             this.GetModel<IClockModel>().TimerType = TimerType.None;
             this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
