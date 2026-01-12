@@ -32,15 +32,15 @@ namespace BirdGame
             if (IsClickingOnDecoration()) return;
 
             // 取消撒食物冷却，每次点击都能撒
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) || SimpleMouseForwarder.clickCount > previousClickCount)
             {
-                //previousClickCount = SimpleMouseForwarder.clickCount;
+                previousClickCount = SimpleMouseForwarder.clickCount;
                 this.GetSystem<IGameSystem>().CreateFood();
                 lastTime = Time.time;
-                isDown = true;
+                // isDown = true;
             }
 
-            if (Input.GetMouseButtonUp(0))
+            if (Input.GetMouseButtonUp(0) )
             {
                 isDown = false;
             }
