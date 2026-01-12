@@ -79,19 +79,48 @@ namespace BirdGame
                         // else if (item.decorationType == DecorationType.Fixed)
                         // {
                         // 固定类型：直接放置在指定位置
-                        this.GetSystem<IGameSystem>().CreateFixedDecoration(id,
-                            accountData.sceneDecorationInfos[mapIndex].decorations[id].count);
-                        accountData.sceneDecorationInfos[mapIndex].decorations[id].count++;
+                        var decorationInfo = accountData.sceneDecorationInfos[mapIndex].decorations[id];
                         var decorationItem = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[mapIndex]
                             .decorations[id];
-                        Vector3 pos = Vector3.zero;
-                        int index = accountData.sceneDecorationInfos[mapIndex].decorations[id].count - 1;
-                        if (decorationItem.fixedPositions.Length > index)
+                        
+                        // 初始化 usedFixedPositionIndices（向后兼容）
+                        if (decorationInfo.usedFixedPositionIndices == null)
                         {
-                            pos = decorationItem.fixedPositions[index];
+                            decorationInfo.usedFixedPositionIndices = new List<int>();
                         }
-
-                        accountData.sceneDecorationInfos[mapIndex].decorations[id].position.Add(pos);
+                        
+                        // 获取可用的 fixedPositions 索引（优先使用被释放的索引）
+                        int availableIndex = -1;
+                        for (int i = 0; i < decorationItem.fixedPositions.Length; i++)
+                        {
+                            if (!decorationInfo.usedFixedPositionIndices.Contains(i))
+                            {
+                                availableIndex = i;
+                                break;
+                            }
+                        }
+                        
+                        // 如果没有可用的索引，提示错误
+                        if (availableIndex == -1)
+                        {
+                            string errorText = this.GetSystem<ILocalizationSystem>()
+                                .GetString("All decoration positions are occupied!");
+                            this.GetSystem<IUISystem>().ShowPrompt(errorText);
+                            return;
+                        }
+                        
+                        // 使用找到的索引创建装饰物
+                        this.GetSystem<IGameSystem>().CreateFixedDecoration(id, availableIndex);
+                        decorationInfo.count++;
+                        
+                        // 获取位置
+                        Vector3 pos = decorationItem.fixedPositions[availableIndex];
+                        
+                        // 将使用的索引添加到已使用列表
+                        decorationInfo.usedFixedPositionIndices.Add(availableIndex);
+                        
+                        // 添加位置到 position 列表
+                        decorationInfo.position.Add(pos);
                         string text = this.GetSystem<ILocalizationSystem>()
                             .GetString("Purchase successful! The decoration has been placed!");
                         this.GetSystem<IUISystem>().ShowPrompt(text);
