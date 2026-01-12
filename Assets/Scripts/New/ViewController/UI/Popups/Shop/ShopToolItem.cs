@@ -69,7 +69,7 @@ namespace BirdGame
                 {
                     string str1 = this.GetSystem<ILocalizationSystem>().GetString(selectedTool.descriptionKey);
                     string str2 = this.GetSystem<ILocalizationSystem>().GetString(selectedTool.description);
-                    description.ThisText.text = $"{str1}\n{str2}";
+                    description.ThisText.text = $"{str1}";
                 }
                 else
                 {
@@ -171,7 +171,7 @@ namespace BirdGame
                     {
                         string str1 = this.GetSystem<ILocalizationSystem>().GetString(selectedTool.descriptionKey);
                         string str2 = this.GetSystem<ILocalizationSystem>().GetString(selectedTool.description);
-                        description.ThisText.text = $"{str1}\n{str2}";
+                        description.ThisText.text = $"{str1}";
                     }
                     else
                     {
