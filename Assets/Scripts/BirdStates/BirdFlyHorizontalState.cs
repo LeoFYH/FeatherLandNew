@@ -68,7 +68,7 @@ namespace BirdGame
                         _brid.sr.flipX = false; // 先朝右
                         StartHorizontalFlight();
                     });
-                DOTween.Sequence().AppendCallback(() => { _brid.sr.sortingOrder = -15; }).SetDelay(flyTime * 0.5f);
+                //DOTween.Sequence().AppendCallback(() => { _brid.sr.sortingOrder = -15; }).SetDelay(flyTime * 0.5f);
             }
         }
 

@@ -204,42 +204,45 @@ namespace BirdGame
                 Refresh(false);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
+            string session = this.GetSystem<ILocalizationSystem>().GetString("Session");
+            string next = this.GetSystem<ILocalizationSystem>().GetString("Next Session");
+            string breaks = this.GetSystem<ILocalizationSystem>().GetString("Breaks");
             item.TimerType.Register(v =>
             {
                 if (v == TomatoTimerType.Session)
                 {
-                    currentSessionName.text = $"Session {item.TotalNumber - item.Number.Value + 1}";
-                    nextSession.text = $"Next Session: Break";
+                    currentSessionName.text = $"{session} {item.TotalNumber - item.Number.Value + 1}";
+                    nextSession.text = $"{next}: {breaks}";
                 }
                 else
                 {
-                    currentSessionName.text = "Break";
+                    currentSessionName.text = this.GetSystem<ILocalizationSystem>().GetString("Breaks");
                     if (item.Number.Value > 0)
                     {
-                        nextSession.text = "Next Session: Session";
+                        nextSession.text = $"{next}: {session}";
                     }
                     else
                     {
-                        nextSession.text = $"Next Session: ";
+                        nextSession.text = $"{next}: ";
                     }
                 }
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             if (item.TimerType.Value == TomatoTimerType.Session)
             {
-                currentSessionName.text = $"Session {item.TotalNumber - item.Number.Value + 1}";
+                currentSessionName.text = $"{session} {item.TotalNumber - item.Number.Value + 1}";
                
-                nextSession.text = "Next Session: Break";
+                nextSession.text = $"{next}: {breaks}";
             }
             else
             {
-                currentSessionName.text = "Break";
+                currentSessionName.text = breaks;
                 if (item.Number.Value > 0)
                 {
-                    nextSession.text = "Next Session: Session";
+                    nextSession.text = $"{next}: {session}";
                 }
                 else
                 {
-                    nextSession.text = $"Next Session: ";
+                    nextSession.text = $"{next}: ";
                 }
             }
             
@@ -348,7 +351,8 @@ namespace BirdGame
                 PopLine().anchoredPosition = new Vector2(posX, 0);
                 var nameTextObj = PopNameText();
                 nameTextObj.GetComponent<RectTransform>().anchoredPosition = new Vector2(lastPosX + (posX - lastPosX) * 0.5f, 0);
-                nameTextObj.text = $"Session {i + 1}";
+                string session = this.GetSystem<ILocalizationSystem>().GetString("Session");
+                nameTextObj.text = $"{session} {i + 1}";
                 lastPosX = posX;
                 //Break
                 curr += item.BreakMinutes.Value * 60;
@@ -360,7 +364,7 @@ namespace BirdGame
 
                 nameTextObj = PopNameText();
                 nameTextObj.GetComponent<RectTransform>().anchoredPosition = new Vector2(lastPosX + (posX - lastPosX) * 0.5f, 0);
-                nameTextObj.text = "Break";
+                nameTextObj.text = this.GetSystem<ILocalizationSystem>().GetString("Breaks");
                 lastPosX = posX;
             }
         }

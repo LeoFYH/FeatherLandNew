@@ -17,7 +17,7 @@ namespace BirdGame
         {
             var config = this.GetModel<IConfigModel>().MapConfig;
             icon.sprite = config.maps[mapIndex].mapPreview;
-            mapText.text = config.maps[mapIndex].mapName;
+            mapText.text = this.GetSystem<ILocalizationSystem>().GetString(config.maps[mapIndex].mapName);
         }
 
         private void Start()

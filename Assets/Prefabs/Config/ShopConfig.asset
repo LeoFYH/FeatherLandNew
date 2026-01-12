@@ -22,7 +22,7 @@ MonoBehaviour:
       description: 
       birds:
       - birdType: 0
-        probability: 0.602
+        probability: 0.092
       - birdType: 1
         probability: 0.0596
       - birdType: 13
@@ -30,21 +30,21 @@ MonoBehaviour:
       - birdType: 6
         probability: 0.089
       - birdType: 21
-        probability: 0.1132
-      - birdType: 22
         probability: 0.0474
+      - birdType: 22
+        probability: 0.11
       - birdType: 23
         probability: 0.1054
       - birdType: 2
-        probability: 0.0191
+        probability: 0.04
       - birdType: 7
         probability: 0.1065
       - birdType: 8
         probability: 0.0689
       - birdType: 9
-        probability: 0.01
+        probability: 0.077
       - birdType: 3
-        probability: 0.259
+        probability: 0.1
       - birdType: 4
         probability: 0.097
       - birdType: 5
@@ -71,28 +71,28 @@ MonoBehaviour:
       - birdType: 38
         probability: 0.01
       - birdType: 39
-        probability: 0.0734
+        probability: 0.03
     - eggSp: {fileID: 2219571566158466069, guid: 066d2d923c5b99944aa6d9ca568d816f, type: 3}
       price: 12
       birdCount: 3
       description: 
       birds:
       - birdType: 15
-        probability: 0.2345
+        probability: 0.0345
       - birdType: 28
-        probability: 0.3377
+        probability: 0.0377
       - birdType: 29
         probability: 0.0296
       - birdType: 30
-        probability: 0.1732
+        probability: 0.08732
       - birdType: 17
-        probability: 0.01
+        probability: 0.07
       - birdType: 27
-        probability: 0.01
+        probability: 0.07
       - birdType: 33
-        probability: 0.1951
+        probability: 0.06
       - birdType: 34
-        probability: 0.01
+        probability: 0.04
     - eggSp: {fileID: -8002347335681798773, guid: 3983a1dbff14cd040915f5a365b4942e, type: 3}
       price: 15
       birdCount: 3
@@ -123,27 +123,27 @@ MonoBehaviour:
       description: 
       birds:
       - birdType: 44
-        probability: 0.4873
+        probability: 0.108
       - birdType: 55
-        probability: 0.4873
+        probability: 0.135
       - birdType: 56
-        probability: 0.4873
+        probability: 0.079
       - birdType: 57
-        probability: 0.342
+        probability: 0.069
       - birdType: 45
-        probability: 0.1
+        probability: 0.187
       - birdType: 94
-        probability: 0.1
+        probability: 0.172
       - birdType: 95
-        probability: 0.1
+        probability: 0.158
       - birdType: 96
-        probability: 0.1
+        probability: 0.148
       - birdType: 86
-        probability: 0.5027
+        probability: 0.227
       - birdType: 87
-        probability: 0.5027
+        probability: 0.116
       - birdType: 88
-        probability: 0.401
+        probability: 0.169
     - eggSp: {fileID: 710238443548197888, guid: 1170092e8fa8e1142a7e347132e8ea45, type: 3}
       price: 16
       birdCount: 3
@@ -171,27 +171,27 @@ MonoBehaviour:
       description: 
       birds:
       - birdType: 43
-        probability: 0.3264
+        probability: 0.338
       - birdType: 58
-        probability: 0.3264
+        probability: 0.327
       - birdType: 59
         probability: 0.3264
       - birdType: 60
         probability: 0.3264
       - birdType: 40
-        probability: 0.6736
+        probability: 0.077
       - birdType: 64
-        probability: 0.6736
+        probability: 0.066
       - birdType: 65
-        probability: 0.6736
+        probability: 0.085
       - birdType: 66
-        probability: 0.6736
+        probability: 0.135
       - birdType: 96
-        probability: 0.5
+        probability: 0.359
       - birdType: 88
-        probability: 0.5
+        probability: 0.398
       - birdType: 57
-        probability: 0.5
+        probability: 0.361
   - eggs:
     - eggSp: {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
       price: 0
@@ -251,7 +251,7 @@ MonoBehaviour:
       maxQuantity: 1
       sceneSprite: {fileID: 21300000, guid: e9d52e55e18fd6d41bd00d03f25be2aa, type: 3}
       fixedPositions:
-      - {x: 2.24, y: -4.4, z: 0}
+      - {x: 0.16, y: -4.2, z: 0}
       isGround: 0
       isVisible: 1
       preview: {fileID: 2252215622904973494, guid: e8d6224ed5ee28e43a5a9a9d32903735, type: 3}
@@ -365,7 +365,7 @@ MonoBehaviour:
       maxQuantity: 1
       sceneSprite: {fileID: 21300000, guid: f586a57a0ab00f94293fecf4dec37f16, type: 3}
       fixedPositions:
-      - {x: -2.27, y: -4.78, z: 0}
+      - {x: -2.68, y: -4.4, z: 0}
       isGround: 0
       isVisible: 1
       preview: {fileID: -7410131866019014177, guid: 263a4c1617cbdc542b4dc9351fe5e909, type: 3}
@@ -395,7 +395,7 @@ MonoBehaviour:
     - icon: {fileID: 4495422397181781673, guid: 2a09792a324f4874196f98f9c4eb95a7, type: 3}
       type: 0
       selectionName: Bean
-      description: 'Acceleration of bird growth: lhigh'
+      description: 'Acceleration of bird growth: high'
       descriptionKey: BeanKey
       price: 300
       foodScale: 0.06

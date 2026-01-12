@@ -33,6 +33,10 @@ namespace BirdGame
 
         private void Start()
         {
+            DOTween.Sequence().AppendCallback(() =>
+            {
+                NavigationManager.Instance.RefreshArea();
+            }).SetDelay(0.01f);
             birdMaterial = this.GetModel<IBirdModel>().BirdMaterial;
             uiGroup = this.GetModel<IGameModel>().UiGroup;
             this.RegisterEvent<SwitchWeatherEvent>(evt =>
@@ -241,10 +245,6 @@ namespace BirdGame
             });
         }
         
-
-
-
-
         private void Update()
         {
             this.GetModel<IBirdModel>().BirdColor.Value = birdMaterial.color;

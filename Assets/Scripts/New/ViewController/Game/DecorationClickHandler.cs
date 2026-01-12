@@ -8,8 +8,10 @@ namespace BirdGame
 {
     public class DecorationClickHandler : ViewControllerBase
     {
+        public int sceneId;
         private int decorationId;
         public int decorationIndex;
+        public bool canFeed;
         [TableList(ShowIndexLabels = true, AlwaysExpanded = true)]
         public DecorationEffect[] effects;
 
@@ -50,6 +52,9 @@ namespace BirdGame
                     }
                 }
             }
+
+            transform.position = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[sceneId]
+                .decorations[decorationId].fixedPositions[0];
         }
 
         private void OnMouseOver()

@@ -23,8 +23,6 @@ namespace BirdGame
         public override void OnEnter()
         {
             //_brid.onNearOtherBird = OnNearOtherBird;
-            
-            
             _brid.agent.SetDestination(_brid.currFood.transform.position);
             var endPath = _brid.transform.position;
             if (_brid.agent.path.corners.Length > 1)

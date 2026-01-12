@@ -25,6 +25,7 @@ namespace BirdGame
             float lickingTime = Random.Range(1f, 4f);
             if (!_brid.agent.enabled)
                 _brid.agent.enabled = true;
+            _brid.sr.sortingOrder = 3;
 
             // 重置被抚摸标志
             _brid.isBeingPetted = false;
@@ -84,6 +85,7 @@ namespace BirdGame
                         // if(random == 1) // 10个数中随机到1时去吃食物
                         // {
                         _brid.currFood = food;
+                        food.isTargeted = true;
                         if(_brid.isSmall)
                             currMachine.ChangeState<BirdEatState>();
                         else
