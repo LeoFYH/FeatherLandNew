@@ -34,6 +34,10 @@ namespace BirdGame
             //this.GetSystem<ISceneSystem>().LoadScene(0);
         }
 
+        /// <summary>
+        /// 切换屏幕模式（统一方法，供启动和快捷键调用）
+        /// </summary>
+        /// <param name="mode">模式：0=窗口模式, 1=壁纸模式, 2=全屏模式</param>
         private void SetScreenMode(int mode)
         {
             Debug.Log($"SetScreenMode 被调用，模式: {mode}");
@@ -41,17 +45,26 @@ namespace BirdGame
             {
                 case 0:
                     this.GetUtility<IFullScreenUtility>().WindowedMode();
-                    Debug.Log("启动时设置为窗口模式");
+                    Debug.Log("设置为窗口模式");
                     break;
                 case 1:
                     this.GetUtility<IFullScreenUtility>().WallpaperMode();
-                    Debug.Log("启动时设置为壁纸模式");
+                    Debug.Log("设置为壁纸模式");
                     break;
                 default:
                     this.GetUtility<IFullScreenUtility>().FullscreenMode();
-                    Debug.Log("启动时设置为全屏模式");
+                    Debug.Log("设置为全屏模式");
                     break;
             }
+            
+            // 保存设置到存档
+            if (this.GetModel<ISaveModel>().SettingData != null)
+            {
+                this.GetModel<ISaveModel>().SettingData.screenMode = mode;
+            }
+            
+            // 发送事件通知UI更新
+            this.GetSystem<IMonoSystem>().SendEvent(new ChangeScreenModeEvent { mode = mode });
         }
 
         private void Update()
@@ -237,8 +250,21 @@ namespace BirdGame
                 return;
             }
 
+            // 检测屏幕模式切换快捷键：1=窗口模式, 2=壁纸模式, 3=全屏模式
+            if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1))
+            {
+                SetScreenMode(0);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2))
+            {
+                SetScreenMode(1);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3))
+            {
+                SetScreenMode(2);
+            }
             // 检测快捷键按下（使用 GetKeyDown 确保每次按键只触发一次）
-            if (Input.GetKeyDown(KeyCode.N))
+            else if (Input.GetKeyDown(KeyCode.N))
             {
                 // Notebook - NotePopup
                 this.GetSystem<IUISystem>().TogglePopup(UIPopup.NotePopup);
