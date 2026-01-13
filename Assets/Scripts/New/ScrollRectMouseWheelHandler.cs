@@ -20,6 +20,7 @@ public class ScrollRectMouseWheelHandler : MonoBehaviour,
     
     [Header("Drag Settings")]
     public bool enableDragScrolling = true;
+    public bool invertDragDirection = false;
     public float momentumDecayRate = 0.95f;
     public float minMomentumThreshold = 0.01f;
     
@@ -89,6 +90,12 @@ public class ScrollRectMouseWheelHandler : MonoBehaviour,
         Vector2 delta = eventData.position - lastMousePosition;
         lastMousePosition = eventData.position;
         
+        // Apply inversion if needed
+        if (invertDragDirection)
+        {
+            delta = -delta;
+        }
+        
         // Store velocity for momentum
         dragVelocity = delta * dragSensitivity;
         
@@ -140,6 +147,12 @@ public class ScrollRectMouseWheelHandler : MonoBehaviour,
     public void ReceiveDragDelta(Vector2 delta)
     {
         if (!enableDragScrolling || !isMouseOver || scrollRect == null || isDragging) return;
+        
+        // Apply inversion if needed
+        if (invertDragDirection)
+        {
+            delta = -delta;
+        }
         
         // Apply drag delta
         if (scrollRect.horizontal)
@@ -213,6 +226,7 @@ public class ScrollRectMouseWheelHandler : MonoBehaviour,
         // Apply momentum with decay
         momentum *= Mathf.Pow(momentumDecayRate, Time.deltaTime * 60f); // Frame-rate independent decay
         
+        // Apply momentum (inversion is already baked into the momentum from OnDrag)
         if (scrollRect.horizontal)
         {
             scrollRect.horizontalNormalizedPosition -= momentum.x * Time.deltaTime / GetScrollRectWidth();
