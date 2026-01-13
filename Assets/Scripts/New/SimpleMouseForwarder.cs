@@ -18,6 +18,10 @@ namespace BirdGame
     {
         public static int clickCount = 0;
         public static int rightClickCount = 0;
+        
+        // Keyboard state tracking for shortcuts (when not in input fields)
+        private static HashSet<KeyCode> pressedKeys = new HashSet<KeyCode>();
+        private static HashSet<KeyCode> pressedKeysThisFrame = new HashSet<KeyCode>();
 
         private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
 
@@ -175,19 +179,52 @@ namespace BirdGame
         [MonoPInvokeCallback(typeof(LowLevelKeyboardProc))]
         private static IntPtr KeyboardHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            if (nCode >= 0 && instance != null && instance.enableForwarding && 
-                (_focusedTMPInputField != null || _focusedLegacyInputField != null) && isOnDesktop)
+            if (nCode >= 0 && instance != null && instance.enableForwarding && isOnDesktop)
             {
                 int message = wParam.ToInt32();
+                KBDLLHOOKSTRUCT hookStruct = Marshal.PtrToStructure<KBDLLHOOKSTRUCT>(lParam);
 
                 if (message == WM_KEYDOWN)
                 {
-                    KBDLLHOOKSTRUCT hookStruct = Marshal.PtrToStructure<KBDLLHOOKSTRUCT>(lParam);
-                    HandleKeyDown(hookStruct);
+                    // Handle input field keyboard events
+                    if (_focusedTMPInputField != null || _focusedLegacyInputField != null)
+                    {
+                        HandleKeyDown(hookStruct);
+                    }
+                    else
+                    {
+                        // Track key presses for shortcuts when no input field is focused
+                        KeyCode keyCode = VirtualKeyToKeyCode(hookStruct.vkCode);
+                        if (keyCode != KeyCode.None && !pressedKeys.Contains(keyCode))
+                        {
+                            pressedKeys.Add(keyCode);
+                            pressedKeysThisFrame.Add(keyCode);
+                            
+                            if (instance != null && instance.showDebugLog)
+                            {
+                                Debug.Log($"[SimpleMouseForwarder] Keyboard hook captured: {keyCode} (VK: 0x{hookStruct.vkCode:X})");
+                            }
+                        }
+                    }
+                }
+                else if (message == WM_KEYUP)
+                {
+                    // Track key releases
+                    KeyCode keyCode = VirtualKeyToKeyCode(hookStruct.vkCode);
+                    if (keyCode != KeyCode.None)
+                    {
+                        pressedKeys.Remove(keyCode);
+                    }
                 }
             }
 
             return CallNextHookEx(_keyboardHookID, nCode, wParam, lParam);
+        }
+        
+        // Public method to check if a key was pressed this frame (for shortcuts)
+        public static bool GetKeyDown(KeyCode keyCode)
+        {
+            return pressedKeysThisFrame.Contains(keyCode);
         }
 
         private static void HandleKeyDown(KBDLLHOOKSTRUCT hookStruct)
@@ -280,6 +317,70 @@ namespace BirdGame
                 {
                     Debug.Log($"[SimpleMouseForwarder] Key: {keyData.keyType} (Shift: {shiftPressed})");
                 }
+            }
+        }
+
+        private static KeyCode VirtualKeyToKeyCode(uint vkCode)
+        {
+            // Map common virtual key codes to Unity KeyCodes
+            switch (vkCode)
+            {
+                // Special keys
+                case 0x1B: return KeyCode.Escape;
+                
+                // Numbers
+                case 0x30: return KeyCode.Alpha0;
+                case 0x31: return KeyCode.Alpha1;
+                case 0x32: return KeyCode.Alpha2;
+                case 0x33: return KeyCode.Alpha3;
+                case 0x34: return KeyCode.Alpha4;
+                case 0x35: return KeyCode.Alpha5;
+                case 0x36: return KeyCode.Alpha6;
+                case 0x37: return KeyCode.Alpha7;
+                case 0x38: return KeyCode.Alpha8;
+                case 0x39: return KeyCode.Alpha9;
+                
+                // Letters
+                case 0x41: return KeyCode.A;
+                case 0x42: return KeyCode.B;
+                case 0x43: return KeyCode.C;
+                case 0x44: return KeyCode.D;
+                case 0x45: return KeyCode.E;
+                case 0x46: return KeyCode.F;
+                case 0x47: return KeyCode.G;
+                case 0x48: return KeyCode.H;
+                case 0x49: return KeyCode.I;
+                case 0x4A: return KeyCode.J;
+                case 0x4B: return KeyCode.K;
+                case 0x4C: return KeyCode.L;
+                case 0x4D: return KeyCode.M;
+                case 0x4E: return KeyCode.N;
+                case 0x4F: return KeyCode.O;
+                case 0x50: return KeyCode.P;
+                case 0x51: return KeyCode.Q;
+                case 0x52: return KeyCode.R;
+                case 0x53: return KeyCode.S;
+                case 0x54: return KeyCode.T;
+                case 0x55: return KeyCode.U;
+                case 0x56: return KeyCode.V;
+                case 0x57: return KeyCode.W;
+                case 0x58: return KeyCode.X;
+                case 0x59: return KeyCode.Y;
+                case 0x5A: return KeyCode.Z;
+                
+                // Numpad
+                case 0x60: return KeyCode.Keypad0;
+                case 0x61: return KeyCode.Keypad1;
+                case 0x62: return KeyCode.Keypad2;
+                case 0x63: return KeyCode.Keypad3;
+                case 0x64: return KeyCode.Keypad4;
+                case 0x65: return KeyCode.Keypad5;
+                case 0x66: return KeyCode.Keypad6;
+                case 0x67: return KeyCode.Keypad7;
+                case 0x68: return KeyCode.Keypad8;
+                case 0x69: return KeyCode.Keypad9;
+                
+                default: return KeyCode.None;
             }
         }
 
@@ -1031,6 +1132,7 @@ namespace BirdGame
         private void Update()
         {
             isOnDesktop = GetForegroundWindowTitle() == "Program Manager" || GetForegroundWindowTitle() == string.Empty;
+            
             // Get the current foreground window handle
             if (isOnDesktop)
             {
@@ -1144,6 +1246,13 @@ namespace BirdGame
                 }
             }
         }
+        
+        private void LateUpdate()
+        {
+            // Clear pressed keys from this frame in LateUpdate
+            // This ensures all Update() methods can read the keys before they're cleared
+            pressedKeysThisFrame.Clear();
+        }
 
         private void SimulateMouseClick(Vector2 screenPosition)
         {
@@ -1167,12 +1276,17 @@ namespace BirdGame
 
             if (raycastResults.Count > 0)
             {
+                bool foundInputField = false;
+                bool foundSlider = false;
+                
+                // Process ALL raycast results to trigger events on all objects
                 foreach (var result in raycastResults)
                 {
                     GameObject hitObject = result.gameObject;
+                    
+                    // Check for TMP InputField handler
                     HookTMPInputHandler tmpHandler = hitObject.GetComponent<HookTMPInputHandler>();
-
-                    if (tmpHandler != null)
+                    if (tmpHandler != null && !foundInputField)
                     {
                         tmpHandler.ActivateInputField();
                         _focusedTMPInputField = hitObject;
@@ -1184,32 +1298,44 @@ namespace BirdGame
                         }
 
                         Debug.Log($"[SimpleMouseForwarder] TMP输入框激活: {hitObject.name}");
-                        return;
+                        foundInputField = true;
+                        // Input fields consume the click, stop processing
+                        break;
                     }
 
                     // Check for legacy InputField handler
                     HookLegacyInputHandler legacyHandler = hitObject.GetComponent<HookLegacyInputHandler>();
-                    if (legacyHandler != null)
+                    if (legacyHandler != null && !foundInputField)
                     {
                         legacyHandler.ActivateInputField();
                         _focusedLegacyInputField = hitObject;
 
                         Debug.Log($"[SimpleMouseForwarder] Legacy输入框激活: {hitObject.name}");
-                        return;
+                        foundInputField = true;
+                        // Input fields consume the click, stop processing
+                        break;
                     }
 
                     // Check for slider handlers
                     SliderBarClickHandler sliderHandler = hitObject.GetComponent<SliderBarClickHandler>();
-                    if (sliderHandler != null)
+                    if (sliderHandler != null && !foundSlider)
                     {
                         ExecuteEvents.Execute(hitObject, pointerData, ExecuteEvents.pointerClickHandler);
                         ExecuteEvents.Execute(hitObject, pointerData, ExecuteEvents.pointerDownHandler);
                         Debug.Log($"[SimpleMouseForwarder] 滑块交互: {hitObject.name}");
-                        return;
+                        foundSlider = true;
+                        // Sliders consume the click, stop processing
+                        break;
                     }
 
+                    // Execute pointer click on this object
+                    // This will trigger ALL objects in the raycast hierarchy
                     ExecuteEvents.Execute(hitObject, pointerData, ExecuteEvents.pointerClickHandler);
-                    return;
+                    
+                    if (showDebugLog)
+                    {
+                        Debug.Log($"[SimpleMouseForwarder] 点击对象: {hitObject.name}");
+                    }
                 }
             }
             else if (showDebugLog)

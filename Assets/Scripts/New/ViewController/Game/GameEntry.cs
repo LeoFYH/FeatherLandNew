@@ -251,54 +251,63 @@ namespace BirdGame
             }
 
             // 检测屏幕模式切换快捷键：1=窗口模式, 2=壁纸模式, 3=全屏模式
-            if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1))
+            // Support both Unity input and hook input for desktop mode
+            if (GetKeyDownAny(KeyCode.Alpha1) || GetKeyDownAny(KeyCode.Keypad1))
             {
                 SetScreenMode(0);
             }
-            else if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2))
+            else if (GetKeyDownAny(KeyCode.Alpha2) || GetKeyDownAny(KeyCode.Keypad2))
             {
                 SetScreenMode(1);
             }
-            else if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3))
+            else if (GetKeyDownAny(KeyCode.Alpha3) || GetKeyDownAny(KeyCode.Keypad3))
             {
                 SetScreenMode(2);
             }
             // 检测快捷键按下（使用 GetKeyDown 确保每次按键只触发一次）
-            else if (Input.GetKeyDown(KeyCode.N))
+            else if (GetKeyDownAny(KeyCode.N))
             {
                 // Notebook - NotePopup
                 this.GetSystem<IUISystem>().TogglePopup(UIPopup.NotePopup);
             }
-            else if (Input.GetKeyDown(KeyCode.R))
+            else if (GetKeyDownAny(KeyCode.R))
             {
                 // Radio - RadioPopup
                 this.GetSystem<IUISystem>().TogglePopup(UIPopup.RadioPopup);
             }
-            else if (Input.GetKeyDown(KeyCode.P))
+            else if (GetKeyDownAny(KeyCode.P))
             {
                 // Pomodoro Clock - ClockPopup
                 this.GetSystem<IUISystem>().TogglePopup(UIPopup.ClockPopup);
             }
-            else if (Input.GetKeyDown(KeyCode.M))
+            else if (GetKeyDownAny(KeyCode.M))
             {
                 // Map - MapPopup
                 this.GetSystem<IUISystem>().TogglePopup(UIPopup.MapPopup);
             }
-            else if (Input.GetKeyDown(KeyCode.S))
+            else if (GetKeyDownAny(KeyCode.S))
             {
                 // Shop - ShopPopup
                 this.GetSystem<IUISystem>().TogglePopup(UIPopup.ShopPopup);
             }
-            else if (Input.GetKeyDown(KeyCode.B))
+            else if (GetKeyDownAny(KeyCode.B))
             {
                 // Birdbook - IllustratedPopup
                 this.GetSystem<IUISystem>().TogglePopup(UIPopup.IllustratedPopup);
             }
-            else if (Input.GetKeyDown(KeyCode.T))
+            else if (GetKeyDownAny(KeyCode.T))
             {
                 // Tutorial - TutorialPopup
                 this.GetSystem<IUISystem>().TogglePopup(UIPopup.TutorialPopup);
             }
+        }
+        
+        /// <summary>
+        /// Helper method to check key press from both Unity Input and Windows Hook
+        /// </summary>
+        private bool GetKeyDownAny(KeyCode keyCode)
+        {
+            return Input.GetKeyDown(keyCode) || SimpleMouseForwarder.GetKeyDown(keyCode);
         }
 
         /// <summary>

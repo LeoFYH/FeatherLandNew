@@ -142,26 +142,26 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
             ActivateInputField();
         }
 
-        // FIRST position the caret, THEN handle selection logic
-        if (enableClickToPositionCaret)
+        // Handle select all on click (takes priority over caret positioning)
+        if (selectAllOnClick)
         {
-            SetCaretToClickPosition(eventData.position);
+            // Use coroutine to ensure input field is fully activated before selecting
+            StartCoroutine(SelectAllTextDelayed());
+            
+            if (enableDebugLog)
+            {
+                Debug.Log($"[HookTMPInputHandler] Will select all text on click: {gameObject.name}");
+            }
         }
-
-        // Handle selection logic
-        // if (selectAllOnClick && isFocused)
-        // {
-        //     SelectAllText();
-        // }
-        // else
-        // {
-        //     // For regular clicks, ensure selection is cleared
-        //     ClearSelection();
-        // }
-
-        if (enableDebugLog)
+        else if (enableClickToPositionCaret)
         {
-            Debug.Log($"[HookTMPInputHandler] TMP InputField clicked: {gameObject.name}, Caret: {inputField.caretPosition}");
+            // Only position caret if we're not selecting all
+            SetCaretToClickPosition(eventData.position);
+            
+            if (enableDebugLog)
+            {
+                Debug.Log($"[HookTMPInputHandler] TMP InputField clicked: {gameObject.name}, Caret: {inputField.caretPosition}");
+            }
         }
     }
 
@@ -995,13 +995,36 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
         }
     }
 
+    private IEnumerator SelectAllTextDelayed()
+    {
+        // Wait for end of frame to ensure input field is fully activated
+        yield return new WaitForEndOfFrame();
+        
+        SelectAllText();
+    }
+
     private void SelectAllText()
     {
-        if (inputField.isFocused)
+        if (inputField == null) return;
+        
+        // Make sure the input field is activated
+        if (!inputField.isFocused)
         {
-            inputField.selectionAnchorPosition = 0;
-            inputField.selectionFocusPosition = inputField.text.Length;
-            inputField.caretPosition = inputField.text.Length;
+            inputField.ActivateInputField();
+            inputField.Select();
+        }
+        
+        // Select all text from start to end
+        inputField.selectionAnchorPosition = 0;
+        inputField.selectionFocusPosition = inputField.text.Length;
+        inputField.caretPosition = inputField.text.Length;
+        
+        // Force label update to show the selection visually
+        inputField.ForceLabelUpdate();
+        
+        if (enableDebugLog)
+        {
+            Debug.Log($"[HookTMPInputHandler] Selected all text: length={inputField.text.Length}");
         }
     }
 
