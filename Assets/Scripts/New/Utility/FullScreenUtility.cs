@@ -83,6 +83,12 @@ namespace BirdGame
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
 
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool BringWindowToTop(IntPtr hWnd);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr SetFocus(IntPtr hWnd);
+
         // ---------------- constants ----------------
         private const uint WS_OVERLAPPEDWINDOW = 0x00000000 | 0x00C00000 | 0x00080000 | 0x00040000 | 0x00020000 | 0x00010000;
         private const uint WS_POPUP = 0x80000000;
@@ -250,6 +256,34 @@ namespace BirdGame
             }
         }
 
+        /// <summary>
+        /// Activate and focus the window to ensure it can receive keyboard input
+        /// </summary>
+        private void ActivateWindow()
+        {
+            if (windowHandle == IntPtr.Zero)
+                return;
+
+            try
+            {
+                // Multiple approaches to ensure window gets focus
+                // SetForegroundWindow: Brings window to foreground
+                bool foregroundResult = SetForegroundWindow(windowHandle);
+                
+                // BringWindowToTop: Brings window to top of Z-order
+                bool bringToTopResult = BringWindowToTop(windowHandle);
+                
+                // SetFocus: Sets keyboard focus
+                IntPtr focusResult = SetFocus(windowHandle);
+                
+                Debug.Log($"[ActivateWindow] 结果 - Foreground: {foregroundResult}, BringToTop: {bringToTopResult}, Focus: {focusResult != IntPtr.Zero}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[ActivateWindow] 激活窗口时出错: {e.Message}");
+            }
+        }
+
         // ---------------- main methods ----------------
         public bool EnableWallpaperMode
         {
@@ -329,6 +363,11 @@ namespace BirdGame
                 {
                     Debug.LogWarning("[WallpaperMode] 未找到 SimpleMouseForwarder 组件");
                 }
+                
+                // Activate window and set focus
+                // Note: In wallpaper mode, window is a child of desktop, so focus behavior may differ
+                // But we still attempt to set focus to ensure keyboard input works when transitioning
+                ActivateWindow();
             }
             catch (Exception e)
             {
@@ -468,6 +507,9 @@ namespace BirdGame
                 mouseForwarder.gameObject.SetActive(false);
                 Debug.Log("[FullscreenMode] SimpleMouseForwarder 已禁用");
             }
+            
+            // Activate window and set focus
+            ActivateWindow();
         }
 
         public void WindowedMode()
@@ -529,6 +571,9 @@ namespace BirdGame
                 mouseForwarder.gameObject.SetActive(false);
                 Debug.Log("[WindowedMode] SimpleMouseForwarder 已禁用");
             }
+            
+            // Activate window and set focus
+            ActivateWindow();
         }
 
         public bool IsWallpaperModeActive() => isWallpaperMode;

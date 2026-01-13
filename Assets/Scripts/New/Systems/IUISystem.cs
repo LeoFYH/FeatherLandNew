@@ -106,6 +106,12 @@ namespace BirdGame
         void ShowBuyConfirm(string price, Action onConfirm);
         void ShowExitConfirm();
         Canvas GetCanvas();
+        /// <summary>
+        /// 获取当前Panel对象
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        T GetPanel<T>() where T : UIBase;
     }
 
     public class UISystem : AbstractSystem, IUISystem
@@ -398,6 +404,11 @@ namespace BirdGame
         public Canvas GetCanvas()
         {
             return popupLayer.GetComponent<Canvas>();
+        }
+
+        public T GetPanel<T>() where T : UIBase
+        {
+            return currentPanelObject as T;
         }
     }
 }

@@ -365,7 +365,8 @@ namespace BirdGame
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
+            // Support both Unity input and hook input for desktop mode
+            if (GetKeyDownAny(KeyCode.Escape))
             {
                 // 检查设置界面是否已经打开
                 var settingPopup = this.GetSystem<IUISystem>().GetPopup<UIBase>(UIPopup.SettingPopup);
@@ -381,7 +382,7 @@ namespace BirdGame
                 }
             }
             
-            if (Input.GetKeyDown(KeyCode.A))
+            if (GetKeyDownAny(KeyCode.A))
             {
                 // 按下 A 键打开/关闭天气选项
                 if (weatherButton != null)
@@ -389,6 +390,14 @@ namespace BirdGame
                     weatherButton.onClick.Invoke();
                 }
             }
+        }
+        
+        /// <summary>
+        /// Helper method to check key press from both Unity Input and Windows Hook
+        /// </summary>
+        private bool GetKeyDownAny(KeyCode keyCode)
+        {
+            return Input.GetKeyDown(keyCode) || SimpleMouseForwarder.GetKeyDown(keyCode);
         }
 
         /// <summary>

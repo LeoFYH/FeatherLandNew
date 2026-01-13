@@ -20,9 +20,12 @@ namespace BirdGame
         private int decorationId;
         private int decorationIndex;
         private GameObject deleteObject;
+        private int lastClickCount = 0;
 
         public override void OnShowPanel()
         {
+            // Initialize with current click count to avoid false positive on first frame
+            lastClickCount = SimpleMouseForwarder.clickCount;
         }
 
         public override void OnHidePanel(Action onComplete = null)
@@ -54,8 +57,19 @@ namespace BirdGame
         private void Update()
         {
             // 检测左键点击
-            if (Input.GetMouseButtonDown(0))
+            // For Unity input: use Input.GetMouseButtonDown(0)
+            // For hook input: check if click count has increased
+            bool unityClickDetected = Input.GetMouseButtonDown(0);
+            bool hookClickDetected = SimpleMouseForwarder.clickCount > lastClickCount;
+            
+            if (unityClickDetected || hookClickDetected)
             {
+                // Update last click count for next frame
+                if (hookClickDetected)
+                {
+                    lastClickCount = SimpleMouseForwarder.clickCount;
+                }
+                
                 // 检查是否点击在UI元素上
                 if (EventSystem.current.IsPointerOverGameObject())
                 {

@@ -380,7 +380,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 0}
-  dragSensitivity: 1
 --- !u!114 &4819254893124897530
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -879,6 +878,7 @@ GameObject:
   - component: {fileID: 5179482564867270620}
   - component: {fileID: 5521689947228489586}
   - component: {fileID: 3960556478407403751}
+  - component: {fileID: 2243740108902308012}
   m_Layer: 0
   m_Name: HourInput
   m_TagString: Click
@@ -1045,6 +1045,25 @@ MonoBehaviour:
   isAlert: 0
   m_InputValidator: {fileID: 0}
   m_ShouldActivateOnSelect: 1
+--- !u!114 &2243740108902308012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 289267032094650268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd32b78703b01942a960e74fd4518ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputField: {fileID: 3960556478407403751}
+  backgroundImage: {fileID: 5521689947228489586}
+  autoActivateOnClick: 0
+  selectAllOnClick: 1
+  enableClickToPositionCaret: 0
+  enableDebugLog: 0
+  selectionColor: {r: 0.2, g: 0.4, b: 0.8, a: 0.4}
 --- !u!1 &296117140870592199
 GameObject:
   m_ObjectHideFlags: 0
@@ -6122,6 +6141,7 @@ GameObject:
   - component: {fileID: 3501572781736095617}
   - component: {fileID: 4522405466498034049}
   - component: {fileID: 5774036164632830126}
+  - component: {fileID: 6478787959929467502}
   m_Layer: 0
   m_Name: HourInput
   m_TagString: Click
@@ -6288,6 +6308,25 @@ MonoBehaviour:
   isAlert: 0
   m_InputValidator: {fileID: 0}
   m_ShouldActivateOnSelect: 1
+--- !u!114 &6478787959929467502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2371066714012072126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd32b78703b01942a960e74fd4518ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputField: {fileID: 5774036164632830126}
+  backgroundImage: {fileID: 4522405466498034049}
+  autoActivateOnClick: 0
+  selectAllOnClick: 1
+  enableClickToPositionCaret: 0
+  enableDebugLog: 0
+  selectionColor: {r: 0.2, g: 0.4, b: 0.8, a: 0.4}
 --- !u!1 &2382974096573920117
 GameObject:
   m_ObjectHideFlags: 0
@@ -7010,6 +7049,7 @@ GameObject:
   - component: {fileID: 7503642674442848659}
   - component: {fileID: 337622161347230700}
   - component: {fileID: 6477447860037952124}
+  - component: {fileID: 2609672375553686946}
   m_Layer: 0
   m_Name: SecondInput
   m_TagString: Click
@@ -7176,6 +7216,25 @@ MonoBehaviour:
   isAlert: 0
   m_InputValidator: {fileID: 0}
   m_ShouldActivateOnSelect: 1
+--- !u!114 &2609672375553686946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2510121388916692608}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd32b78703b01942a960e74fd4518ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputField: {fileID: 6477447860037952124}
+  backgroundImage: {fileID: 337622161347230700}
+  autoActivateOnClick: 0
+  selectAllOnClick: 1
+  enableClickToPositionCaret: 0
+  enableDebugLog: 0
+  selectionColor: {r: 0.2, g: 0.4, b: 0.8, a: 0.4}
 --- !u!1 &2566571997921695672
 GameObject:
   m_ObjectHideFlags: 0
@@ -10155,7 +10214,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 0}
-  dragSensitivity: 1
 --- !u!114 &7001820743399567302
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11522,6 +11580,7 @@ GameObject:
   - component: {fileID: 8976185282199574064}
   - component: {fileID: 4859898777036844918}
   - component: {fileID: 3118323581707249736}
+  - component: {fileID: 3012143244711087135}
   m_Layer: 0
   m_Name: SecondInput
   m_TagString: Click
@@ -11688,6 +11747,25 @@ MonoBehaviour:
   isAlert: 0
   m_InputValidator: {fileID: 0}
   m_ShouldActivateOnSelect: 1
+--- !u!114 &3012143244711087135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5016751671521385317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd32b78703b01942a960e74fd4518ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputField: {fileID: 3118323581707249736}
+  backgroundImage: {fileID: 4859898777036844918}
+  autoActivateOnClick: 0
+  selectAllOnClick: 1
+  enableClickToPositionCaret: 0
+  enableDebugLog: 0
+  selectionColor: {r: 0.2, g: 0.4, b: 0.8, a: 0.4}
 --- !u!1 &5025659780564830389
 GameObject:
   m_ObjectHideFlags: 0
@@ -15441,6 +15519,7 @@ GameObject:
   - component: {fileID: 5532530603133577247}
   - component: {fileID: 1885621956558855693}
   - component: {fileID: 2455709420353497913}
+  - component: {fileID: 7768954485643603118}
   m_Layer: 0
   m_Name: MinuteInput
   m_TagString: Click
@@ -15607,6 +15686,25 @@ MonoBehaviour:
   isAlert: 0
   m_InputValidator: {fileID: 0}
   m_ShouldActivateOnSelect: 1
+--- !u!114 &7768954485643603118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6819469978632329354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd32b78703b01942a960e74fd4518ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputField: {fileID: 2455709420353497913}
+  backgroundImage: {fileID: 1885621956558855693}
+  autoActivateOnClick: 0
+  selectAllOnClick: 1
+  enableClickToPositionCaret: 0
+  enableDebugLog: 0
+  selectionColor: {r: 0.2, g: 0.4, b: 0.8, a: 0.4}
 --- !u!1 &6823196674394814796
 GameObject:
   m_ObjectHideFlags: 0
@@ -16066,6 +16164,7 @@ GameObject:
   - component: {fileID: 2839728204950151762}
   - component: {fileID: 6569683222236288963}
   - component: {fileID: 6834462230588685835}
+  - component: {fileID: 6323684222118717133}
   m_Layer: 0
   m_Name: MinuteInput
   m_TagString: Click
@@ -16232,6 +16331,25 @@ MonoBehaviour:
   isAlert: 0
   m_InputValidator: {fileID: 0}
   m_ShouldActivateOnSelect: 1
+--- !u!114 &6323684222118717133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6925121623846375646}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd32b78703b01942a960e74fd4518ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputField: {fileID: 6834462230588685835}
+  backgroundImage: {fileID: 6569683222236288963}
+  autoActivateOnClick: 0
+  selectAllOnClick: 1
+  enableClickToPositionCaret: 0
+  enableDebugLog: 0
+  selectionColor: {r: 0.2, g: 0.4, b: 0.8, a: 0.4}
 --- !u!1 &6937564320543938720
 GameObject:
   m_ObjectHideFlags: 0
