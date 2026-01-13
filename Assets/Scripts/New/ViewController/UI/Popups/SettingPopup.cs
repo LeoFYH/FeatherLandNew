@@ -292,6 +292,9 @@ namespace BirdGame
         /// <param name="mode">模式：0=窗口模式, 1=壁纸模式, 2=全屏模式</param>
         private void SwitchScreenMode(int mode)
         {
+            // Clear keyboard state before mode change to prevent lingering key states
+            SimpleMouseForwarder.ClearKeyboardState();
+            
             if (mode == 0)
             {
                 this.GetUtility<IFullScreenUtility>().WindowedMode();
@@ -307,6 +310,9 @@ namespace BirdGame
                 this.GetUtility<IFullScreenUtility>().FullscreenMode();
                 Debug.Log("FullscreenMode");
             }
+            
+            // Clear keyboard state after mode change as well
+            SimpleMouseForwarder.ClearKeyboardState();
 
             // 保存设置
             this.GetModel<ISaveModel>().SettingData.screenMode = mode;

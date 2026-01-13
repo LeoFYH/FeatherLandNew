@@ -11,6 +11,10 @@ namespace BirdGame
     {
         public Action onUpdate;
         
+        // Cooldown timer to prevent rapid mode switching during window state transitions
+        private float _lastModeChangeTime = -999f;
+        private const float MODE_CHANGE_COOLDOWN = 0.5f; // 500ms cooldown between mode changes
+        
         private void Start()
         {
             // 延迟一帧来确保所有系统都已初始化
@@ -29,7 +33,7 @@ namespace BirdGame
             this.GetModel<ISaveModel>().SettingData.screenMode = 2;
             int savedScreenMode = this.GetModel<ISaveModel>().SettingData.screenMode;
             Debug.Log($"从存档加载的屏幕模式: {savedScreenMode}");
-            SetScreenMode(savedScreenMode);
+            SetScreenMode(savedScreenMode, forceChange: true); // Force initial mode setting
             
             //this.GetSystem<ISceneSystem>().LoadScene(0);
         }
@@ -38,9 +42,29 @@ namespace BirdGame
         /// 切换屏幕模式（统一方法，供启动和快捷键调用）
         /// </summary>
         /// <param name="mode">模式：0=窗口模式, 1=壁纸模式, 2=全屏模式</param>
-        private void SetScreenMode(int mode)
+        /// <param name="forceChange">是否强制切换（忽略冷却时间，用于初始化）</param>
+        private void SetScreenMode(int mode, bool forceChange = false)
         {
+            // Check cooldown to prevent rapid mode switching during transitions
+            if (!forceChange && Time.time - _lastModeChangeTime < MODE_CHANGE_COOLDOWN)
+            {
+                Debug.Log($"SetScreenMode 被忽略（冷却中）- 模式: {mode}, 剩余冷却时间: {MODE_CHANGE_COOLDOWN - (Time.time - _lastModeChangeTime):F2}秒");
+                return;
+            }
+            
+            // Check if already in the requested mode
+            int currentMode = this.GetModel<ISaveModel>().SettingData?.screenMode ?? -1;
+            if (!forceChange && currentMode == mode)
+            {
+                Debug.Log($"SetScreenMode 被忽略（已处于模式 {mode}）");
+                return;
+            }
+            
             Debug.Log($"SetScreenMode 被调用，模式: {mode}");
+            
+            // Clear keyboard state before mode change to prevent lingering key states
+            SimpleMouseForwarder.ClearKeyboardState();
+            
             switch (mode)
             {
                 case 0:
@@ -56,6 +80,12 @@ namespace BirdGame
                     Debug.Log("设置为全屏模式");
                     break;
             }
+            
+            // Clear keyboard state after mode change as well
+            SimpleMouseForwarder.ClearKeyboardState();
+            
+            // Update cooldown timer
+            _lastModeChangeTime = Time.time;
             
             // 保存设置到存档
             if (this.GetModel<ISaveModel>().SettingData != null)
@@ -251,21 +281,31 @@ namespace BirdGame
             }
 
             // 检测屏幕模式切换快捷键：1=窗口模式, 2=壁纸模式, 3=全屏模式
-            // Support both Unity input and hook input for desktop mode
-            if (GetKeyDownAny(KeyCode.Alpha1) || GetKeyDownAny(KeyCode.Keypad1))
+            // Cache key states to avoid multiple calls and race conditions
+            bool key1Down = GetKeyDownAny(KeyCode.Alpha1) || GetKeyDownAny(KeyCode.Keypad1);
+            bool key2Down = GetKeyDownAny(KeyCode.Alpha2) || GetKeyDownAny(KeyCode.Keypad2);
+            bool key3Down = GetKeyDownAny(KeyCode.Alpha3) || GetKeyDownAny(KeyCode.Keypad3);
+            
+            if (key1Down)
             {
                 SetScreenMode(0);
+                return; // Early return to prevent processing other keys in the same frame
             }
-            else if (GetKeyDownAny(KeyCode.Alpha2) || GetKeyDownAny(KeyCode.Keypad2))
+            
+            if (key2Down)
             {
                 SetScreenMode(1);
+                return; // Early return to prevent processing other keys in the same frame
             }
-            else if (GetKeyDownAny(KeyCode.Alpha3) || GetKeyDownAny(KeyCode.Keypad3))
+            
+            if (key3Down)
             {
                 SetScreenMode(2);
+                return; // Early return to prevent processing other keys in the same frame
             }
+            
             // 检测快捷键按下（使用 GetKeyDown 确保每次按键只触发一次）
-            else if (GetKeyDownAny(KeyCode.N))
+            if (GetKeyDownAny(KeyCode.N))
             {
                 // Notebook - NotePopup
                 this.GetSystem<IUISystem>().TogglePopup(UIPopup.NotePopup);
@@ -304,10 +344,18 @@ namespace BirdGame
         
         /// <summary>
         /// Helper method to check key press from both Unity Input and Windows Hook
+        /// Uses OR logic to support both input systems but prevents double-detection
         /// </summary>
         private bool GetKeyDownAny(KeyCode keyCode)
         {
-            return Input.GetKeyDown(keyCode) || SimpleMouseForwarder.GetKeyDown(keyCode);
+            // Check both input systems
+            // In windowed/fullscreen: Unity Input will work
+            // In wallpaper mode: Windows Hook will work (and Unity Input may or may not)
+            // Using OR ensures at least one system detects the key
+            bool unityInput = Input.GetKeyDown(keyCode);
+            bool hookInput = SimpleMouseForwarder.GetKeyDown(keyCode);
+            
+            return unityInput || hookInput;
         }
 
         /// <summary>

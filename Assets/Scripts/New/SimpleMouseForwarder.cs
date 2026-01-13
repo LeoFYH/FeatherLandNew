@@ -226,6 +226,13 @@ namespace BirdGame
         {
             return pressedKeysThisFrame.Contains(keyCode);
         }
+        
+        // Public method to clear keyboard state (useful during mode transitions)
+        public static void ClearKeyboardState()
+        {
+            pressedKeys.Clear();
+            pressedKeysThisFrame.Clear();
+        }
 
         private static void HandleKeyDown(KBDLLHOOKSTRUCT hookStruct)
         {
