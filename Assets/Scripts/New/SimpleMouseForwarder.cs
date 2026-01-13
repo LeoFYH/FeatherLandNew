@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using Debug = UnityEngine.Debug;
@@ -17,6 +18,10 @@ namespace BirdGame
     {
         public static int clickCount = 0;
         public static int rightClickCount = 0;
+        
+        // Keyboard state tracking for shortcuts (when not in input fields)
+        private static HashSet<KeyCode> pressedKeys = new HashSet<KeyCode>();
+        private static HashSet<KeyCode> pressedKeysThisFrame = new HashSet<KeyCode>();
 
         private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
 
@@ -66,6 +71,7 @@ namespace BirdGame
         private static GameObject _focusedTMPInputField = null;
         private static GameObject _focusedLegacyInputField = null;
         private static GameObject _currentHoveredPointerEvent = null;
+        private static HashSet<GameObject> _currentHoveredUIElements = new HashSet<GameObject>();
 
         private static bool isLeftMouseDragging = false;
         private static Vector2 dragStartPosition;
@@ -127,6 +133,10 @@ namespace BirdGame
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder text, int count);
 
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool GetCursorPos(out POINT lpPoint);
+
         public bool enableForwarding = true;
         public bool showDebugLog = false;
 
@@ -169,19 +179,59 @@ namespace BirdGame
         [MonoPInvokeCallback(typeof(LowLevelKeyboardProc))]
         private static IntPtr KeyboardHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            if (nCode >= 0 && instance != null && instance.enableForwarding && 
-                (_focusedTMPInputField != null || _focusedLegacyInputField != null) && isOnDesktop)
+            if (nCode >= 0 && instance != null && instance.enableForwarding && isOnDesktop)
             {
                 int message = wParam.ToInt32();
+                KBDLLHOOKSTRUCT hookStruct = Marshal.PtrToStructure<KBDLLHOOKSTRUCT>(lParam);
 
                 if (message == WM_KEYDOWN)
                 {
-                    KBDLLHOOKSTRUCT hookStruct = Marshal.PtrToStructure<KBDLLHOOKSTRUCT>(lParam);
-                    HandleKeyDown(hookStruct);
+                    // Handle input field keyboard events
+                    if (_focusedTMPInputField != null || _focusedLegacyInputField != null)
+                    {
+                        HandleKeyDown(hookStruct);
+                    }
+                    else
+                    {
+                        // Track key presses for shortcuts when no input field is focused
+                        KeyCode keyCode = VirtualKeyToKeyCode(hookStruct.vkCode);
+                        if (keyCode != KeyCode.None && !pressedKeys.Contains(keyCode))
+                        {
+                            pressedKeys.Add(keyCode);
+                            pressedKeysThisFrame.Add(keyCode);
+                            
+                            if (instance != null && instance.showDebugLog)
+                            {
+                                Debug.Log($"[SimpleMouseForwarder] Keyboard hook captured: {keyCode} (VK: 0x{hookStruct.vkCode:X})");
+                            }
+                        }
+                    }
+                }
+                else if (message == WM_KEYUP)
+                {
+                    // Track key releases
+                    KeyCode keyCode = VirtualKeyToKeyCode(hookStruct.vkCode);
+                    if (keyCode != KeyCode.None)
+                    {
+                        pressedKeys.Remove(keyCode);
+                    }
                 }
             }
 
             return CallNextHookEx(_keyboardHookID, nCode, wParam, lParam);
+        }
+        
+        // Public method to check if a key was pressed this frame (for shortcuts)
+        public static bool GetKeyDown(KeyCode keyCode)
+        {
+            return pressedKeysThisFrame.Contains(keyCode);
+        }
+        
+        // Public method to clear keyboard state (useful during mode transitions)
+        public static void ClearKeyboardState()
+        {
+            pressedKeys.Clear();
+            pressedKeysThisFrame.Clear();
         }
 
         private static void HandleKeyDown(KBDLLHOOKSTRUCT hookStruct)
@@ -274,6 +324,70 @@ namespace BirdGame
                 {
                     Debug.Log($"[SimpleMouseForwarder] Key: {keyData.keyType} (Shift: {shiftPressed})");
                 }
+            }
+        }
+
+        private static KeyCode VirtualKeyToKeyCode(uint vkCode)
+        {
+            // Map common virtual key codes to Unity KeyCodes
+            switch (vkCode)
+            {
+                // Special keys
+                case 0x1B: return KeyCode.Escape;
+                
+                // Numbers
+                case 0x30: return KeyCode.Alpha0;
+                case 0x31: return KeyCode.Alpha1;
+                case 0x32: return KeyCode.Alpha2;
+                case 0x33: return KeyCode.Alpha3;
+                case 0x34: return KeyCode.Alpha4;
+                case 0x35: return KeyCode.Alpha5;
+                case 0x36: return KeyCode.Alpha6;
+                case 0x37: return KeyCode.Alpha7;
+                case 0x38: return KeyCode.Alpha8;
+                case 0x39: return KeyCode.Alpha9;
+                
+                // Letters
+                case 0x41: return KeyCode.A;
+                case 0x42: return KeyCode.B;
+                case 0x43: return KeyCode.C;
+                case 0x44: return KeyCode.D;
+                case 0x45: return KeyCode.E;
+                case 0x46: return KeyCode.F;
+                case 0x47: return KeyCode.G;
+                case 0x48: return KeyCode.H;
+                case 0x49: return KeyCode.I;
+                case 0x4A: return KeyCode.J;
+                case 0x4B: return KeyCode.K;
+                case 0x4C: return KeyCode.L;
+                case 0x4D: return KeyCode.M;
+                case 0x4E: return KeyCode.N;
+                case 0x4F: return KeyCode.O;
+                case 0x50: return KeyCode.P;
+                case 0x51: return KeyCode.Q;
+                case 0x52: return KeyCode.R;
+                case 0x53: return KeyCode.S;
+                case 0x54: return KeyCode.T;
+                case 0x55: return KeyCode.U;
+                case 0x56: return KeyCode.V;
+                case 0x57: return KeyCode.W;
+                case 0x58: return KeyCode.X;
+                case 0x59: return KeyCode.Y;
+                case 0x5A: return KeyCode.Z;
+                
+                // Numpad
+                case 0x60: return KeyCode.Keypad0;
+                case 0x61: return KeyCode.Keypad1;
+                case 0x62: return KeyCode.Keypad2;
+                case 0x63: return KeyCode.Keypad3;
+                case 0x64: return KeyCode.Keypad4;
+                case 0x65: return KeyCode.Keypad5;
+                case 0x66: return KeyCode.Keypad6;
+                case 0x67: return KeyCode.Keypad7;
+                case 0x68: return KeyCode.Keypad8;
+                case 0x69: return KeyCode.Keypad9;
+                
+                default: return KeyCode.None;
             }
         }
 
@@ -415,6 +529,24 @@ namespace BirdGame
                             {
                                 dragMove.ReceiveDragBegin(currentMousePosition);
                             }
+                            else
+                            {
+                                // Check if it's a slider handler
+                                SliderBarClickHandler sliderHandler = currentDragTarget.GetComponent<SliderBarClickHandler>();
+                                if (sliderHandler != null)
+                                {
+                                    sliderHandler.ReceiveDragBegin(currentMousePosition);
+                                }
+                                else
+                                {
+                                    // Check if it's a Scrollbar - send pointer down event
+                                    Scrollbar scrollbar = currentDragTarget.GetComponent<Scrollbar>();
+                                    if (scrollbar != null && scrollbar.interactable)
+                                    {
+                                        ForwardPointerDownToScrollbar(scrollbar, currentMousePosition);
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -437,6 +569,12 @@ namespace BirdGame
                         if (timeSinceMouseDown >= DRAG_TIME_THRESHOLD && distanceMoved > DRAG_DISTANCE_THRESHOLD)
                         {
                             isLeftMouseDragging = true;
+                            
+                            // Clear all hover states when drag starts to prevent sticky hover issues
+                            // Use real-time position for accuracy
+                            // Exclude the drag target itself so it doesn't lose its visual state
+                            Vector2 actualMousePos = GetCurrentMousePositionRealtime();
+                            ClearAllHoverStates(actualMousePos, currentDragTarget);
 
                             // Find drag target if not already found (could be DragAspect or ScrollRect)
                             if (currentDragTarget == null)
@@ -463,6 +601,24 @@ namespace BirdGame
                                         {
                                             // Use dragStartPosition to maintain consistency with where drag actually began
                                             dragMove.ReceiveDragBegin(dragStartPosition);
+                                        }
+                                        else
+                                        {
+                                            // Check if it's a slider handler
+                                            SliderBarClickHandler sliderHandler = currentDragTarget.GetComponent<SliderBarClickHandler>();
+                                            if (sliderHandler != null)
+                                            {
+                                                sliderHandler.ReceiveDragBegin(dragStartPosition);
+                                            }
+                                            else
+                                            {
+                                                // Check if it's a Scrollbar - send pointer down event
+                                                Scrollbar scrollbar = currentDragTarget.GetComponent<Scrollbar>();
+                                                if (scrollbar != null && scrollbar.interactable)
+                                                {
+                                                    ForwardPointerDownToScrollbar(scrollbar, dragStartPosition);
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -494,9 +650,27 @@ namespace BirdGame
                             }
                             else
                             {
-                                // Otherwise, forward to scroll rect
-                                Vector2 delta = currentMousePosition - lastMousePosition;
-                                ForwardDragToScrollRect(currentDragTarget, delta);
+                                // Check if it's a slider handler
+                                SliderBarClickHandler sliderHandler = currentDragTarget.GetComponent<SliderBarClickHandler>();
+                                if (sliderHandler != null)
+                                {
+                                    sliderHandler.ReceiveHookMousePosition(currentMousePosition);
+                                }
+                                else
+                                {
+                                    // Check if it's a Scrollbar
+                                    Scrollbar scrollbar = currentDragTarget.GetComponent<Scrollbar>();
+                                    if (scrollbar != null && scrollbar.interactable)
+                                    {
+                                        ForwardDragToScrollbar(scrollbar, currentMousePosition);
+                                    }
+                                    else
+                                    {
+                                        // Otherwise, forward to scroll rect
+                                        Vector2 delta = currentMousePosition - lastMousePosition;
+                                        ForwardDragToScrollRect(currentDragTarget, delta);
+                                    }
+                                }
                             }
                         }
 
@@ -506,33 +680,92 @@ namespace BirdGame
                         }
                     }
 
-                    // Handle PointerEvent enter/exit
-                    GameObject pointerEventTarget = FindPointerEventTarget(currentMousePosition);
+                    // Check if we should update hover states
+                    // For sliders and scrollbars, we continue updating hover states so elements behind can receive events
+                    // For other drag types (window move, resize), we skip hover updates
+                    bool isSliderDrag = isLeftMouseDragging && currentDragTarget != null && 
+                                       currentDragTarget.GetComponent<SliderBarClickHandler>() != null;
+                    bool isScrollbarDrag = isLeftMouseDragging && currentDragTarget != null && 
+                                          currentDragTarget.GetComponent<Scrollbar>() != null;
+                    bool shouldUpdateHoverStates = !isLeftMouseDragging || isSliderDrag || isScrollbarDrag;
                     
-                    // Check if we're entering a new PointerEvent
-                    if (pointerEventTarget != null && pointerEventTarget != _currentHoveredPointerEvent)
+                    if (shouldUpdateHoverStates)
                     {
-                        // Exit the previous one if exists
-                        if (_currentHoveredPointerEvent != null)
+                        // Get the ACTUAL real-time mouse position to catch fast movements
+                        // The hook position might be outdated by the time we process hover states
+                        Vector2 actualMousePos = GetCurrentMousePositionRealtime();
+                        
+                        // Handle all UI elements enter/exit (Buttons, Toggles, etc.)
+                        HashSet<GameObject> currentUIElements = FindAllUIElementsUnderMouse(actualMousePos);
+                        
+                        // Exit all UI elements that are no longer under the mouse
+                        var elementsToExit = new List<GameObject>(_currentHoveredUIElements);
+                        foreach (var element in elementsToExit)
                         {
-                            HandlePointerExit(_currentHoveredPointerEvent, currentMousePosition);
+                            if (element != null && !currentUIElements.Contains(element))
+                            {
+                                // Don't exit the drag target during slider or scrollbar drag
+                                if ((isSliderDrag || isScrollbarDrag) && element == currentDragTarget)
+                                {
+                                    continue;
+                                }
+                                
+                                HandlePointerExit(element, actualMousePos);
+                                _currentHoveredUIElements.Remove(element);
+                            }
+                            else if (element == null)
+                            {
+                                // Object was destroyed, just remove from set
+                                _currentHoveredUIElements.Remove(element);
+                            }
                         }
                         
-                        // Enter the new one
-                        _currentHoveredPointerEvent = pointerEventTarget;
-                        HandlePointerEnter(_currentHoveredPointerEvent, currentMousePosition);
-                    }
-                    // Check if we're exiting the current PointerEvent
-                    else if (_currentHoveredPointerEvent != null && pointerEventTarget != _currentHoveredPointerEvent)
-                    {
-                        HandlePointerExit(_currentHoveredPointerEvent, currentMousePosition);
-                        _currentHoveredPointerEvent = null;
+                        // Enter all new UI elements under the mouse
+                        foreach (var element in currentUIElements)
+                        {
+                            if (!_currentHoveredUIElements.Contains(element))
+                            {
+                                HandlePointerEnter(element, actualMousePos);
+                                _currentHoveredUIElements.Add(element);
+                            }
+                        }
+                        
+                        // Make sure the slider drag target stays in the hovered set
+                        if (isSliderDrag && !_currentHoveredUIElements.Contains(currentDragTarget))
+                        {
+                            _currentHoveredUIElements.Add(currentDragTarget);
+                        }
+
+                        // Handle PointerEvent enter/exit (for backward compatibility)
+                        GameObject pointerEventTarget = FindPointerEventTarget(actualMousePos);
+                        
+                        // Check if we're entering a new PointerEvent
+                        if (pointerEventTarget != null && pointerEventTarget != _currentHoveredPointerEvent)
+                        {
+                            // Exit the previous one if exists
+                            if (_currentHoveredPointerEvent != null)
+                            {
+                                HandlePointerExit(_currentHoveredPointerEvent, actualMousePos);
+                            }
+                            
+                            // Enter the new one
+                            _currentHoveredPointerEvent = pointerEventTarget;
+                            HandlePointerEnter(_currentHoveredPointerEvent, actualMousePos);
+                        }
+                        // Check if we're exiting the current PointerEvent
+                        else if (_currentHoveredPointerEvent != null && pointerEventTarget != _currentHoveredPointerEvent)
+                        {
+                            HandlePointerExit(_currentHoveredPointerEvent, actualMousePos);
+                            _currentHoveredPointerEvent = null;
+                        }
                     }
 
                     lastMousePosition = currentMousePosition;
                 }
                 else if (message == WM_LBUTTONUP)
                 {
+                    bool wasDragging = isLeftMouseDragging;
+                    
                     // Notify drag handlers about drag end if applicable (even if drag didn't start)
                     if (currentDragTarget != null)
                     {
@@ -552,18 +785,27 @@ namespace BirdGame
                             {
                                 // Check if it's a slider handler
                                 SliderBarClickHandler sliderHandler = currentDragTarget.GetComponent<SliderBarClickHandler>();
-                                if (sliderHandler != null && EventSystem.current != null)
+                                if (sliderHandler != null)
                                 {
-                                    PointerEventData pointerData = new PointerEventData(EventSystem.current)
-                                    {
-                                        position = currentMousePosition,
-                                        button = PointerEventData.InputButton.Left
-                                    };
-                                    ExecuteEvents.Execute(currentDragTarget, pointerData, ExecuteEvents.pointerUpHandler);
+                                    sliderHandler.ReceiveDragEnd();
                                     
                                     if (instance.showDebugLog)
                                     {
-                                        Debug.Log($"[SimpleMouseForwarder] 滑块鼠标释放: {currentDragTarget.name}");
+                                        Debug.Log($"[SimpleMouseForwarder] 滑块拖动结束: {currentDragTarget.name}");
+                                    }
+                                }
+                                else
+                                {
+                                    // Check if it's a Scrollbar
+                                    Scrollbar scrollbar = currentDragTarget.GetComponent<Scrollbar>();
+                                    if (scrollbar != null && scrollbar.interactable)
+                                    {
+                                        ForwardPointerUpToScrollbar(scrollbar, currentMousePosition);
+                                        
+                                        if (instance.showDebugLog)
+                                        {
+                                            Debug.Log($"[SimpleMouseForwarder] Scrollbar 拖动结束: {currentDragTarget.name}");
+                                        }
                                     }
                                 }
                             }
@@ -584,6 +826,33 @@ namespace BirdGame
                     isLeftMouseDragging = false;
                     dragStartTime = 0f;
                     currentDragTarget = null;
+                    
+                    // After drag ends, re-evaluate what's under the mouse cursor
+                    // This ensures hover states are correct after a drag operation
+                    if (wasDragging)
+                    {
+                        // Get real-time position to ensure accuracy
+                        Vector2 actualMousePos = GetCurrentMousePositionRealtime();
+                        HashSet<GameObject> currentUIElements = FindAllUIElementsUnderMouse(actualMousePos);
+                        
+                        // Enter all UI elements under the mouse
+                        foreach (var element in currentUIElements)
+                        {
+                            if (!_currentHoveredUIElements.Contains(element))
+                            {
+                                HandlePointerEnter(element, actualMousePos);
+                                _currentHoveredUIElements.Add(element);
+                            }
+                        }
+                        
+                        // Re-evaluate pointer events
+                        GameObject pointerEventTarget = FindPointerEventTarget(actualMousePos);
+                        if (pointerEventTarget != null && pointerEventTarget != _currentHoveredPointerEvent)
+                        {
+                            _currentHoveredPointerEvent = pointerEventTarget;
+                            HandlePointerEnter(_currentHoveredPointerEvent, actualMousePos);
+                        }
+                    }
                 }
                 else if (message == WM_RBUTTONDOWN)
                 {
@@ -654,6 +923,18 @@ namespace BirdGame
                 {
                     return result.gameObject;
                 }
+                
+                // Look for Scrollbar components (check the object and its parents)
+                Transform current = result.gameObject.transform;
+                while (current != null)
+                {
+                    Scrollbar scrollbar = current.GetComponent<Scrollbar>();
+                    if (scrollbar != null && scrollbar.interactable)
+                    {
+                        return current.gameObject;
+                    }
+                    current = current.parent;
+                }
             }
 
             return null;
@@ -717,6 +998,54 @@ namespace BirdGame
             return null;
         }
 
+        private static HashSet<GameObject> FindAllUIElementsUnderMouse(Vector2 screenPosition)
+        {
+            HashSet<GameObject> uiElements = new HashSet<GameObject>();
+            
+            if (EventSystem.current == null) return uiElements;
+
+            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            {
+                position = screenPosition,
+                button = PointerEventData.InputButton.Left
+            };
+
+            var raycastResults = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointerData, raycastResults);
+
+            foreach (var result in raycastResults)
+            {
+                // Add all UI elements that can receive pointer events
+                // This includes Buttons, Toggles, and any other Selectable components
+                GameObject obj = result.gameObject;
+                
+                // Check if the object or any parent has a Selectable component (Button, Toggle, etc.)
+                Transform current = obj.transform;
+                while (current != null)
+                {
+                    Selectable selectable = current.GetComponent<Selectable>();
+                    if (selectable != null && selectable.interactable)
+                    {
+                        uiElements.Add(current.gameObject);
+                        break; // Only add the topmost selectable in the hierarchy
+                    }
+                    
+                    // Also check for IPointerEnterHandler/IPointerExitHandler implementations
+                    // This catches custom components that handle pointer events
+                    if (current.GetComponent<IPointerEnterHandler>() != null || 
+                        current.GetComponent<IPointerExitHandler>() != null)
+                    {
+                        uiElements.Add(current.gameObject);
+                        break; // Only add the topmost handler in the hierarchy
+                    }
+                    
+                    current = current.parent;
+                }
+            }
+
+            return uiElements;
+        }
+
         private static void ForwardDragToScrollRect(GameObject target, Vector2 delta)
         {
             if (target == null) return;
@@ -725,6 +1054,147 @@ namespace BirdGame
             if (handler != null)
             {
                 handler.ReceiveDragDelta(delta);
+            }
+        }
+
+        private static void ForwardPointerDownToScrollbar(Scrollbar scrollbar, Vector2 mousePosition)
+        {
+            if (scrollbar == null || EventSystem.current == null) return;
+
+            // Create pointer event data with proper raycast information
+            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            {
+                position = mousePosition,
+                button = PointerEventData.InputButton.Left,
+                dragging = false,
+                pressPosition = mousePosition,
+                clickTime = Time.time,
+                clickCount = 1
+            };
+
+            // Perform raycast to get the exact hit information
+            var raycastResults = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointerData, raycastResults);
+            
+            // Find the scrollbar or its children in the raycast results
+            RaycastResult scrollbarResult = default(RaycastResult);
+            bool foundScrollbarHit = false;
+            
+            foreach (var result in raycastResults)
+            {
+                // Check if this result is the scrollbar or a child of it
+                Transform current = result.gameObject.transform;
+                while (current != null)
+                {
+                    if (current == scrollbar.transform)
+                    {
+                        scrollbarResult = result;
+                        foundScrollbarHit = true;
+                        break;
+                    }
+                    current = current.parent;
+                }
+                if (foundScrollbarHit) break;
+            }
+            
+            // Set the raycast result on the pointer event data
+            if (foundScrollbarHit)
+            {
+                pointerData.pointerEnter = scrollbarResult.gameObject;
+                pointerData.pointerPress = scrollbar.gameObject;
+                pointerData.rawPointerPress = scrollbarResult.gameObject;
+                pointerData.pointerCurrentRaycast = scrollbarResult;
+                pointerData.pointerPressRaycast = scrollbarResult;
+            }
+            else
+            {
+                // If we didn't find it in raycast, still set basic info
+                pointerData.pointerPress = scrollbar.gameObject;
+                pointerData.rawPointerPress = scrollbar.gameObject;
+            }
+
+            // Execute pointer down event - this will handle both track clicks and handle drags
+            ExecuteEvents.Execute(scrollbar.gameObject, pointerData, ExecuteEvents.pointerDownHandler);
+            
+            // Also execute begin drag event for proper drag initialization
+            ExecuteEvents.Execute(scrollbar.gameObject, pointerData, ExecuteEvents.beginDragHandler);
+
+            if (instance != null && instance.showDebugLog)
+            {
+                Debug.Log($"[SimpleMouseForwarder] Pointer down on scrollbar: {scrollbar.name}, Position: {mousePosition}, Hit: {foundScrollbarHit}");
+            }
+        }
+
+        private static void ForwardDragToScrollbar(Scrollbar scrollbar, Vector2 mousePosition)
+        {
+            if (scrollbar == null || EventSystem.current == null) return;
+
+            // Create pointer event data
+            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            {
+                position = mousePosition,
+                button = PointerEventData.InputButton.Left,
+                dragging = true,
+                pointerPress = scrollbar.gameObject,
+                pointerDrag = scrollbar.gameObject
+            };
+
+            // Perform raycast to get current hit information during drag
+            var raycastResults = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointerData, raycastResults);
+            
+            if (raycastResults.Count > 0)
+            {
+                pointerData.pointerCurrentRaycast = raycastResults[0];
+            }
+
+            // Execute drag event on the scrollbar
+            ExecuteEvents.Execute(scrollbar.gameObject, pointerData, ExecuteEvents.dragHandler);
+
+            if (instance != null && instance.showDebugLog)
+            {
+                Debug.Log($"[SimpleMouseForwarder] Forwarding drag to scrollbar: {scrollbar.name}, Position: {mousePosition}, Value: {scrollbar.value:F3}");
+            }
+        }
+
+        private static void ForwardPointerUpToScrollbar(Scrollbar scrollbar, Vector2 mousePosition)
+        {
+            if (scrollbar == null || EventSystem.current == null) return;
+
+            // Create pointer event data
+            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            {
+                position = mousePosition,
+                button = PointerEventData.InputButton.Left,
+                dragging = false,
+                pointerPress = scrollbar.gameObject,
+                pointerDrag = scrollbar.gameObject
+            };
+
+            // Perform raycast to get final hit information
+            var raycastResults = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointerData, raycastResults);
+            
+            if (raycastResults.Count > 0)
+            {
+                pointerData.pointerCurrentRaycast = raycastResults[0];
+            }
+
+            // Execute end drag event
+            ExecuteEvents.Execute(scrollbar.gameObject, pointerData, ExecuteEvents.endDragHandler);
+            
+            // Execute pointer up event
+            ExecuteEvents.Execute(scrollbar.gameObject, pointerData, ExecuteEvents.pointerUpHandler);
+            
+            // Execute pointer click event if we're clicking (not just ending a drag)
+            if (pointerData.pointerPress == scrollbar.gameObject)
+            {
+                ExecuteEvents.Execute(scrollbar.gameObject, pointerData, ExecuteEvents.pointerClickHandler);
+            }
+
+            if (instance != null && instance.showDebugLog)
+            {
+                Debug.Log($"[SimpleMouseForwarder] Pointer up on scrollbar: {scrollbar.name}, Position: {mousePosition}");
             }
         }
 
@@ -797,6 +1267,55 @@ namespace BirdGame
             }
         }
 
+        private static void ClearAllHoverStates(Vector2 screenPosition, GameObject excludeObject = null)
+        {
+            // Exit all currently hovered UI elements (except the excluded one)
+            var elementsToExit = new List<GameObject>(_currentHoveredUIElements);
+            foreach (var element in elementsToExit)
+            {
+                if (element != null && element != excludeObject)
+                {
+                    HandlePointerExit(element, screenPosition);
+                    _currentHoveredUIElements.Remove(element);
+                }
+            }
+            
+            // If we excluded an object, make sure it stays in the hovered set
+            if (excludeObject != null && elementsToExit.Contains(excludeObject))
+            {
+                // Keep it in the hovered set
+            }
+            else if (excludeObject == null)
+            {
+                // If no exclusion, clear everything
+                _currentHoveredUIElements.Clear();
+            }
+            
+            // Exit currently hovered pointer event (unless it's the excluded object)
+            if (_currentHoveredPointerEvent != null && _currentHoveredPointerEvent != excludeObject)
+            {
+                HandlePointerExit(_currentHoveredPointerEvent, screenPosition);
+                _currentHoveredPointerEvent = null;
+            }
+            
+            if (instance != null && instance.showDebugLog)
+            {
+                Debug.Log($"[SimpleMouseForwarder] 清除所有悬停状态 (排除: {(excludeObject != null ? excludeObject.name : "无")})");
+            }
+        }
+
+        private static Vector2 GetCurrentMousePositionRealtime()
+        {
+            POINT cursorPos;
+            if (GetCursorPos(out cursorPos))
+            {
+                // Convert from screen coordinates to Unity coordinates (flip Y axis)
+                return new Vector2(cursorPos.x, Screen.height - cursorPos.y);
+            }
+            // Fallback to the last known position from the hook
+            return currentMousePosition;
+        }
+
         private string GetForegroundWindowTitle()
         {
             IntPtr hwnd = GetForegroundWindow();
@@ -816,6 +1335,7 @@ namespace BirdGame
         private void Update()
         {
             isOnDesktop = GetForegroundWindowTitle() == "Program Manager" || GetForegroundWindowTitle() == string.Empty;
+            
             // Get the current foreground window handle
             if (isOnDesktop)
             {
@@ -841,16 +1361,100 @@ namespace BirdGame
                         Debug.Log($"[SimpleMouseForwarder] 转发右键点击到Unity EventSystem: {mousePosition}");
                     }
                 }
+
+                // Only validate hover states when NOT dragging
+                // During drag operations, hover states are intentionally cleared
+                if (!isLeftMouseDragging)
+                {
+                    // Get the ACTUAL current mouse position in real-time
+                    // This catches fast mouse movements that the hook might have missed
+                    Vector2 realtimeMousePos = GetCurrentMousePositionRealtime();
+                    
+                    // Validate that all currently hovered UI elements are still valid
+                    // This handles cases where the mouse left the window, object was destroyed, or mouse moved too fast
+                    HashSet<GameObject> currentUIElements = FindAllUIElementsUnderMouse(realtimeMousePos);
+                    
+                    // Exit all UI elements that are no longer valid or no longer under the mouse
+                    var elementsToExit = new List<GameObject>(_currentHoveredUIElements);
+                    foreach (var element in elementsToExit)
+                    {
+                        if (element == null)
+                        {
+                            // Object was destroyed, just remove from set
+                            _currentHoveredUIElements.Remove(element);
+                        }
+                        else if (!element.activeInHierarchy || !currentUIElements.Contains(element))
+                        {
+                            HandlePointerExit(element, realtimeMousePos);
+                            _currentHoveredUIElements.Remove(element);
+                        }
+                    }
+                    
+                    // Enter all new UI elements under the mouse
+                    foreach (var element in currentUIElements)
+                    {
+                        if (!_currentHoveredUIElements.Contains(element))
+                        {
+                            HandlePointerEnter(element, realtimeMousePos);
+                            _currentHoveredUIElements.Add(element);
+                        }
+                    }
+
+                    // Validate that the currently hovered pointer event is still valid
+                    // This handles cases where the mouse left the window, object was destroyed, or mouse moved too fast
+                    if (_currentHoveredPointerEvent != null)
+                    {
+                        // Check if the object still exists and is active
+                        if (!_currentHoveredPointerEvent.activeInHierarchy)
+                        {
+                            // Object was destroyed or disabled, clear the hovered state
+                            HandlePointerExit(_currentHoveredPointerEvent, realtimeMousePos);
+                            _currentHoveredPointerEvent = null;
+                        }
+                        else
+                        {
+                            // Verify that the mouse is still actually over the object
+                            GameObject currentPointerEventTarget = FindPointerEventTarget(realtimeMousePos);
+                            if (currentPointerEventTarget != _currentHoveredPointerEvent)
+                            {
+                                // Mouse is no longer over the object, trigger exit
+                                HandlePointerExit(_currentHoveredPointerEvent, realtimeMousePos);
+                                _currentHoveredPointerEvent = null;
+                            }
+                        }
+                    }
+                }
             }
             else
             {
+                // Get real-time position for exit events
+                Vector2 realtimeMousePos = GetCurrentMousePositionRealtime();
+                
+                // Clear all hovered UI elements when not on desktop
+                var elementsToExit = new List<GameObject>(_currentHoveredUIElements);
+                foreach (var element in elementsToExit)
+                {
+                    if (element != null)
+                    {
+                        HandlePointerExit(element, realtimeMousePos);
+                    }
+                }
+                _currentHoveredUIElements.Clear();
+                
                 // Clear hovered pointer event when not on desktop
                 if (_currentHoveredPointerEvent != null)
                 {
-                    HandlePointerExit(_currentHoveredPointerEvent, currentMousePosition);
+                    HandlePointerExit(_currentHoveredPointerEvent, realtimeMousePos);
                     _currentHoveredPointerEvent = null;
                 }
             }
+        }
+        
+        private void LateUpdate()
+        {
+            // Clear pressed keys from this frame in LateUpdate
+            // This ensures all Update() methods can read the keys before they're cleared
+            pressedKeysThisFrame.Clear();
         }
 
         private void SimulateMouseClick(Vector2 screenPosition)
@@ -875,12 +1479,17 @@ namespace BirdGame
 
             if (raycastResults.Count > 0)
             {
+                bool foundInputField = false;
+                bool foundSlider = false;
+                
+                // Process ALL raycast results to trigger events on all objects
                 foreach (var result in raycastResults)
                 {
                     GameObject hitObject = result.gameObject;
+                    
+                    // Check for TMP InputField handler
                     HookTMPInputHandler tmpHandler = hitObject.GetComponent<HookTMPInputHandler>();
-
-                    if (tmpHandler != null)
+                    if (tmpHandler != null && !foundInputField)
                     {
                         tmpHandler.ActivateInputField();
                         _focusedTMPInputField = hitObject;
@@ -892,32 +1501,44 @@ namespace BirdGame
                         }
 
                         Debug.Log($"[SimpleMouseForwarder] TMP输入框激活: {hitObject.name}");
-                        return;
+                        foundInputField = true;
+                        // Input fields consume the click, stop processing
+                        break;
                     }
 
                     // Check for legacy InputField handler
                     HookLegacyInputHandler legacyHandler = hitObject.GetComponent<HookLegacyInputHandler>();
-                    if (legacyHandler != null)
+                    if (legacyHandler != null && !foundInputField)
                     {
                         legacyHandler.ActivateInputField();
                         _focusedLegacyInputField = hitObject;
 
                         Debug.Log($"[SimpleMouseForwarder] Legacy输入框激活: {hitObject.name}");
-                        return;
+                        foundInputField = true;
+                        // Input fields consume the click, stop processing
+                        break;
                     }
 
                     // Check for slider handlers
                     SliderBarClickHandler sliderHandler = hitObject.GetComponent<SliderBarClickHandler>();
-                    if (sliderHandler != null)
+                    if (sliderHandler != null && !foundSlider)
                     {
                         ExecuteEvents.Execute(hitObject, pointerData, ExecuteEvents.pointerClickHandler);
                         ExecuteEvents.Execute(hitObject, pointerData, ExecuteEvents.pointerDownHandler);
                         Debug.Log($"[SimpleMouseForwarder] 滑块交互: {hitObject.name}");
-                        return;
+                        foundSlider = true;
+                        // Sliders consume the click, stop processing
+                        break;
                     }
 
+                    // Execute pointer click on this object
+                    // This will trigger ALL objects in the raycast hierarchy
                     ExecuteEvents.Execute(hitObject, pointerData, ExecuteEvents.pointerClickHandler);
-                    return;
+                    
+                    if (showDebugLog)
+                    {
+                        Debug.Log($"[SimpleMouseForwarder] 点击对象: {hitObject.name}");
+                    }
                 }
             }
             else if (showDebugLog)
@@ -944,6 +1565,24 @@ namespace BirdGame
                 Debug.Log("[SimpleMouseForwarder] 键盘钩子已卸载 (OnDisable)");
             }
 
+            // Clear all hovered UI elements when component is disabled
+            var elementsToExit = new List<GameObject>(_currentHoveredUIElements);
+            foreach (var element in elementsToExit)
+            {
+                if (element != null)
+                {
+                    HandlePointerExit(element, currentMousePosition);
+                }
+            }
+            _currentHoveredUIElements.Clear();
+            
+            // Clear hovered pointer event when component is disabled
+            if (_currentHoveredPointerEvent != null)
+            {
+                HandlePointerExit(_currentHoveredPointerEvent, currentMousePosition);
+                _currentHoveredPointerEvent = null;
+            }
+
             if (instance == this)
             {
                 instance = null;
@@ -962,6 +1601,24 @@ namespace BirdGame
             {
                 UnhookWindowsHookEx(_keyboardHookID);
                 _keyboardHookID = IntPtr.Zero;
+            }
+
+            // Clear all hovered UI elements when component is destroyed
+            var elementsToExit = new List<GameObject>(_currentHoveredUIElements);
+            foreach (var element in elementsToExit)
+            {
+                if (element != null)
+                {
+                    HandlePointerExit(element, currentMousePosition);
+                }
+            }
+            _currentHoveredUIElements.Clear();
+            
+            // Clear hovered pointer event when component is destroyed
+            if (_currentHoveredPointerEvent != null)
+            {
+                HandlePointerExit(_currentHoveredPointerEvent, currentMousePosition);
+                _currentHoveredPointerEvent = null;
             }
 
             instance = null;

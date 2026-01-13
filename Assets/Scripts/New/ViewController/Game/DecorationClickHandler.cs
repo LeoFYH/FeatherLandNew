@@ -68,8 +68,17 @@ namespace BirdGame
             }
 
             // 右键直接销毁装饰品
-            if (Input.GetMouseButtonDown(1)) // 右键
+            // 检查标准Unity输入或SimpleMouseForwarder的钩子输入
+            bool rightClickDetected = Input.GetMouseButtonDown(1) || SimpleMouseForwarder.rightButtonDown;
+            
+            if (rightClickDetected)
             {
+                // 重置钩子的右键状态（如果使用了钩子）
+                if (SimpleMouseForwarder.rightButtonDown)
+                {
+                    SimpleMouseForwarder.rightButtonDown = false;
+                }
+                
                 DestroyDecoration();
             }
         }

@@ -14,6 +14,10 @@ namespace BirdGame
         {
             SceneManager.LoadScene(0, LoadSceneMode.Single);
             this.GetSystem<IDesktopSystem>().DisableDesktopMode();
+            
+            // Clear keyboard state before mode change
+            SimpleMouseForwarder.ClearKeyboardState();
+            
             int id = this.GetModel<ISaveModel>().SettingData.screenMode;
             if (id == 0)
             {
@@ -30,6 +34,10 @@ namespace BirdGame
                 this.GetUtility<IFullScreenUtility>().FullscreenMode();
                 Debug.Log("FullscreenMode");
             }
+            
+            // Clear keyboard state after mode change
+            SimpleMouseForwarder.ClearKeyboardState();
+            
             this.GetSystem<IMonoSystem>().StartCoroutine(LoadMapDelay());
         }
 
