@@ -18,12 +18,28 @@ namespace BirdGame
             var type = this.GetModel<IClockModel>().AlertType;
             if (type == AlertType.TimeUpForTimer)
             {
+                var accountModel = this.GetModel<IAccountModel>();
+                int addedCoins = accountModel.AddedCoins;
+                
                 string value = this.GetSystem<ILocalizationSystem>().GetString("Time's Up!");
-                string value1 = this.GetSystem<ILocalizationSystem>()
-                    .GetString("Focus succeed! {0} Bonus Coin Earned!");
-                string value2 = string.Format(value1, this.GetModel<IAccountModel>().AddedCoins);
+                string value1;
+                
+                // 如果 focus time 小于 5 分钟（AddedCoins == 0），显示提示信息
+                if (addedCoins == 0)
+                {
+                    value1 = this.GetSystem<ILocalizationSystem>()
+                        .GetString("Try to focus for more than 5 minutes to earn coins.");
+                }
+                else
+                {
+                    value1 = this.GetSystem<ILocalizationSystem>()
+                        .GetString("Focus succeeded! {0} Bonus Coin Earned!");
+                    value1 = string.Format(value1, addedCoins);
+                }
+                
                 alertText.ThisText.text = new StringBuilder().Append(value)
-                    .Append(value2)
+                    .Append("\n")
+                    .Append(value1)
                     .ToString();
                 icon.sprite = sps[0];
                 icon.GetComponent<RectTransform>().sizeDelta = new Vector2(sps[0].rect.size.x, sps[0].rect.size.y) * 0.5f;
