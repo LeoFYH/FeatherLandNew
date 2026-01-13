@@ -503,26 +503,38 @@ namespace BirdGame
             var item = this.GetModel<IClockModel>().TomatoItem;
             if (index == 0)
             {
-                // 工作时长上限为 60 分钟
+                // 工作时长：超过 60 分钟时，再次点击变成 0（循环效果）
                 if (item.SessionMinutes.Value < 60)
                 {
                     item.SessionMinutes.Value++;
                 }
+                else
+                {
+                    item.SessionMinutes.Value = 0;
+                }
             }
             else if (index == 1)
             {
-                // 休息时长上限为 60 分钟
+                // 休息时长：超过 60 分钟时，再次点击变成 0（循环效果）
                 if (item.BreakMinutes.Value < 60)
                 {
                     item.BreakMinutes.Value++;
                 }
+                else
+                {
+                    item.BreakMinutes.Value = 0;
+                }
             }
             else if (index == 2)
             {
-                // 最大 session 数量限制为 4
+                // session 数量：超过 4 时，再次点击变成 0（循环效果）
                 if (item.Number.Value < 4)
                 {
                     item.Number.Value++;
+                }
+                else
+                {
+                    item.Number.Value = 0;
                 }
             }
         }
