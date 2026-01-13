@@ -180,7 +180,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 7110191201829549805}
-  dragSensitivity: 1
 --- !u!222 &6114651260963387191
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -883,7 +882,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 7833164168014283578}
-  dragSensitivity: 1
 --- !u!1 &1183095335164903003
 GameObject:
   m_ObjectHideFlags: 0
@@ -1247,7 +1245,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 4783653444476346031}
-  dragSensitivity: 1
 --- !u!1 &1236952087702337851
 GameObject:
   m_ObjectHideFlags: 0
@@ -2279,7 +2276,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -2910,7 +2907,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -3069,7 +3066,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 7022751537507994770}
-  dragSensitivity: 1
 --- !u!1 &4526816509402362634
 GameObject:
   m_ObjectHideFlags: 0
@@ -6228,7 +6224,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 8379783351590781204}
-  dragSensitivity: 1
 --- !u!1 &7209330874697729135
 GameObject:
   m_ObjectHideFlags: 0
@@ -7258,7 +7253,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 1220568594208573878}
-  dragSensitivity: 1
 --- !u!1 &8590974898583690154
 GameObject:
   m_ObjectHideFlags: 0
@@ -7518,7 +7512,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 9162278140444941856}
-  dragSensitivity: 1
 --- !u!1 &8762852979362938895
 GameObject:
   m_ObjectHideFlags: 0

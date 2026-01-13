@@ -45,6 +45,25 @@ public class SliderBarClickHandler : MonoBehaviour, IPointerClickHandler, IPoint
         isDragging = false;
     }
 
+    // Called by SimpleMouseForwarder during hook-based dragging
+    public void ReceiveHookMousePosition(Vector2 screenPosition)
+    {
+        SetValueFromMousePosition(screenPosition);
+    }
+
+    // Called by SimpleMouseForwarder to start drag from hook
+    public void ReceiveDragBegin(Vector2 screenPosition)
+    {
+        isDragging = true;
+        SetValueFromMousePosition(screenPosition);
+    }
+
+    // Called by SimpleMouseForwarder to end drag from hook
+    public void ReceiveDragEnd()
+    {
+        isDragging = false;
+    }
+
     private void SetValueFromMousePosition(Vector2 screenPosition)
     {
         RectTransform rect = GetComponent<RectTransform>();

@@ -421,6 +421,15 @@ namespace BirdGame
                             {
                                 dragMove.ReceiveDragBegin(currentMousePosition);
                             }
+                            else
+                            {
+                                // Check if it's a slider handler
+                                SliderBarClickHandler sliderHandler = currentDragTarget.GetComponent<SliderBarClickHandler>();
+                                if (sliderHandler != null)
+                                {
+                                    sliderHandler.ReceiveDragBegin(currentMousePosition);
+                                }
+                            }
                         }
                     }
 
@@ -446,8 +455,9 @@ namespace BirdGame
                             
                             // Clear all hover states when drag starts to prevent sticky hover issues
                             // Use real-time position for accuracy
+                            // Exclude the drag target itself so it doesn't lose its visual state
                             Vector2 actualMousePos = GetCurrentMousePositionRealtime();
-                            ClearAllHoverStates(actualMousePos);
+                            ClearAllHoverStates(actualMousePos, currentDragTarget);
 
                             // Find drag target if not already found (could be DragAspect or ScrollRect)
                             if (currentDragTarget == null)
@@ -474,6 +484,15 @@ namespace BirdGame
                                         {
                                             // Use dragStartPosition to maintain consistency with where drag actually began
                                             dragMove.ReceiveDragBegin(dragStartPosition);
+                                        }
+                                        else
+                                        {
+                                            // Check if it's a slider handler
+                                            SliderBarClickHandler sliderHandler = currentDragTarget.GetComponent<SliderBarClickHandler>();
+                                            if (sliderHandler != null)
+                                            {
+                                                sliderHandler.ReceiveDragBegin(dragStartPosition);
+                                            }
                                         }
                                     }
                                 }
@@ -505,9 +524,18 @@ namespace BirdGame
                             }
                             else
                             {
-                                // Otherwise, forward to scroll rect
-                                Vector2 delta = currentMousePosition - lastMousePosition;
-                                ForwardDragToScrollRect(currentDragTarget, delta);
+                                // Check if it's a slider handler
+                                SliderBarClickHandler sliderHandler = currentDragTarget.GetComponent<SliderBarClickHandler>();
+                                if (sliderHandler != null)
+                                {
+                                    sliderHandler.ReceiveHookMousePosition(currentMousePosition);
+                                }
+                                else
+                                {
+                                    // Otherwise, forward to scroll rect
+                                    Vector2 delta = currentMousePosition - lastMousePosition;
+                                    ForwardDragToScrollRect(currentDragTarget, delta);
+                                }
                             }
                         }
 
@@ -517,9 +545,14 @@ namespace BirdGame
                         }
                     }
 
-                    // Only update hover states when NOT dragging
-                    // This prevents buttons from getting stuck in hover state during drag operations
-                    if (!isLeftMouseDragging)
+                    // Check if we should update hover states
+                    // For sliders, we continue updating hover states so elements behind can receive events
+                    // For other drag types (window move, resize), we skip hover updates
+                    bool isSliderDrag = isLeftMouseDragging && currentDragTarget != null && 
+                                       currentDragTarget.GetComponent<SliderBarClickHandler>() != null;
+                    bool shouldUpdateHoverStates = !isLeftMouseDragging || isSliderDrag;
+                    
+                    if (shouldUpdateHoverStates)
                     {
                         // Get the ACTUAL real-time mouse position to catch fast movements
                         // The hook position might be outdated by the time we process hover states
@@ -534,6 +567,12 @@ namespace BirdGame
                         {
                             if (element != null && !currentUIElements.Contains(element))
                             {
+                                // Don't exit the drag target during slider drag
+                                if (isSliderDrag && element == currentDragTarget)
+                                {
+                                    continue;
+                                }
+                                
                                 HandlePointerExit(element, actualMousePos);
                                 _currentHoveredUIElements.Remove(element);
                             }
@@ -552,6 +591,12 @@ namespace BirdGame
                                 HandlePointerEnter(element, actualMousePos);
                                 _currentHoveredUIElements.Add(element);
                             }
+                        }
+                        
+                        // Make sure the slider drag target stays in the hovered set
+                        if (isSliderDrag && !_currentHoveredUIElements.Contains(currentDragTarget))
+                        {
+                            _currentHoveredUIElements.Add(currentDragTarget);
                         }
 
                         // Handle PointerEvent enter/exit (for backward compatibility)
@@ -603,18 +648,13 @@ namespace BirdGame
                             {
                                 // Check if it's a slider handler
                                 SliderBarClickHandler sliderHandler = currentDragTarget.GetComponent<SliderBarClickHandler>();
-                                if (sliderHandler != null && EventSystem.current != null)
+                                if (sliderHandler != null)
                                 {
-                                    PointerEventData pointerData = new PointerEventData(EventSystem.current)
-                                    {
-                                        position = currentMousePosition,
-                                        button = PointerEventData.InputButton.Left
-                                    };
-                                    ExecuteEvents.Execute(currentDragTarget, pointerData, ExecuteEvents.pointerUpHandler);
+                                    sliderHandler.ReceiveDragEnd();
                                     
                                     if (instance.showDebugLog)
                                     {
-                                        Debug.Log($"[SimpleMouseForwarder] 滑块鼠标释放: {currentDragTarget.name}");
+                                        Debug.Log($"[SimpleMouseForwarder] 滑块拖动结束: {currentDragTarget.name}");
                                     }
                                 }
                             }
@@ -923,21 +963,32 @@ namespace BirdGame
             }
         }
 
-        private static void ClearAllHoverStates(Vector2 screenPosition)
+        private static void ClearAllHoverStates(Vector2 screenPosition, GameObject excludeObject = null)
         {
-            // Exit all currently hovered UI elements
+            // Exit all currently hovered UI elements (except the excluded one)
             var elementsToExit = new List<GameObject>(_currentHoveredUIElements);
             foreach (var element in elementsToExit)
             {
-                if (element != null)
+                if (element != null && element != excludeObject)
                 {
                     HandlePointerExit(element, screenPosition);
+                    _currentHoveredUIElements.Remove(element);
                 }
             }
-            _currentHoveredUIElements.Clear();
             
-            // Exit currently hovered pointer event
-            if (_currentHoveredPointerEvent != null)
+            // If we excluded an object, make sure it stays in the hovered set
+            if (excludeObject != null && elementsToExit.Contains(excludeObject))
+            {
+                // Keep it in the hovered set
+            }
+            else if (excludeObject == null)
+            {
+                // If no exclusion, clear everything
+                _currentHoveredUIElements.Clear();
+            }
+            
+            // Exit currently hovered pointer event (unless it's the excluded object)
+            if (_currentHoveredPointerEvent != null && _currentHoveredPointerEvent != excludeObject)
             {
                 HandlePointerExit(_currentHoveredPointerEvent, screenPosition);
                 _currentHoveredPointerEvent = null;
@@ -945,7 +996,7 @@ namespace BirdGame
             
             if (instance != null && instance.showDebugLog)
             {
-                Debug.Log("[SimpleMouseForwarder] 清除所有悬停状态");
+                Debug.Log($"[SimpleMouseForwarder] 清除所有悬停状态 (排除: {(excludeObject != null ? excludeObject.name : "无")})");
             }
         }
 
