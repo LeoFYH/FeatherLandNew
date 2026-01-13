@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using QFramework;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace BirdGame
 {
@@ -9,65 +11,235 @@ namespace BirdGame
     {
         public GameObject itemPrefab;
         public Transform content;
-
-        private Dictionary<int, BirdScaleData> birds = new Dictionary<int, BirdScaleData>();
+        public TextMeshProUGUI sceneName;
+        public Button leftButton;
+        public Button rightButton;
+        public Toggle sortingToggle0;
+        public Toggle sortingToggle1;
+        public Toggle sortingToggle2;
+        public Button releaseAll;
+        public LocalizationText nameText;
+        public TextMeshProUGUI capacityText;
+        
+        private int mapIndex;
+        private int sortType;
+        private List<SaleBirdItem> birdItems = new List<SaleBirdItem>();
         
         private void Start()
+        { 
+            mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            RefreshName();
+            sortingToggle0.isOn = true;
+            RefreshBirdList();
+            sortingToggle0.onValueChanged.AddListener(isOn =>
+            {
+                if (isOn)
+                {
+                    sortType = 0;
+                    Sorting();
+                }
+            });
+            sortingToggle1.onValueChanged.AddListener(isOn =>
+            {
+                if (isOn)
+                {
+                    sortType = 1;
+                    Sorting();
+                }
+            });
+            sortingToggle2.onValueChanged.AddListener(isOn =>
+            {
+                if (isOn)
+                {
+                    sortType = 2;
+                    Sorting();
+                }
+            });
+            leftButton.onClick.AddListener(() =>
+            {
+                if (mapIndex > 0)
+                {
+                    mapIndex--;
+                }
+                RefreshName();
+                RefreshBirdList();
+                RefreshButtons();
+            });
+            rightButton.onClick.AddListener(() =>
+            {
+                if (mapIndex < this.GetModel<IConfigModel>().MapConfig.maps.Length - 1)
+                {
+                    mapIndex++;
+                }
+                RefreshName();
+                RefreshBirdList();
+                RefreshButtons();
+            });
+            releaseAll.onClick.AddListener(() =>
+            {
+                int count = birdItems.Count;
+                for (int i = count - 1; i >= 0; i--)
+                {
+                    if (birdItems[i].lockToggle.isOn)
+                    {
+                        continue;
+                    }
+
+                    var data = this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList[i];
+                    if (data.isSmall)
+                    {
+                        this.GetModel<IAccountModel>().Coins.Value += data.individualPriceSmall;
+                    }
+                    else
+                    {
+                        this.GetModel<IAccountModel>().Coins.Value += data.individualPriceBig;
+                    }
+
+                    if (mapIndex == this.GetModel<ISaveModel>().BirdInfoData.currentMap)
+                    {
+                        this.GetModel<IBirdModel>().RemoveBird(i);
+                    }
+                    this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.RemoveAt(i);
+                }
+                RefreshBirdList();
+            });
+            RefreshButtons();
+        }
+
+        private void RefreshName()
         {
-            var list = this.GetModel<IBirdModel>().BirdList;
+            nameText.SetKey(this.GetModel<IConfigModel>().MapConfig.maps[mapIndex].mapName);
+            capacityText.text =
+                $"{this.GetSystem<ILocalizationSystem>().GetString("Total Capacity")}: {this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.Count}/{this.GetModel<IBirdModel>().AddedBirdCount + this.GetModel<IConfigModel>().BirdConfig.maxBirdCount}";
+        }
+
+        private void RefreshButtons()
+        {
+            leftButton.interactable = mapIndex > 0;
+            rightButton.interactable = mapIndex < this.GetModel<IConfigModel>().MapConfig.maps.Length - 1;
+        }
+
+        private void RefreshBirdList()
+        {
+            for (int i = birdItems.Count - 1; i >= 0; i--)
+            {
+                var item = birdItems[i];
+                birdItems.RemoveAt(i);
+                Destroy(item.gameObject);
+            }
+            
+            birdItems.Clear();
+
+            if (mapIndex >= this.GetModel<ISaveModel>().BirdInfoData.mapBirds.Count)
+            {
+                return;
+            }
+            var list = this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList;
+            //var list = this.GetModel<IBirdModel>().BirdList;
+            int index = 0;
             foreach (var bird in list)
             {
-                if (birds.ContainsKey(bird.birdType))
-                {
-                    birds[bird.birdType].AddBird(bird);
-                }
-                else
-                {
-                    var item = GameObject.Instantiate(itemPrefab, content).GetComponent<SaleBirdItem>();
-                    float price = bird.bird.isSmall ? bird.individualPriceSmall : bird.individualPriceBig;
-                    item.SetBird(bird.birdType, price, OnSaleBird);
-                    birds.Add(bird.birdType, new BirdScaleData() { item = item });
-                    birds[bird.birdType].AddBird(bird);
-                }
+                var item = GameObject.Instantiate(itemPrefab, content).GetComponent<SaleBirdItem>();
+                float price = bird.isSmall ? bird.individualPriceSmall : bird.individualPriceBig;
+                item.SetBird(index, price, mapIndex, OnSaleBird);
+                birdItems.Add(item);
+                index++;
             }
+            Sorting();
         }
 
-        private void OnSaleBird(int birdId, int count)
+        private void Sorting()
         {
-            if(!birds.ContainsKey(birdId))
-                return;
-            var birditem = birds[birdId];
+            var list = new List<int>();
+            int current = 0;
+            var config = this.GetModel<IConfigModel>().BirdConfig;
+            foreach (var item in birdItems)
+            {
+                bool isSert = false;
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (sortType == 0)
+                    {
+                        var bird1 = config.GetBird(item.id, mapIndex);
+                        var bird2 = config.GetBird(birdItems[list[i]].id, mapIndex);
+                        if (GetRarityValue(bird2.reality) < GetRarityValue(bird1.reality))
+                        {
+                            list.Insert(i, item.index);
+                            isSert = true;
+                            break;
+                        }
+                    }
+                    else if (sortType == 1)
+                    {
+                        var data1 = this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList[item.index];
+                        var data2 = this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList[list[i]];
+                        float price1 = data1.isSmall ? data1.individualEarningSmall : data1.individualEarningBig;
+                        float price2 = data2.isSmall ? data2.individualEarningSmall : data2.individualEarningBig;
+                        if (price2 < price1)
+                        {
+                            list.Insert(i, item.index);
+                            isSert = true;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        var data1 = this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList[item.index];
+                        var data2 = this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList[list[i]];
+                        if (data2.currentExp < data1.currentExp)
+                        {
+                            list.Insert(i, item.index);
+                            isSert = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!isSert)
+                {
+                    list.Add(item.index);
+                }
+            }
+
+            int count = list.Count;
             for (int i = 0; i < count; i++)
             {
-                var data = birditem.dataList[0];
-                
-                // 使用实例化时计算的个体化售价
-                if (data.bird.isSmall)
-                {
-                    this.GetModel<IAccountModel>().Coins.Value += data.individualPriceSmall;
-                }
-                else
-                {
-                    this.GetModel<IAccountModel>().Coins.Value += data.individualPriceBig;
-                }
-
-                birditem.dataList.RemoveAt(0);
-                int index = this.GetModel<IBirdModel>().BirdList.IndexOf(data);
-                
-                this.GetModel<IBirdModel>().RemoveBird(index);
+                birdItems[list[i]].transform.SetSiblingIndex(i);
             }
         }
-    }
 
-    public class BirdScaleData
-    {
-        public List<BirdData> dataList = new List<BirdData>();
-        public SaleBirdItem item;
-
-        public void AddBird(BirdData data)
+        private int GetRarityValue(string key)
         {
-            dataList.Add(data);
-            item.AddCount();
+            switch (key)
+            {
+                case "Common": return 1;
+                case "Rare" : return 2;
+                case "Endangered" : return 3;
+                case "Extinct" : return 4;
+                default: return 0;
+            }
+        }
+
+        private void OnSaleBird(int birdIndex)
+        {
+            //var birditem = birdItems[birdIndex];
+            var data = this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList[birdIndex];
+            // 使用实例化时计算的个体化售价
+            if (data.isSmall)
+            {
+                this.GetModel<IAccountModel>().Coins.Value += data.individualPriceSmall;
+            }
+            else
+            {
+                this.GetModel<IAccountModel>().Coins.Value += data.individualPriceBig;
+            }
+
+            this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.RemoveAt(birdIndex);
+
+            if (mapIndex == this.GetModel<ISaveModel>().BirdInfoData.currentMap)
+                this.GetModel<IBirdModel>().RemoveBird(birdIndex);
+            
+            RefreshBirdList();
         }
     }
 }

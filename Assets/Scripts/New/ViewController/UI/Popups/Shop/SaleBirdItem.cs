@@ -1,78 +1,70 @@
 ﻿using System;
 using QFramework;
 using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace BirdGame
 {
     public class SaleBirdItem : ViewControllerBase
     {
-        public Action<int, int> onSaleEvent;
+        public Action<int> onSaleEvent;
         public Image icon;
-        public TextMeshProUGUI numberText;
-        public TextMeshProUGUI deleteNumberText;
         public TextMeshProUGUI coinText;
-        public Button addButton;
-        public Button deleteButton;
+        public TextMeshProUGUI rarityText;
+        public TextMeshProUGUI outputText;
+        public TextMeshProUGUI growthText;
+        public TextMeshProUGUI nameText;
         public Button saleButton;
-        private int count = 0;
-        private int deleteCount = 0;
-        private int id;
+        public Toggle lockToggle;
+        public int index;
+        public int id;
         private float salePrice;
         
-        public void SetBird(int birdId, float birdPrice, Action<int, int> action)
+        public void SetBird(int birdIndex, float birdPrice, int mapIndex, Action<int> action)
         {
-            id = birdId;
+            index = birdIndex;
+            Debug.Log(birdIndex);
+            var data = this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList[birdIndex];
+            id = data.birdType;
             onSaleEvent = action;
             salePrice = birdPrice;
-            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
-            var bird = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdId, mapIndex);
+            var bird = this.GetModel<IConfigModel>().BirdConfig.GetBird(id, mapIndex);
             icon.sprite = bird.preview;
-        }
-
-        public void AddCount()
-        {
-            count++;
-            numberText.text = $"X {count}";
+            coinText.text = $"{salePrice:F1}";
+            rarityText.text = this.GetSystem<ILocalizationSystem>().GetString(bird.reality);
+            outputText.text = (data.isSmall ? data.individualEarningSmall : data.individualEarningBig).ToString();
+            growthText.text = data.currentExp.ToString();
+            nameText.text = string.IsNullOrEmpty(data.customName) ? this.GetModel<IConfigModel>().BirdConfig.GetBirdName(id, mapIndex) : data.customName;
         }
 
         private void Start()
         {
-            addButton.onClick.AddListener(() =>
-            {
-                if(deleteCount >= count)
-                    return;
-                deleteCount++;
-                coinText.text = (salePrice * deleteCount).ToString("F1"); 
-                deleteNumberText.text = deleteCount.ToString();
-            });
-            deleteButton.onClick.AddListener(() =>
-            {
-                if(deleteCount <= 0)
-                    return;
-                deleteCount--;
-                coinText.text = (salePrice * deleteCount).ToString("F1"); 
-                deleteNumberText.text = deleteCount.ToString();
-            });
+            // addButton.onClick.AddListener(() =>
+            // {
+            //     if(deleteCount >= count)
+            //         return;
+            //     deleteCount++;
+            //     coinText.text = (salePrice * deleteCount).ToString("F1"); 
+            //     deleteNumberText.text = deleteCount.ToString();
+            // });
+            // deleteButton.onClick.AddListener(() =>
+            // {
+            //     if(deleteCount <= 0)
+            //         return;
+            //     deleteCount--;
+            //     coinText.text = (salePrice * deleteCount).ToString("F1"); 
+            //     deleteNumberText.text = deleteCount.ToString();
+            // });
             saleButton.onClick.AddListener(() =>
             {
-                onSaleEvent?.Invoke(id, deleteCount);
-                count -= deleteCount;
-                deleteCount = 0;
-                if (count <= 0)
-                {
-                    gameObject.SetActive(false);
-                }
-                else
-                {
-                    numberText.text = $"X {count}";
-                    deleteNumberText.text = deleteCount.ToString();
-                }
+                onSaleEvent?.Invoke(index);
             });
-            
-            deleteNumberText.text = "0";
-            deleteCount = 0;
-            coinText.text = "0.0";
+            lockToggle.onValueChanged.AddListener(isOn =>
+            {
+                saleButton.interactable = !isOn;
+            });
+            lockToggle.isOn = false;
         }
     }
 }
