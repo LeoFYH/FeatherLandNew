@@ -53,8 +53,10 @@ namespace BirdGame
                 }
             }
 
-            transform.position = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[sceneId]
-                .decorations[decorationId].fixedPositions[0];
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            transform.parent.position = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[sceneId]
+                .decorations[decorationId]
+                .fixedPositions[decorationIndex];
         }
 
         private void OnMouseOver()

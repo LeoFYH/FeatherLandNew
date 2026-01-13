@@ -460,6 +460,40 @@ namespace BirdGame
             }
         }
 
+        /// <summary>
+        /// 获取可用的 fixedPositions 索引（优先使用被释放的索引）
+        /// </summary>
+        private int GetAvailableFixedPositionIndex(int decorationId, int mapIndex)
+        {
+            var accountData = this.GetModel<ISaveModel>().AccountData;
+            var decorationInfo = accountData.sceneDecorationInfos[mapIndex].decorations[decorationId];
+            var decorationItem = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[mapIndex].decorations[decorationId];
+            
+            // 初始化 usedFixedPositionIndices（向后兼容）
+            if (decorationInfo.usedFixedPositionIndices == null)
+            {
+                decorationInfo.usedFixedPositionIndices = new List<int>();
+            }
+            
+            // 如果没有 fixedPositions，返回 -1
+            if (decorationItem.fixedPositions == null || decorationItem.fixedPositions.Length == 0)
+            {
+                return -1;
+            }
+            
+            // 优先查找未使用的索引（被释放的索引）
+            for (int i = 0; i < decorationItem.fixedPositions.Length; i++)
+            {
+                if (!decorationInfo.usedFixedPositionIndices.Contains(i))
+                {
+                    return i;
+                }
+            }
+            
+            // 如果所有索引都被使用，返回 -1（表示没有可用位置）
+            return -1;
+        }
+
         public void CreateFixedDecoration(int decorationId, int index)
         {
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
@@ -468,7 +502,8 @@ namespace BirdGame
             if (index < decorationItem.fixedPositions.Length)
             {
                 Debug.LogWarning("设置位置");
-                decoration.transform.position = decorationItem.fixedPositions[index];
+                decoration.transform.localPosition = decorationItem.fixedPositions[index];
+                decoration.GetComponentsInChildren<Transform>()[1].localPosition = Vector3.zero;
             }
             currentIndex = index;
             DecorationClickHandler clickHandler = decoration.GetComponentInChildren<DecorationClickHandler>();
@@ -521,7 +556,14 @@ namespace BirdGame
         {
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             var accountData = this.GetModel<ISaveModel>().AccountData;
-            var positionList = accountData.sceneDecorationInfos[mapIndex].decorations[decorationId].position;
+            var decorationInfo = accountData.sceneDecorationInfos[mapIndex].decorations[decorationId];
+            var positionList = decorationInfo.position;
+            
+            // 初始化 usedFixedPositionIndices（向后兼容）
+            if (decorationInfo.usedFixedPositionIndices == null)
+            {
+                decorationInfo.usedFixedPositionIndices = new List<int>();
+            }
             
             // 通过装饰对象的实际位置在 position 列表中查找对应的索引，而不是使用传入的 index
             // 因为删除第一个装饰后，后续装饰的索引会前移，但 decorationIndex 不会自动更新
@@ -563,6 +605,27 @@ namespace BirdGame
                 }
             }
             
+            // 找到被删除位置对应的 fixedPositions 索引
+            Vector3 deletedPosition = positionList[actualIndex];
+            var decorationItem = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[mapIndex].decorations[decorationId];
+            int fixedPositionIndex = -1;
+            float minFixedDistance = float.MaxValue;
+            const float fixedPositionTolerance = 0.1f;
+            
+            // 在 fixedPositions 中查找匹配的位置索引
+            if (decorationItem.fixedPositions != null && decorationItem.fixedPositions.Length > 0)
+            {
+                for (int i = 0; i < decorationItem.fixedPositions.Length; i++)
+                {
+                    float distance = Vector3.Distance(deletedPosition, decorationItem.fixedPositions[i]);
+                    if (distance < fixedPositionTolerance && distance < minFixedDistance)
+                    {
+                        minFixedDistance = distance;
+                        fixedPositionIndex = i;
+                    }
+                }
+            }
+            
             // 销毁装饰品对象
             GameObject.Destroy(decorationObject);
             
@@ -570,15 +633,25 @@ namespace BirdGame
             if (actualIndex >= 0 && actualIndex < positionList.Count)
             {
                 positionList.RemoveAt(actualIndex);
-                accountData.sceneDecorationInfos[mapIndex].decorations[decorationId].count--;
+                decorationInfo.count--;
                 
                 // 确保 count 不为负数
-                if (accountData.sceneDecorationInfos[mapIndex].decorations[decorationId].count < 0)
+                if (decorationInfo.count < 0)
                 {
-                    accountData.sceneDecorationInfos[mapIndex].decorations[decorationId].count = 0;
+                    decorationInfo.count = 0;
                 }
                 
-                Debug.Log($"销毁装饰品 {decorationId}，使用索引 {actualIndex}（传入索引: {index}），剩余数量: {accountData.sceneDecorationInfos[mapIndex].decorations[decorationId].count}");
+                // 如果找到了对应的 fixedPositions 索引，从已使用列表中移除
+                if (fixedPositionIndex >= 0)
+                {
+                    if (decorationInfo.usedFixedPositionIndices.Contains(fixedPositionIndex))
+                    {
+                        decorationInfo.usedFixedPositionIndices.Remove(fixedPositionIndex);
+                        Debug.Log($"销毁装饰品 {decorationId}，释放 fixedPositions 索引 {fixedPositionIndex}，剩余数量: {decorationInfo.count}");
+                    }
+                }
+                
+                Debug.Log($"销毁装饰品 {decorationId}，使用索引 {actualIndex}（传入索引: {index}），剩余数量: {decorationInfo.count}");
             }
             else
             {
@@ -630,16 +703,56 @@ namespace BirdGame
                 accountData.sceneDecorationInfos.Add(new SceneDecorationInfo());
             }
             int count = accountData.sceneDecorationInfos[mapIndex].decorations.Count;
+            Dictionary<int, int> decount = new Dictionary<int, int>();
             for (int i = 0; i < count; i++)
             {
-                if (accountData.sceneDecorationInfos[mapIndex].decorations[i].position == null)
+                var decorationInfo = accountData.sceneDecorationInfos[mapIndex].decorations[i];
+                
+                // 初始化 position 列表
+                if (decorationInfo.position == null)
                 {
-                    accountData.sceneDecorationInfos[mapIndex].decorations[i].position = new List<Vector3>();
+                    decorationInfo.position = new List<Vector3>();
                 }
                 
-                for (int j = 0; j < accountData.sceneDecorationInfos[mapIndex].decorations[i].count; j++)
+                // 初始化 usedFixedPositionIndices（向后兼容）
+                if (decorationInfo.usedFixedPositionIndices == null)
                 {
-                    var decorationItem = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[mapIndex].decorations[i];
+                    decorationInfo.usedFixedPositionIndices = new List<int>();
+                }
+                
+                // 重建 usedFixedPositionIndices：根据现有的 position 列表匹配 fixedPositions
+                var decorationItem = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[mapIndex].decorations[i];
+                decorationInfo.usedFixedPositionIndices.Clear();
+                
+                if (decorationItem.fixedPositions != null && decorationItem.fixedPositions.Length > 0)
+                {
+                    foreach (var pos in decorationInfo.position)
+                    {
+                        // 查找这个位置对应的 fixedPositions 索引
+                        int matchedIndex = -1;
+                        float minDistance = float.MaxValue;
+                        const float positionTolerance = 0.1f;
+                        
+                        for (int k = 0; k < decorationItem.fixedPositions.Length; k++)
+                        {
+                            float distance = Vector3.Distance(pos, decorationItem.fixedPositions[k]);
+                            if (distance < positionTolerance && distance < minDistance)
+                            {
+                                minDistance = distance;
+                                matchedIndex = k;
+                            }
+                        }
+                        
+                        // 如果找到匹配的索引且未在列表中，添加到已使用列表
+                        if (matchedIndex >= 0 && !decorationInfo.usedFixedPositionIndices.Contains(matchedIndex))
+                        {
+                            decorationInfo.usedFixedPositionIndices.Add(matchedIndex);
+                        }
+                    }
+                }
+                
+                for (int j = 0; j < decorationInfo.count; j++)
+                {
                     // 创建一个 GameObject 来承载 Sprite
                     // GameObject decoration = new GameObject("Decoration");
                     // Sprite spriteToUse = decorationItem.sceneSprite != null
@@ -666,15 +779,14 @@ namespace BirdGame
                     // clickHandler.Initialize(i, j);
                     
                     var decoration = GameObject.Instantiate(decorationItem.prefab);
-                    
                     DecorationClickHandler clickHandler = decoration.GetComponentInChildren<DecorationClickHandler>();
                     clickHandler.Initialize(i, j);
-                    if (accountData.sceneDecorationInfos[mapIndex].decorations[i].position.Count <= j)
+                    if (decorationInfo.position.Count <= j)
                     {
-                        accountData.sceneDecorationInfos[mapIndex].decorations[i].position.Add(Vector3.zero);
+                        decorationInfo.position.Add(Vector3.zero);
                     }
 
-                    decoration.transform.position = accountData.sceneDecorationInfos[mapIndex].decorations[i].position[j];
+                    decoration.transform.position = decorationInfo.position[j];
                 }
             }
         }

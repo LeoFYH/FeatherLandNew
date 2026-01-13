@@ -60,6 +60,10 @@ namespace BirdGame
     {
         public int count;
         public List<Vector3> position = new List<Vector3>();
+        /// <summary>
+        /// 记录已使用的 fixedPositions 索引，用于在删除后重新购买时使用正确的索引
+        /// </summary>
+        public List<int> usedFixedPositionIndices = new List<int>();
     }
 
     [Serializable]
