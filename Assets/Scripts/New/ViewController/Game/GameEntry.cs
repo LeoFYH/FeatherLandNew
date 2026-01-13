@@ -304,40 +304,48 @@ namespace BirdGame
                 return; // Early return to prevent processing other keys in the same frame
             }
             
+            // 获取MenuPanel以便访问toggle按钮
+            var menuPanel = this.GetSystem<IUISystem>().GetPanel<MenuPanel>();
+            if (menuPanel == null)
+            {
+                return; // MenuPanel未加载，不处理快捷键
+            }
+
             // 检测快捷键按下（使用 GetKeyDown 确保每次按键只触发一次）
+            // 直接切换toggle按钮状态，而不是调用TogglePopup
             if (GetKeyDownAny(KeyCode.N))
             {
                 // Notebook - NotePopup
-                this.GetSystem<IUISystem>().TogglePopup(UIPopup.NotePopup);
+                menuPanel.noteToggle.isOn = !menuPanel.noteToggle.isOn;
             }
             else if (GetKeyDownAny(KeyCode.R))
             {
                 // Radio - RadioPopup
-                this.GetSystem<IUISystem>().TogglePopup(UIPopup.RadioPopup);
+                menuPanel.radioToggle.isOn = !menuPanel.radioToggle.isOn;
             }
             else if (GetKeyDownAny(KeyCode.P))
             {
                 // Pomodoro Clock - ClockPopup
-                this.GetSystem<IUISystem>().TogglePopup(UIPopup.ClockPopup);
+                menuPanel.clockToggle.isOn = !menuPanel.clockToggle.isOn;
             }
             else if (GetKeyDownAny(KeyCode.M))
             {
                 // Map - MapPopup
-                this.GetSystem<IUISystem>().TogglePopup(UIPopup.MapPopup);
+                menuPanel.mapButton.isOn = !menuPanel.mapButton.isOn;
             }
             else if (GetKeyDownAny(KeyCode.S))
             {
                 // Shop - ShopPopup
-                this.GetSystem<IUISystem>().TogglePopup(UIPopup.ShopPopup);
+                menuPanel.shopButton.isOn = !menuPanel.shopButton.isOn;
             }
             else if (GetKeyDownAny(KeyCode.B))
             {
                 // Birdbook - IllustratedPopup
-                this.GetSystem<IUISystem>().TogglePopup(UIPopup.IllustratedPopup);
+                menuPanel.illustratedButton.isOn = !menuPanel.illustratedButton.isOn;
             }
             else if (GetKeyDownAny(KeyCode.T))
             {
-                // Tutorial - TutorialPopup
+                // Tutorial - TutorialPopup (没有对应的toggle按钮，保持原有行为)
                 this.GetSystem<IUISystem>().TogglePopup(UIPopup.TutorialPopup);
             }
         }
