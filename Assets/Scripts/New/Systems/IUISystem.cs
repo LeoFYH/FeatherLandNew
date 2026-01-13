@@ -61,6 +61,11 @@ namespace BirdGame
 
         void HideAllPopups();
         /// <summary>
+        /// 切换弹窗（如果已打开则关闭，如果未打开则打开）
+        /// </summary>
+        /// <param name="popup"></param>
+        void TogglePopup(UIPopup popup);
+        /// <summary>
         /// 获取Popup对象
         /// </summary>
         /// <param name="popup"></param>
@@ -234,6 +239,18 @@ namespace BirdGame
                 });
             }
             popupDic.Clear();
+        }
+
+        public void TogglePopup(UIPopup popup)
+        {
+            if (popupDic.ContainsKey(popup))
+            {
+                HidePopup(popup);
+            }
+            else
+            {
+                ShowPopup(popup);
+            }
         }
 
         public T GetPopup<T>(UIPopup popup) where T : UIBase

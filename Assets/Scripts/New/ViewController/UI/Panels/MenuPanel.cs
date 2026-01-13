@@ -380,6 +380,15 @@ namespace BirdGame
                     settingButton.isOn = true;
                 }
             }
+            
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                // 按下 A 键打开/关闭天气选项
+                if (weatherButton != null)
+                {
+                    weatherButton.onClick.Invoke();
+                }
+            }
         }
 
         /// <summary>

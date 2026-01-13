@@ -1,6 +1,9 @@
 ﻿using System;
 using QFramework;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using TMPro;
+using UnityEngine.UI;
 
 namespace BirdGame
 {
@@ -31,6 +34,10 @@ namespace BirdGame
             //this.GetSystem<ISceneSystem>().LoadScene(0);
         }
 
+        /// <summary>
+        /// 切换屏幕模式（统一方法，供启动和快捷键调用）
+        /// </summary>
+        /// <param name="mode">模式：0=窗口模式, 1=壁纸模式, 2=全屏模式</param>
         private void SetScreenMode(int mode)
         {
             Debug.Log($"SetScreenMode 被调用，模式: {mode}");
@@ -38,17 +45,26 @@ namespace BirdGame
             {
                 case 0:
                     this.GetUtility<IFullScreenUtility>().WindowedMode();
-                    Debug.Log("启动时设置为窗口模式");
+                    Debug.Log("设置为窗口模式");
                     break;
                 case 1:
                     this.GetUtility<IFullScreenUtility>().WallpaperMode();
-                    Debug.Log("启动时设置为壁纸模式");
+                    Debug.Log("设置为壁纸模式");
                     break;
                 default:
                     this.GetUtility<IFullScreenUtility>().FullscreenMode();
-                    Debug.Log("启动时设置为全屏模式");
+                    Debug.Log("设置为全屏模式");
                     break;
             }
+            
+            // 保存设置到存档
+            if (this.GetModel<ISaveModel>().SettingData != null)
+            {
+                this.GetModel<ISaveModel>().SettingData.screenMode = mode;
+            }
+            
+            // 发送事件通知UI更新
+            this.GetSystem<IMonoSystem>().SendEvent(new ChangeScreenModeEvent { mode = mode });
         }
 
         private void Update()
@@ -57,6 +73,9 @@ namespace BirdGame
             this.GetSystem<ISteamSystem>().RunCallbacks();
             
             CheckCursor();
+            
+            // 检测快捷键（仅在非输入状态下）
+            HandleKeyboardShortcuts();
             
             if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
             {
@@ -218,6 +237,121 @@ namespace BirdGame
             {
                 this.GetSystem<ICursorSystem>().SetCursorState(CursorState.Default);
             }
+        }
+        
+        /// <summary>
+        /// 处理键盘快捷键
+        /// </summary>
+        private void HandleKeyboardShortcuts()
+        {
+            // 检查是否有输入框处于焦点状态，如果有则不处理快捷键
+            if (IsInputFieldFocused())
+            {
+                return;
+            }
+
+            // 检测屏幕模式切换快捷键：1=窗口模式, 2=壁纸模式, 3=全屏模式
+            if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1))
+            {
+                SetScreenMode(0);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2))
+            {
+                SetScreenMode(1);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3))
+            {
+                SetScreenMode(2);
+            }
+            // 检测快捷键按下（使用 GetKeyDown 确保每次按键只触发一次）
+            else if (Input.GetKeyDown(KeyCode.N))
+            {
+                // Notebook - NotePopup
+                this.GetSystem<IUISystem>().TogglePopup(UIPopup.NotePopup);
+            }
+            else if (Input.GetKeyDown(KeyCode.R))
+            {
+                // Radio - RadioPopup
+                this.GetSystem<IUISystem>().TogglePopup(UIPopup.RadioPopup);
+            }
+            else if (Input.GetKeyDown(KeyCode.P))
+            {
+                // Pomodoro Clock - ClockPopup
+                this.GetSystem<IUISystem>().TogglePopup(UIPopup.ClockPopup);
+            }
+            else if (Input.GetKeyDown(KeyCode.M))
+            {
+                // Map - MapPopup
+                this.GetSystem<IUISystem>().TogglePopup(UIPopup.MapPopup);
+            }
+            else if (Input.GetKeyDown(KeyCode.S))
+            {
+                // Shop - ShopPopup
+                this.GetSystem<IUISystem>().TogglePopup(UIPopup.ShopPopup);
+            }
+            else if (Input.GetKeyDown(KeyCode.B))
+            {
+                // Birdbook - IllustratedPopup
+                this.GetSystem<IUISystem>().TogglePopup(UIPopup.IllustratedPopup);
+            }
+            else if (Input.GetKeyDown(KeyCode.T))
+            {
+                // Tutorial - TutorialPopup
+                this.GetSystem<IUISystem>().TogglePopup(UIPopup.TutorialPopup);
+            }
+        }
+
+        /// <summary>
+        /// 检查是否有输入框处于焦点状态
+        /// </summary>
+        private bool IsInputFieldFocused()
+        {
+            // 检查 EventSystem 当前选中的对象
+            GameObject selectedObject = EventSystem.current?.currentSelectedGameObject;
+            if (selectedObject != null)
+            {
+                // 检查是否是 TMP_InputField
+                if (selectedObject.GetComponent<TMP_InputField>() != null)
+                {
+                    TMP_InputField tmpInput = selectedObject.GetComponent<TMP_InputField>();
+                    if (tmpInput != null && tmpInput.isFocused)
+                    {
+                        return true;
+                    }
+                }
+
+                // 检查是否是 InputField
+                if (selectedObject.GetComponent<InputField>() != null)
+                {
+                    InputField input = selectedObject.GetComponent<InputField>();
+                    if (input != null && input.isFocused)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            // 检查所有 TMP_InputField
+            TMP_InputField[] tmpInputFields = FindObjectsOfType<TMP_InputField>();
+            foreach (var inputField in tmpInputFields)
+            {
+                if (inputField != null && inputField.isFocused)
+                {
+                    return true;
+                }
+            }
+
+            // 检查所有 InputField
+            InputField[] inputFields = FindObjectsOfType<InputField>();
+            foreach (var inputField in inputFields)
+            {
+                if (inputField != null && inputField.isFocused)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
         
         void OnApplicationQuit()
