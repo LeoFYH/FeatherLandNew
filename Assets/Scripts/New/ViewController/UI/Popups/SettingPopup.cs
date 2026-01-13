@@ -39,6 +39,7 @@ namespace BirdGame
         private RectTransform tutorialRect;
         private RectTransform quitRect;
         private RectTransform languageRect;
+        private bool isChangingMode = false; // 防止键盘切换时触发onValueChanged导致循环
         
         public void onClick()
         {
@@ -198,23 +199,11 @@ namespace BirdGame
             
             screenDropdown.onValueChanged.AddListener(id =>
             {
-                if (id == 0)
-                {
-                    this.GetUtility<IFullScreenUtility>().WindowedMode();
-                    Debug.Log("WindowedMode");
-                }
-                else if (id == 1)
-                {
-                    this.GetUtility<IFullScreenUtility>().WallpaperMode();
-                    Debug.Log("WallpaperMode");
-                }
-                else if (id == 2)
-                {
-                    this.GetUtility<IFullScreenUtility>().FullscreenMode();
-                    Debug.Log("FullscreenMode");
-                }
-
-                this.GetModel<ISaveModel>().SettingData.screenMode = id;
+                // 如果正在通过代码切换模式，跳过处理（避免循环触发）
+                if (isChangingMode)
+                    return;
+                    
+                SwitchScreenMode(id);
             });
             languageDropdown.onValueChanged.AddListener(index =>
             {
@@ -241,6 +230,17 @@ namespace BirdGame
                     languageDropdown.options[i].text = langText;
                 }
                 languageDropdown.RefreshShownValue();
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            
+            // 监听全局屏幕模式切换事件（用于键盘快捷键切换时更新UI）
+            this.RegisterEvent<ChangeScreenModeEvent>(evt =>
+            {
+                if (screenDropdown != null && screenDropdown.value != evt.mode)
+                {
+                    isChangingMode = true; // 设置标志，防止触发onValueChanged
+                    screenDropdown.value = evt.mode;
+                    isChangingMode = false; // 重置标志
+                }
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
         }
 
@@ -284,6 +284,40 @@ namespace BirdGame
             deleteRect.anchoredPosition = new Vector2(0, deleteY - moveHeight);
             tutorialRect.anchoredPosition = new Vector2(0, tutorailY - moveHeight);
             quitRect.anchoredPosition = new Vector2(0, quitY - moveHeight);
+        }
+
+        /// <summary>
+        /// 切换屏幕模式（统一方法，供点击和键盘快捷键调用）
+        /// </summary>
+        /// <param name="mode">模式：0=窗口模式, 1=壁纸模式, 2=全屏模式</param>
+        private void SwitchScreenMode(int mode)
+        {
+            if (mode == 0)
+            {
+                this.GetUtility<IFullScreenUtility>().WindowedMode();
+                Debug.Log("WindowedMode");
+            }
+            else if (mode == 1)
+            {
+                this.GetUtility<IFullScreenUtility>().WallpaperMode();
+                Debug.Log("WallpaperMode");
+            }
+            else if (mode == 2)
+            {
+                this.GetUtility<IFullScreenUtility>().FullscreenMode();
+                Debug.Log("FullscreenMode");
+            }
+
+            // 保存设置
+            this.GetModel<ISaveModel>().SettingData.screenMode = mode;
+            
+            // 更新下拉菜单显示（如果是通过键盘切换）
+            if (screenDropdown.value != mode)
+            {
+                isChangingMode = true; // 设置标志，防止触发onValueChanged
+                screenDropdown.value = mode;
+                isChangingMode = false; // 重置标志
+            }
         }
 
         private void InitializeScreenDropdown()
