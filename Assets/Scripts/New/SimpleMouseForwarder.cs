@@ -537,6 +537,15 @@ namespace BirdGame
                                 {
                                     sliderHandler.ReceiveDragBegin(currentMousePosition);
                                 }
+                                else
+                                {
+                                    // Check if it's a Scrollbar - send pointer down event
+                                    Scrollbar scrollbar = currentDragTarget.GetComponent<Scrollbar>();
+                                    if (scrollbar != null && scrollbar.interactable)
+                                    {
+                                        ForwardPointerDownToScrollbar(scrollbar, currentMousePosition);
+                                    }
+                                }
                             }
                         }
                     }
@@ -601,6 +610,15 @@ namespace BirdGame
                                             {
                                                 sliderHandler.ReceiveDragBegin(dragStartPosition);
                                             }
+                                            else
+                                            {
+                                                // Check if it's a Scrollbar - send pointer down event
+                                                Scrollbar scrollbar = currentDragTarget.GetComponent<Scrollbar>();
+                                                if (scrollbar != null && scrollbar.interactable)
+                                                {
+                                                    ForwardPointerDownToScrollbar(scrollbar, dragStartPosition);
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -640,9 +658,18 @@ namespace BirdGame
                                 }
                                 else
                                 {
-                                    // Otherwise, forward to scroll rect
-                                    Vector2 delta = currentMousePosition - lastMousePosition;
-                                    ForwardDragToScrollRect(currentDragTarget, delta);
+                                    // Check if it's a Scrollbar
+                                    Scrollbar scrollbar = currentDragTarget.GetComponent<Scrollbar>();
+                                    if (scrollbar != null && scrollbar.interactable)
+                                    {
+                                        ForwardDragToScrollbar(scrollbar, currentMousePosition);
+                                    }
+                                    else
+                                    {
+                                        // Otherwise, forward to scroll rect
+                                        Vector2 delta = currentMousePosition - lastMousePosition;
+                                        ForwardDragToScrollRect(currentDragTarget, delta);
+                                    }
                                 }
                             }
                         }
@@ -654,11 +681,13 @@ namespace BirdGame
                     }
 
                     // Check if we should update hover states
-                    // For sliders, we continue updating hover states so elements behind can receive events
+                    // For sliders and scrollbars, we continue updating hover states so elements behind can receive events
                     // For other drag types (window move, resize), we skip hover updates
                     bool isSliderDrag = isLeftMouseDragging && currentDragTarget != null && 
                                        currentDragTarget.GetComponent<SliderBarClickHandler>() != null;
-                    bool shouldUpdateHoverStates = !isLeftMouseDragging || isSliderDrag;
+                    bool isScrollbarDrag = isLeftMouseDragging && currentDragTarget != null && 
+                                          currentDragTarget.GetComponent<Scrollbar>() != null;
+                    bool shouldUpdateHoverStates = !isLeftMouseDragging || isSliderDrag || isScrollbarDrag;
                     
                     if (shouldUpdateHoverStates)
                     {
@@ -675,8 +704,8 @@ namespace BirdGame
                         {
                             if (element != null && !currentUIElements.Contains(element))
                             {
-                                // Don't exit the drag target during slider drag
-                                if (isSliderDrag && element == currentDragTarget)
+                                // Don't exit the drag target during slider or scrollbar drag
+                                if ((isSliderDrag || isScrollbarDrag) && element == currentDragTarget)
                                 {
                                     continue;
                                 }
@@ -763,6 +792,20 @@ namespace BirdGame
                                     if (instance.showDebugLog)
                                     {
                                         Debug.Log($"[SimpleMouseForwarder] 滑块拖动结束: {currentDragTarget.name}");
+                                    }
+                                }
+                                else
+                                {
+                                    // Check if it's a Scrollbar
+                                    Scrollbar scrollbar = currentDragTarget.GetComponent<Scrollbar>();
+                                    if (scrollbar != null && scrollbar.interactable)
+                                    {
+                                        ForwardPointerUpToScrollbar(scrollbar, currentMousePosition);
+                                        
+                                        if (instance.showDebugLog)
+                                        {
+                                            Debug.Log($"[SimpleMouseForwarder] Scrollbar 拖动结束: {currentDragTarget.name}");
+                                        }
                                     }
                                 }
                             }
@@ -879,6 +922,18 @@ namespace BirdGame
                 if (sliderHandler != null)
                 {
                     return result.gameObject;
+                }
+                
+                // Look for Scrollbar components (check the object and its parents)
+                Transform current = result.gameObject.transform;
+                while (current != null)
+                {
+                    Scrollbar scrollbar = current.GetComponent<Scrollbar>();
+                    if (scrollbar != null && scrollbar.interactable)
+                    {
+                        return current.gameObject;
+                    }
+                    current = current.parent;
                 }
             }
 
@@ -999,6 +1054,147 @@ namespace BirdGame
             if (handler != null)
             {
                 handler.ReceiveDragDelta(delta);
+            }
+        }
+
+        private static void ForwardPointerDownToScrollbar(Scrollbar scrollbar, Vector2 mousePosition)
+        {
+            if (scrollbar == null || EventSystem.current == null) return;
+
+            // Create pointer event data with proper raycast information
+            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            {
+                position = mousePosition,
+                button = PointerEventData.InputButton.Left,
+                dragging = false,
+                pressPosition = mousePosition,
+                clickTime = Time.time,
+                clickCount = 1
+            };
+
+            // Perform raycast to get the exact hit information
+            var raycastResults = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointerData, raycastResults);
+            
+            // Find the scrollbar or its children in the raycast results
+            RaycastResult scrollbarResult = default(RaycastResult);
+            bool foundScrollbarHit = false;
+            
+            foreach (var result in raycastResults)
+            {
+                // Check if this result is the scrollbar or a child of it
+                Transform current = result.gameObject.transform;
+                while (current != null)
+                {
+                    if (current == scrollbar.transform)
+                    {
+                        scrollbarResult = result;
+                        foundScrollbarHit = true;
+                        break;
+                    }
+                    current = current.parent;
+                }
+                if (foundScrollbarHit) break;
+            }
+            
+            // Set the raycast result on the pointer event data
+            if (foundScrollbarHit)
+            {
+                pointerData.pointerEnter = scrollbarResult.gameObject;
+                pointerData.pointerPress = scrollbar.gameObject;
+                pointerData.rawPointerPress = scrollbarResult.gameObject;
+                pointerData.pointerCurrentRaycast = scrollbarResult;
+                pointerData.pointerPressRaycast = scrollbarResult;
+            }
+            else
+            {
+                // If we didn't find it in raycast, still set basic info
+                pointerData.pointerPress = scrollbar.gameObject;
+                pointerData.rawPointerPress = scrollbar.gameObject;
+            }
+
+            // Execute pointer down event - this will handle both track clicks and handle drags
+            ExecuteEvents.Execute(scrollbar.gameObject, pointerData, ExecuteEvents.pointerDownHandler);
+            
+            // Also execute begin drag event for proper drag initialization
+            ExecuteEvents.Execute(scrollbar.gameObject, pointerData, ExecuteEvents.beginDragHandler);
+
+            if (instance != null && instance.showDebugLog)
+            {
+                Debug.Log($"[SimpleMouseForwarder] Pointer down on scrollbar: {scrollbar.name}, Position: {mousePosition}, Hit: {foundScrollbarHit}");
+            }
+        }
+
+        private static void ForwardDragToScrollbar(Scrollbar scrollbar, Vector2 mousePosition)
+        {
+            if (scrollbar == null || EventSystem.current == null) return;
+
+            // Create pointer event data
+            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            {
+                position = mousePosition,
+                button = PointerEventData.InputButton.Left,
+                dragging = true,
+                pointerPress = scrollbar.gameObject,
+                pointerDrag = scrollbar.gameObject
+            };
+
+            // Perform raycast to get current hit information during drag
+            var raycastResults = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointerData, raycastResults);
+            
+            if (raycastResults.Count > 0)
+            {
+                pointerData.pointerCurrentRaycast = raycastResults[0];
+            }
+
+            // Execute drag event on the scrollbar
+            ExecuteEvents.Execute(scrollbar.gameObject, pointerData, ExecuteEvents.dragHandler);
+
+            if (instance != null && instance.showDebugLog)
+            {
+                Debug.Log($"[SimpleMouseForwarder] Forwarding drag to scrollbar: {scrollbar.name}, Position: {mousePosition}, Value: {scrollbar.value:F3}");
+            }
+        }
+
+        private static void ForwardPointerUpToScrollbar(Scrollbar scrollbar, Vector2 mousePosition)
+        {
+            if (scrollbar == null || EventSystem.current == null) return;
+
+            // Create pointer event data
+            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            {
+                position = mousePosition,
+                button = PointerEventData.InputButton.Left,
+                dragging = false,
+                pointerPress = scrollbar.gameObject,
+                pointerDrag = scrollbar.gameObject
+            };
+
+            // Perform raycast to get final hit information
+            var raycastResults = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointerData, raycastResults);
+            
+            if (raycastResults.Count > 0)
+            {
+                pointerData.pointerCurrentRaycast = raycastResults[0];
+            }
+
+            // Execute end drag event
+            ExecuteEvents.Execute(scrollbar.gameObject, pointerData, ExecuteEvents.endDragHandler);
+            
+            // Execute pointer up event
+            ExecuteEvents.Execute(scrollbar.gameObject, pointerData, ExecuteEvents.pointerUpHandler);
+            
+            // Execute pointer click event if we're clicking (not just ending a drag)
+            if (pointerData.pointerPress == scrollbar.gameObject)
+            {
+                ExecuteEvents.Execute(scrollbar.gameObject, pointerData, ExecuteEvents.pointerClickHandler);
+            }
+
+            if (instance != null && instance.showDebugLog)
+            {
+                Debug.Log($"[SimpleMouseForwarder] Pointer up on scrollbar: {scrollbar.name}, Position: {mousePosition}");
             }
         }
 

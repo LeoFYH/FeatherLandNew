@@ -11,6 +11,8 @@ public class ScrollRectMouseWheelHandler : MonoBehaviour,
 {
     [Header("References")]
     public ScrollRect scrollRect;
+    public Scrollbar verticalScrollbar;
+    public Scrollbar horizontalScrollbar;
     
     [Header("Scroll Settings")]
     public float mouseWheelSensitivity = 0.1f;
@@ -24,6 +26,11 @@ public class ScrollRectMouseWheelHandler : MonoBehaviour,
     public float momentumDecayRate = 0.95f;
     public float minMomentumThreshold = 0.01f;
     
+    [Header("Scrollbar Settings")]
+    public bool enableScrollbarAutoHide = false;
+    public float scrollbarAutoHideDelay = 1.5f;
+    public float scrollbarFadeSpeed = 5f;
+    
     private bool isMouseOver = true;
     private float pendingWheelDelta = 0f;
     private bool isHorizontalWheel = false;
@@ -35,6 +42,12 @@ public class ScrollRectMouseWheelHandler : MonoBehaviour,
     private Vector2 momentum;
     private bool useMomentum = false;
     private float momentumTimer = 0f;
+    
+    // Scrollbar interaction tracking
+    private bool isInteractingWithScrollbar = false;
+    private float lastScrollbarInteractionTime = 0f;
+    private CanvasGroup verticalScrollbarCanvasGroup;
+    private CanvasGroup horizontalScrollbarCanvasGroup;
 
     void Start()
     {
@@ -46,7 +59,120 @@ public class ScrollRectMouseWheelHandler : MonoBehaviour,
         {
             scrollRect.movementType = ScrollRect.MovementType.Clamped;
             scrollRect.inertia = false; // We'll handle our own momentum
+            
+            // Auto-detect scrollbars if not manually assigned
+            if (verticalScrollbar == null && scrollRect.verticalScrollbar != null)
+            {
+                verticalScrollbar = scrollRect.verticalScrollbar;
+            }
+            
+            if (horizontalScrollbar == null && scrollRect.horizontalScrollbar != null)
+            {
+                horizontalScrollbar = scrollRect.horizontalScrollbar;
+            }
         }
+        
+        // Setup scrollbar listeners and canvas groups
+        InitializeScrollbars();
+    }
+    
+    void OnDestroy()
+    {
+        // Remove scrollbar listeners when destroyed
+        CleanupScrollbars();
+    }
+    
+    private void InitializeScrollbars()
+    {
+        // Setup vertical scrollbar
+        if (verticalScrollbar != null)
+        {
+            verticalScrollbar.onValueChanged.AddListener(OnVerticalScrollbarValueChanged);
+            
+            // Add event triggers for detecting scrollbar interaction
+            var verticalEventTrigger = verticalScrollbar.gameObject.GetComponent<EventTrigger>();
+            if (verticalEventTrigger == null)
+            {
+                verticalEventTrigger = verticalScrollbar.gameObject.AddComponent<EventTrigger>();
+            }
+            
+            AddScrollbarEventTriggers(verticalEventTrigger, true);
+            
+            // Setup canvas group for fading if enabled
+            if (enableScrollbarAutoHide)
+            {
+                verticalScrollbarCanvasGroup = verticalScrollbar.GetComponent<CanvasGroup>();
+                if (verticalScrollbarCanvasGroup == null)
+                {
+                    verticalScrollbarCanvasGroup = verticalScrollbar.gameObject.AddComponent<CanvasGroup>();
+                }
+            }
+        }
+        
+        // Setup horizontal scrollbar
+        if (horizontalScrollbar != null)
+        {
+            horizontalScrollbar.onValueChanged.AddListener(OnHorizontalScrollbarValueChanged);
+            
+            // Add event triggers for detecting scrollbar interaction
+            var horizontalEventTrigger = horizontalScrollbar.gameObject.GetComponent<EventTrigger>();
+            if (horizontalEventTrigger == null)
+            {
+                horizontalEventTrigger = horizontalScrollbar.gameObject.AddComponent<EventTrigger>();
+            }
+            
+            AddScrollbarEventTriggers(horizontalEventTrigger, false);
+            
+            // Setup canvas group for fading if enabled
+            if (enableScrollbarAutoHide)
+            {
+                horizontalScrollbarCanvasGroup = horizontalScrollbar.GetComponent<CanvasGroup>();
+                if (horizontalScrollbarCanvasGroup == null)
+                {
+                    horizontalScrollbarCanvasGroup = horizontalScrollbar.gameObject.AddComponent<CanvasGroup>();
+                }
+            }
+        }
+    }
+    
+    private void CleanupScrollbars()
+    {
+        if (verticalScrollbar != null)
+        {
+            verticalScrollbar.onValueChanged.RemoveListener(OnVerticalScrollbarValueChanged);
+        }
+        
+        if (horizontalScrollbar != null)
+        {
+            horizontalScrollbar.onValueChanged.RemoveListener(OnHorizontalScrollbarValueChanged);
+        }
+    }
+    
+    private void AddScrollbarEventTriggers(EventTrigger eventTrigger, bool isVertical)
+    {
+        // Pointer Down
+        EventTrigger.Entry pointerDownEntry = new EventTrigger.Entry();
+        pointerDownEntry.eventID = EventTriggerType.PointerDown;
+        pointerDownEntry.callback.AddListener((data) => { OnScrollbarPointerDown(isVertical); });
+        eventTrigger.triggers.Add(pointerDownEntry);
+        
+        // Pointer Up
+        EventTrigger.Entry pointerUpEntry = new EventTrigger.Entry();
+        pointerUpEntry.eventID = EventTriggerType.PointerUp;
+        pointerUpEntry.callback.AddListener((data) => { OnScrollbarPointerUp(isVertical); });
+        eventTrigger.triggers.Add(pointerUpEntry);
+        
+        // Pointer Enter
+        EventTrigger.Entry pointerEnterEntry = new EventTrigger.Entry();
+        pointerEnterEntry.eventID = EventTriggerType.PointerEnter;
+        pointerEnterEntry.callback.AddListener((data) => { OnScrollbarPointerEnter(isVertical); });
+        eventTrigger.triggers.Add(pointerEnterEntry);
+        
+        // Pointer Exit
+        EventTrigger.Entry pointerExitEntry = new EventTrigger.Entry();
+        pointerExitEntry.eventID = EventTriggerType.PointerExit;
+        pointerExitEntry.callback.AddListener((data) => { OnScrollbarPointerExit(isVertical); });
+        eventTrigger.triggers.Add(pointerExitEntry);
     }
 
     void Update()
@@ -56,6 +182,12 @@ public class ScrollRectMouseWheelHandler : MonoBehaviour,
         
         // Handle momentum-based scrolling
         HandleMomentum();
+        
+        // Handle scrollbar auto-hide
+        if (enableScrollbarAutoHide)
+        {
+            HandleScrollbarAutoHide();
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -277,5 +409,208 @@ public class ScrollRectMouseWheelHandler : MonoBehaviour,
         useMomentum = false;
         momentum = Vector2.zero;
         isDragging = false;
+    }
+    
+    // ============ Scrollbar Event Handlers ============
+    
+    private void OnVerticalScrollbarValueChanged(float value)
+    {
+        if (isInteractingWithScrollbar)
+        {
+            // Stop momentum when manually using scrollbar
+            StopMomentum();
+            lastScrollbarInteractionTime = Time.time;
+            
+            Debug.Log($"[ScrollRectMouseWheel] Vertical scrollbar value changed: {value:F3}");
+        }
+    }
+    
+    private void OnHorizontalScrollbarValueChanged(float value)
+    {
+        if (isInteractingWithScrollbar)
+        {
+            // Stop momentum when manually using scrollbar
+            StopMomentum();
+            lastScrollbarInteractionTime = Time.time;
+            
+            Debug.Log($"[ScrollRectMouseWheel] Horizontal scrollbar value changed: {value:F3}");
+        }
+    }
+    
+    private void OnScrollbarPointerDown(bool isVertical)
+    {
+        isInteractingWithScrollbar = true;
+        lastScrollbarInteractionTime = Time.time;
+        
+        // Show scrollbars when interacting
+        if (enableScrollbarAutoHide)
+        {
+            ShowScrollbars();
+        }
+        
+        Debug.Log($"[ScrollRectMouseWheel] {(isVertical ? "Vertical" : "Horizontal")} scrollbar pointer down");
+    }
+    
+    private void OnScrollbarPointerUp(bool isVertical)
+    {
+        isInteractingWithScrollbar = false;
+        lastScrollbarInteractionTime = Time.time;
+        
+        Debug.Log($"[ScrollRectMouseWheel] {(isVertical ? "Vertical" : "Horizontal")} scrollbar pointer up");
+    }
+    
+    private void OnScrollbarPointerEnter(bool isVertical)
+    {
+        lastScrollbarInteractionTime = Time.time;
+        
+        // Show scrollbars when hovering
+        if (enableScrollbarAutoHide)
+        {
+            ShowScrollbars();
+        }
+        
+        Debug.Log($"[ScrollRectMouseWheel] {(isVertical ? "Vertical" : "Horizontal")} scrollbar pointer enter");
+    }
+    
+    private void OnScrollbarPointerExit(bool isVertical)
+    {
+        // Don't update interaction time here - let auto-hide timer handle it
+        Debug.Log($"[ScrollRectMouseWheel] {(isVertical ? "Vertical" : "Horizontal")} scrollbar pointer exit");
+    }
+    
+    // ============ Scrollbar Auto-Hide Logic ============
+    
+    private void HandleScrollbarAutoHide()
+    {
+        if (!enableScrollbarAutoHide) return;
+        
+        float timeSinceLastInteraction = Time.time - lastScrollbarInteractionTime;
+        
+        // Update scrollbar visibility based on activity
+        if (isInteractingWithScrollbar || isMouseOver || isDragging || useMomentum)
+        {
+            // Show scrollbars during interaction
+            ShowScrollbars();
+            lastScrollbarInteractionTime = Time.time;
+        }
+        else if (timeSinceLastInteraction > scrollbarAutoHideDelay)
+        {
+            // Fade out scrollbars after delay
+            HideScrollbars();
+        }
+    }
+    
+    private void ShowScrollbars()
+    {
+        if (verticalScrollbarCanvasGroup != null)
+        {
+            verticalScrollbarCanvasGroup.alpha = Mathf.Lerp(
+                verticalScrollbarCanvasGroup.alpha, 
+                1f, 
+                Time.deltaTime * scrollbarFadeSpeed
+            );
+        }
+        
+        if (horizontalScrollbarCanvasGroup != null)
+        {
+            horizontalScrollbarCanvasGroup.alpha = Mathf.Lerp(
+                horizontalScrollbarCanvasGroup.alpha, 
+                1f, 
+                Time.deltaTime * scrollbarFadeSpeed
+            );
+        }
+    }
+    
+    private void HideScrollbars()
+    {
+        if (verticalScrollbarCanvasGroup != null)
+        {
+            verticalScrollbarCanvasGroup.alpha = Mathf.Lerp(
+                verticalScrollbarCanvasGroup.alpha, 
+                0f, 
+                Time.deltaTime * scrollbarFadeSpeed
+            );
+        }
+        
+        if (horizontalScrollbarCanvasGroup != null)
+        {
+            horizontalScrollbarCanvasGroup.alpha = Mathf.Lerp(
+                horizontalScrollbarCanvasGroup.alpha, 
+                0f, 
+                Time.deltaTime * scrollbarFadeSpeed
+            );
+        }
+    }
+    
+    // ============ Public Scrollbar Control Methods ============
+    
+    /// <summary>
+    /// Set the vertical scrollbar value (0-1, where 0 is bottom and 1 is top)
+    /// </summary>
+    public void SetVerticalScrollbarValue(float value)
+    {
+        if (verticalScrollbar != null && scrollRect != null)
+        {
+            scrollRect.verticalNormalizedPosition = Mathf.Clamp01(value);
+            StopMomentum();
+        }
+    }
+    
+    /// <summary>
+    /// Set the horizontal scrollbar value (0-1, where 0 is left and 1 is right)
+    /// </summary>
+    public void SetHorizontalScrollbarValue(float value)
+    {
+        if (horizontalScrollbar != null && scrollRect != null)
+        {
+            scrollRect.horizontalNormalizedPosition = Mathf.Clamp01(value);
+            StopMomentum();
+        }
+    }
+    
+    /// <summary>
+    /// Get the current vertical scrollbar value (0-1)
+    /// </summary>
+    public float GetVerticalScrollbarValue()
+    {
+        return verticalScrollbar != null ? verticalScrollbar.value : 0f;
+    }
+    
+    /// <summary>
+    /// Get the current horizontal scrollbar value (0-1)
+    /// </summary>
+    public float GetHorizontalScrollbarValue()
+    {
+        return horizontalScrollbar != null ? horizontalScrollbar.value : 0f;
+    }
+    
+    /// <summary>
+    /// Force scrollbars to show (useful for indicating scrollable content)
+    /// </summary>
+    public void ForceShowScrollbars()
+    {
+        lastScrollbarInteractionTime = Time.time;
+        ShowScrollbars();
+    }
+    
+    /// <summary>
+    /// Check if user is currently interacting with scrollbar
+    /// </summary>
+    public bool IsInteractingWithScrollbar()
+    {
+        return isInteractingWithScrollbar;
+    }
+    
+    /// <summary>
+    /// Enable or disable scrollbar auto-hide at runtime
+    /// </summary>
+    public void SetScrollbarAutoHide(bool enable)
+    {
+        enableScrollbarAutoHide = enable;
+        
+        if (!enable)
+        {
+            ShowScrollbars();
+        }
     }
 }
