@@ -32,9 +32,10 @@ namespace BirdGame
             var bird = this.GetModel<IConfigModel>().BirdConfig.GetBird(id, mapIndex);
             icon.sprite = bird.preview;
             coinText.text = $"{salePrice:F1}";
-            rarityText.text = this.GetSystem<ILocalizationSystem>().GetString(bird.reality);
-            outputText.text = (data.isSmall ? data.individualEarningSmall : data.individualEarningBig).ToString();
-            growthText.text = data.currentExp.ToString();
+            rarityText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Rarity")}: {this.GetSystem<ILocalizationSystem>().GetString(bird.reality)}";
+            outputText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Output")}: {(data.isSmall ? data.individualEarningSmall : data.individualEarningBig):N0}coin/min";
+            growthText.text =
+                $"{this.GetSystem<ILocalizationSystem>().GetString("Growth")}: {(data.isSmall ? this.GetSystem<ILocalizationSystem>().GetString("Childhood") : this.GetSystem<ILocalizationSystem>().GetString("Adult"))}";
             nameText.text = string.IsNullOrEmpty(data.customName) ? this.GetModel<IConfigModel>().BirdConfig.GetBirdName(id, mapIndex) : data.customName;
         }
 

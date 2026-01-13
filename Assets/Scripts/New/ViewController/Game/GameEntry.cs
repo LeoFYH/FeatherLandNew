@@ -71,7 +71,6 @@ namespace BirdGame
         {
             onUpdate?.Invoke();
             this.GetSystem<ISteamSystem>().RunCallbacks();
-            
             CheckCursor();
             
             // 检测快捷键（仅在非输入状态下）

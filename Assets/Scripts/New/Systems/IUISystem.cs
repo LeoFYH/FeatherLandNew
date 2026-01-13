@@ -72,6 +72,7 @@ namespace BirdGame
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         T GetPopup<T>(UIPopup popup) where T : UIBase;
+        
         /// <summary>
         /// 展示提示
         /// </summary>
@@ -187,20 +188,17 @@ namespace BirdGame
             {
                 if (obj == null)
                 {
-                    Debug.LogError($"无法加载弹窗预制体: {popup.ToString()}，请检查Addressables配置");
                     return;
                 }
 
                 if (popupLayer == null)
                 {
-                    Debug.LogError("PopupLayer未找到，请检查场景中是否存在UIRoot/PopupLayer");
                     return;
                 }
 
                 var pop = GameObject.Instantiate(obj, popupLayer).GetComponent<UIBase>();
                 if (pop == null)
                 {
-                    Debug.LogError($"预制体 {popup.ToString()} 缺少UIBase组件");
                     return;
                 }
 

@@ -109,6 +109,10 @@ namespace BirdGame
         private void RefreshName()
         {
             nameText.SetKey(this.GetModel<IConfigModel>().MapConfig.maps[mapIndex].mapName);
+            if (mapIndex >= this.GetModel<ISaveModel>().BirdInfoData.mapBirds.Count)
+            {
+                capacityText.text = "0/20";
+            }
             capacityText.text =
                 $"{this.GetSystem<ILocalizationSystem>().GetString("Total Capacity")}: {this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.Count}/{this.GetModel<IBirdModel>().AddedBirdCount + this.GetModel<IConfigModel>().BirdConfig.maxBirdCount}";
         }
