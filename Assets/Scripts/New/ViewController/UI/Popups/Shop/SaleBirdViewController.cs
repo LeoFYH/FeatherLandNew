@@ -60,6 +60,12 @@ namespace BirdGame
                 if (mapIndex > 0)
                 {
                     mapIndex--;
+                    // 确保只切换到已解锁的栖息地
+                    int maxUnlockedIndex = this.GetModel<ISaveModel>().BirdInfoData.mapBirds.Count - 1;
+                    if (mapIndex > maxUnlockedIndex)
+                    {
+                        mapIndex = maxUnlockedIndex;
+                    }
                 }
                 RefreshName();
                 RefreshBirdList();
@@ -67,7 +73,8 @@ namespace BirdGame
             });
             rightButton.onClick.AddListener(() =>
             {
-                if (mapIndex < this.GetModel<IConfigModel>().MapConfig.maps.Length - 1)
+                int maxUnlockedIndex = this.GetModel<ISaveModel>().BirdInfoData.mapBirds.Count - 1;
+                if (mapIndex < maxUnlockedIndex)
                 {
                     mapIndex++;
                 }
@@ -112,6 +119,7 @@ namespace BirdGame
             if (mapIndex >= this.GetModel<ISaveModel>().BirdInfoData.mapBirds.Count)
             {
                 capacityText.text = "0/20";
+                return;  // 避免访问越界的索引
             }
             capacityText.text =
                 $"{this.GetSystem<ILocalizationSystem>().GetString("Total Capacity")}: {this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.Count}/{this.GetModel<IBirdModel>().AddedBirdCount + this.GetModel<IConfigModel>().BirdConfig.maxBirdCount}";
@@ -119,8 +127,9 @@ namespace BirdGame
 
         private void RefreshButtons()
         {
+            int maxUnlockedIndex = this.GetModel<ISaveModel>().BirdInfoData.mapBirds.Count - 1;
             leftButton.interactable = mapIndex > 0;
-            rightButton.interactable = mapIndex < this.GetModel<IConfigModel>().MapConfig.maps.Length - 1;
+            rightButton.interactable = mapIndex < maxUnlockedIndex;
         }
 
         private void RefreshBirdList()
