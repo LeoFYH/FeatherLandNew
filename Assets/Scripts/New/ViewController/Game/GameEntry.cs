@@ -15,9 +15,6 @@ namespace BirdGame
         private float _lastModeChangeTime = -999f;
         private const float MODE_CHANGE_COOLDOWN = 0.5f; // 500ms cooldown between mode changes
         
-        // 用于检测右键点击的计数器
-        private int lastRightClickCount = 0;
-        
         private void Start()
         {
             // 延迟一帧来确保所有系统都已初始化
@@ -108,20 +105,6 @@ namespace BirdGame
             
             // 检测快捷键（仅在非输入状态下）
             HandleKeyboardShortcuts();
-            
-            // 检测右键点击关闭 InfoPopup
-            if (Input.GetMouseButtonDown(1) || SimpleMouseForwarder.rightClickCount > lastRightClickCount)
-            {
-                lastRightClickCount = SimpleMouseForwarder.rightClickCount;
-                
-                var popup = this.GetSystem<IUISystem>().GetPopup<InfoPopup>(UIPopup.InfoPopup);
-                if (popup != null)
-                {
-                    // InfoPopup 已打开，关闭它
-                    this.GetSystem<IUISystem>().HidePopup(UIPopup.InfoPopup);
-                    return; // 关闭后不再处理其他点击事件
-                }
-            }
             
             if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
             {
