@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using QFramework;
 using TMPro;
@@ -20,6 +20,7 @@ namespace BirdGame
         public Button releaseAll;
         public LocalizationText nameText;
         public TextMeshProUGUI capacityText;
+        public TextMeshProUGUI coinsPerMinuteText;
         
         private int mapIndex;
         private int sortType;
@@ -120,10 +121,40 @@ namespace BirdGame
             if (mapIndex >= this.GetModel<ISaveModel>().BirdInfoData.mapBirds.Count)
             {
                 capacityText.text = "0/20";
+                if (coinsPerMinuteText != null)
+                {
+                    coinsPerMinuteText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Coins per minute")}: 0";
+                }
                 return;  // 避免访问越界的索引
             }
             capacityText.text =
                 $"{this.GetSystem<ILocalizationSystem>().GetString("Total Capacity")}: {this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.Count}/{this.GetModel<IBirdModel>().AddedBirdCount + this.GetModel<IConfigModel>().BirdConfig.maxBirdCount}";
+            
+            // 计算每分钟收益
+            if (coinsPerMinuteText != null)
+            {
+                float totalEarningPerMinute = CalculateCoinsPerMinute();
+                coinsPerMinuteText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Coins per minute")}: {totalEarningPerMinute:F1}";
+            }
+        }
+        
+        private float CalculateCoinsPerMinute()
+        {
+            if (mapIndex >= this.GetModel<ISaveModel>().BirdInfoData.mapBirds.Count)
+            {
+                return 0f;
+            }
+            
+            float totalEarning = 0f;
+            var birdList = this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList;
+            
+            foreach (var bird in birdList)
+            {
+                float earning = bird.isSmall ? bird.individualEarningSmall : bird.individualEarningBig;
+                totalEarning += earning;
+            }
+            
+            return totalEarning;
         }
 
         private void RefreshButtons()
