@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using QFramework;
 using UnityEngine;
@@ -41,7 +41,7 @@ namespace BirdGame
         
         [Header("食物位置偏移")]
         [Tooltip("食物落下位置相对于鼠标的偏移量")]
-        private Vector3 foodDropOffset = new Vector3(0.3f, 0, 0f); // 基础偏移量
+        private Vector3 foodDropOffset = new Vector3(0f, 0, 0f); // 基础偏移量（X轴改为0，让食物在左右两侧均匀随机）
         
         [Header("随机偏移设置")]
         [Tooltip("X轴随机偏移范围")]
