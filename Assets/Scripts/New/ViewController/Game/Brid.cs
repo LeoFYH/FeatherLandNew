@@ -240,12 +240,19 @@ namespace BirdGame
                             desc = "It's an adult bird";
                         }
 
-                        this.GetModel<IGameModel>().CurrentSelectedBirdIndex = birdIndex;
-                        this.GetSystem<IUISystem>().ShowPopup(UIPopup.InfoPopup);
+                        // 检查 InfoPopup 是否已打开（全局已处理关闭逻辑，这里只处理打开）
+                        var popup = this.GetSystem<IUISystem>().GetPopup<InfoPopup>(UIPopup.InfoPopup);
+                        if (popup == null)
+                        {
+                            // InfoPopup 未打开，打开新的
+                            this.GetModel<IGameModel>().CurrentSelectedBirdIndex = birdIndex;
+                            this.GetSystem<IUISystem>().ShowPopup(UIPopup.InfoPopup);
 
-                        // 先恢复所有鸟的材质颜色，然后设置当前鸟为白色轮廓
-                        RestoreAllBirdsOutlineColor();
-                        SetBirdOutlineToWhite();
+                            // 先恢复所有鸟的材质颜色，然后设置当前鸟为白色轮廓
+                            RestoreAllBirdsOutlineColor();
+                            SetBirdOutlineToWhite();
+                        }
+                        // 如果 InfoPopup 已打开，不做任何事（由全局处理关闭）
                         // if (isSmall)
                         // {
                         //     // UIManager.Instance.ShowInfoPanel(gameObject, smallPrice, title, desc, 0,
