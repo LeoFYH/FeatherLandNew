@@ -109,6 +109,7 @@ namespace BirdGame
                     this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.RemoveAt(i);
                 }
                 RefreshBirdList();
+                RefreshName();  // 刷新容量显示
             });
             RefreshButtons();
         }
@@ -253,6 +254,7 @@ namespace BirdGame
                 this.GetModel<IBirdModel>().RemoveBird(birdIndex);
             
             RefreshBirdList();
+            RefreshName();  // 刷新容量显示
         }
     }
 }
