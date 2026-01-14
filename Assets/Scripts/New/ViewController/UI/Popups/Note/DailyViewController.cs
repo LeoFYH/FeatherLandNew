@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -15,6 +15,7 @@ namespace BirdGame
 
         private int currentNoteIndex;
         private List<NoteItem> items = new List<NoteItem>();
+        private const int MAX_DIARY_COUNT = 10; // 最多可创建10本日记
         
         private void Start()
         {
@@ -29,6 +30,14 @@ namespace BirdGame
             
             addButton.onClick.AddListener(() =>
             {
+                // 检查是否已达到日记上限
+                if (items.Count >= MAX_DIARY_COUNT)
+                {
+                    Debug.Log($"已达到日记上限：{MAX_DIARY_COUNT}本");
+                    // 可以在这里显示提示信息给玩家
+                    return;
+                }
+                
                 var item = GameObject.Instantiate(bookPrefab, content).GetComponent<NoteItem>();
                 int index = items.Count;
                 item.transform.SetSiblingIndex(index);
@@ -38,6 +47,9 @@ namespace BirdGame
                 currentNoteIndex = index;
                 item.thisToggle.isOn = true;
                 noteInput.text = data.bookList[currentNoteIndex].noteText;
+                
+                // 更新按钮状态
+                UpdateAddButtonState();
             });
             noteInput.onEndEdit.AddListener(text =>
             {
@@ -61,6 +73,27 @@ namespace BirdGame
             currentNoteIndex = 0;
             items[0].thisToggle.isOn = true;
             noteInput.text = data.bookList[currentNoteIndex].noteText;
+            
+            // 初始化时更新按钮状态
+            UpdateAddButtonState();
+        }
+        
+        /// <summary>
+        /// 更新添加按钮的状态（根据日记数量）
+        /// </summary>
+        private void UpdateAddButtonState()
+        {
+            if (addButton != null)
+            {
+                // 如果已达到上限，禁用按钮
+                addButton.interactable = items.Count < MAX_DIARY_COUNT;
+                
+                // 可选：修改按钮的视觉效果
+                if (items.Count >= MAX_DIARY_COUNT)
+                {
+                    Debug.Log($"日记已达上限 {items.Count}/{MAX_DIARY_COUNT}");
+                }
+            }
         }
 
 
@@ -84,6 +117,9 @@ namespace BirdGame
                 items[i].ResetIndex(i);
             }
 
+            // 删除日记后更新按钮状态
+            UpdateAddButtonState();
+            
             // if (items.Count <= currentNoteIndex)
             //     currentNoteIndex = items.Count - 1;
             // items[currentNoteIndex].thisToggle.isOn = true;
