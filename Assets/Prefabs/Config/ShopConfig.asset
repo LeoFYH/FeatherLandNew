@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3af29a6e86b04fca88f7fd9ffc287542, type: 3}
   m_Name: ShopConfig
   m_EditorClassIdentifier: 
-  startCoins: 100000
-  coinsLimit: 500000
+  startCoins: 5
+  coinsLimit: 50000000
   sceneEggs:
   - eggs:
     - eggSp: {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
-      price: 5
+      price: 2
       birdCount: 3
       description: 
       birds:
@@ -50,7 +50,7 @@ MonoBehaviour:
       - birdType: 5
         probability: 0.0848
     - eggSp: {fileID: 710238443548197888, guid: 1170092e8fa8e1142a7e347132e8ea45, type: 3}
-      price: 8
+      price: 30
       birdCount: 3
       description: 
       birds:
@@ -73,7 +73,7 @@ MonoBehaviour:
       - birdType: 39
         probability: 0.03
     - eggSp: {fileID: 2219571566158466069, guid: 066d2d923c5b99944aa6d9ca568d816f, type: 3}
-      price: 12
+      price: 100
       birdCount: 3
       description: 
       birds:
@@ -94,7 +94,7 @@ MonoBehaviour:
       - birdType: 34
         probability: 0.04
     - eggSp: {fileID: -8002347335681798773, guid: 3983a1dbff14cd040915f5a365b4942e, type: 3}
-      price: 15
+      price: 200
       birdCount: 3
       description: 
       birds:
@@ -107,7 +107,7 @@ MonoBehaviour:
       - birdType: 7
         probability: 0.5
       - birdType: 11
-        probability: 0.5
+        probability: 0.246
       - birdType: 2
         probability: 0.5
       - birdType: 27
@@ -118,7 +118,7 @@ MonoBehaviour:
         probability: 0.5
   - eggs:
     - eggSp: {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
-      price: 10
+      price: 100
       birdCount: 3
       description: 
       birds:
@@ -145,7 +145,7 @@ MonoBehaviour:
       - birdType: 88
         probability: 0.169
     - eggSp: {fileID: 710238443548197888, guid: 1170092e8fa8e1142a7e347132e8ea45, type: 3}
-      price: 16
+      price: 700
       birdCount: 3
       description: 
       birds:
@@ -156,17 +156,21 @@ MonoBehaviour:
       - birdType: 63
         probability: 0.4937
       - birdType: 18
-        probability: 0.0101
+        probability: 0.036
       - birdType: 42
         probability: 0.4962
       - birdType: 44
-        probability: 0.1
+        probability: 0.51
       - birdType: 94
-        probability: 0.05
-      - birdType: 86
-        probability: 0.05
+        probability: 0.52
+      - birdType: 40
+        probability: 0.5
+      - birdType: 64
+        probability: 0.5
+      - birdType: 62
+        probability: 0.5
     - eggSp: {fileID: 2219571566158466069, guid: 066d2d923c5b99944aa6d9ca568d816f, type: 3}
-      price: 24
+      price: 3000
       birdCount: 3
       description: 
       birds:
@@ -178,58 +182,64 @@ MonoBehaviour:
         probability: 0.3264
       - birdType: 60
         probability: 0.3264
-      - birdType: 40
-        probability: 0.077
-      - birdType: 64
-        probability: 0.066
       - birdType: 65
-        probability: 0.085
+        probability: 0.345
       - birdType: 66
-        probability: 0.135
+        probability: 0.323
       - birdType: 96
         probability: 0.359
       - birdType: 88
-        probability: 0.398
+        probability: 0.207
       - birdType: 57
-        probability: 0.361
+        probability: 0.223
   - eggs:
     - eggSp: {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
-      price: 0
+      price: 2000
       birdCount: 3
       description: 
       birds:
-      - birdType: 20
+      - birdType: 48
         probability: 0.5
-      - birdType: 36
+      - birdType: 49
+        probability: 0.5
+      - birdType: 35
         probability: 0.5
       - birdType: 36
         probability: 0.5
       - birdType: 37
         probability: 0.5
     - eggSp: {fileID: 710238443548197888, guid: 1170092e8fa8e1142a7e347132e8ea45, type: 3}
-      price: 0
+      price: 10000
       birdCount: 3
       description: 
       birds:
-      - birdType: 54
-        probability: 0.5
-      - birdType: 49
-        probability: 0.5
       - birdType: 48
         probability: 0.5
-    - eggSp: {fileID: 2219571566158466069, guid: 066d2d923c5b99944aa6d9ca568d816f, type: 3}
-      price: 0
-      birdCount: 3
-      description: 
-      birds:
+      - birdType: 20
+        probability: 0.5
       - birdType: 51
+        probability: 0.5
+      - birdType: 52
         probability: 0.5
       - birdType: 53
         probability: 0.5
+    - eggSp: {fileID: 2219571566158466069, guid: 066d2d923c5b99944aa6d9ca568d816f, type: 3}
+      price: 30000
+      birdCount: 3
+      description: 
+      birds:
       - birdType: 50
+        probability: 0.592
+      - birdType: 20
+        probability: 0.5
+      - birdType: 48
+        probability: 0.5
+      - birdType: 52
+        probability: 0.5
+      - birdType: 53
         probability: 0.5
     - eggSp: {fileID: -8002347335681798773, guid: 3983a1dbff14cd040915f5a365b4942e, type: 3}
-      price: 0
+      price: 50000
       birdCount: 3
       description: 
       birds:
@@ -238,6 +248,10 @@ MonoBehaviour:
       - birdType: 54
         probability: 0.5
       - birdType: 50
+        probability: 0.5
+      - birdType: 20
+        probability: 0.5
+      - birdType: 36
         probability: 0.5
   sceneDecorations:
   - decorations:
@@ -379,9 +393,9 @@ MonoBehaviour:
       selectionName: Seed
       description: 'Acceleration of bird growth: low'
       descriptionKey: SeedKey
-      price: 0
+      price: 50
       foodScale: 0.04
-      addValue: 0.1
+      addValue: 0.3
       addCount: 0
     - icon: {fileID: -3520649881568307650, guid: c53a4b854fc13b246880f045ae7f38b1, type: 3}
       type: 0
@@ -390,16 +404,16 @@ MonoBehaviour:
       descriptionKey: GrainKey
       price: 300
       foodScale: 0.06
-      addValue: 0.2
+      addValue: 0.5
       addCount: 0
     - icon: {fileID: 4495422397181781673, guid: 2a09792a324f4874196f98f9c4eb95a7, type: 3}
       type: 0
       selectionName: Bean
       description: 'Acceleration of bird growth: high'
       descriptionKey: BeanKey
-      price: 300
+      price: 500
       foodScale: 0.06
-      addValue: 0.3
+      addValue: 1
       addCount: 0
   - name: Capacity
     isVisible: 1
@@ -409,7 +423,7 @@ MonoBehaviour:
       selectionName: 30
       description: 
       descriptionKey: 
-      price: 1000
+      price: 100
       foodScale: 1
       addValue: 0.1
       addCount: 5
@@ -418,7 +432,7 @@ MonoBehaviour:
       selectionName: 40
       description: 
       descriptionKey: 
-      price: 3000
+      price: 200
       foodScale: 1
       addValue: 0.1
       addCount: 10
@@ -427,7 +441,7 @@ MonoBehaviour:
       selectionName: 50
       description: 
       descriptionKey: 
-      price: 5000
+      price: 300
       foodScale: 1
       addValue: 0.1
       addCount: 15
