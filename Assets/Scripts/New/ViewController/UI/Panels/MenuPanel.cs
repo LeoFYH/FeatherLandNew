@@ -455,9 +455,9 @@ namespace BirdGame
                 }
             }
             
-            if (GetKeyDownAny(KeyCode.A))
+            if (GetKeyDownAny(KeyCode.W))
             {
-                // 按下 A 键打开/关闭天气选项
+                // 按下 W 键打开/关闭天气选项
                 if (weatherButton != null)
                 {
                     weatherButton.onClick.Invoke();
