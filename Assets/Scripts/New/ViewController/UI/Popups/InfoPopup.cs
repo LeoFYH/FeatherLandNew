@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using DG.Tweening;
 using QFramework;
 using TMPro;
@@ -30,6 +30,7 @@ namespace BirdGame
         public bool enableClickOutsideToClose = true;  // 是否启用点击外部关闭功能
 
         private float price;
+        private int previousClickCount = 0;
         
         void Update()
         {
@@ -37,10 +38,15 @@ namespace BirdGame
             if (enableClickOutsideToClose)
             {
                 // 检测鼠标点击
-                if (Input.GetMouseButtonDown(0))
+                if (Input.GetMouseButtonDown(0) || SimpleMouseForwarder.clickCount > previousClickCount)
                 {
                     CheckClickOutside();
                 }
+            }
+
+            if (SimpleMouseForwarder.clickCount > previousClickCount)
+            {
+                previousClickCount = SimpleMouseForwarder.clickCount;
             }
         }
         
@@ -261,6 +267,9 @@ namespace BirdGame
         
         public override void OnShowPanel()
         {
+            // 初始化点击计数，防止刚显示时立即关闭（因为打开弹窗的点击已经被计数）
+            previousClickCount = SimpleMouseForwarder.clickCount;
+            
             var rect = transform as RectTransform;
             rect.anchoredPosition = new Vector2(-rect.sizeDelta.x * transform.localScale.x * 0.5f, rect.anchoredPosition.y);
             rect.DOAnchorPosX(rect.sizeDelta.x * transform.localScale.x * 0.5f, 0.2f).SetEase(Ease.InSine);
