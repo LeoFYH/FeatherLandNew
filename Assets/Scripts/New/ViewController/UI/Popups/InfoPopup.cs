@@ -53,16 +53,34 @@ namespace BirdGame
         /// </summary>
         private void CheckClickOutside()
         {
-            // 检查是否点击了UI元素
-            if (!EventSystem.current.IsPointerOverGameObject())
+            // 获取鼠标位置
+            Vector2 mousePosition = Input.mousePosition;
+            
+            // 在壁纸模式下，IsPointerOverGameObject() 不可靠
+            // 使用手动射线检测来判断是否点击了UI元素
+            if (EventSystem.current != null)
             {
-                // 没有点击UI元素，关闭InfoPopup
+                PointerEventData pointerData = new PointerEventData(EventSystem.current)
+                {
+                    position = mousePosition
+                };
+                
+                var raycastResults = new System.Collections.Generic.List<RaycastResult>();
+                EventSystem.current.RaycastAll(pointerData, raycastResults);
+                
+                // 如果没有点击任何UI元素，关闭InfoPopup
+                if (raycastResults.Count == 0)
+                {
+                    this.GetSystem<IUISystem>().HidePopup(UIPopup.InfoPopup);
+                    return;
+                }
+            }
+            else
+            {
+                // 没有EventSystem，直接关闭
                 this.GetSystem<IUISystem>().HidePopup(UIPopup.InfoPopup);
                 return;
             }
-            
-            // 获取鼠标位置
-            Vector2 mousePosition = Input.mousePosition;
             
             // 检查是否点击了主要内容区域
             if (contentTransform != null)
