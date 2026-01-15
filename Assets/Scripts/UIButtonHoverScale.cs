@@ -351,7 +351,7 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         }
         
         // 设置位置，添加小偏移避免遮挡鼠标
-        tooltipRect.anchoredPosition = pos + Vector2.up * 10;
+        tooltipRect.anchoredPosition = pos + textOffset;
     }
 
     /// <summary>

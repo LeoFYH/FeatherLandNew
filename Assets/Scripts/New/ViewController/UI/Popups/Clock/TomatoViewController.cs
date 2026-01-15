@@ -34,6 +34,7 @@ namespace BirdGame
         public Button skipButton;
         public Button cancelButton;
         public GameObject sessionView;
+        public TextMeshProUGUI startPauseText;
         [Title("Audio")]
         public Toggle[] audioToggles;
         public Slider volumeSlider;
@@ -301,7 +302,13 @@ namespace BirdGame
             startPauseButton.onClick.AddListener(() =>
             {
                 item.IsPause = !item.IsPause;
+                startPauseText.text = item.IsPause
+                    ? this.GetSystem<ILocalizationSystem>().GetString("Start")
+                    : this.GetSystem<ILocalizationSystem>().GetString("Pause");
             });
+            startPauseText.text = item.IsPause
+                ? this.GetSystem<ILocalizationSystem>().GetString("Start")
+                : this.GetSystem<ILocalizationSystem>().GetString("Pause");
             
             skipButton.onClick.AddListener(() =>
             {

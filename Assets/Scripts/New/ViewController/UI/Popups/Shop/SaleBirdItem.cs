@@ -31,11 +31,11 @@ namespace BirdGame
             salePrice = birdPrice;
             var bird = this.GetModel<IConfigModel>().BirdConfig.GetBird(id, mapIndex);
             icon.sprite = bird.preview;
-            coinText.text = $"${salePrice:F1}";
-            rarityText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Rarity")}: {this.GetSystem<ILocalizationSystem>().GetString(bird.reality)}";
-            outputText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Output")}: {(data.isSmall ? data.individualEarningSmall : data.individualEarningBig):N0}coin/min";
+            coinText.text = $"Reward${salePrice:F1}";
+            rarityText.text = $"<color=#d3c6be>{this.GetSystem<ILocalizationSystem>().GetString("Rarity")}:</color> <color=#ddcdba>{this.GetSystem<ILocalizationSystem>().GetString(bird.reality)}</color>";
+            outputText.text = $"<color=#d3c6be>{this.GetSystem<ILocalizationSystem>().GetString("Output")}:</color> <color=#ddcdba>${(data.isSmall ? data.individualEarningSmall : data.individualEarningBig):N0}/min</color>";
             growthText.text =
-                $"{this.GetSystem<ILocalizationSystem>().GetString("Growth")}: {(data.isSmall ? this.GetSystem<ILocalizationSystem>().GetString("Childhood") : this.GetSystem<ILocalizationSystem>().GetString("Adult"))}";
+                $"<color=#d3c6be>{this.GetSystem<ILocalizationSystem>().GetString("Growth")}:</color> <color=#ddcdba>{(data.isSmall ? this.GetSystem<ILocalizationSystem>().GetString("Childhood") : this.GetSystem<ILocalizationSystem>().GetString("Adult"))}</color>";
             nameText.text = string.IsNullOrEmpty(data.customName) ? this.GetModel<IConfigModel>().BirdConfig.GetBirdName(id, mapIndex) : data.customName;
         }
 

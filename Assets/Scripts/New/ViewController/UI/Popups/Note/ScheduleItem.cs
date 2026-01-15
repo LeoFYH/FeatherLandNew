@@ -51,6 +51,7 @@ namespace BirdGame
 
         private void Start()
         {
+            ((Text)scheduleInput.placeholder).text = this.GetSystem<ILocalizationSystem>().GetString("EnterText");
             markToggle.onValueChanged.AddListener(isOn =>
             {
                 if (isOn)

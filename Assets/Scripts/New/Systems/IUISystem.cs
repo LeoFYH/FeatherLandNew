@@ -33,7 +33,8 @@ namespace BirdGame
         HatchingBirdPopup,
         ExitConfirmPopup,
         BuyFailPopup,
-        AddCoinPopup
+        AddCoinPopup,
+        ConfirmPopup,
     }
 
     public interface IUISystem : ISystem
@@ -78,6 +79,8 @@ namespace BirdGame
         /// </summary>
         /// <param name="prompt"></param>
         void ShowPrompt(string prompt);
+
+        void ShowConfirm(string message, Action onConfirm = null, Action onCancel = null);
 
         void ShowMask();
 
@@ -272,6 +275,14 @@ namespace BirdGame
             ShowPopup(UIPopup.PromptPopup, () =>
             {
                 GetPopup<PromptPopup>(UIPopup.PromptPopup).Init(prompt);
+            });
+        }
+
+        public void ShowConfirm(string message, Action onConfirm = null, Action onCancel = null)
+        {
+            ShowPopup(UIPopup.ConfirmPopup, () =>
+            {
+                GetPopup<ConfirmPopup>(UIPopup.ConfirmPopup).Init(message, onConfirm, onCancel);
             });
         }
 

@@ -15,6 +15,7 @@ namespace BirdGame
         public Button refreshButton;
         public Button startButton;
         public Button stopButton;
+        public Button clearButton;
         
         private void Start()
         {
@@ -29,9 +30,19 @@ namespace BirdGame
             
             startButton.onClick.AddListener(() =>
             {
+                if (item.IsPause)
+                {
+                    item.IsPause = false;
+                    startButton.interactable = false;
+                    stopButton.interactable = true;
+                    clearButton.interactable = true;
+                    return;
+                }
+
                 item.TimerCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(StartTimer());
                 startButton.interactable = false;
                 stopButton.interactable = true;
+                clearButton.interactable = true;
                 this.GetModel<IClockModel>().TimerType = TimerType.StopWatch;
                 this.SendCommand<StopOtherTimerCommand>();
                 this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
@@ -41,11 +52,19 @@ namespace BirdGame
             });
             stopButton.onClick.AddListener(() =>
             {
+                item.IsPause = true;
+                startButton.interactable = true;
+                stopButton.interactable = false;
+                clearButton.interactable = true;
+            });
+            clearButton.onClick.AddListener(() =>
+            {
                 if (item.TimerCoroutine != null)
                     this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
                 item.TimerCoroutine = null;
                 startButton.interactable = true;
                 stopButton.interactable = false;
+                clearButton.interactable = false;
 
                 this.GetModel<IClockModel>().TimerType = TimerType.None;
                 this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
@@ -58,6 +77,7 @@ namespace BirdGame
                 item.Minutes.Value = 0;
                 item.Seconds.Value = 0;
             });
+            
             this.RegisterEvent<StopStopWatchEvent>(evt =>
             {
                 if (item.TimerCoroutine != null)
@@ -100,6 +120,11 @@ namespace BirdGame
             var frame = new WaitForFixedUpdate();
             while (true)
             {
+                if (item.IsPause)
+                {
+                    yield return null;
+                    continue;
+                }
                 int totalSeconds = (int)item.Timer;
                 item.Hours.Value = totalSeconds / 3600;
                 item.Minutes.Value = totalSeconds / 60 % 60;

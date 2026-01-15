@@ -187,8 +187,12 @@ namespace BirdGame
             {
                 clearSaveButton.onClick.AddListener(() =>
                 {
-                    this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
-                    onClick(); // 调用清除存档功能
+                    this.GetSystem<IUISystem>().ShowConfirm("Are you sure you want to delete this save file?",
+                        () =>
+                        {
+                            this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
+                            onClick(); // 调用清除存档功能
+                        });
                 });
             }
             

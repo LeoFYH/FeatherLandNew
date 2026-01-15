@@ -71,6 +71,7 @@
     <Compile Include="Assets\Scripts\New\Commands\CreateBirdCommand.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Note\ScheduleItem.cs" />
     <Compile Include="Assets\Scripts\UI\InfoPanel.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\ConfirmPopup.cs" />
     <Compile Include="Assets\Scripts\HatchEgg.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\Food.cs" />
     <Compile Include="Assets\Scripts\New\Events\OnMaskClickEvent.cs" />
@@ -678,6 +679,9 @@
     </Reference>
     <Reference Include="DOTween">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Assets\Plugins\Demigiant\DOTween\DOTween.dll</HintPath>
+    </Reference>
+    <Reference Include="Coffee.UIEffect.R">
+      <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\PackageCache\com.coffee.ui-effect@47494fbcbcec\Runtime\Coffee.UIEffect.R.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\PackageCache\com.unity.visualscripting@6279e2b7c485\Runtime\VisualScripting.Flow\Dependencies\NCalc\Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
@@ -1290,6 +1294,9 @@
     </Reference>
     <Reference Include="Unity.Burst.Editor">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.Burst.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Coffee.UIEffect">
+      <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Coffee.UIEffect.dll</HintPath>
     </Reference>
     <Reference Include="Unity.2D.PixelPerfect">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.2D.PixelPerfect.dll</HintPath>
