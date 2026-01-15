@@ -35,14 +35,14 @@ namespace BirdGame
                     item.IsPause = false;
                     startButton.interactable = false;
                     stopButton.interactable = true;
-                    clearButton.interactable = true;
+                    //clearButton.interactable = true;
                     return;
                 }
 
                 item.TimerCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(StartTimer());
                 startButton.interactable = false;
                 stopButton.interactable = true;
-                clearButton.interactable = true;
+                //clearButton.interactable = true;
                 this.GetModel<IClockModel>().TimerType = TimerType.StopWatch;
                 this.SendCommand<StopOtherTimerCommand>();
                 this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
@@ -55,7 +55,7 @@ namespace BirdGame
                 item.IsPause = true;
                 startButton.interactable = true;
                 stopButton.interactable = false;
-                clearButton.interactable = true;
+                //clearButton.interactable = true;
             });
             clearButton.onClick.AddListener(() =>
             {
@@ -64,7 +64,8 @@ namespace BirdGame
                 item.TimerCoroutine = null;
                 startButton.interactable = true;
                 stopButton.interactable = false;
-                clearButton.interactable = false;
+                //clearButton.interactable = false;
+                item.IsPause = false;
 
                 this.GetModel<IClockModel>().TimerType = TimerType.None;
                 this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()

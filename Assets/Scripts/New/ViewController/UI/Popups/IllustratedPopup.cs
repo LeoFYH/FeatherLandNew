@@ -71,7 +71,7 @@ namespace BirdGame
             }
 
             items[0].clickButton.isOn = true;
-            items[0].GetComponent<Outline>().enabled = true;
+            items[0].outline.enabled = true;
             OnSelectedItem(0);
 
             this.GetModel<IGameModel>().HasNewBirdIllustrated.Value = false;

@@ -12,11 +12,11 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{284f92be-a5cf-41c4-cfdb-57c4f72929df}</ProjectGuid>
+    <ProjectGuid>{8742bf23-c522-607c-0060-f3346ab8e998}</ProjectGuid>
     <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>UniTask</AssemblyName>
+    <AssemblyName>Coffee.UIEffect</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <BaseDirectory>.</BaseDirectory>
@@ -25,8 +25,8 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>Temp\Bin\Debug\UniTask\</OutputPath>
-    <DefineConstants>UNITY_6000_0_58;UNITY_6000_0;UNITY_6000;UNITY_5_3_OR_NEWER;UNITY_5_4_OR_NEWER;UNITY_5_5_OR_NEWER;UNITY_5_6_OR_NEWER;UNITY_2017_1_OR_NEWER;UNITY_2017_2_OR_NEWER;UNITY_2017_3_OR_NEWER;UNITY_2017_4_OR_NEWER;UNITY_2018_1_OR_NEWER;UNITY_2018_2_OR_NEWER;UNITY_2018_3_OR_NEWER;UNITY_2018_4_OR_NEWER;UNITY_2019_1_OR_NEWER;UNITY_2019_2_OR_NEWER;UNITY_2019_3_OR_NEWER;UNITY_2019_4_OR_NEWER;UNITY_2020_1_OR_NEWER;UNITY_2020_2_OR_NEWER;UNITY_2020_3_OR_NEWER;UNITY_2021_1_OR_NEWER;UNITY_2021_2_OR_NEWER;UNITY_2021_3_OR_NEWER;UNITY_2022_1_OR_NEWER;UNITY_2022_2_OR_NEWER;UNITY_2022_3_OR_NEWER;UNITY_2023_1_OR_NEWER;UNITY_2023_2_OR_NEWER;UNITY_2023_3_OR_NEWER;UNITY_6000_0_OR_NEWER;PLATFORM_ARCH_64;UNITY_64;UNITY_INCLUDE_TESTS;ENABLE_AR;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_EVENT_QUEUE;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_PHYSICS;ENABLE_TEXTURE_STREAMING;ENABLE_VIRTUALTEXTURING;ENABLE_LZMA;ENABLE_UNITYEVENTS;ENABLE_VR;ENABLE_WEBCAM;ENABLE_UNITYWEBREQUEST;ENABLE_WWW;ENABLE_CLOUD_SERVICES;ENABLE_CLOUD_SERVICES_ADS;ENABLE_CLOUD_SERVICES_USE_WEBREQUEST;ENABLE_CLOUD_SERVICES_CRASH_REPORTING;ENABLE_CLOUD_SERVICES_PURCHASING;ENABLE_CLOUD_SERVICES_ANALYTICS;ENABLE_CLOUD_SERVICES_BUILD;ENABLE_EDITOR_GAME_SERVICES;ENABLE_UNITY_GAME_SERVICES_ANALYTICS_SUPPORT;ENABLE_CLOUD_LICENSE;ENABLE_EDITOR_HUB_LICENSE;ENABLE_WEBSOCKET_CLIENT;ENABLE_GENERATE_NATIVE_PLUGINS_FOR_ASSEMBLIES_API;ENABLE_DIRECTOR_AUDIO;ENABLE_DIRECTOR_TEXTURE;ENABLE_MANAGED_JOBS;ENABLE_MANAGED_TRANSFORM_JOBS;ENABLE_MANAGED_ANIMATION_JOBS;ENABLE_MANAGED_AUDIO_JOBS;ENABLE_MANAGED_UNITYTLS;INCLUDE_DYNAMIC_GI;ENABLE_SCRIPTING_GC_WBARRIERS;PLATFORM_SUPPORTS_MONO;RENDER_SOFTWARE_CURSOR;ENABLE_MARSHALLING_TESTS;ENABLE_VIDEO;ENABLE_NAVIGATION_OFFMESHLINK_TO_NAVMESHLINK;ENABLE_ACCELERATOR_CLIENT_DEBUGGING;TEXTCORE_1_0_OR_NEWER;EDITOR_ONLY_NAVMESH_BUILDER_DEPRECATED;PLATFORM_STANDALONE_WIN;PLATFORM_STANDALONE;UNITY_STANDALONE_WIN;UNITY_STANDALONE;ENABLE_RUNTIME_GI;ENABLE_MOVIES;ENABLE_NETWORK;ENABLE_NVIDIA;ENABLE_AMD;ENABLE_CRUNCH_TEXTURE_COMPRESSION;ENABLE_OUT_OF_PROCESS_CRASH_HANDLER;ENABLE_CLUSTER_SYNC;ENABLE_CLUSTERINPUT;PLATFORM_UPDATES_TIME_OUTSIDE_OF_PLAYER_LOOP;GFXDEVICE_WAITFOREVENT_MESSAGEPUMP;PLATFORM_USES_EXPLICIT_MEMORY_MANAGER_INITIALIZER;PLATFORM_SUPPORTS_WAIT_FOR_PRESENTATION;PLATFORM_SUPPORTS_SPLIT_GRAPHICS_JOBS;ENABLE_MONO;NET_4_6;NET_UNITY_4_8;ENABLE_PROFILER;DEBUG;TRACE;UNITY_ASSERTIONS;UNITY_EDITOR;UNITY_EDITOR_64;UNITY_EDITOR_WIN;ENABLE_UNITY_COLLECTIONS_CHECKS;ENABLE_BURST_AOT;UNITY_TEAM_LICENSE;ENABLE_CUSTOM_RENDER_TEXTURE;ENABLE_DIRECTOR;ENABLE_LOCALIZATION;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_TILEMAP;ENABLE_TIMELINE;ENABLE_INPUT_SYSTEM;ENABLE_LEGACY_INPUT_MANAGER;TEXTCORE_FONT_ENGINE_1_5_OR_NEWER;TEXTCORE_TEXT_ENGINE_1_5_OR_NEWER;ODIN_INSPECTOR;ODIN_INSPECTOR_3;ODIN_INSPECTOR_3_1;ODIN_INSPECTOR_3_2;ODIN_INSPECTOR_3_3;STEAMWORKS_NET;UNITASK_ASSETBUNDLE_SUPPORT;UNITASK_PHYSICS_SUPPORT;UNITASK_PHYSICS2D_SUPPORT;UNITASK_PARTICLESYSTEM_SUPPORT;UNITASK_UGUI_SUPPORT;UNITASK_WEBREQUEST_SUPPORT;CSHARP_7_OR_LATER;CSHARP_7_3_OR_NEWER</DefineConstants>
+    <OutputPath>Temp\Bin\Debug\Coffee.UIEffect\</OutputPath>
+    <DefineConstants>UNITY_6000_0_58;UNITY_6000_0;UNITY_6000;UNITY_5_3_OR_NEWER;UNITY_5_4_OR_NEWER;UNITY_5_5_OR_NEWER;UNITY_5_6_OR_NEWER;UNITY_2017_1_OR_NEWER;UNITY_2017_2_OR_NEWER;UNITY_2017_3_OR_NEWER;UNITY_2017_4_OR_NEWER;UNITY_2018_1_OR_NEWER;UNITY_2018_2_OR_NEWER;UNITY_2018_3_OR_NEWER;UNITY_2018_4_OR_NEWER;UNITY_2019_1_OR_NEWER;UNITY_2019_2_OR_NEWER;UNITY_2019_3_OR_NEWER;UNITY_2019_4_OR_NEWER;UNITY_2020_1_OR_NEWER;UNITY_2020_2_OR_NEWER;UNITY_2020_3_OR_NEWER;UNITY_2021_1_OR_NEWER;UNITY_2021_2_OR_NEWER;UNITY_2021_3_OR_NEWER;UNITY_2022_1_OR_NEWER;UNITY_2022_2_OR_NEWER;UNITY_2022_3_OR_NEWER;UNITY_2023_1_OR_NEWER;UNITY_2023_2_OR_NEWER;UNITY_2023_3_OR_NEWER;UNITY_6000_0_OR_NEWER;PLATFORM_ARCH_64;UNITY_64;UNITY_INCLUDE_TESTS;ENABLE_AR;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_EVENT_QUEUE;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_PHYSICS;ENABLE_TEXTURE_STREAMING;ENABLE_VIRTUALTEXTURING;ENABLE_LZMA;ENABLE_UNITYEVENTS;ENABLE_VR;ENABLE_WEBCAM;ENABLE_UNITYWEBREQUEST;ENABLE_WWW;ENABLE_CLOUD_SERVICES;ENABLE_CLOUD_SERVICES_ADS;ENABLE_CLOUD_SERVICES_USE_WEBREQUEST;ENABLE_CLOUD_SERVICES_CRASH_REPORTING;ENABLE_CLOUD_SERVICES_PURCHASING;ENABLE_CLOUD_SERVICES_ANALYTICS;ENABLE_CLOUD_SERVICES_BUILD;ENABLE_EDITOR_GAME_SERVICES;ENABLE_UNITY_GAME_SERVICES_ANALYTICS_SUPPORT;ENABLE_CLOUD_LICENSE;ENABLE_EDITOR_HUB_LICENSE;ENABLE_WEBSOCKET_CLIENT;ENABLE_GENERATE_NATIVE_PLUGINS_FOR_ASSEMBLIES_API;ENABLE_DIRECTOR_AUDIO;ENABLE_DIRECTOR_TEXTURE;ENABLE_MANAGED_JOBS;ENABLE_MANAGED_TRANSFORM_JOBS;ENABLE_MANAGED_ANIMATION_JOBS;ENABLE_MANAGED_AUDIO_JOBS;ENABLE_MANAGED_UNITYTLS;INCLUDE_DYNAMIC_GI;ENABLE_SCRIPTING_GC_WBARRIERS;PLATFORM_SUPPORTS_MONO;RENDER_SOFTWARE_CURSOR;ENABLE_MARSHALLING_TESTS;ENABLE_VIDEO;ENABLE_NAVIGATION_OFFMESHLINK_TO_NAVMESHLINK;ENABLE_ACCELERATOR_CLIENT_DEBUGGING;TEXTCORE_1_0_OR_NEWER;EDITOR_ONLY_NAVMESH_BUILDER_DEPRECATED;PLATFORM_STANDALONE_WIN;PLATFORM_STANDALONE;UNITY_STANDALONE_WIN;UNITY_STANDALONE;ENABLE_RUNTIME_GI;ENABLE_MOVIES;ENABLE_NETWORK;ENABLE_NVIDIA;ENABLE_AMD;ENABLE_CRUNCH_TEXTURE_COMPRESSION;ENABLE_OUT_OF_PROCESS_CRASH_HANDLER;ENABLE_CLUSTER_SYNC;ENABLE_CLUSTERINPUT;PLATFORM_UPDATES_TIME_OUTSIDE_OF_PLAYER_LOOP;GFXDEVICE_WAITFOREVENT_MESSAGEPUMP;PLATFORM_USES_EXPLICIT_MEMORY_MANAGER_INITIALIZER;PLATFORM_SUPPORTS_WAIT_FOR_PRESENTATION;PLATFORM_SUPPORTS_SPLIT_GRAPHICS_JOBS;ENABLE_MONO;NET_4_6;NET_UNITY_4_8;ENABLE_PROFILER;DEBUG;TRACE;UNITY_ASSERTIONS;UNITY_EDITOR;UNITY_EDITOR_64;UNITY_EDITOR_WIN;ENABLE_UNITY_COLLECTIONS_CHECKS;ENABLE_BURST_AOT;UNITY_TEAM_LICENSE;ENABLE_CUSTOM_RENDER_TEXTURE;ENABLE_DIRECTOR;ENABLE_LOCALIZATION;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_TILEMAP;ENABLE_TIMELINE;ENABLE_INPUT_SYSTEM;ENABLE_LEGACY_INPUT_MANAGER;TEXTCORE_FONT_ENGINE_1_5_OR_NEWER;TEXTCORE_TEXT_ENGINE_1_5_OR_NEWER;ODIN_INSPECTOR;ODIN_INSPECTOR_3;ODIN_INSPECTOR_3_1;ODIN_INSPECTOR_3_2;ODIN_INSPECTOR_3_3;STEAMWORKS_NET;TMP_ENABLE;TIMELINE_ENABLE;CSHARP_7_OR_LATER;CSHARP_7_3_OR_NEWER</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>0169,0649</NoWarn>
@@ -46,83 +46,54 @@
     <Analyzer Include="E:\WorkSoftwares\Unity\6000.0.58f2\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Plugins\UniTask\Runtime\Internal\PlayerLoopRunner.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UnityAsyncExtensions.AsyncInstantiate.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UniTask.Bridge.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UniTask.WhenAll.Generated.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\AsyncReactiveProperty.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\IUniTaskSource.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UniTaskCompletionSource.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UnityAsyncExtensions.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\Triggers\AsyncDestroyTrigger.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\Internal\ArrayPool.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\Triggers\AsyncTriggerExtensions.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UniTask.WhenAny.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\Triggers\AsyncStartTrigger.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\Internal\StatePool.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UniTaskScheduler.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\_InternalVisibleTo.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\Internal\ArrayPoolUtil.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UniTaskVoid.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\TaskPool.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\Progress.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\EnumeratorAsyncExtensions.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\CancellationTokenSourceExtensions.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\EnumerableAsyncExtensions.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\Internal\MinimumQueue.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UniTask.WaitUntil.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UniTask.Threading.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\Internal\WeakDictionary.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\Internal\PooledDelegate.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UnityBindingExtensions.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UniTaskObservableExtensions.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UnityAsyncExtensions.uGUI.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\CompilerServices\AsyncUniTaskMethodBuilder.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UnityAwaitableExtensions.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\Internal\DiagnosticsExtensions.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\CancellationTokenEqualityComparer.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UniTask.AsValueTask.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\Internal\ContinuationQueue.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UniTask.Factory.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UnityAsyncExtensions.AssetBundleRequestAllAssets.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\Internal\UnityEqualityComparer.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\ExceptionExtensions.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UniTask.WhenEach.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\PlayerLoopHelper.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\CompilerServices\StateMachineRunner.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\Internal\ValueStopwatch.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\AsyncUnit.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\AsyncLazy.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\Internal\ArrayUtil.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UniTaskExtensions.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\PlayerLoopTimer.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UnityAsyncExtensions.AsyncGPUReadback.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\Triggers\AsyncAwakeTrigger.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UnityAsyncExtensions.MonoBehaviour.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\Internal\TaskTracker.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\CancellationTokenExtensions.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UnityAsyncExtensions.Jobs.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\Triggers\AsyncTriggerBase.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UniTask.Delay.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UniTask.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UniTaskExtensions.Shorthand.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UniTask.WhenAll.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\Internal\RuntimeHelpersAbstraction.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\Triggers\MonoBehaviourMessagesTriggers.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\TriggerEvent.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\Internal\UnityWebRequestExtensions.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\CompilerServices\AsyncMethodBuilderAttribute.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UniTask.WhenAny.Generated.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\CompilerServices\AsyncUniTaskVoidMethodBuilder.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\IUniTaskAsyncEnumerable.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\TimeoutController.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\Channel.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UniTaskSynchronizationContext.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UniTask.Run.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\UnityWebRequestException.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\Internal\Error.cs" />
-    <Compile Include="Assets\Plugins\UniTask\Runtime\MoveNextSource.cs" />
-    <None Include="Assets\Plugins\UniTask\Runtime\UniTask.asmdef" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\UIEffectContext.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Internal\Utilities\Misc.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Timeline\ColorIntensityTrack.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Timeline\ColorTrack.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Timeline\Base\UIEffectFloatClip.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\UIEffectBase.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Internal\Utilities\ObjectPool.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Internal\Utilities\Logging.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Internal\Utilities\ShaderVariantRegistry.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Timeline\GradationOffsetTrack.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Internal\Utilities\FrameCache.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Timeline\DetailIntensityTrack.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Internal\Utilities\MinMax01.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Internal\Utilities\TransformSensitivity.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Internal\Utilities\PowerRangeAttribute.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\UIEffectTweener.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Timeline\SamplingIntensityTrack.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Utilities\TmpProxy.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Timeline\TransitionRateTrack.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Timeline\EdgeShinyRateTrack.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Utilities\GraphicProxy.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\UIEffectReplica.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Internal\Utilities\ShaderSampleImporter.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Timeline\Base\UIEffectTimelineUtils.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Internal\Utilities\MaterialRepository.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\UIEffect.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Internal\Utilities\FastAction.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Timeline\GradationScaleTrack.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Enums.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Timeline\Base\UIEffectColorClip.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Internal\ProjectSettings\PreloadedProjectSettings.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Timeline\GradationIntensityTrack.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Timeline\TransitionColorTrack.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Timeline\DetailColorTrack.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Timeline\EdgeColorTrack.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Timeline\ToneIntensityTrack.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Internal\Extensions\ComponentExtensions.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Internal\Utilities\ObjectRepository.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Timeline\GradationRotationTrack.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Internal\Utilities\CgincPathSync.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Internal\Extensions\MeshExtensions.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Utilities\UIVertexUtil.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Utilities\ShadowUtil.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Internal\Utilities\UIExtraCallbacks.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\UIEffectProjectSettings.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\Utilities\ImageProxy.cs" />
+    <Compile Include="UIEffect-5.10.7\Packages\src\Runtime\UIEffectPreset.cs" />
+    <None Include="UIEffect-5.10.7\Packages\src\Runtime\Coffee.UIEffect.asmdef" />
     <Reference Include="UnityEngine">
       <HintPath>E:\WorkSoftwares\Unity\6000.0.58f2\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>
@@ -924,17 +895,17 @@
     <Reference Include="System.Xml.XPath.XDocument">
       <HintPath>E:\WorkSoftwares\Unity\6000.0.58f2\Editor\Data\UnityReferenceAssemblies\unity-4.8-api\Facades\System.Xml.XPath.XDocument.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Timeline">
+      <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.Timeline.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.TestRunner">
-      <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\UnityEditor.TestRunner.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.TestRunner">
-      <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\UnityEngine.TestRunner.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

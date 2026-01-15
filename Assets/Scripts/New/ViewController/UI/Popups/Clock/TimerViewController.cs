@@ -191,6 +191,7 @@ namespace BirdGame
                 if (item.TimerCoroutine != null)
                     this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
                 item.TimerCoroutine = null;
+                item.IsPause = false;
                 Refresh(false, item.IsPause);
                 this.GetModel<IClockModel>().TimerType = TimerType.None;
                 this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
@@ -201,7 +202,7 @@ namespace BirdGame
                 item.Hours.Value = 0;
                 item.Minutes.Value = 0;
                 item.Seconds.Value = 0;
-                item.IsPause = false;
+                
             });
 
             this.RegisterEvent<StopTimerEvent>(evt =>
@@ -252,7 +253,6 @@ namespace BirdGame
 
             startButton.interactable = !isTiming || isPause;
             stopButton.interactable = isTiming && !isPause;
-            clearButton.interactable = isTiming;
             refreshButton.interactable = !isTiming;
         }
 

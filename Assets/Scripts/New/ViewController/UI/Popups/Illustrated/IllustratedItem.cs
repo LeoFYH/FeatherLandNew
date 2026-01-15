@@ -2,6 +2,7 @@
 using QFramework;
 using UnityEngine;
 using UnityEngine.UI;
+using Coffee.UIEffects;
 
 namespace BirdGame
 {
@@ -9,7 +10,7 @@ namespace BirdGame
     {
         public Image icon;
         public Toggle clickButton;
-        public Outline outline;
+        public UIEffect outline;
 
         private int index;
         private Action<int> onItemSelected;

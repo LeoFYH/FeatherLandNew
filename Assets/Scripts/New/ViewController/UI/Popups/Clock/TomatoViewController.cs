@@ -209,6 +209,9 @@ namespace BirdGame
                 item.TimerCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(StartTimer());
                 item.IsPause = false;
                 item.CurrentTimer = 0f;
+                startPauseText.text = item.IsPause
+                    ? this.GetSystem<ILocalizationSystem>().GetString("Start")
+                    : this.GetSystem<ILocalizationSystem>().GetString("Pause");
                 Refresh(true);
                 this.GetModel<IClockModel>().TimerType = TimerType.Tomato;
                 this.SendCommand<StopOtherTimerCommand>();
