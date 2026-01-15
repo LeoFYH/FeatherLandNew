@@ -231,15 +231,9 @@ namespace BirdGame
                 
                 if (isEnter)
                 {
-                    // 检测是否有新的点击（在检查具体按钮之前先判断）
-                    bool hasNewLeftClick = Input.GetMouseButtonDown(0) || SimpleMouseForwarder.clickCount > previousClickCount;
-                    bool hasNewRightClick = Input.GetMouseButtonDown(1) || SimpleMouseForwarder.rightClickCount > previousRightClickCount;
-                    
-                    if (hasNewRightClick)
+                    if (Input.GetMouseButtonDown(1) || SimpleMouseForwarder.rightClickCount > previousRightClickCount)
                     {
                         previousRightClickCount = SimpleMouseForwarder.rightClickCount;
-                        previousClickCount = SimpleMouseForwarder.clickCount; // 同步左键计数，防止误判
-                        
                         if (!isSmall)
                         {
                             title = "Adult bird";
@@ -267,10 +261,10 @@ namespace BirdGame
                         //         //1, currentFavorability * 1f / totalFavorability, true));
                         // }
                     }
-                    else if (hasNewLeftClick)
+
+                    if (Input.GetMouseButtonDown(0) || SimpleMouseForwarder.clickCount > previousClickCount)
                     {
                         previousClickCount = SimpleMouseForwarder.clickCount;
-                        previousRightClickCount = SimpleMouseForwarder.rightClickCount; // 同步右键计数，防止误判
                         if (_stateMachine.CurrentState == typeof(BirdIdleState) ||
                             _stateMachine.CurrentState == typeof(BirdRunState) ||
                             _stateMachine.CurrentState == typeof(BirdEatState))
@@ -399,20 +393,15 @@ namespace BirdGame
                     AutoExp();
                 }
             }
-            
-            // 同步点击计数器，即使不在鸟上悬停也要保持同步
-            // 这样可以防止在其他地方点击后，再次悬停到鸟上时出现误判
-            // 但只同步，不处理点击事件
-            if (!isEnter)
+
+            if (SimpleMouseForwarder.clickCount > previousClickCount)
             {
-                if (SimpleMouseForwarder.clickCount != previousClickCount)
-                {
-                    previousClickCount = SimpleMouseForwarder.clickCount;
-                }
-                if (SimpleMouseForwarder.rightClickCount != previousRightClickCount)
-                {
-                    previousRightClickCount = SimpleMouseForwarder.rightClickCount;
-                }
+                previousClickCount = SimpleMouseForwarder.clickCount;
+            }
+
+            if (SimpleMouseForwarder.rightClickCount > previousRightClickCount)
+            {
+                previousRightClickCount = SimpleMouseForwarder.rightClickCount;
             }
         }
 
