@@ -110,6 +110,13 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
     public bool showBackground = true;
     public Color backgroundColor = new Color(0, 0, 0, 0.8f);
     public Vector2 backgroundPadding = new Vector2(10, 5);
+    [LabelText("圆角半径")]
+    public float cornerRadius = 10f;
+    
+    [Header("整体大小设置")]
+    [LabelText("整体缩放")]
+    [Tooltip("调整提示框和文本的整体大小")]
+    private float tooltipScale = 0.75f;
 
     private Vector3 originalScale;
     private GameObject tooltipObject;
@@ -204,6 +211,13 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         SetPos();
         RectTransform textRect = tooltipText.GetComponent<RectTransform>();
         tooltipObject.GetComponent<RectTransform>().sizeDelta = new Vector2(textRect.sizeDelta.x + 50, textRect.sizeDelta.y + 15);
+        
+        // 应用整体缩放
+        if (tooltipObject != null)
+        {
+            tooltipObject.transform.localScale = Vector3.one * tooltipScale;
+        }
+        
         if (string.IsNullOrEmpty(tooltipText.text) && backgroundImage.enabled)
         {
             backgroundImage.enabled = false;
@@ -571,6 +585,70 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         OnMouseExit();
     }
 
+    /// <summary>
+    /// 创建圆角矩形Sprite
+    /// </summary>
+    private Sprite CreateRoundedRectangleSprite(int width, int height, float radius, Color color)
+    {
+        Texture2D texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+        Color[] pixels = new Color[width * height];
+        
+        float radiusSquared = radius * radius;
+        
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                float distance = 0f;
+                bool isCorner = false;
+                
+                // 检查是否在四个圆角区域内
+                if (x < radius && y < radius) // 左下角
+                {
+                    float dx = radius - x;
+                    float dy = radius - y;
+                    distance = Mathf.Sqrt(dx * dx + dy * dy);
+                    isCorner = true;
+                }
+                else if (x < radius && y >= height - radius) // 左上角
+                {
+                    float dx = radius - x;
+                    float dy = y - (height - radius);
+                    distance = Mathf.Sqrt(dx * dx + dy * dy);
+                    isCorner = true;
+                }
+                else if (x >= width - radius && y < radius) // 右下角
+                {
+                    float dx = x - (width - radius);
+                    float dy = radius - y;
+                    distance = Mathf.Sqrt(dx * dx + dy * dy);
+                    isCorner = true;
+                }
+                else if (x >= width - radius && y >= height - radius) // 右上角
+                {
+                    float dx = x - (width - radius);
+                    float dy = y - (height - radius);
+                    distance = Mathf.Sqrt(dx * dx + dy * dy);
+                    isCorner = true;
+                }
+                
+                if (isCorner && distance > radius)
+                {
+                    pixels[y * width + x] = Color.clear;
+                }
+                else
+                {
+                    pixels[y * width + x] = color;
+                }
+            }
+        }
+        
+        texture.SetPixels(pixels);
+        texture.Apply();
+        
+        return Sprite.Create(texture, new Rect(0, 0, width, height), new Vector2(0.5f, 0.5f), 100f);
+    }
+
     private void CreateTooltipObject()
     {
        
@@ -630,6 +708,11 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
             backgroundImage.color = new Color32(0, 0, 0, 200);
             backgroundImage.raycastTarget = false;
             
+            // 创建圆角矩形Sprite并应用
+            Sprite roundedSprite = CreateRoundedRectangleSprite(200, 100, cornerRadius, new Color32(0, 0, 0, 200));
+            backgroundImage.sprite = roundedSprite;
+            backgroundImage.type = Image.Type.Simple;
+            
             RectTransform bgRect = bgObject.GetComponent<RectTransform>();
             bgRect.anchorMin = Vector2.zero;
             bgRect.anchorMax = Vector2.one;
@@ -670,6 +753,8 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         // 设置初始大小
         tooltipRect.sizeDelta = new Vector2(textRect.sizeDelta.x + 50, textRect.sizeDelta.y + 15);
         
+        // 应用整体缩放
+        tooltipObject.transform.localScale = Vector3.one * tooltipScale;
         
     }
     

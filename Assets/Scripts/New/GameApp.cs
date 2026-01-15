@@ -7,7 +7,7 @@ namespace BirdGame
         protected override void Init()
         {
             // 设置目标帧率为45FPS
-            UnityEngine.Application.targetFrameRate = 45;
+            UnityEngine.Application.targetFrameRate = 60;
             
             this.RegisterUtility<IFullScreenUtility>(new FullScreenUtility());
             
