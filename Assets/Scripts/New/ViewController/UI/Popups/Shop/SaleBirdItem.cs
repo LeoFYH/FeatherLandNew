@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -33,7 +33,7 @@ namespace BirdGame
             icon.sprite = bird.preview;
             coinText.text = $"Reward: ${salePrice:F1}";
             rarityText.text = $"<color=#d3c6be>{this.GetSystem<ILocalizationSystem>().GetString("Rarity")}:</color> <color=#ddcdba>{this.GetSystem<ILocalizationSystem>().GetString(bird.reality)}</color>";
-            outputText.text = $"<color=#d3c6be>{this.GetSystem<ILocalizationSystem>().GetString("Output")}:</color> <color=#ddcdba>${(data.isSmall ? data.individualEarningSmall : data.individualEarningBig):N0}/min</color>";
+            outputText.text = $"<color=#d3c6be>{this.GetSystem<ILocalizationSystem>().GetString("Output")}:</color> <color=#ddcdba>${(data.isSmall ? data.individualEarningSmall : data.individualEarningBig):F1}/min</color>";
             growthText.text =
                 $"<color=#d3c6be>{this.GetSystem<ILocalizationSystem>().GetString("Growth")}:</color> <color=#ddcdba>{(data.isSmall ? this.GetSystem<ILocalizationSystem>().GetString("Childhood") : this.GetSystem<ILocalizationSystem>().GetString("Adult"))}</color>";
             nameText.text = string.IsNullOrEmpty(data.customName) ? this.GetModel<IConfigModel>().BirdConfig.GetBirdName(id, mapIndex) : data.customName;

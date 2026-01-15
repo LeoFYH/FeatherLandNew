@@ -1,4 +1,4 @@
-﻿using QFramework;
+using QFramework;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -142,6 +142,26 @@ namespace BirdGame
             
             // 设置默认的晴天环境音（初始化时不使用淡入淡出，直接切换）
             this.GetSystem<IAudioSystem>().SetEnvironmentVolumesByWeather(0, useFade: false);
+            
+            // 检查是否是第一次启动游戏，如果是则自动播放第一首歌
+            if (!PlayerPrefs.HasKey("PlayedFirstSong"))
+            {
+                PlayerPrefs.SetString("PlayedFirstSong", "true");
+                var radioModel = this.GetModel<IRadioModel>();
+                var configModel = this.GetModel<IConfigModel>();
+                
+                // 确保RadioConfig已加载且音乐列表不为空
+                if (configModel.RadioConfig != null && configModel.RadioConfig.musicItems != null && configModel.RadioConfig.musicItems.Length > 0)
+                {
+                    // 确保第一首歌的音乐文件存在
+                    if (configModel.RadioConfig.musicItems[0].songFile != null)
+                    {
+                        radioModel.SongIndex = 0;
+                        this.GetSystem<IAudioSystem>().PlaySong();
+                        Debug.Log("首次启动，自动播放第一首歌");
+                    }
+                }
+            }
                 
             this.GetSystem<IUISystem>().ShowPanel(UIPanel.MenuPanel);
 

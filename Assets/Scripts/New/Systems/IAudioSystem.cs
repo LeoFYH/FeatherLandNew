@@ -479,7 +479,7 @@ namespace BirdGame
                     // 然后设置索引1为0.0589
                     if (environmentCount > 1)
                     {
-                        targetVolumes[1] = 0.0589f;
+                        targetVolumes[1] = 0.6f;
                     }
                     break;
                     

@@ -127,7 +127,7 @@ namespace BirdGame
                 capacityValue.text = "0/20";
                 if (coinsPerMinuteText != null)
                 {
-                    coinsPerMinuteValue.text = "$0";
+                    coinsPerMinuteValue.text = "$0.0";
                 }
                 return;  // 避免访问越界的索引
             }
