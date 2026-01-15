@@ -628,6 +628,7 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
             
             backgroundImage = bgObject.AddComponent<Image>();
             backgroundImage.color = new Color32(0, 0, 0, 200);
+            backgroundImage.raycastTarget = false;
             
             RectTransform bgRect = bgObject.GetComponent<RectTransform>();
             bgRect.anchorMin = Vector2.zero;
