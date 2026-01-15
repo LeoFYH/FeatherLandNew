@@ -15,12 +15,15 @@ namespace BirdGame
         [TableList(ShowIndexLabels = true, AlwaysExpanded = true)]
         public DecorationEffect[] effects;
 
+        public ResetSpriteController controller;
+
         private SpriteRenderer sr;
 
         public void Initialize(int id, int index)
         {
             decorationId = id;
             decorationIndex = index;
+            controller?.SetSp(index);
         }
 
         private void Start()
