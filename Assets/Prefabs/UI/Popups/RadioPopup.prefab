@@ -490,6 +490,7 @@ GameObject:
   - component: {fileID: 1719373241551309543}
   - component: {fileID: 1488675029117458219}
   - component: {fileID: 5522726235393326145}
+  - component: {fileID: 8118593324803553589}
   m_Layer: 5
   m_Name: Volume
   m_TagString: Untagged
@@ -555,6 +556,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8118593324803553589
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 847698163764002110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1035532860487240806
 GameObject:
   m_ObjectHideFlags: 0
@@ -569,6 +582,7 @@ GameObject:
   - component: {fileID: 709587325970384655}
   - component: {fileID: 7700117402468065736}
   - component: {fileID: 8472169872033536547}
+  - component: {fileID: 8375267445485319413}
   m_Layer: 5
   m_Name: Rain
   m_TagString: Click
@@ -739,6 +753,18 @@ MonoBehaviour:
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
+--- !u!114 &8375267445485319413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1035532860487240806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1074102323020046674
 GameObject:
   m_ObjectHideFlags: 0
@@ -932,6 +958,7 @@ GameObject:
   - component: {fileID: 7753829416978878873}
   - component: {fileID: 7564608593035112281}
   - component: {fileID: 1080877626833582107}
+  - component: {fileID: 4901446754789684473}
   m_Layer: 5
   m_Name: Fire
   m_TagString: Click
@@ -1102,6 +1129,18 @@ MonoBehaviour:
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
+--- !u!114 &4901446754789684473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1214556711631231245}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1235777748952284456
 GameObject:
   m_ObjectHideFlags: 0
@@ -1468,6 +1507,7 @@ GameObject:
   - component: {fileID: 5707303899666589037}
   - component: {fileID: 8193557600419991331}
   - component: {fileID: 4763634101051593607}
+  - component: {fileID: 2665740564571433241}
   m_Layer: 5
   m_Name: CloseButton
   m_TagString: Click
@@ -1576,6 +1616,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2665740564571433241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2172973169776666038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2277566572857915216
 GameObject:
   m_ObjectHideFlags: 0
@@ -1652,7 +1704,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -30.5944, y: -5.9157}
+  m_AnchoredPosition: {x: -272, y: -319.31}
   m_SizeDelta: {x: 1362.7404, y: 801.3795}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1773460500859440716
@@ -1706,6 +1758,7 @@ GameObject:
   - component: {fileID: 6110004297430286856}
   - component: {fileID: 4063618753346513052}
   - component: {fileID: 111184680358282511}
+  - component: {fileID: 2821577972416841265}
   m_Layer: 5
   m_Name: Random
   m_TagString: Click
@@ -1860,6 +1913,18 @@ MonoBehaviour:
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
+--- !u!114 &2821577972416841265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2317376543531105399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2578152854764608366
 GameObject:
   m_ObjectHideFlags: 0
@@ -1993,6 +2058,7 @@ GameObject:
   - component: {fileID: 6132118780459976828}
   - component: {fileID: 2093324309152144300}
   - component: {fileID: 4577167962236458635}
+  - component: {fileID: 3620597179615179679}
   m_Layer: 5
   m_Name: PreviousButton
   m_TagString: Click
@@ -2142,6 +2208,18 @@ MonoBehaviour:
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
+--- !u!114 &3620597179615179679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2699619774028649315}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3129586472457042081
 GameObject:
   m_ObjectHideFlags: 0
@@ -2399,6 +2477,7 @@ GameObject:
   - component: {fileID: 5854011299219476547}
   - component: {fileID: 5476077890852222913}
   - component: {fileID: 1557359373463294445}
+  - component: {fileID: 8959042714589898711}
   m_Layer: 5
   m_Name: River
   m_TagString: Click
@@ -2569,6 +2648,18 @@ MonoBehaviour:
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
+--- !u!114 &8959042714589898711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3745352248530941599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3824626363103200542
 GameObject:
   m_ObjectHideFlags: 0
@@ -4130,6 +4221,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scrollRect: {fileID: 8035365422286115741}
+  verticalScrollbar: {fileID: 0}
+  horizontalScrollbar: {fileID: 0}
   mouseWheelSensitivity: 0.1
   dragSensitivity: 1
   invertScrollDirection: 0
@@ -4138,6 +4231,9 @@ MonoBehaviour:
   invertDragDirection: 1
   momentumDecayRate: 0.95
   minMomentumThreshold: 0.01
+  enableScrollbarAutoHide: 0
+  scrollbarAutoHideDelay: 1.5
+  scrollbarFadeSpeed: 5
 --- !u!1 &5960614751004405735
 GameObject:
   m_ObjectHideFlags: 0
@@ -4152,6 +4248,7 @@ GameObject:
   - component: {fileID: 6415846084593705998}
   - component: {fileID: 8990848915893856978}
   - component: {fileID: 1610407271079068478}
+  - component: {fileID: 7021290781068960037}
   m_Layer: 5
   m_Name: Bird
   m_TagString: Click
@@ -4322,6 +4419,18 @@ MonoBehaviour:
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
+--- !u!114 &7021290781068960037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5960614751004405735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6005104868541316108
 GameObject:
   m_ObjectHideFlags: 0
@@ -4742,6 +4851,7 @@ GameObject:
   - component: {fileID: 7470966707212966209}
   - component: {fileID: 2841651732385881849}
   - component: {fileID: 749957951149006414}
+  - component: {fileID: 4794589471746584586}
   m_Layer: 5
   m_Name: NextButton
   m_TagString: Click
@@ -4891,6 +5001,18 @@ MonoBehaviour:
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
+--- !u!114 &4794589471746584586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6353538024952454331}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6407066605953513797
 GameObject:
   m_ObjectHideFlags: 0
@@ -5106,6 +5228,7 @@ GameObject:
   - component: {fileID: 446192928419850725}
   - component: {fileID: 3460516210754559990}
   - component: {fileID: 8948788134004503063}
+  - component: {fileID: 2903728070134866736}
   m_Layer: 5
   m_Name: Wind
   m_TagString: Click
@@ -5276,6 +5399,18 @@ MonoBehaviour:
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
+--- !u!114 &2903728070134866736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6657441461763361776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6663538459436211998
 GameObject:
   m_ObjectHideFlags: 0
@@ -5289,6 +5424,7 @@ GameObject:
   - component: {fileID: 2146329955493253777}
   - component: {fileID: 8089789920597205933}
   - component: {fileID: 3695641025276689780}
+  - component: {fileID: 4915953412768532792}
   m_Layer: 5
   m_Name: Play
   m_TagString: Click
@@ -5438,6 +5574,18 @@ MonoBehaviour:
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
+--- !u!114 &4915953412768532792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6663538459436211998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6779103130369093372
 GameObject:
   m_ObjectHideFlags: 0
@@ -5451,6 +5599,7 @@ GameObject:
   - component: {fileID: 5366456309729218728}
   - component: {fileID: 8189815189844303146}
   - component: {fileID: 2891736860379084175}
+  - component: {fileID: 485457446711593274}
   m_Layer: 5
   m_Name: Pause
   m_TagString: Click
@@ -5600,6 +5749,18 @@ MonoBehaviour:
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
+--- !u!114 &485457446711593274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6779103130369093372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6796545665595996206
 GameObject:
   m_ObjectHideFlags: 0
@@ -5614,6 +5775,7 @@ GameObject:
   - component: {fileID: 3467979734330406260}
   - component: {fileID: 4162326502831636192}
   - component: {fileID: 6704518496365449814}
+  - component: {fileID: 3295082312574717845}
   m_Layer: 5
   m_Name: Bee
   m_TagString: Click
@@ -5784,6 +5946,18 @@ MonoBehaviour:
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
+--- !u!114 &3295082312574717845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6796545665595996206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6935881658838128064
 GameObject:
   m_ObjectHideFlags: 0
@@ -6656,6 +6830,7 @@ GameObject:
   - component: {fileID: 8313961740575593889}
   - component: {fileID: 6756499071979012876}
   - component: {fileID: 7737525300174828170}
+  - component: {fileID: 7786352166577591162}
   m_Layer: 5
   m_Name: Loop
   m_TagString: Click
@@ -6810,6 +6985,18 @@ MonoBehaviour:
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
+--- !u!114 &7786352166577591162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7630942390383972895}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7693176368323044663
 GameObject:
   m_ObjectHideFlags: 0

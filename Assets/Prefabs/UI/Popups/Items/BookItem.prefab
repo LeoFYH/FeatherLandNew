@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 8152070855340697286}
   - component: {fileID: 8466521046356296157}
   - component: {fileID: 4532509194934615947}
+  - component: {fileID: 7680385426750679070}
   m_Layer: 5
   m_Name: BookItem
   m_TagString: Click
@@ -186,6 +187,18 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 63
+--- !u!114 &7680385426750679070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2908847565958217174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4674392417517922833
 GameObject:
   m_ObjectHideFlags: 0
@@ -436,6 +449,7 @@ GameObject:
   - component: {fileID: 5685294827527108784}
   - component: {fileID: 481609089064042272}
   - component: {fileID: 5555149354013159437}
+  - component: {fileID: 4261628391589516239}
   m_Layer: 5
   m_Name: Button
   m_TagString: Click
@@ -544,3 +558,15 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4261628391589516239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8676333414728081434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

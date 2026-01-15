@@ -8,6 +8,7 @@ namespace BirdGame
     public class DecorationContentViewController : ViewControllerBase
     {
         public GameObject itemPrefab;
+        private List<ShopDecorationItem> items = new List<ShopDecorationItem>();
 
         private void Start()
         {
@@ -32,7 +33,42 @@ namespace BirdGame
                     var item = GameObject.Instantiate(itemPrefab, itemPrefab.transform.parent).GetComponent<ShopDecorationItem>();
                     item.gameObject.SetActive(true);
                     item.Init(i);
+                    items.Add(item);
                 }
+            }
+            
+            Sort();
+        }
+
+        private void Sort()
+        {
+            var list = new List<int>();
+            int current = 0;
+            foreach (var item in items)
+            {
+                bool isSert = false;
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (item.price < items[list[i]].price)
+                    {
+                        list.Insert(i, current);
+                        isSert = true;
+                        break;
+                    }
+                }
+
+                if (!isSert)
+                {
+                    list.Add(current);
+                }
+
+                current++;
+            }
+
+            int count = list.Count;
+            for (int i = 0; i < count; i++)
+            {
+                items[list[i]].transform.SetSiblingIndex(i);
             }
         }
     }

@@ -1527,6 +1527,7 @@ GameObject:
   - component: {fileID: 100897428990571150}
   - component: {fileID: 1178850372035554602}
   - component: {fileID: 6268420290235728025}
+  - component: {fileID: 7355911572507202967}
   m_Layer: 5
   m_Name: SellButton
   m_TagString: Click
@@ -1649,6 +1650,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &7355911572507202967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5562974833794307793}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5588612564420190203
 GameObject:
   m_ObjectHideFlags: 0
@@ -2127,6 +2140,7 @@ GameObject:
   - component: {fileID: 1607375924313005229}
   - component: {fileID: 2721880546602026486}
   - component: {fileID: 4397591512602725234}
+  - component: {fileID: 241605483348941644}
   m_Layer: 5
   m_Name: EditorButton
   m_TagString: Untagged
@@ -2235,6 +2249,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &241605483348941644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7705842833225896422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8032793903040038634
 GameObject:
   m_ObjectHideFlags: 0

@@ -922,6 +922,7 @@ MonoBehaviour:
   skinPrefab: {fileID: 5566325955820234992, guid: 462778da0d73eb747bb36af5e4301747, type: 3}
   animator: {fileID: 6688413675065809541}
   closeButton: {fileID: 966906752220398126}
+  group: {fileID: 2477816699823302936}
 --- !u!1 &1986834853005911148
 GameObject:
   m_ObjectHideFlags: 0
@@ -2039,6 +2040,7 @@ GameObject:
   - component: {fileID: 904896063462016593}
   - component: {fileID: 686095151097969867}
   - component: {fileID: 6416047513647450950}
+  - component: {fileID: 2477816699823302936}
   m_Layer: 0
   m_Name: Content
   m_TagString: Untagged
@@ -2103,6 +2105,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 2
+--- !u!114 &2477816699823302936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4443418812225098494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fafe2cfe61f6974895a912c3755e8f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AllowSwitchOff: 0
 --- !u!1 &4491645965004259083
 GameObject:
   m_ObjectHideFlags: 0

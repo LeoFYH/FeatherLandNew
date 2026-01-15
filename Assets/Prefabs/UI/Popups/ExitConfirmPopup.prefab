@@ -175,6 +175,7 @@ GameObject:
   - component: {fileID: 8176757289763902457}
   - component: {fileID: 1062622616911612615}
   - component: {fileID: 7493671050788855875}
+  - component: {fileID: 6575637598208727689}
   m_Layer: 0
   m_Name: BuyButton (1)
   m_TagString: Click
@@ -284,6 +285,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6575637598208727689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2669418778403375280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4180947968999294855
 GameObject:
   m_ObjectHideFlags: 0
@@ -374,6 +387,7 @@ GameObject:
   - component: {fileID: 8354264128297967552}
   - component: {fileID: 9199704942843659335}
   - component: {fileID: 3849581373068767150}
+  - component: {fileID: 2908733606733045601}
   m_Layer: 0
   m_Name: BuyButton
   m_TagString: Click
@@ -483,6 +497,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2908733606733045601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4667437993412179911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4856391042847064571
 GameObject:
   m_ObjectHideFlags: 0

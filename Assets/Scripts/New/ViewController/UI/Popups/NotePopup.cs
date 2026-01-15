@@ -23,14 +23,14 @@ namespace BirdGame
             {
                 scheduleBar.SetActive(true);
                 diaryBar.SetActive(false);
-                scheduleToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-131.9f, 386f);
+                scheduleToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-131.9f, 385.1f);
                 diaryToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(21.6f, 360.6f);
             });
             diaryToggle.onClick.AddListener(() =>
             {
                 scheduleBar.SetActive(false);
                 diaryBar.SetActive(true);
-                scheduleToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-131.9f, 360.6f);
+                scheduleToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-131.9f, 367.1f);
                 diaryToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(21.6f, 386f);
             });
             
@@ -68,7 +68,7 @@ namespace BirdGame
             
             diaryBar.SetActive(true);
             scheduleBar.SetActive(false);
-            scheduleToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-131.9f, 360.6f);
+            scheduleToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-131.9f, 367.1f);
             diaryToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(21.6f, 386f);
         }
         

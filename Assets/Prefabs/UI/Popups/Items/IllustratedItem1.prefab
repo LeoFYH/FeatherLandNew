@@ -12,7 +12,9 @@ GameObject:
   - component: {fileID: 2044627855774423533}
   - component: {fileID: 427447072377668788}
   - component: {fileID: 2886862297674031981}
-  - component: {fileID: 4293992415052126299}
+  - component: {fileID: 5657051023280370240}
+  - component: {fileID: 3953037644238985520}
+  - component: {fileID: 629354878863782182}
   m_Layer: 0
   m_Name: IllustratedItem1
   m_TagString: Click
@@ -92,8 +94,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   icon: {fileID: 3343819080052174103}
-  clickButton: {fileID: 4293992415052126299}
---- !u!114 &4293992415052126299
+  clickButton: {fileID: 3953037644238985520}
+  outline: {fileID: 629354878863782182}
+--- !u!114 &5657051023280370240
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -102,7 +105,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 339133585812856602}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3953037644238985520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 339133585812856602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -134,9 +149,28 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 427447072377668788}
-  m_OnClick:
+  toggleTransition: 1
+  graphic: {fileID: 0}
+  m_Group: {fileID: 0}
+  onValueChanged:
     m_PersistentCalls:
       m_Calls: []
+  m_IsOn: 0
+--- !u!114 &629354878863782182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 339133585812856602}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0.05122415, g: 0.44025147, b: 0.073780164, a: 0.5}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!1 &2213509657394714500
 GameObject:
   m_ObjectHideFlags: 0

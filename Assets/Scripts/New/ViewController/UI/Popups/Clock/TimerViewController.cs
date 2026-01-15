@@ -17,6 +17,7 @@ namespace BirdGame
         public Button refreshButton;
         public Button startButton;
         public Button stopButton;
+        public Button clearButton;
         public Toggle[] audioToggles;
         public Slider volumeSlider;
         public Image volumeFill;
@@ -26,7 +27,7 @@ namespace BirdGame
             var item = this.GetModel<IClockModel>().TimerItem;
             this.RegisterEvent<TimerOverEvent>(evt =>
             {
-                Refresh(false);
+                Refresh(false, item.IsPause);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             item.Hours.Register(v =>
             {
@@ -161,11 +162,18 @@ namespace BirdGame
             });
             startButton.onClick.AddListener(() =>
             {
+                if (item.IsPause)
+                {
+                    item.IsPause = false;
+                    Refresh(true, false);
+                    return;
+                }
+
                 item.Timer = item.Hours.Value * 3600 + item.Minutes.Value * 60 + item.Seconds.Value;
                 if(item.Timer == 0)
                     return;
                 item.TimerCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(StartTimer());
-                Refresh(true);
+                Refresh(true, item.IsPause);
                 this.GetModel<IClockModel>().TimerType = TimerType.Timer;
                 this.SendCommand<StopOtherTimerCommand>();
                 this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
@@ -175,10 +183,15 @@ namespace BirdGame
             });
             stopButton.onClick.AddListener(() =>
             {
+                item.IsPause = true;
+                Refresh(true, true);
+            });
+            clearButton.onClick.AddListener(() =>
+            {
                 if (item.TimerCoroutine != null)
                     this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
                 item.TimerCoroutine = null;
-                Refresh(false);
+                Refresh(false, item.IsPause);
                 this.GetModel<IClockModel>().TimerType = TimerType.None;
                 this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
                 {
@@ -188,6 +201,7 @@ namespace BirdGame
                 item.Hours.Value = 0;
                 item.Minutes.Value = 0;
                 item.Seconds.Value = 0;
+                item.IsPause = false;
             });
 
             this.RegisterEvent<StopTimerEvent>(evt =>
@@ -195,7 +209,7 @@ namespace BirdGame
                 if (item.TimerCoroutine != null)
                     this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
                 item.TimerCoroutine = null;
-                Refresh(false);
+                Refresh(false, item.IsPause);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             for (var i = 0; i < audioToggles.Length; i++)
             {
@@ -214,12 +228,13 @@ namespace BirdGame
             audioToggles[item.AudioSelected.Value].isOn = true;
             volumeSlider.value = item.AudioVolume.Value;
             volumeFill.fillAmount = item.AudioVolume.Value;
-            Refresh(item.TimerCoroutine != null);
+            Refresh(item.TimerCoroutine != null, item.IsPause);
         }
 
         private void OnEnable()
         {
-            Refresh(this.GetModel<IClockModel>().TimerItem.TimerCoroutine != null);
+            Refresh(this.GetModel<IClockModel>().TimerItem.TimerCoroutine != null,
+                this.GetModel<IClockModel>().TimerItem.IsPause);
         }
 
         private void OnDisable()
@@ -227,7 +242,7 @@ namespace BirdGame
             this.GetSystem<IAudioSystem>().StopAlert();
         }
 
-        private void Refresh(bool isTiming)
+        private void Refresh(bool isTiming, bool isPause)
         {
             for (int i = 0; i < 3; i++)
             {
@@ -235,8 +250,9 @@ namespace BirdGame
                 downButtons[i].interactable = !isTiming;
             }
 
-            startButton.interactable = !isTiming;
-            stopButton.interactable = isTiming;
+            startButton.interactable = !isTiming || isPause;
+            stopButton.interactable = isTiming && !isPause;
+            clearButton.interactable = isTiming;
             refreshButton.interactable = !isTiming;
         }
 
@@ -299,6 +315,12 @@ namespace BirdGame
             var frame = new WaitForFixedUpdate();
             while (item.Timer > 0)
             {
+                if (item.IsPause)
+                {
+                    yield return null;
+                    continue;
+                }
+                
                 int totalSeconds = (int)item.Timer;
                 item.Hours.Value = totalSeconds / 3600;
                 item.Minutes.Value = totalSeconds / 60 % 60;

@@ -23,6 +23,7 @@ namespace BirdGame
         public GameObject skinPrefab;
         public Animator animator;
         public Button closeButton;
+        public ToggleGroup group;
 
         private List<GameObject> skinItems = new List<GameObject>();
         private int currentSelectedIndex = 0; // 记录当前选中的鸟类索引
@@ -60,13 +61,17 @@ namespace BirdGame
                 Debug.Log($"  - 鸟ID: {birdId}");
             }
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            var items = new List<IllustratedItem>();
             for (int i = 0; i < config.sceneBirds[mapIndex].birdClasses.Length; i++)
             {
                 int itemIndex = i % illustratedItemPrefabs.Length;
                 var item = GameObject.Instantiate(illustratedItemPrefabs[itemIndex], illustratedContent).GetComponent<IllustratedItem>();
-                item.Init(i, OnSelectedItem);
+                item.Init(i, group, OnSelectedItem);
+                items.Add(item);
             }
 
+            items[0].clickButton.isOn = true;
+            items[0].GetComponent<Outline>().enabled = true;
             OnSelectedItem(0);
 
             this.GetModel<IGameModel>().HasNewBirdIllustrated.Value = false;

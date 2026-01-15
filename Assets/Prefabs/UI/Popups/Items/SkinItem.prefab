@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 820156344162851437}
   - component: {fileID: 3621475364323705812}
   - component: {fileID: 2599484653749807569}
-  - component: {fileID: 3733782855715624197}
+  - component: {fileID: 1285020648005546627}
   m_Layer: 0
   m_Name: SkinItem
   m_TagString: Click
@@ -166,7 +166,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   icon: {fileID: 1296339091586595372}
---- !u!114 &3733782855715624197
+  outline: {fileID: 0}
+--- !u!114 &1285020648005546627
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

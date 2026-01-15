@@ -52,7 +52,6 @@ namespace BirdGame
                 icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size;
             Debug.Log("名称：" + item.name);
             itemName.SetKey(item.name);
-            selectName.SetKey(item.selections[gameModel.SelectedToolDic[index].Value].selectionName);
             if (item.selections[0].type == ToolType.BirdMaxCount)
             { 
                 int current = this.GetModel<IConfigModel>().BirdConfig.maxBirdCount +
@@ -60,9 +59,11 @@ namespace BirdGame
                 string str1 = this.GetSystem<ILocalizationSystem>().GetString("Upgrade forest bird capacity to");
                 string str2 = this.GetSystem<ILocalizationSystem>().GetString("Current bird capacity");
                 description.SetKey($"{str1} {item.selections[gameModel.SelectedToolDic[index].Value].selectionName}.\n<i>{str2}:{current}</i>");
+                selectName.SetKey("Capacity Upgrade");
             }
             else
             {
+                selectName.SetKey(item.selections[gameModel.SelectedToolDic[index].Value].selectionName);
                 // 优先使用descriptionKey，如果没有设置则使用description
                 var selectedTool = item.selections[gameModel.SelectedToolDic[index].Value];
                 if (!string.IsNullOrEmpty(selectedTool.descriptionKey))
@@ -101,7 +102,7 @@ namespace BirdGame
                 else
                 {
                     // 未购买：显示价格
-                    priceText.ThisText.text = item.selections[gameModel.SelectedToolDic[index].Value].price.ToString();
+                    priceText.ThisText.text = $"${item.selections[gameModel.SelectedToolDic[index].Value].price}";
                 }
                 for (int i = 0; i < item.selections.Length; i++)
                 {
@@ -128,7 +129,7 @@ namespace BirdGame
                 else
                 {
                     buyButton.enabled = true;
-                    priceText.ThisText.text = item.selections[gameModel.SelectedToolDic[index].Value].price.ToString();
+                    priceText.ThisText.text = $"${item.selections[gameModel.SelectedToolDic[index].Value].price}";
                 }
 
                 bool initFirst = false;
@@ -161,12 +162,12 @@ namespace BirdGame
 
             gameModel.SelectedToolDic[itemIndex].Register(v =>
             {
-                selectName.SetKey(item.selections[v].selectionName);
                 
                 // 优先使用descriptionKey，如果没有设置则使用description
                 var selectedTool = item.selections[v];
                 if(item.selections[v].type == ToolType.Food)
                 {
+                    selectName.SetKey(item.selections[v].selectionName);
                     if (!string.IsNullOrEmpty(selectedTool.descriptionKey))
                     {
                         string str1 = this.GetSystem<ILocalizationSystem>().GetString(selectedTool.descriptionKey);
@@ -180,6 +181,7 @@ namespace BirdGame
                 }
                 else
                 {
+                    selectName.SetKey("Capacity Upgrade");
                     int current = this.GetModel<IConfigModel>().BirdConfig.maxBirdCount +
                                   this.GetModel<IBirdModel>().AddedBirdCount;
                     string str1 = this.GetSystem<ILocalizationSystem>().GetString("Upgrade forest bird capacity to");
@@ -209,7 +211,7 @@ namespace BirdGame
                     else
                     {
                         // 未购买：显示价格
-                        priceText.ThisText.text = selectedTool.price.ToString();
+                        priceText.ThisText.text = $"${selectedTool.price}";
                     }
                 }
                 else if(item.selections[0].type == ToolType.BirdMaxCount)
@@ -222,7 +224,7 @@ namespace BirdGame
                     }
                     else
                     {
-                        priceText.ThisText.text = selectedTool.price.ToString();
+                        priceText.ThisText.text = $"${selectedTool.price}";
                         buyButton.enabled = true;
                     }
                 }

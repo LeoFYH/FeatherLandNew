@@ -30,14 +30,13 @@ namespace BirdGame
 
                 eggView.sprite = configModel.ShopConfig.sceneEggs[mapIndex].eggs[gameModel.ShopEggSelectIndex.Value]
                     .eggSp;
-                priceText.text = configModel.ShopConfig.sceneEggs[mapIndex].eggs[gameModel.ShopEggSelectIndex.Value]
-                    .price.ToString();
+                priceText.text = $"${configModel.ShopConfig.sceneEggs[mapIndex].eggs[gameModel.ShopEggSelectIndex.Value].price}";
             }
 
             gameModel.ShopEggSelectIndex.Register(v =>
             {
                 eggView.sprite = configModel.ShopConfig.sceneEggs[mapIndex].eggs[v].eggSp;
-                priceText.text = configModel.ShopConfig.sceneEggs[mapIndex].eggs[v].price.ToString();
+                priceText.text = $"${configModel.ShopConfig.sceneEggs[mapIndex].eggs[v].price}";
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
             buyButton.onClick.AddListener(() =>

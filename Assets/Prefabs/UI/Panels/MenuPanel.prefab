@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7610940271758299990}
   - component: {fileID: 4199026761063824762}
   - component: {fileID: 4780737901360466006}
+  - component: {fileID: 8310960429409640452}
   m_Layer: 5
   m_Name: NoteToggle
   m_TagString: Click
@@ -113,11 +114,11 @@ MonoBehaviour:
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 1
-  textColor: {r: 1, g: 1, b: 1, a: 1}
+  textColor: {r: 0.4509804, g: 0.37254903, b: 0.3019608, a: 1}
   fontSize: 25
   fontStyle: 0
   showBackground: 1
-  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundColor: {r: 1, g: 1, b: 1, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
 --- !u!114 &4780737901360466006
@@ -168,6 +169,18 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 0
+--- !u!114 &8310960429409640452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 94702110380492303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &103608755448055095
 GameObject:
   m_ObjectHideFlags: 0
@@ -431,6 +444,7 @@ GameObject:
   - component: {fileID: 707723388593710286}
   - component: {fileID: 5772913894975710614}
   - component: {fileID: 5792784658498526238}
+  - component: {fileID: 4638782097887041272}
   m_Layer: 5
   m_Name: ShopButton
   m_TagString: Click
@@ -579,13 +593,25 @@ MonoBehaviour:
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 1
-  textColor: {r: 1, g: 1, b: 1, a: 1}
+  textColor: {r: 0.4509804, g: 0.37254903, b: 0.3019608, a: 1}
   fontSize: 25
   fontStyle: 0
   showBackground: 1
-  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundColor: {r: 1, g: 1, b: 1, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
+--- !u!114 &4638782097887041272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 209583512461631260}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &363438665957256618
 GameObject:
   m_ObjectHideFlags: 0
@@ -599,6 +625,7 @@ GameObject:
   - component: {fileID: 2595223738537032633}
   - component: {fileID: 3105487857001560809}
   - component: {fileID: 1947747989404934766}
+  - component: {fileID: 6923355170392560875}
   m_Layer: 5
   m_Name: Weather (1)
   m_TagString: Click
@@ -726,6 +753,18 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 0
+--- !u!114 &6923355170392560875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 363438665957256618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &396927526642392072
 GameObject:
   m_ObjectHideFlags: 0
@@ -735,6 +774,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7951064263167258027}
+  - component: {fileID: 452625242809489483}
   m_Layer: 5
   m_Name: Item_Ins
   m_TagString: Untagged
@@ -762,6 +802,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &452625242809489483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 396927526642392072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &450171737489780754
 GameObject:
   m_ObjectHideFlags: 0
@@ -1251,6 +1303,7 @@ GameObject:
   - component: {fileID: 4353068031523485767}
   - component: {fileID: 1320590948243800855}
   - component: {fileID: 4362041990416616053}
+  - component: {fileID: 5574375622302482491}
   m_Layer: 5
   m_Name: SteamButton
   m_TagString: Click
@@ -1401,6 +1454,18 @@ MonoBehaviour:
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
+--- !u!114 &5574375622302482491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1210588696094364001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1230584317835759892
 GameObject:
   m_ObjectHideFlags: 0
@@ -1705,6 +1770,7 @@ GameObject:
   - component: {fileID: 960605616221347396}
   - component: {fileID: 9128563736378716597}
   - component: {fileID: 3544373294959797110}
+  - component: {fileID: 7013491107524064213}
   m_Layer: 5
   m_Name: Weather (4)
   m_TagString: Click
@@ -1832,6 +1898,18 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 0
+--- !u!114 &7013491107524064213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1635577106720041940}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1661566473683830270
 GameObject:
   m_ObjectHideFlags: 0
@@ -2627,6 +2705,7 @@ GameObject:
   - component: {fileID: 8170508519480084103}
   - component: {fileID: 266633985563856820}
   - component: {fileID: 4592780273286591674}
+  - component: {fileID: 9060913658855729618}
   m_Layer: 5
   m_Name: QuestionButton
   m_TagString: Click
@@ -2777,6 +2856,18 @@ MonoBehaviour:
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
+--- !u!114 &9060913658855729618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3191349004619072196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3229645788194523579
 GameObject:
   m_ObjectHideFlags: 0
@@ -3175,6 +3266,7 @@ GameObject:
   - component: {fileID: 4469864220726823701}
   - component: {fileID: 7653783732987244842}
   - component: {fileID: 5298930049704859204}
+  - component: {fileID: 5989504907127639951}
   m_Layer: 5
   m_Name: Weather
   m_TagString: Click
@@ -3302,6 +3394,18 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 1
+--- !u!114 &5989504907127639951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3591878814414197913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3751665914022530198
 GameObject:
   m_ObjectHideFlags: 0
@@ -3592,6 +3696,7 @@ GameObject:
   - component: {fileID: 6410129200679659723}
   - component: {fileID: 8591652613503023915}
   - component: {fileID: 1337173987301918705}
+  - component: {fileID: 632015605355354738}
   m_Layer: 5
   m_Name: MusicToggle
   m_TagString: Click
@@ -3692,11 +3797,11 @@ MonoBehaviour:
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 1
-  textColor: {r: 1, g: 1, b: 1, a: 1}
+  textColor: {r: 0.4509804, g: 0.37254903, b: 0.3019608, a: 1}
   fontSize: 25
   fontStyle: 0
   showBackground: 1
-  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundColor: {r: 1, g: 1, b: 1, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
 --- !u!114 &1337173987301918705
@@ -3747,6 +3852,18 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 0
+--- !u!114 &632015605355354738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3787668565844912990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3955603769211749441
 GameObject:
   m_ObjectHideFlags: 0
@@ -3760,6 +3877,7 @@ GameObject:
   - component: {fileID: 7985651338791730218}
   - component: {fileID: 8416074484676417523}
   - component: {fileID: 7882458221052775462}
+  - component: {fileID: 509656030865211633}
   m_Layer: 5
   m_Name: IllustratedButton
   m_TagString: Click
@@ -3908,13 +4026,25 @@ MonoBehaviour:
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 1
-  textColor: {r: 1, g: 1, b: 1, a: 1}
+  textColor: {r: 0.4509804, g: 0.37254903, b: 0.3019608, a: 1}
   fontSize: 25
   fontStyle: 0
   showBackground: 1
-  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundColor: {r: 1, g: 1, b: 1, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
+--- !u!114 &509656030865211633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3955603769211749441}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4291053874780780973
 GameObject:
   m_ObjectHideFlags: 0
@@ -4602,6 +4732,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2160497260867899461}
+  - component: {fileID: 907391838934037391}
   m_Layer: 5
   m_Name: Item_RedNote
   m_TagString: Untagged
@@ -4629,6 +4760,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &907391838934037391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4744484333432455437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4785762880399450823
 GameObject:
   m_ObjectHideFlags: 0
@@ -4778,6 +4921,7 @@ GameObject:
   - component: {fileID: 4702514254789354874}
   - component: {fileID: 224184597736445012}
   - component: {fileID: 2960869161410020837}
+  - component: {fileID: 8387943612537301174}
   m_Layer: 5
   m_Name: ViewToggle
   m_TagString: Click
@@ -4932,6 +5076,18 @@ MonoBehaviour:
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
+--- !u!114 &8387943612537301174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4874549918778446078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5114226663933484749
 GameObject:
   m_ObjectHideFlags: 0
@@ -5306,6 +5462,7 @@ GameObject:
   - component: {fileID: 530825771507221552}
   - component: {fileID: 670174266089374583}
   - component: {fileID: 2160884002228910952}
+  - component: {fileID: 506033544631832074}
   m_Layer: 5
   m_Name: SettingButton
   m_TagString: Click
@@ -5453,13 +5610,25 @@ MonoBehaviour:
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 1
-  textColor: {r: 1, g: 1, b: 1, a: 1}
+  textColor: {r: 0.4509804, g: 0.37254903, b: 0.3019608, a: 1}
   fontSize: 25
   fontStyle: 0
   showBackground: 1
-  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundColor: {r: 1, g: 1, b: 1, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
+--- !u!114 &506033544631832074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5592588052942518516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5634660051002685781
 GameObject:
   m_ObjectHideFlags: 0
@@ -5469,6 +5638,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 702614573394780328}
+  - component: {fileID: 962290284547860106}
   m_Layer: 5
   m_Name: Item_X
   m_TagString: Untagged
@@ -5496,6 +5666,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &962290284547860106
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5634660051002685781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5668639012730374944
 GameObject:
   m_ObjectHideFlags: 0
@@ -5641,6 +5823,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2801320006325021001}
+  - component: {fileID: 908072894247287999}
   m_Layer: 5
   m_Name: Item_Mail
   m_TagString: Untagged
@@ -5668,6 +5851,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &908072894247287999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5695475734226080293}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5787178235990890655
 GameObject:
   m_ObjectHideFlags: 0
@@ -6132,6 +6327,7 @@ GameObject:
   - component: {fileID: 77603682426194956}
   - component: {fileID: 124844076394129884}
   - component: {fileID: 8194878324209975095}
+  - component: {fileID: 4121928402144375412}
   m_Layer: 5
   m_Name: WeatherIcon
   m_TagString: Click
@@ -6276,13 +6472,25 @@ MonoBehaviour:
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 1
-  textColor: {r: 1, g: 1, b: 1, a: 1}
+  textColor: {r: 0.4509804, g: 0.37254903, b: 0.3019608, a: 1}
   fontSize: 25
   fontStyle: 0
   showBackground: 1
-  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundColor: {r: 1, g: 1, b: 1, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
+--- !u!114 &4121928402144375412
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6536987362346141445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6576888212394274134
 GameObject:
   m_ObjectHideFlags: 0
@@ -7040,6 +7248,7 @@ GameObject:
   - component: {fileID: 2208836872790742297}
   - component: {fileID: 5066892050673860270}
   - component: {fileID: 6842727869978473618}
+  - component: {fileID: 8639171049475182622}
   m_Layer: 5
   m_Name: MapButton
   m_TagString: Click
@@ -7188,13 +7397,25 @@ MonoBehaviour:
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 1
-  textColor: {r: 1, g: 1, b: 1, a: 1}
+  textColor: {r: 0.4509804, g: 0.37254903, b: 0.3019608, a: 1}
   fontSize: 25
   fontStyle: 0
   showBackground: 1
-  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundColor: {r: 1, g: 1, b: 1, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
+--- !u!114 &8639171049475182622
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7564161181850799338}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7616151524826141430
 GameObject:
   m_ObjectHideFlags: 0
@@ -7208,6 +7429,7 @@ GameObject:
   - component: {fileID: 818386849500622443}
   - component: {fileID: 8268455510673077112}
   - component: {fileID: 667887962907108147}
+  - component: {fileID: 4288365419538705582}
   m_Layer: 5
   m_Name: ClockToggle
   m_TagString: Click
@@ -7309,11 +7531,11 @@ MonoBehaviour:
   textOffset: {x: 0, y: 50}
   showDelay: 0.5
   showTooltip: 1
-  textColor: {r: 1, g: 1, b: 1, a: 1}
+  textColor: {r: 0.4509804, g: 0.37254903, b: 0.3019608, a: 1}
   fontSize: 25
   fontStyle: 0
   showBackground: 1
-  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundColor: {r: 1, g: 1, b: 1, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
   isHovering: 0
 --- !u!114 &667887962907108147
@@ -7364,6 +7586,18 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 0
+--- !u!114 &4288365419538705582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7616151524826141430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7617639137667702569
 GameObject:
   m_ObjectHideFlags: 0
@@ -8099,6 +8333,7 @@ GameObject:
   - component: {fileID: 1919434782290555366}
   - component: {fileID: 7903127872983919295}
   - component: {fileID: 710628430100394115}
+  - component: {fileID: 3841853180891332878}
   m_Layer: 5
   m_Name: Weather (2)
   m_TagString: Click
@@ -8226,6 +8461,18 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 0
+--- !u!114 &3841853180891332878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8980440639253195356}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8995175341180670386
 GameObject:
   m_ObjectHideFlags: 0
@@ -8304,6 +8551,7 @@ GameObject:
   - component: {fileID: 8511559946832056737}
   - component: {fileID: 4680478150360868018}
   - component: {fileID: 7069567358209510705}
+  - component: {fileID: 3133498614755647083}
   m_Layer: 5
   m_Name: Weather (3)
   m_TagString: Click
@@ -8431,6 +8679,18 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 0
+--- !u!114 &3133498614755647083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9125840489352708309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9157509639369506218
 GameObject:
   m_ObjectHideFlags: 0
@@ -8440,6 +8700,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7985309948932825366}
+  - component: {fileID: 3390859394218885826}
   m_Layer: 5
   m_Name: Item_Discord
   m_TagString: Untagged
@@ -8467,3 +8728,15 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &3390859394218885826
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9157509639369506218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

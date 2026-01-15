@@ -250,6 +250,7 @@ GameObject:
   - component: {fileID: 4134496075017632115}
   - component: {fileID: 2752090014988528432}
   - component: {fileID: 3018807310248457903}
+  - component: {fileID: 2193889590010215498}
   m_Layer: 0
   m_Name: Close
   m_TagString: Click
@@ -358,6 +359,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2193889590010215498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2607239962183885240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3544391573710429094
 GameObject:
   m_ObjectHideFlags: 0

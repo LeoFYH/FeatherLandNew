@@ -8,23 +8,27 @@ namespace BirdGame
     public class IllustratedItem : ViewControllerBase
     {
         public Image icon;
-        public Button clickButton;
+        public Toggle clickButton;
+        public Outline outline;
 
         private int index;
         private Action<int> onItemSelected;
         
         private void Start()
         {
-            clickButton.onClick.AddListener(() =>
+            clickButton.onValueChanged.AddListener(isOn =>
             {
-                onItemSelected?.Invoke(index);
+                if (isOn)
+                    onItemSelected?.Invoke(index);
+                outline.enabled = isOn;
             });
         }
 
-        public void Init(int classIndex, Action<int> onSelected)
+        public void Init(int classIndex, ToggleGroup group, Action<int> onSelected)
         {
             index = classIndex;
             onItemSelected = onSelected;
+            clickButton.group = group;
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             var classInfo = this.GetModel<IConfigModel>().BirdConfig.sceneBirds[mapIndex].birdClasses[classIndex];
             foreach (var bird in classInfo.birds)

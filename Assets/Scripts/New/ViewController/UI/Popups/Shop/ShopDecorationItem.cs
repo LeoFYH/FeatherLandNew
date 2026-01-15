@@ -18,7 +18,8 @@ namespace BirdGame
         public bool autoAdjustDetectionRange = true;  // 自动调整检测范围
         public bool checkUIRaycast = true;
         public bool useRectTransform = true;  // 是否使用RectTransform，对于GameObject设为false
-
+        public float price;
+        
         private int id;
         private bool mouseWasOverButton = false;
         private bool isHovering = false;
@@ -33,7 +34,8 @@ namespace BirdGame
             icon.GetComponent<RectTransform>().sizeDelta = icon.sprite.rect.size * scale;
             nameText.SetKey(item.name);
             descriptionText.SetKey(item.description);
-            priceText.text = item.price.ToString();
+            price = item.price;
+            priceText.text = $"${item.price}";
         }
 
         private void Start()

@@ -21,13 +21,17 @@ namespace BirdGame
         public LocalizationText nameText;
         public TextMeshProUGUI capacityText;
         public TextMeshProUGUI coinsPerMinuteText;
+        public TextMeshProUGUI capacityValue;
+        public TextMeshProUGUI coinsPerMinuteValue;
         
         private int mapIndex;
         private int sortType;
         private List<SaleBirdItem> birdItems = new List<SaleBirdItem>();
         
         private void Start()
-        { 
+        {
+            capacityText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Total Capacity")}:";
+            coinsPerMinuteText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Coins per minute")}:";
             mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             RefreshName();
             sortingToggle0.isOn = true;
@@ -120,21 +124,21 @@ namespace BirdGame
             nameText.SetKey(this.GetModel<IConfigModel>().MapConfig.maps[mapIndex].mapName);
             if (mapIndex >= this.GetModel<ISaveModel>().BirdInfoData.mapBirds.Count)
             {
-                capacityText.text = "0/20";
+                capacityValue.text = "0/20";
                 if (coinsPerMinuteText != null)
                 {
-                    coinsPerMinuteText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Coins per minute")}: 0";
+                    coinsPerMinuteValue.text = "$0";
                 }
                 return;  // 避免访问越界的索引
             }
-            capacityText.text =
-                $"{this.GetSystem<ILocalizationSystem>().GetString("Total Capacity")}: {this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.Count}/{this.GetModel<IBirdModel>().AddedBirdCount + this.GetModel<IConfigModel>().BirdConfig.maxBirdCount}";
+            capacityValue.text =
+                $"{this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.Count}/{this.GetModel<IBirdModel>().AddedBirdCount + this.GetModel<IConfigModel>().BirdConfig.maxBirdCount}";
             
             // 计算每分钟收益
             if (coinsPerMinuteText != null)
             {
                 float totalEarningPerMinute = CalculateCoinsPerMinute();
-                coinsPerMinuteText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Coins per minute")}: {totalEarningPerMinute:F1}";
+                coinsPerMinuteValue.text = $"${totalEarningPerMinute:F1}";
             }
         }
         

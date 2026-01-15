@@ -46,6 +46,7 @@ namespace BirdGame
         public BindableProperty<string> TimeString { get; } = new BindableProperty<string>();
         public BindableProperty<int> AudioSelected { get; } = new BindableProperty<int>();
         public BindableProperty<float> AudioVolume { get; } = new BindableProperty<float>(0.5f);
+        public bool IsPause { get; set; }
     }
 
     public class TomatoItem

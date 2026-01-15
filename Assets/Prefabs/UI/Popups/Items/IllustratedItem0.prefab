@@ -12,7 +12,9 @@ GameObject:
   - component: {fileID: 3728123026658623256}
   - component: {fileID: 373581208089278644}
   - component: {fileID: 3526719168744294052}
-  - component: {fileID: 8077571229311209916}
+  - component: {fileID: 9147091834182287107}
+  - component: {fileID: 8310239935015755853}
+  - component: {fileID: 37859026708087765}
   m_Layer: 0
   m_Name: IllustratedItem0
   m_TagString: Click
@@ -92,8 +94,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   icon: {fileID: 7983491954042917278}
-  clickButton: {fileID: 8077571229311209916}
---- !u!114 &8077571229311209916
+  clickButton: {fileID: 37859026708087765}
+  outline: {fileID: 8310239935015755853}
+--- !u!114 &9147091834182287107
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -102,7 +105,34 @@ MonoBehaviour:
   m_GameObject: {fileID: 7631882502085490900}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8310239935015755853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7631882502085490900}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0.05122415, g: 0.44025147, b: 0.073780164, a: 0.5}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
+--- !u!114 &37859026708087765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7631882502085490900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -134,9 +164,13 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 373581208089278644}
-  m_OnClick:
+  toggleTransition: 1
+  graphic: {fileID: 0}
+  m_Group: {fileID: 0}
+  onValueChanged:
     m_PersistentCalls:
       m_Calls: []
+  m_IsOn: 0
 --- !u!1 &7776777381335499074
 GameObject:
   m_ObjectHideFlags: 0

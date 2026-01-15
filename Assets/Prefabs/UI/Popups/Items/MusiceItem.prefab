@@ -299,6 +299,7 @@ GameObject:
   - component: {fileID: 5039388363757558318}
   - component: {fileID: 4754129144667346677}
   - component: {fileID: 8085453084115937848}
+  - component: {fileID: 1268456890438913797}
   m_Layer: 5
   m_Name: MusiceItem
   m_TagString: Click
@@ -424,3 +425,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   songNameText: {fileID: 1434380076597208842}
   lightOn: {fileID: 428616402584484788}
+--- !u!114 &1268456890438913797
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6431163640044106322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
