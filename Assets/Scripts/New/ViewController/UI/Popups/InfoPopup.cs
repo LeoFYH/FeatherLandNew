@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using DG.Tweening;
 using QFramework;
 using TMPro;
@@ -30,19 +30,15 @@ namespace BirdGame
         public bool enableClickOutsideToClose = true;  // 是否启用点击外部关闭功能
 
         private float price;
-        private int previousClickCount = 0;  // 用于跟踪SimpleMouseForwarder的点击计数（壁纸模式）
         
         void Update()
         {
             // 只有在启用点击外部关闭功能时才检测
             if (enableClickOutsideToClose)
             {
-                // 检测鼠标点击 (支持普通模式和壁纸模式)
-                // 普通模式使用Input.GetMouseButtonDown(0)
-                // 壁纸模式使用SimpleMouseForwarder.clickCount
-                if (Input.GetMouseButtonDown(0) || SimpleMouseForwarder.clickCount > previousClickCount)
+                // 检测鼠标点击
+                if (Input.GetMouseButtonDown(0))
                 {
-                    previousClickCount = SimpleMouseForwarder.clickCount;
                     CheckClickOutside();
                 }
             }
