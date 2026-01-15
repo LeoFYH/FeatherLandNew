@@ -66,7 +66,7 @@ namespace BirdGame
                 stopButton.interactable = false;
                 //clearButton.interactable = false;
                 item.IsPause = false;
-
+                item.TimerString.Value = "00:00:00";
                 this.GetModel<IClockModel>().TimerType = TimerType.None;
                 this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
                 {
@@ -118,6 +118,7 @@ namespace BirdGame
         private IEnumerator StartTimer()
         {
             var item = this.GetModel<IClockModel>().StopWatchItem;
+            item.TimerString.Value = "00:00:00";
             var frame = new WaitForFixedUpdate();
             while (true)
             {
