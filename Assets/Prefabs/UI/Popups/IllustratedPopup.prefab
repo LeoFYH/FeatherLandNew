@@ -355,13 +355,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scrollRect: {fileID: 1397797469386364897}
+  verticalScrollbar: {fileID: 0}
+  horizontalScrollbar: {fileID: 0}
   mouseWheelSensitivity: 1
   dragSensitivity: 1
   invertScrollDirection: 0
   horizontalScrollWithShift: 1
   enableDragScrolling: 1
+  invertDragDirection: 0
   momentumDecayRate: 0.95
   minMomentumThreshold: 0.01
+  enableScrollbarAutoHide: 0
+  scrollbarAutoHideDelay: 1.5
+  scrollbarFadeSpeed: 5
 --- !u!1 &1286753362091564037
 GameObject:
   m_ObjectHideFlags: 0
@@ -2933,7 +2939,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 21, y: 34}
+  m_AnchoredPosition: {x: 21, y: -51}
   m_SizeDelta: {x: 1670, y: 1039.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1096064879441834292

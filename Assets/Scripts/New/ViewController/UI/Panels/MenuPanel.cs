@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using DG.Tweening;
 using QFramework;
 using TMPro;
@@ -43,6 +43,8 @@ namespace BirdGame
         private float mapPosX;
         
         private bool isSyncingShopButton = false; // 标志位：正在同步 shopButton 状态，避免重复调用 HidePopup
+        private bool isSyncingIllustratedButton = false; // 标志位：正在同步 illustratedButton 状态
+        private bool isSyncingMapButton = false; // 标志位：正在同步 mapButton 状态
         
         public override void OnShowPanel()
         {
@@ -138,6 +140,19 @@ namespace BirdGame
                 
                 if (isOn)
                 {
+                    // 先关闭其他两个互斥的弹窗UI
+                    uiSystem.HidePopup(UIPopup.IllustratedPopup);
+                    uiSystem.HidePopup(UIPopup.MapPopup);
+                    
+                    // 再同步toggle状态（使用标志位防止重复调用HidePopup）
+                    isSyncingIllustratedButton = true;
+                    illustratedButton.isOn = false;
+                    isSyncingIllustratedButton = false;
+                    
+                    isSyncingMapButton = true;
+                    mapButton.isOn = false;
+                    isSyncingMapButton = false;
+                    
                     uiSystem.ShowPopup(UIPopup.ShopPopup);
                 }
                 else
@@ -149,8 +164,27 @@ namespace BirdGame
 
             illustratedButton.onValueChanged.AddListener(isOn =>
             {
+                if (isSyncingIllustratedButton)
+                {
+                    // 正在同步状态，跳过这次调用
+                    return;
+                }
+                
                 if (isOn)
                 {
+                    // 先关闭其他两个互斥的弹窗UI
+                    uiSystem.HidePopup(UIPopup.ShopPopup);
+                    uiSystem.HidePopup(UIPopup.MapPopup);
+                    
+                    // 再同步toggle状态（使用标志位防止重复调用HidePopup）
+                    isSyncingShopButton = true;
+                    shopButton.isOn = false;
+                    isSyncingShopButton = false;
+                    
+                    isSyncingMapButton = true;
+                    mapButton.isOn = false;
+                    isSyncingMapButton = false;
+                    
                     uiSystem.ShowPopup(UIPopup.IllustratedPopup);
                 }
                 else
@@ -162,8 +196,27 @@ namespace BirdGame
             
             mapButton.onValueChanged.AddListener(isOn =>
             {
+                if (isSyncingMapButton)
+                {
+                    // 正在同步状态，跳过这次调用
+                    return;
+                }
+                
                 if (isOn)
                 {
+                    // 先关闭其他两个互斥的弹窗UI
+                    uiSystem.HidePopup(UIPopup.ShopPopup);
+                    uiSystem.HidePopup(UIPopup.IllustratedPopup);
+                    
+                    // 再同步toggle状态（使用标志位防止重复调用HidePopup）
+                    isSyncingShopButton = true;
+                    shopButton.isOn = false;
+                    isSyncingShopButton = false;
+                    
+                    isSyncingIllustratedButton = true;
+                    illustratedButton.isOn = false;
+                    isSyncingIllustratedButton = false;
+                    
                     uiSystem.ShowPopup(UIPopup.MapPopup);
                 }
                 else
@@ -179,12 +232,32 @@ namespace BirdGame
 
             this.RegisterEvent<OnIllustratedCloseEvent>(v =>
             {
+                // 设置标志位，避免在设置 isOn = false 时触发 onValueChanged 导致重复调用 HidePopup
+                isSyncingIllustratedButton = true;
+                
+                // 关闭图鉴（如果存在）
+                uiSystem.HidePopup(UIPopup.IllustratedPopup);
+                
+                // 同步 Toggle 状态（由于标志位，不会触发 onValueChanged 中的 HidePopup）
                 illustratedButton.isOn = false;
+                
+                // 重置标志位
+                isSyncingIllustratedButton = false;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
             this.RegisterEvent<OnMapCloseEvent>(v =>
             {
+                // 设置标志位，避免在设置 isOn = false 时触发 onValueChanged 导致重复调用 HidePopup
+                isSyncingMapButton = true;
+                
+                // 关闭地图（如果存在）
+                uiSystem.HidePopup(UIPopup.MapPopup);
+                
+                // 同步 Toggle 状态（由于标志位，不会触发 onValueChanged 中的 HidePopup）
                 mapButton.isOn = false;
+                
+                // 重置标志位
+                isSyncingMapButton = false;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
             this.RegisterEvent<OnNoteCloseEvent>(evt =>
