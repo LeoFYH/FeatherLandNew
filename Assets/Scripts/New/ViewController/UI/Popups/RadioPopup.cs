@@ -8,6 +8,8 @@ namespace BirdGame
     public class RadioPopup : UIBase
     {
         public Slider volumeSlider;
+        public Button addButton;
+        public Button deleteButton;
 
         public Button closeButton;
         // public GameObject musicView;
@@ -16,6 +18,7 @@ namespace BirdGame
         {
             var radioModel = this.GetModel<IRadioModel>();
             var saveModel = this.GetModel<ISaveModel>();
+            
             // musicButton.onClick.AddListener(() =>
             // {
             //     musicView.SetActive(true);
@@ -34,6 +37,15 @@ namespace BirdGame
             closeButton.onClick.AddListener(() =>
             {
                 this.GetSystem<IUISystem>().SendEvent<OnRadioCloseEvent>();
+            });
+            addButton.onClick.AddListener(() =>
+            {
+                volumeSlider.value += 0.1f;
+            });
+            
+            deleteButton.onClick.AddListener(() =>
+            {
+                volumeSlider.value -= 0.1f;
             });
             
             volumeSlider.onValueChanged.AddListener(volume =>

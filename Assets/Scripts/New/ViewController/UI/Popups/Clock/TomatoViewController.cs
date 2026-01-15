@@ -181,9 +181,9 @@ namespace BirdGame
             refreshButton.onClick.AddListener(() =>
             {
                 item.Timer.Value = 0;
-                item.SessionMinutes.Value = 0;
-                item.BreakMinutes.Value = 0;
-                item.Number.Value = 0;
+                item.SessionMinutes.Value = 5;
+                item.BreakMinutes.Value = 5;
+                item.Number.Value = 1;
                 item.TimerType.Value = TomatoTimerType.Session;
             });
             startButton.onClick.AddListener(() =>
@@ -330,13 +330,17 @@ namespace BirdGame
                 });
                 Refresh(false);
                 item.Timer.Value = 0;
-                item.SessionMinutes.Value = 0;
-                item.BreakMinutes.Value = 0;
+                item.SessionMinutes.Value =5;
+                item.BreakMinutes.Value = 5;
                 // 恢复 Number 为上一次设定的值（TotalNumber），而不是设置为 0
                 // 如果 TotalNumber 还没有被设置（用户还没有开始过计时），则保持当前值不变
                 if (item.TotalNumber > 0)
                 {
                     item.Number.Value = item.TotalNumber;
+                }
+                else
+                {
+                    item.Number.Value = 1;
                 }
                 item.TimerType.Value = TomatoTimerType.Session;
             });

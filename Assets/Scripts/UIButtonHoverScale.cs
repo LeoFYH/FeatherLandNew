@@ -202,6 +202,16 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         if (disabled) return;
 
         SetPos();
+        RectTransform textRect = tooltipText.GetComponent<RectTransform>();
+        tooltipObject.GetComponent<RectTransform>().sizeDelta = new Vector2(textRect.sizeDelta.x + 50, textRect.sizeDelta.y + 15);
+        if (string.IsNullOrEmpty(tooltipText.text) && backgroundImage.enabled)
+        {
+            backgroundImage.enabled = false;
+        }
+        else if(!string.IsNullOrEmpty(tooltipText.text) && !backgroundImage.enabled)
+        {
+            backgroundImage.enabled = true;
+        }
 
         // 检测鼠标是否真的在按钮上
         bool mouseIsOverButton = IsMouseOverButton();
@@ -611,20 +621,20 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         tooltipRect.pivot = new Vector2(0.5f, 0.5f);
         
         // 创建背景
-        if (showBackground)
-        {
+        // if (showBackground)
+        // {
             GameObject bgObject = new GameObject("Background");
             bgObject.transform.SetParent(tooltipObject.transform, false);
             
             backgroundImage = bgObject.AddComponent<Image>();
-            backgroundImage.color = backgroundColor;
+            backgroundImage.color = new Color32(0, 0, 0, 200);
             
             RectTransform bgRect = bgObject.GetComponent<RectTransform>();
             bgRect.anchorMin = Vector2.zero;
             bgRect.anchorMax = Vector2.one;
             bgRect.offsetMin = Vector2.zero;
             bgRect.offsetMax = Vector2.zero;
-        }
+        //}
         
         // 创建文本
         GameObject textObject = new GameObject("Text");
@@ -649,15 +659,17 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         }
         
         RectTransform textRect = textObject.GetComponent<RectTransform>();
-        textRect.anchorMin = Vector2.zero;
-        textRect.anchorMax = Vector2.one;
-        textRect.offsetMin = backgroundPadding;
-        textRect.offsetMax = -backgroundPadding;
-        
+        textRect.anchorMin = new Vector2(0.5f,0.5f);
+        textRect.anchorMax = new Vector2(0.5f,0.5f);
+        textRect.offsetMin = new Vector2(0.5f,0.5f);
+        textRect.offsetMax = new Vector2(0.5f,0.5f);
+        textRect.sizeDelta = new Vector2(0, 50f);
+        var fitter = textObject.AddComponent<ContentSizeFitter>();
+        fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
         // 设置初始大小
-        tooltipRect.sizeDelta = new Vector2(200, 50);
+        tooltipRect.sizeDelta = new Vector2(textRect.sizeDelta.x + 50, textRect.sizeDelta.y + 15);
         
-       
+        
     }
     
     private void UpdateTooltipPosition()
