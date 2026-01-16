@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8737252440241035818}
   - component: {fileID: 3201239484416915758}
+  - component: {fileID: 8096364683618642769}
   m_Layer: 0
   m_Name: Decoration 0
   m_TagString: Untagged
@@ -47,6 +48,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   notWalkableIndex: 0
+--- !u!114 &8096364683618642769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1044825183646240256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8696a8b13b1b40dbb22d4f123937e296, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colors:
+  - serializedVersion: 2
+    rgba: 4294967295
+  - serializedVersion: 2
+    rgba: 4291348680
+  - serializedVersion: 2
+    rgba: 4294557891
+  - serializedVersion: 2
+    rgba: 4290897145
+  - serializedVersion: 2
+    rgba: 4291348680
+  sr: {fileID: 3586591596044996425}
 --- !u!1 &1551552144379533925
 GameObject:
   m_ObjectHideFlags: 0
@@ -181,9 +206,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneId: 0
   decorationIndex: 0
+  canFeed: 0
   effects:
   - type: 0
     flyPosition: {fileID: 2976590193480867296}
+  controller: {fileID: 0}
 --- !u!60 &63456346555431041
 PolygonCollider2D:
   m_ObjectHideFlags: 0

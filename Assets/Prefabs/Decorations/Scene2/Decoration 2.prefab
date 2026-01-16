@@ -105,6 +105,7 @@ MonoBehaviour:
   decorationIndex: 2
   canFeed: 1
   effects: []
+  controller: {fileID: 0}
 --- !u!60 &524291022262379566
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -265,6 +266,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8295158473250630222}
+  - component: {fileID: 8172508063534336196}
   m_Layer: 0
   m_Name: Decoration 2
   m_TagString: Untagged
@@ -288,3 +290,27 @@ Transform:
   - {fileID: 6176381423275381836}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8172508063534336196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7099460407733767612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8696a8b13b1b40dbb22d4f123937e296, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colors:
+  - serializedVersion: 2
+    rgba: 4294967295
+  - serializedVersion: 2
+    rgba: 4291348680
+  - serializedVersion: 2
+    rgba: 4294557891
+  - serializedVersion: 2
+    rgba: 4290897145
+  - serializedVersion: 2
+    rgba: 4291348680
+  sr: {fileID: 6718122987913486000}

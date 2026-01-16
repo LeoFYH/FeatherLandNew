@@ -103,7 +103,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneId: 1
   decorationIndex: 0
+  canFeed: 0
   effects: []
+  controller: {fileID: 0}
 --- !u!60 &1864192048974830588
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -539,6 +541,7 @@ GameObject:
   - component: {fileID: 2009568976145928268}
   - component: {fileID: 5613375902227111113}
   - component: {fileID: 8312397845111938999}
+  - component: {fileID: 2800091725133710695}
   m_Layer: 0
   m_Name: Decoration 0
   m_TagString: Untagged
@@ -605,6 +608,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   notWalkableIndex: 0
+--- !u!114 &2800091725133710695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3012990827443070192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8696a8b13b1b40dbb22d4f123937e296, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colors:
+  - serializedVersion: 2
+    rgba: 4294967295
+  - serializedVersion: 2
+    rgba: 4291348680
+  - serializedVersion: 2
+    rgba: 4294557891
+  - serializedVersion: 2
+    rgba: 4290897145
+  - serializedVersion: 2
+    rgba: 4291348680
+  sr: {fileID: 1788447028003223345}
 --- !u!1 &3399968892424376433
 GameObject:
   m_ObjectHideFlags: 0

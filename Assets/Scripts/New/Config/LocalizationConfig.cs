@@ -26,17 +26,6 @@ namespace BirdGame
     [Serializable]
     public class Pattern
     {
-        public enum PatternType
-        {
-            Image,
-            Text,
-        }
-
-        [ShowInInspector] public PatternType Type { get; set; } = PatternType.Text;
-
-        [ShowIf("@Type==PatternType.Image"), PreviewField(30, ObjectFieldAlignment.Left)]
-        public Sprite sprite;
-        [ShowIf("@Type==PatternType.Text")]
         public string text;
     }
 }

@@ -17,7 +17,7 @@ namespace BirdGame
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        Sprite GetSprite(string key);
+        //Sprite GetSprite(string key);
         /// <summary>
         /// 获取当前字体文件
         /// </summary>
@@ -91,18 +91,18 @@ namespace BirdGame
             return text;
         }
 
-        public Sprite GetSprite(string key)
-        {
-            var config = this.GetModel<IConfigModel>().LocalizationConfig;
-            var currentLanguage = this.GetModel<ISaveModel>().SettingData.gameLanguage;
-            if (!config.languageDic[currentLanguage].words.ContainsKey(key))
-            {
-                Debug.LogWarning($"不存在key[{key}]对应的翻译，请在本地化配置中增加！");
-                return null;
-            }
-
-            return config.languageDic[currentLanguage].words[key].sprite;
-        }
+        // public Sprite GetSprite(string key)
+        // {
+        //     var config = this.GetModel<IConfigModel>().LocalizationConfig;
+        //     var currentLanguage = this.GetModel<ISaveModel>().SettingData.gameLanguage;
+        //     if (!config.languageDic[currentLanguage].words.ContainsKey(key))
+        //     {
+        //         Debug.LogWarning($"不存在key[{key}]对应的翻译，请在本地化配置中增加！");
+        //         return null;
+        //     }
+        //
+        //     return config.languageDic[currentLanguage].words[key].sprite;
+        // }
 
         public TMP_FontAsset GetFontAsset()
         {

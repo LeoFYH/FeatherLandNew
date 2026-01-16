@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -15,6 +16,7 @@ namespace BirdGame
 
         private IGameModel gameModel;
         private IConfigModel configModel;
+        private List<ShopEggItem> items = new List<ShopEggItem>();
         
         private void Awake()
         {
@@ -37,6 +39,11 @@ namespace BirdGame
             {
                 eggView.sprite = configModel.ShopConfig.sceneEggs[mapIndex].eggs[v].eggSp;
                 priceText.text = $"${configModel.ShopConfig.sceneEggs[mapIndex].eggs[v].price}";
+                int count = items.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    items[i].uiEffect.enabled = i == v;
+                }
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
             buyButton.onClick.AddListener(() =>
@@ -76,7 +83,10 @@ namespace BirdGame
                 var item = obj.GetComponent<ShopEggItem>();
                 obj.SetActive(true);
                 item.Init(i);
+                items.Add(item);
             }
+
+            items[gameModel.ShopEggSelectIndex.Value].uiEffect.enabled = true;
         }
     }
 }

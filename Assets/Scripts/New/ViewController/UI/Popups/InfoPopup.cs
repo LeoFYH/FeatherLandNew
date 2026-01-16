@@ -271,14 +271,14 @@ namespace BirdGame
             previousClickCount = SimpleMouseForwarder.clickCount;
             
             var rect = transform as RectTransform;
-            rect.anchoredPosition = new Vector2(-rect.sizeDelta.x * transform.localScale.x * 0.5f, rect.anchoredPosition.y);
-            rect.DOAnchorPosX(rect.sizeDelta.x * transform.localScale.x * 0.5f, 0.2f).SetEase(Ease.InSine);
+            rect.anchoredPosition = new Vector2(rect.sizeDelta.x * transform.localScale.x * 0.5f, rect.anchoredPosition.y);
+            rect.DOAnchorPosX(-rect.sizeDelta.x * transform.localScale.x * 0.5f, 0.2f).SetEase(Ease.InSine);
         }
 
         public override void OnHidePanel(Action onComplete = null)
         {
             var rect = transform as RectTransform;
-            rect.DOAnchorPosX(-rect.sizeDelta.x * transform.localScale.x * 0.5f, 0.2f).SetEase(Ease.OutSine).OnComplete(() =>
+            rect.DOAnchorPosX(rect.sizeDelta.x * transform.localScale.x * 0.5f, 0.2f).SetEase(Ease.OutSine).OnComplete(() =>
             {
                 Destroy(gameObject);
                 onComplete?.Invoke();

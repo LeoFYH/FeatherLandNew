@@ -30,7 +30,7 @@ namespace BirdGame
         {
             if(string.IsNullOrEmpty(Key))
                 return;
-            ThisImage.sprite = this.GetSystem<ILocalizationSystem>().GetSprite(Key);
+            //ThisImage.sprite = this.GetSystem<ILocalizationSystem>().GetSprite(Key);
         }
 
         public void SetKey(string key)

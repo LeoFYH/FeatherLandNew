@@ -387,20 +387,17 @@ namespace BirdGame.Editor
 
                     GUILayout.BeginHorizontal();
                     {
-                        GUILayout.Label("图片翻译", GUILayout.Width(60));
-                        words[currentSelectedLanguage].isImageFlags[i] =
-                            EditorGUILayout.Toggle(words[currentSelectedLanguage].isImageFlags[i]);
                         wordKeys[i] = EditorGUILayout.TextField(wordKeys[i]);
                         GUILayout.Label("翻译", GUILayout.Width(30));
-                        if (!words[currentSelectedLanguage].isImageFlags[i])
-                        {
+                        // if (!words[currentSelectedLanguage].isImageFlags[i])
+                        // {
                             words[currentSelectedLanguage].values[i] = EditorGUILayout.TextField(words[currentSelectedLanguage].values[i]);
-                        }
-                        else
-                        {
-                            words[currentSelectedLanguage].spValues[i] =
-                                (Sprite)EditorGUILayout.ObjectField(words[currentSelectedLanguage].spValues[i], typeof(Sprite));
-                        }
+                        // }
+                        // else
+                        // {
+                        //     words[currentSelectedLanguage].spValues[i] =
+                        //         (Sprite)EditorGUILayout.ObjectField(words[currentSelectedLanguage].spValues[i], typeof(Sprite));
+                        // }
                         foreach (var word in words)
                         {
                             word.keys[i] = wordKeys[i];
@@ -527,10 +524,10 @@ namespace BirdGame.Editor
                         {
                             wordKeys.Add(word.Key);
                         }
-                        words[index].spValues.Add(word.Value.sprite);
+                        //words[index].spValues.Add(word.Value.sprite);
                         words[index].values.Add(word.Value.text);
                         words[index].keys.Add(word.Key);
-                        words[index].isImageFlags.Add(word.Value.Type == Pattern.PatternType.Text);
+                        //words[index].isImageFlags.Add(word.Value.Type == Pattern.PatternType.Text);
                     }
                 }
                 index++;
@@ -950,9 +947,9 @@ namespace BirdGame.Editor
                 {
                     config.languageDic[languages[i].Language].words.Add(wordKeys[j], new Pattern()
                     {
-                        sprite = words[i].spValues[j],
+                        //sprite = words[i].spValues[j],
                         text = words[i].values[j],
-                        Type = words[i].isImageFlags[j] ? Pattern.PatternType.Image : Pattern.PatternType.Text
+                        //Type = words[i].isImageFlags[j] ? Pattern.PatternType.Image : Pattern.PatternType.Text
                     });
                 }
             }

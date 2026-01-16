@@ -1,4 +1,5 @@
-﻿using QFramework;
+﻿using Coffee.UIEffects;
+using QFramework;
 using UnityEngine.UI;
 
 namespace BirdGame
@@ -6,6 +7,7 @@ namespace BirdGame
     public class ShopEggItem : ViewControllerBase
     {
         public Image icon;
+        public UIEffect uiEffect;
 
         private int id;
         

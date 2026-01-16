@@ -30,7 +30,9 @@ namespace BirdGame
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             var item = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[mapIndex].decorations[index];
             icon.sprite = item.icon;
-            float scale = 480f / icon.sprite.rect.size.y;
+            Vector2 originalSize = icon.sprite.bounds.size;
+            float average = (originalSize.x + originalSize.y) / 2f;
+            float scale = 4f / average;
             icon.GetComponent<RectTransform>().sizeDelta = icon.sprite.rect.size * scale;
             nameText.SetKey(item.name);
             descriptionText.SetKey(item.description);
