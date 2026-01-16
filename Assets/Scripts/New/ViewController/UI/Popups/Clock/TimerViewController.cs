@@ -4,6 +4,7 @@ using QFramework;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 namespace BirdGame
 {
@@ -21,6 +22,11 @@ namespace BirdGame
         public Toggle[] audioToggles;
         public Slider volumeSlider;
         public Image volumeFill;
+
+        private Coroutine[] upButtonHoldCoroutines = new Coroutine[3];
+        private Coroutine[] downButtonHoldCoroutines = new Coroutine[3];
+        private bool[] isUpButtonHeld = new bool[3];
+        private bool[] isDownButtonHeld = new bool[3];
 
         private void Start()
         {
@@ -152,6 +158,10 @@ namespace BirdGame
                 {
                     OnDownClick(index);
                 });
+                
+                // Add button hold functionality
+                AddButtonHoldSupport(upButtons[i], index, true);
+                AddButtonHoldSupport(downButtons[i], index, false);
             }
             refreshButton.onClick.AddListener(() =>
             {
@@ -358,6 +368,118 @@ namespace BirdGame
                 this.GetModel<IClockModel>().TimerItem.AudioSelected.Value = index;
                 this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForTimer;
                 this.GetSystem<IAudioSystem>().PlayAlert();
+            }
+        }
+
+        private void AddButtonHoldSupport(Button button, int index, bool isUpButton)
+        {
+            var eventTrigger = button.gameObject.GetComponent<EventTrigger>();
+            if (eventTrigger == null)
+            {
+                eventTrigger = button.gameObject.AddComponent<EventTrigger>();
+            }
+
+            // Pointer Down
+            var pointerDown = new EventTrigger.Entry();
+            pointerDown.eventID = EventTriggerType.PointerDown;
+            pointerDown.callback.AddListener((data) =>
+            {
+                if (isUpButton)
+                {
+                    isUpButtonHeld[index] = true;
+                    if (upButtonHoldCoroutines[index] != null)
+                    {
+                        this.GetSystem<IMonoSystem>().StopCoroutine(upButtonHoldCoroutines[index]);
+                    }
+                    upButtonHoldCoroutines[index] = this.GetSystem<IMonoSystem>().StartCoroutine(ButtonHoldCoroutine(index, true));
+                }
+                else
+                {
+                    isDownButtonHeld[index] = true;
+                    if (downButtonHoldCoroutines[index] != null)
+                    {
+                        this.GetSystem<IMonoSystem>().StopCoroutine(downButtonHoldCoroutines[index]);
+                    }
+                    downButtonHoldCoroutines[index] = this.GetSystem<IMonoSystem>().StartCoroutine(ButtonHoldCoroutine(index, false));
+                }
+            });
+            eventTrigger.triggers.Add(pointerDown);
+
+            // Pointer Up
+            var pointerUp = new EventTrigger.Entry();
+            pointerUp.eventID = EventTriggerType.PointerUp;
+            pointerUp.callback.AddListener((data) =>
+            {
+                if (isUpButton)
+                {
+                    isUpButtonHeld[index] = false;
+                    if (upButtonHoldCoroutines[index] != null)
+                    {
+                        this.GetSystem<IMonoSystem>().StopCoroutine(upButtonHoldCoroutines[index]);
+                        upButtonHoldCoroutines[index] = null;
+                    }
+                }
+                else
+                {
+                    isDownButtonHeld[index] = false;
+                    if (downButtonHoldCoroutines[index] != null)
+                    {
+                        this.GetSystem<IMonoSystem>().StopCoroutine(downButtonHoldCoroutines[index]);
+                        downButtonHoldCoroutines[index] = null;
+                    }
+                }
+            });
+            eventTrigger.triggers.Add(pointerUp);
+
+            // Pointer Exit (stop holding if mouse leaves button area)
+            var pointerExit = new EventTrigger.Entry();
+            pointerExit.eventID = EventTriggerType.PointerExit;
+            pointerExit.callback.AddListener((data) =>
+            {
+                if (isUpButton)
+                {
+                    isUpButtonHeld[index] = false;
+                    if (upButtonHoldCoroutines[index] != null)
+                    {
+                        this.GetSystem<IMonoSystem>().StopCoroutine(upButtonHoldCoroutines[index]);
+                        upButtonHoldCoroutines[index] = null;
+                    }
+                }
+                else
+                {
+                    isDownButtonHeld[index] = false;
+                    if (downButtonHoldCoroutines[index] != null)
+                    {
+                        this.GetSystem<IMonoSystem>().StopCoroutine(downButtonHoldCoroutines[index]);
+                        downButtonHoldCoroutines[index] = null;
+                    }
+                }
+            });
+            eventTrigger.triggers.Add(pointerExit);
+        }
+
+        private IEnumerator ButtonHoldCoroutine(int index, bool isUp)
+        {
+            // Initial delay before starting to repeat
+            yield return new WaitForSeconds(0.5f);
+            
+            // If still held, start repeating
+            bool stillHeld = isUp ? isUpButtonHeld[index] : isDownButtonHeld[index];
+            if (!stillHeld) yield break;
+
+            // Repeat while held with faster interval
+            while (isUp ? isUpButtonHeld[index] : isDownButtonHeld[index])
+            {
+                if (isUp)
+                {
+                    OnUpClick(index);
+                }
+                else
+                {
+                    OnDownClick(index);
+                }
+                
+                yield return new WaitForSeconds(0.1f);
             }
         }
     }
