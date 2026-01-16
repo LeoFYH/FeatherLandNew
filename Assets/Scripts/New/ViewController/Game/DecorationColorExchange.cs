@@ -13,9 +13,9 @@ namespace BirdGame
 
         private void Start()
         {
-            var anim = DOTween.Sequence();
-            anim.Append(sr.DOColor(Color.black, 0.5f));
-            anim.Append(sr.DOColor(colors[0], 0.5f));
+            // var anim = DOTween.Sequence();
+            // anim.Append(sr.DOColor(Color.black, 0.5f));
+            // anim.Append(sr.DOColor(colors[0], 0.5f));
 
             this.RegisterEvent<SwitchWeatherEvent>(evt =>
             {
