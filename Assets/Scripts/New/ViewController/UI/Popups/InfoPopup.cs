@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using DG.Tweening;
 using QFramework;
 using TMPro;
@@ -56,7 +56,26 @@ namespace BirdGame
         private void CheckClickOutside()
         {
             // 检查是否点击了UI元素
-            if (!EventSystem.current.IsPointerOverGameObject())
+            // 在壁纸模式下，使用RaycastAll方法确保正确检测（因为SimpleMouseForwarder转发点击事件）
+            bool isPointerOverUI;
+            if (this.GetUtility<IFullScreenUtility>().EnableWallpaperMode)
+            {
+                // 壁纸模式下使用RaycastAll进行检测
+                PointerEventData eventData = new PointerEventData(EventSystem.current)
+                {
+                    position = Input.mousePosition
+                };
+                System.Collections.Generic.List<RaycastResult> results = new System.Collections.Generic.List<RaycastResult>();
+                EventSystem.current.RaycastAll(eventData, results);
+                isPointerOverUI = results.Count > 0;
+            }
+            else
+            {
+                // 正常模式下使用IsPointerOverGameObject
+                isPointerOverUI = EventSystem.current.IsPointerOverGameObject();
+            }
+            
+            if (!isPointerOverUI)
             {
                 // 没有点击UI元素，关闭InfoPopup
                 this.GetSystem<IUISystem>().HidePopup(UIPopup.InfoPopup);
