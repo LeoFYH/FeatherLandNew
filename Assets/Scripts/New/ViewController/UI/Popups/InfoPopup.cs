@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using DG.Tweening;
 using QFramework;
 using TMPro;
@@ -369,8 +370,8 @@ namespace BirdGame
                 price = data.individualPriceBig;
             }
 
-            incomeText.text = "$" + data.individualEarningBig.ToString("F1") + this.GetSystem<ILocalizationSystem>().GetString("min");
-            priceText.text = "$" + price.ToString("F1");
+            incomeText.text = "$" + data.individualEarningBig.ToString("F1", CultureInfo.InvariantCulture) + this.GetSystem<ILocalizationSystem>().GetString("min");
+            priceText.text = "$" + price.ToString("F1", CultureInfo.InvariantCulture);
             
             saleButton.onClick.AddListener(() =>
             {
