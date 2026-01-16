@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using DG.Tweening;
 using QFramework;
 using TMPro;
@@ -319,7 +319,7 @@ namespace BirdGame
             // 显示自定义名称，如果没有则显示默认名称
             if (string.IsNullOrEmpty(data.customName))
             {
-                cutomName.text = "Name!!"; // 空的自定义名称显示为"Name!"
+                cutomName.text = this.GetSystem<ILocalizationSystem>().GetString("customName");
             }
             else
             {
@@ -369,8 +369,8 @@ namespace BirdGame
                 price = data.individualPriceBig;
             }
 
-            incomeText.text = data.individualEarningBig.ToString("F1");
-            priceText.text = price.ToString("F1");
+            incomeText.text = "$" + data.individualEarningBig.ToString("F1") + this.GetSystem<ILocalizationSystem>().GetString("min");
+            priceText.text = "$" + price.ToString("F1");
             
             saleButton.onClick.AddListener(() =>
             {
@@ -395,7 +395,7 @@ namespace BirdGame
             // 如果输入为空，显示默认名称
             if (string.IsNullOrEmpty(data.customName))
             {
-                cutomName.text = "Name!";
+                cutomName.text = this.GetSystem<ILocalizationSystem>().GetString("customName");
             }
         }
         
