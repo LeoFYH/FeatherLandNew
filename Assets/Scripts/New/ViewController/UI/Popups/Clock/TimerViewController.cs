@@ -27,6 +27,8 @@ namespace BirdGame
         private Coroutine[] downButtonHoldCoroutines = new Coroutine[3];
         private bool[] isUpButtonHeld = new bool[3];
         private bool[] isDownButtonHeld = new bool[3];
+        private float[] buttonPressStartTime = new float[6]; // 3 up + 3 down buttons
+        private bool[] buttonHoldIncrementExecuted = new bool[6]; // Track if hold increment was executed
 
         private void Start()
         {
@@ -150,16 +152,30 @@ namespace BirdGame
             for (int i = 0; i < 3; i++)
             {
                 int index = i;
+                
+                // Add onClick for one-time click (only if it was a quick click, not a hold)
                 upButtons[i].onClick.AddListener(() =>
                 {
-                    OnUpClick(index);
+                    int buttonIndex = index * 2; // Up buttons: 0, 2, 4
+                    // Only execute onClick if no hold increment was executed
+                    if (!buttonHoldIncrementExecuted[buttonIndex])
+                    {
+                        OnUpClick(index);
+                    }
+                    buttonHoldIncrementExecuted[buttonIndex] = false; // Reset for next press
                 });
                 downButtons[i].onClick.AddListener(() =>
                 {
-                    OnDownClick(index);
+                    int buttonIndex = index * 2 + 1; // Down buttons: 1, 3, 5
+                    // Only execute onClick if no hold increment was executed
+                    if (!buttonHoldIncrementExecuted[buttonIndex])
+                    {
+                        OnDownClick(index);
+                    }
+                    buttonHoldIncrementExecuted[buttonIndex] = false; // Reset for next press
                 });
                 
-                // Add button hold functionality
+                // Add button hold functionality (increments only after holding 0.5 seconds)
                 AddButtonHoldSupport(upButtons[i], index, true);
                 AddButtonHoldSupport(downButtons[i], index, false);
             }
@@ -384,6 +400,10 @@ namespace BirdGame
             pointerDown.eventID = EventTriggerType.PointerDown;
             pointerDown.callback.AddListener((data) =>
             {
+                int buttonIndex = isUpButton ? index * 2 : index * 2 + 1;
+                buttonPressStartTime[buttonIndex] = Time.time;
+                buttonHoldIncrementExecuted[buttonIndex] = false; // Reset flag
+                
                 if (isUpButton)
                 {
                     isUpButtonHeld[index] = true;
@@ -460,16 +480,33 @@ namespace BirdGame
 
         private IEnumerator ButtonHoldCoroutine(int index, bool isUp)
         {
-            // Initial delay before starting to repeat
+            // Wait 0.5 seconds before doing the first increment
             yield return new WaitForSeconds(0.5f);
             
-            // If still held, start repeating
+            // If still held, do the first increment and then start repeating
             bool stillHeld = isUp ? isUpButtonHeld[index] : isDownButtonHeld[index];
             if (!stillHeld) yield break;
 
-            // Repeat while held with faster interval
+            // Do the first increment after 0.5 seconds of holding
+            int buttonIndex = isUp ? index * 2 : index * 2 + 1;
+            buttonHoldIncrementExecuted[buttonIndex] = true; // Mark that hold increment was executed
+            if (isUp)
+            {
+                OnUpClick(index);
+            }
+            else
+            {
+                OnDownClick(index);
+            }
+
+            // Repeat while held with faster interval (0.1 seconds)
             while (isUp ? isUpButtonHeld[index] : isDownButtonHeld[index])
             {
+                yield return new WaitForSeconds(0.1f);
+                
+                // Check again if still held before incrementing
+                if (!(isUp ? isUpButtonHeld[index] : isDownButtonHeld[index])) break;
+                
                 if (isUp)
                 {
                     OnUpClick(index);
@@ -478,8 +515,6 @@ namespace BirdGame
                 {
                     OnDownClick(index);
                 }
-                
-                yield return new WaitForSeconds(0.1f);
             }
         }
     }
