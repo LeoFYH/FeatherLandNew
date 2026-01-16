@@ -143,6 +143,8 @@ namespace BirdGame
         public static bool leftButtonDown = false;
         public static bool rightButtonDown = false;
         private static Vector2 mousePosition = Vector2.zero;
+        private static Vector2 mouseDownPosition = Vector2.zero; // Track where mouse was pressed down
+        private static bool shouldTriggerClickOnRelease = false; // Track if we should trigger click on release
         private static SimpleMouseForwarder instance;
         
         // Cache for hover state checking - only update when mouse moves
@@ -518,12 +520,47 @@ namespace BirdGame
                 {
                     leftButtonDown = true;
                     mousePosition = currentMousePosition;
+                    mouseDownPosition = currentMousePosition; // Store where mouse was pressed down
                     isMouseDown = true;
                     isLeftMouseDragging = false;
                     lastMousePosition = currentMousePosition;
                     dragStartPosition = currentMousePosition;
                     dragStartTime = Time.time;
                     currentDragTarget = FindDragTarget(currentMousePosition);
+                    
+                    // Check if we're over a clickable button (not a drag target or input field)
+                    // This determines if we should trigger click on release
+                    shouldTriggerClickOnRelease = false;
+                    if (currentDragTarget == null)
+                    {
+                        // Check if there's a button or other clickable element at this position
+                        if (EventSystem.current != null)
+                        {
+                            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+                            {
+                                position = currentMousePosition,
+                                button = PointerEventData.InputButton.Left
+                            };
+                            var raycastResults = new System.Collections.Generic.List<RaycastResult>();
+                            EventSystem.current.RaycastAll(pointerData, raycastResults);
+                            
+                            foreach (var result in raycastResults)
+                            {
+                                // Check if it's a clickable button or other Selectable (but not a drag target or input field)
+                                Selectable selectable = result.gameObject.GetComponent<Selectable>();
+                                if (selectable != null && selectable.interactable)
+                                {
+                                    // Make sure it's not an input field
+                                    if (result.gameObject.GetComponent<HookTMPInputHandler>() == null &&
+                                        result.gameObject.GetComponent<HookLegacyInputHandler>() == null)
+                                    {
+                                        shouldTriggerClickOnRelease = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
                     
                     // If we found a drag target, notify it about drag begin
                     if (currentDragTarget != null)
@@ -594,6 +631,12 @@ namespace BirdGame
                                 if (currentDragTarget == null)
                                 {
                                     currentDragTarget = FindScrollRectTarget(currentMousePosition);
+                                    
+                                    // If still no target, check if we're dragging on a clickable object inside a ScrollRect
+                                    if (currentDragTarget == null)
+                                    {
+                                        currentDragTarget = FindScrollRectForClickableObject(currentMousePosition);
+                                    }
                                 }
                                 
                                 // If we found a drag target, notify it about drag begin
@@ -628,6 +671,30 @@ namespace BirdGame
                                                 if (scrollbar != null && scrollbar.interactable)
                                                 {
                                                     ForwardPointerDownToScrollbar(scrollbar, dragStartPosition);
+                                                }
+                                                else
+                                                {
+                                                    // Check if it's a ScrollRectMouseWheelHandler - notify drag begin
+                                                    ScrollRectMouseWheelHandler scrollHandler = currentDragTarget.GetComponent<ScrollRectMouseWheelHandler>();
+                                                    if (scrollHandler != null && scrollHandler.enableDragScrolling)
+                                                    {
+                                                        scrollHandler.ReceiveDragBegin(dragStartPosition);
+                                                    }
+                                                    else
+                                                    {
+                                                        // Search parents for ScrollRectMouseWheelHandler
+                                                        Transform parent = currentDragTarget.transform.parent;
+                                                        while (parent != null)
+                                                        {
+                                                            scrollHandler = parent.GetComponent<ScrollRectMouseWheelHandler>();
+                                                            if (scrollHandler != null && scrollHandler.enableDragScrolling)
+                                                            {
+                                                                scrollHandler.ReceiveDragBegin(dragStartPosition);
+                                                                break;
+                                                            }
+                                                            parent = parent.parent;
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -798,6 +865,58 @@ namespace BirdGame
                 {
                     bool wasDragging = isLeftMouseDragging;
                     
+                    // Trigger button click on mouse UP if it wasn't a drag and we should trigger click
+                    // This ensures buttons are clicked when mouse is released, not when pressed down
+                    if (!wasDragging && shouldTriggerClickOnRelease && instance != null && instance.enableForwarding)
+                    {
+                        // Check if mouse is still over a button at release position
+                        bool shouldClick = false;
+                        if (EventSystem.current != null)
+                        {
+                            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+                            {
+                                position = currentMousePosition,
+                                button = PointerEventData.InputButton.Left
+                            };
+                            var raycastResults = new System.Collections.Generic.List<RaycastResult>();
+                            EventSystem.current.RaycastAll(pointerData, raycastResults);
+                            
+                            // Check if mouse is still over a clickable element
+                            // Also check if it's still reasonably close to where mouse was pressed down
+                            float distanceFromDown = Vector2.Distance(currentMousePosition, mouseDownPosition);
+                            const float CLICK_DISTANCE_THRESHOLD = 50f; // Allow small movement (50 pixels) to still count as click
+                            
+                            if (distanceFromDown < CLICK_DISTANCE_THRESHOLD)
+                            {
+                                foreach (var result in raycastResults)
+                                {
+                                    Selectable selectable = result.gameObject.GetComponent<Selectable>();
+                                    if (selectable != null && selectable.interactable)
+                                    {
+                                        // Make sure it's not an input field
+                                        if (result.gameObject.GetComponent<HookTMPInputHandler>() == null &&
+                                            result.gameObject.GetComponent<HookLegacyInputHandler>() == null)
+                                        {
+                                            shouldClick = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        
+                        if (shouldClick)
+                        {
+                            clickCount++;
+                            instance.SimulateMouseClick(currentMousePosition);
+                            
+                            if (instance.showDebugLog)
+                            {
+                                Debug.Log($"[SimpleMouseForwarder] 转发点击到Unity EventSystem (鼠标释放): {currentMousePosition}");
+                            }
+                        }
+                    }
+                    
                     // Notify drag handlers about drag end if applicable (even if drag didn't start)
                     if (currentDragTarget != null)
                     {
@@ -853,11 +972,13 @@ namespace BirdGame
                         }
                     }
 
-                    // Reset drag state
+                    // Reset drag state and click trigger flag
                     isMouseDown = false;
                     isLeftMouseDragging = false;
                     dragStartTime = 0f;
                     currentDragTarget = null;
+                    shouldTriggerClickOnRelease = false;
+                    leftButtonDown = false;
                     
                     // After drag ends, re-evaluate what's under the mouse cursor
                     // This ensures hover states are correct after a drag operation
@@ -999,6 +1120,52 @@ namespace BirdGame
             return null;
         }
 
+        /// <summary>
+        /// Find ScrollRectMouseWheelHandler for clickable objects (Buttons, Toggles, etc.) inside a ScrollRect
+        /// This allows dragging to scroll even when starting the drag on a clickable object
+        /// </summary>
+        private static GameObject FindScrollRectForClickableObject(Vector2 screenPosition)
+        {
+            if (EventSystem.current == null) return null;
+
+            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            {
+                position = screenPosition,
+                button = PointerEventData.InputButton.Left
+            };
+
+            var raycastResults = new System.Collections.Generic.List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointerData, raycastResults);
+
+            foreach (var result in raycastResults)
+            {
+                // Check if this object or any parent is a Selectable (Button, Toggle, etc.)
+                Transform current = result.gameObject.transform;
+                while (current != null)
+                {
+                    Selectable selectable = current.GetComponent<Selectable>();
+                    if (selectable != null && selectable.interactable)
+                    {
+                        // Found a clickable object, now search its parents for ScrollRectMouseWheelHandler
+                        Transform parent = current.parent;
+                        while (parent != null)
+                        {
+                            ScrollRectMouseWheelHandler scrollHandler = parent.GetComponent<ScrollRectMouseWheelHandler>();
+                            if (scrollHandler != null && scrollHandler.enableDragScrolling)
+                            {
+                                return parent.gameObject;
+                            }
+                            parent = parent.parent;
+                        }
+                        break; // Only check the first selectable found
+                    }
+                    current = current.parent;
+                }
+            }
+
+            return null;
+        }
+
         private static GameObject FindPointerEventTarget(Vector2 screenPosition)
         {
             if (EventSystem.current == null) return null;
@@ -1082,10 +1249,17 @@ namespace BirdGame
         {
             if (target == null) return;
 
-            ScrollRectMouseWheelHandler handler = target.GetComponent<ScrollRectMouseWheelHandler>();
-            if (handler != null)
+            // Search for ScrollRectMouseWheelHandler on the target and its parents
+            Transform current = target.transform;
+            while (current != null)
             {
-                handler.ReceiveDragDelta(delta);
+                ScrollRectMouseWheelHandler handler = current.GetComponent<ScrollRectMouseWheelHandler>();
+                if (handler != null && handler.enableDragScrolling)
+                {
+                    handler.ReceiveDragDelta(delta);
+                    return;
+                }
+                current = current.parent;
             }
         }
 
@@ -1371,17 +1545,8 @@ namespace BirdGame
             // Get the current foreground window handle
             if (isOnDesktop)
             {
-                if (leftButtonDown && instance.enableForwarding)
-                {
-                    clickCount++;
-                    leftButtonDown = false;
-                    SimulateMouseClick(mousePosition);
-
-                    if (showDebugLog)
-                    {
-                        Debug.Log($"[SimpleMouseForwarder] 转发点击到Unity EventSystem: {mousePosition}");
-                    }
-                }
+                // Note: Button clicks are now triggered on mouse UP (in WM_LBUTTONUP handler), not on mouse DOWN
+                // This matches standard button behavior where clicks execute when mouse is released on the button
 
                 if (rightButtonDown && instance.enableForwarding)
                 {

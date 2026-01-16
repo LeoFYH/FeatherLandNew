@@ -231,17 +231,25 @@ public class ScrollRectMouseWheelHandler : MonoBehaviour,
         // Store velocity for momentum
         dragVelocity = delta * dragSensitivity;
         
-        // Apply dragging
+        // Apply dragging - use viewport size for proper scaling
         if (scrollRect.horizontal)
         {
-            scrollRect.horizontalNormalizedPosition -= delta.x * dragSensitivity / GetScrollRectWidth();
-            scrollRect.horizontalNormalizedPosition = Mathf.Clamp01(scrollRect.horizontalNormalizedPosition);
+            float scrollableWidth = GetScrollableWidth();
+            if (scrollableWidth > 0f)
+            {
+                scrollRect.horizontalNormalizedPosition -= delta.x * dragSensitivity / scrollableWidth;
+                scrollRect.horizontalNormalizedPosition = Mathf.Clamp01(scrollRect.horizontalNormalizedPosition);
+            }
         }
         
         if (scrollRect.vertical)
         {
-            scrollRect.verticalNormalizedPosition += delta.y * dragSensitivity / GetScrollRectHeight();
-            scrollRect.verticalNormalizedPosition = Mathf.Clamp01(scrollRect.verticalNormalizedPosition);
+            float scrollableHeight = GetScrollableHeight();
+            if (scrollableHeight > 0f)
+            {
+                scrollRect.verticalNormalizedPosition += delta.y * dragSensitivity / scrollableHeight;
+                scrollRect.verticalNormalizedPosition = Mathf.Clamp01(scrollRect.verticalNormalizedPosition);
+            }
         }
     }
 
@@ -275,10 +283,28 @@ public class ScrollRectMouseWheelHandler : MonoBehaviour,
         }
     }
 
+    // Called by SimpleMouseForwarder when drag begins (in wallpaper mode)
+    public void ReceiveDragBegin(Vector2 position)
+    {
+        if (!enableDragScrolling || scrollRect == null) return;
+        
+        // Set mouse over state to true (in wallpaper mode, pointer events might not fire)
+        isMouseOver = true;
+        isDragging = false; // Ensure we're not in Unity drag mode
+        lastMousePosition = position;
+        
+        Debug.Log($"[ScrollRectMouseWheel] Drag begin received at position: {position}");
+    }
+
     // Called by SimpleMouseForwarder when it receives drag events
     public void ReceiveDragDelta(Vector2 delta)
     {
-        if (!enableDragScrolling || !isMouseOver || scrollRect == null || isDragging) return;
+        if (!enableDragScrolling || scrollRect == null) return;
+        
+        // In wallpaper mode, isDragging might be false (Unity events don't fire)
+        // So we allow dragging even if isDragging is false, as long as we're receiving drag deltas
+        // But if isDragging is true (Unity drag system active), we skip to avoid double handling
+        if (isDragging) return;
         
         // Apply inversion if needed
         if (invertDragDirection)
@@ -286,17 +312,25 @@ public class ScrollRectMouseWheelHandler : MonoBehaviour,
             delta = -delta;
         }
         
-        // Apply drag delta
+        // Apply drag delta - use viewport size for proper scaling
         if (scrollRect.horizontal)
         {
-            scrollRect.horizontalNormalizedPosition -= delta.x * dragSensitivity / GetScrollRectWidth();
-            scrollRect.horizontalNormalizedPosition = Mathf.Clamp01(scrollRect.horizontalNormalizedPosition);
+            float scrollableWidth = GetScrollableWidth();
+            if (scrollableWidth > 0f)
+            {
+                scrollRect.horizontalNormalizedPosition -= delta.x * dragSensitivity / scrollableWidth;
+                scrollRect.horizontalNormalizedPosition = Mathf.Clamp01(scrollRect.horizontalNormalizedPosition);
+            }
         }
         
         if (scrollRect.vertical)
         {
-            scrollRect.verticalNormalizedPosition += delta.y * dragSensitivity / GetScrollRectHeight();
-            scrollRect.verticalNormalizedPosition = Mathf.Clamp01(scrollRect.verticalNormalizedPosition);
+            float scrollableHeight = GetScrollableHeight();
+            if (scrollableHeight > 0f)
+            {
+                scrollRect.verticalNormalizedPosition += delta.y * dragSensitivity / scrollableHeight;
+                scrollRect.verticalNormalizedPosition = Mathf.Clamp01(scrollRect.verticalNormalizedPosition);
+            }
         }
         
         Debug.Log($"[ScrollRectMouseWheel] Received drag delta: {delta}");
@@ -361,14 +395,22 @@ public class ScrollRectMouseWheelHandler : MonoBehaviour,
         // Apply momentum (inversion is already baked into the momentum from OnDrag)
         if (scrollRect.horizontal)
         {
-            scrollRect.horizontalNormalizedPosition -= momentum.x * Time.deltaTime / GetScrollRectWidth();
-            scrollRect.horizontalNormalizedPosition = Mathf.Clamp01(scrollRect.horizontalNormalizedPosition);
+            float scrollableWidth = GetScrollableWidth();
+            if (scrollableWidth > 0f)
+            {
+                scrollRect.horizontalNormalizedPosition -= momentum.x * Time.deltaTime / scrollableWidth;
+                scrollRect.horizontalNormalizedPosition = Mathf.Clamp01(scrollRect.horizontalNormalizedPosition);
+            }
         }
         
         if (scrollRect.vertical)
         {
-            scrollRect.verticalNormalizedPosition += momentum.y * Time.deltaTime / GetScrollRectHeight();
-            scrollRect.verticalNormalizedPosition = Mathf.Clamp01(scrollRect.verticalNormalizedPosition);
+            float scrollableHeight = GetScrollableHeight();
+            if (scrollableHeight > 0f)
+            {
+                scrollRect.verticalNormalizedPosition += momentum.y * Time.deltaTime / scrollableHeight;
+                scrollRect.verticalNormalizedPosition = Mathf.Clamp01(scrollRect.verticalNormalizedPosition);
+            }
         }
         
         // Stop momentum when it's too small
@@ -379,16 +421,26 @@ public class ScrollRectMouseWheelHandler : MonoBehaviour,
         }
     }
 
-    private float GetScrollRectWidth()
+    /// <summary>
+    /// Get the scrollable width (content width - viewport width)
+    /// </summary>
+    private float GetScrollableWidth()
     {
-        if (scrollRect == null || scrollRect.content == null) return 1f;
-        return Mathf.Max(1f, scrollRect.content.rect.width * (1f - scrollRect.horizontalNormalizedPosition));
+        if (scrollRect == null || scrollRect.content == null || scrollRect.viewport == null) return 1f;
+        float contentWidth = scrollRect.content.rect.width;
+        float viewportWidth = scrollRect.viewport.rect.width;
+        return Mathf.Max(1f, contentWidth - viewportWidth);
     }
 
-    private float GetScrollRectHeight()
+    /// <summary>
+    /// Get the scrollable height (content height - viewport height)
+    /// </summary>
+    private float GetScrollableHeight()
     {
-        if (scrollRect == null || scrollRect.content == null) return 1f;
-        return Mathf.Max(1f, scrollRect.content.rect.height * (1f - scrollRect.verticalNormalizedPosition));
+        if (scrollRect == null || scrollRect.content == null || scrollRect.viewport == null) return 1f;
+        float contentHeight = scrollRect.content.rect.height;
+        float viewportHeight = scrollRect.viewport.rect.height;
+        return Mathf.Max(1f, contentHeight - viewportHeight);
     }
 
     // Public method for external control
