@@ -195,9 +195,29 @@ namespace BirdGame
                     return;
                 }
 
+                // 在开始计时前，先同步输入框的值到模型（确保键盘输入的值被正确读取）
+                if (int.TryParse(hourText.text, out int hours) && hours >= 0 && hours <= 59)
+                {
+                    item.Hours.Value = hours;
+                }
+                if (int.TryParse(minuteText.text, out int minutes) && minutes >= 0 && minutes <= 59)
+                {
+                    item.Minutes.Value = minutes;
+                }
+                if (int.TryParse(secondText.text, out int seconds) && seconds >= 0 && seconds <= 59)
+                {
+                    item.Seconds.Value = seconds;
+                }
+                
                 item.Timer = item.Hours.Value * 3600 + item.Minutes.Value * 60 + item.Seconds.Value;
                 if(item.Timer == 0)
                     return;
+                
+                // 保存当前设置的时间值，用于取消后恢复
+                item.LastHours = item.Hours.Value;
+                item.LastMinutes = item.Minutes.Value;
+                item.LastSeconds = item.Seconds.Value;
+                
                 item.TimerCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(StartTimer());
                 Refresh(true, item.IsPause);
                 this.GetModel<IClockModel>().TimerType = TimerType.Timer;
@@ -225,10 +245,21 @@ namespace BirdGame
                     show = false
                 });
                 item.Timer = 0;
-                item.Hours.Value = 0;
-                item.Minutes.Value = 0;
-                item.Seconds.Value = 0;
-                
+                // 恢复为上一次设置的时间值，而不是重置为 0
+                // 如果还没有保存过值（用户还没有开始过计时），则保持当前值不变
+                if (item.LastHours > 0 || item.LastMinutes > 0 || item.LastSeconds > 0)
+                {
+                    item.Hours.Value = item.LastHours;
+                    item.Minutes.Value = item.LastMinutes;
+                    item.Seconds.Value = item.LastSeconds;
+                }
+                else
+                {
+                    // 如果从未开始过计时，保持默认值（默认5分钟）
+                    item.Hours.Value = 0;
+                    item.Minutes.Value = 5;
+                    item.Seconds.Value = 0;
+                }
             });
 
             this.RegisterEvent<StopTimerEvent>(evt =>
@@ -358,9 +389,19 @@ namespace BirdGame
                 item.Timer -= Time.fixedDeltaTime;
             }
 
-            item.Hours.Value = 0;
-            item.Minutes.Value = 0;
-            item.Seconds.Value = 0;
+            // 恢复为上一次设置的时间值，而不是重置为 0
+            if (item.LastHours > 0 || item.LastMinutes > 0 || item.LastSeconds > 0)
+            {
+                item.Hours.Value = item.LastHours;
+                item.Minutes.Value = item.LastMinutes;
+                item.Seconds.Value = item.LastSeconds;
+            }
+            else
+            {
+                item.Hours.Value = 0;
+                item.Minutes.Value = 0;
+                item.Seconds.Value = 0;
+            }
             this.GetModel<IClockModel>().TimerType = TimerType.None;
             this.GetModel<IClockModel>().TimerItem.TimerCoroutine = null;
             int coins = (int)(timer / 300 );
