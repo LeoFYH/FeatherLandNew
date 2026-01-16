@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using QFramework;
 using UnityEngine;
 using UnityEngine.EventSystems;
