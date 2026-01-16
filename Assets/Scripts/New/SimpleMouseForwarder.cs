@@ -555,6 +555,17 @@ namespace BirdGame
                                         result.gameObject.GetComponent<HookLegacyInputHandler>() == null)
                                     {
                                         shouldTriggerClickOnRelease = true;
+                                        
+                                        // Trigger pointer down event for button hold support in wallpaper mode
+                                        // This allows EventTrigger to receive PointerDown events
+                                        pointerData.pointerCurrentRaycast = result;
+                                        pointerData.pointerPressRaycast = result;
+                                        ExecuteEvents.Execute(result.gameObject, pointerData, ExecuteEvents.pointerDownHandler);
+                                        
+                                        if (instance.showDebugLog)
+                                        {
+                                            Debug.Log($"[SimpleMouseForwarder] 触发按钮 PointerDown: {result.gameObject.name}");
+                                        }
                                         break;
                                     }
                                 }
@@ -864,6 +875,52 @@ namespace BirdGame
                 else if (message == WM_LBUTTONUP)
                 {
                     bool wasDragging = isLeftMouseDragging;
+                    
+                    // Trigger pointer up event for buttons before handling click
+                    // This allows EventTrigger to receive PointerUp events for button hold support in wallpaper mode
+                    if (!wasDragging && shouldTriggerClickOnRelease && instance != null && instance.enableForwarding)
+                    {
+                        if (EventSystem.current != null)
+                        {
+                            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+                            {
+                                position = currentMousePosition,
+                                button = PointerEventData.InputButton.Left
+                            };
+                            var raycastResults = new System.Collections.Generic.List<RaycastResult>();
+                            EventSystem.current.RaycastAll(pointerData, raycastResults);
+                            
+                            // Check if mouse is still over a clickable element
+                            // Also check if it's still reasonably close to where mouse was pressed down
+                            float distanceFromDown = Vector2.Distance(currentMousePosition, mouseDownPosition);
+                            const float CLICK_DISTANCE_THRESHOLD = 50f; // Allow small movement (50 pixels) to still count as click
+                            
+                            if (distanceFromDown < CLICK_DISTANCE_THRESHOLD)
+                            {
+                                foreach (var result in raycastResults)
+                                {
+                                    Selectable selectable = result.gameObject.GetComponent<Selectable>();
+                                    if (selectable != null && selectable.interactable)
+                                    {
+                                        // Make sure it's not an input field
+                                        if (result.gameObject.GetComponent<HookTMPInputHandler>() == null &&
+                                            result.gameObject.GetComponent<HookLegacyInputHandler>() == null)
+                                        {
+                                            // Trigger pointer up event for button hold support
+                                            pointerData.pointerCurrentRaycast = result;
+                                            ExecuteEvents.Execute(result.gameObject, pointerData, ExecuteEvents.pointerUpHandler);
+                                            
+                                            if (instance.showDebugLog)
+                                            {
+                                                Debug.Log($"[SimpleMouseForwarder] 触发按钮 PointerUp: {result.gameObject.name}");
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     
                     // Trigger button click on mouse UP if it wasn't a drag and we should trigger click
                     // This ensures buttons are clicked when mouse is released, not when pressed down
