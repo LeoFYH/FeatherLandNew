@@ -21,7 +21,7 @@ namespace BirdGame
         
         public void Init(string price, Action onConfirmHandle)
         {
-            buyButton.GetComponentInChildren<TextMeshProUGUI>().text = price;
+            buyButton.GetComponentInChildren<TextMeshProUGUI>().text = $"${price}";
             onConfirm = onConfirmHandle;
         }
 

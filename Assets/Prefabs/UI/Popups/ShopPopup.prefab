@@ -444,6 +444,7 @@ MonoBehaviour:
   buyButton: {fileID: 1258756107422193919}
   priceText: {fileID: 4599692142151633698}
   itemPrefab: {fileID: 4328571397999659450}
+  uiButtonHoverScale: {fileID: 4781750963341343706}
 --- !u!1 &338307415628571214
 GameObject:
   m_ObjectHideFlags: 0
@@ -848,6 +849,8 @@ GameObject:
   - component: {fileID: 7298572098276960737}
   - component: {fileID: 1258756107422193919}
   - component: {fileID: 1129125117384817035}
+  - component: {fileID: 4781750963341343706}
+  - component: {fileID: 5678338098027523801}
   m_Layer: 0
   m_Name: BuyButton
   m_TagString: Click
@@ -981,6 +984,62 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4781750963341343706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 586656301537261642}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 0
+  hoverScale: 1.1
+  animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  showDebugInfo: 0
+  localizationKey: 
+  useLocalization: 1
+  checkUIRaycast: 1
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls: []
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 25
+  fontStyle: 0
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
+  cornerRadius: 10
+  isHovering: 0
+--- !u!114 &5678338098027523801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 586656301537261642}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd6896b629a14704bbcd02c1afc44e9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isLessCoin: 0
+  image: {fileID: 7298572098276960737}
 --- !u!1 &627649042615983484
 GameObject:
   m_ObjectHideFlags: 0
@@ -2655,6 +2714,7 @@ GameObject:
   - component: {fileID: 3841986187833465953}
   - component: {fileID: 3956215574946200453}
   - component: {fileID: 720056572724626791}
+  - component: {fileID: 3130049755328855867}
   m_Layer: 0
   m_Name: BuyButton
   m_TagString: Click
@@ -2818,6 +2878,20 @@ MonoBehaviour:
   backgroundPadding: {x: 10, y: 5}
   cornerRadius: 10
   isHovering: 0
+--- !u!114 &3130049755328855867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2007193476739605858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd6896b629a14704bbcd02c1afc44e9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isLessCoin: 0
+  image: {fileID: 4258393109275885206}
 --- !u!1 &2012419720480694172
 GameObject:
   m_ObjectHideFlags: 0
@@ -3370,6 +3444,7 @@ GameObject:
   - component: {fileID: 1269628065095347645}
   - component: {fileID: 7052295837936101544}
   - component: {fileID: 476600809736222836}
+  - component: {fileID: 216031476397479570}
   m_Layer: 0
   m_Name: BuyButton
   m_TagString: Click
@@ -3533,6 +3608,20 @@ MonoBehaviour:
   backgroundPadding: {x: 10, y: 5}
   cornerRadius: 10
   isHovering: 0
+--- !u!114 &216031476397479570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2318860924554549083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd6896b629a14704bbcd02c1afc44e9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isLessCoin: 0
+  image: {fileID: 5843035034273230030}
 --- !u!1 &2347776007372042270
 GameObject:
   m_ObjectHideFlags: 0
@@ -8189,7 +8278,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:

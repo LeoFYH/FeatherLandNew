@@ -18,8 +18,8 @@ namespace BirdGame
         public TMP_InputField sessionText;
         public TMP_InputField breakText;
         public TMP_InputField numberText;
-        public Button[] upButtons;
-        public Button[] downButtons;
+        public AddButton[] upButtons;
+        public AddButton[] downButtons;
         public Button refreshButton;
         public Button startButton;
         public GameObject startView;
@@ -812,7 +812,7 @@ namespace BirdGame
             }
         }
 
-        private void AddButtonHoldSupport(Button button, int index, bool isUpButton)
+        private void AddButtonHoldSupport(AddButton button, int index, bool isUpButton)
         {
             var eventTrigger = button.gameObject.GetComponent<EventTrigger>();
             if (eventTrigger == null)

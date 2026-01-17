@@ -28,6 +28,8 @@ namespace BirdGame
         public LocalizationText toolsToggleText;
         public LocalizationText saleBirdToggleText;
 
+        private GameObject lastOpenObj;
+
         private void Start()
         {
             // 设置标签文本的本地化key
@@ -69,7 +71,9 @@ namespace BirdGame
             {
                 eggContent.SetActive(isOn);
                 if (isOn)
+                {
                     barImage.sprite = eggBar;
+                }
             });
             decorationToggle.onValueChanged.AddListener(isOn =>
             {
@@ -83,7 +87,30 @@ namespace BirdGame
                 if (isOn)
                     barImage.sprite = normalBar;
             });
-            saleBirdToggle.onValueChanged.AddListener(isOn => { saleBirdContent.SetActive(isOn); });
+            saleBirdToggle.onValueChanged.AddListener(isOn =>
+            {
+                saleBirdContent.SetActive(isOn);
+                if (isOn)
+                {
+                    if (eggContent.activeSelf)
+                        lastOpenObj = eggContent;
+                    else if (decorationContent.activeSelf)
+                        lastOpenObj = decorationContent;
+                    else
+                        lastOpenObj = toolsContent;
+                    lastOpenObj.SetActive(false);
+                }
+                else
+                {
+                    if(lastOpenObj != null)
+                        lastOpenObj.SetActive(true);
+                    else
+                    {
+                        eggToggle.isOn = true;
+                        eggContent.SetActive(true);
+                    }
+                }
+            });
 
             StartCoroutine(InitDelay());
         }

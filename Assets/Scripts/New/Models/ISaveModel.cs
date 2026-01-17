@@ -172,7 +172,11 @@ namespace BirdGame
     [Serializable]
     public class ScheduleData : SavableData
     {
-        public List<ScheduleItemData> scheduleList = new List<ScheduleItemData>();
+        public List<ScheduleItemData> scheduleList = new List<ScheduleItemData>(){new ScheduleItemData()
+        {
+            isCompleted =  false,
+            scheduleText = ""
+        }};
     }
 
     /// <summary>

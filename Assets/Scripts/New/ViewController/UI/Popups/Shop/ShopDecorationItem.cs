@@ -56,19 +56,28 @@ namespace BirdGame
             int totalCount = decorationItem.fixedPositions.Length;
             int currentCount = decorationInfo.usedFixedPositionIndices.Count;
             priceText.text = $"${price}";
-            if (price <= this.GetModel<IAccountModel>().Coins.Value)
+            buyButton.targetGraphic.color = Color.white;
+
+            if (currentCount >= totalCount)
             {
-                buyButton.interactable = currentCount < totalCount;
-                if (currentCount >= totalCount)
-                {
-                    priceText.text = this.GetSystem<ILocalizationSystem>().GetString("Purchased");
-                }
+                buyButton.interactable = false;
+                priceText.text = this.GetSystem<ILocalizationSystem>().GetString("Purchased");
+                buyButton.targetGraphic.color = new Color32(159, 159, 159, 255);
+                buyButton.GetComponent<HoverButton>().isLessCoin = false;
+            }
+            else if (price <= this.GetModel<IAccountModel>().Coins.Value)
+            {
+                buyButton.interactable = true;
+                buyButton.targetGraphic.color = Color.white;
                 uiButtonHoverScale.localizationKey =$"{this.GetSystem<ILocalizationSystem>().GetString("Hold")}: {currentCount}/{totalCount}";
+                buyButton.GetComponent<HoverButton>().isLessCoin = false;
             }
             else
             {
                 uiButtonHoverScale.localizationKey = "Insufficient coins";
                 buyButton.interactable = false;
+                buyButton.targetGraphic.color = Color.white;
+                buyButton.GetComponent<HoverButton>().isLessCoin = true;
             }
         }
 

@@ -147,6 +147,7 @@
     <Compile Include="Assets\Scripts\New\ViewController\Game\AtlasManager.cs" />
     <Compile Include="Assets\Scripts\New\SimpleMouseForwarder.cs" />
     <Compile Include="Assets\Scripts\New\Commands\StopOtherTimerCommand.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Shop\HoverControl.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\InputProxy.cs" />
     <Compile Include="Assets\Scripts\New\Events\TimerOverEvent.cs" />
     <Compile Include="Assets\Scripts\New\Systems\IGameSystem.cs" />
@@ -230,6 +231,7 @@
     <Compile Include="Assets\Scripts\FSM\StateMachine.cs" />
     <Compile Include="Assets\Scripts\New\Events\ChangeTimeViewEvent.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\GameEntry.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Shop\HoverButton.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\ExitButton.cs" />
     <Compile Include="Assets\Scripts\UI\NumPanel.cs" />
     <Compile Include="Assets\Scripts\New\Models\IAccountModel.cs" />
@@ -265,6 +267,7 @@
     <Compile Include="Assets\Scripts\New\ViewController\UI\MapInfo.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\HatchingBirdPopup.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\PointerEvent.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Clock\AddButton.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Radio\EnvironmentViewController.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Note\NoteItem.cs" />
     <None Include="Assets\QFramework\Framework\PackageVersion.json" />

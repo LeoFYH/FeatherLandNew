@@ -8,4 +8,9 @@
     public struct RefreshSaleBirdEvent
     {
     }
+
+    public struct EnableHoverEvent
+    {
+        public bool enabled;
+    }
 }

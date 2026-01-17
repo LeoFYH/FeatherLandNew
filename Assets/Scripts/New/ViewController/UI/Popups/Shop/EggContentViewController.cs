@@ -13,6 +13,7 @@ namespace BirdGame
         public Button buyButton;
         public TextMeshProUGUI priceText;
         public GameObject itemPrefab;
+        public UIButtonHoverScale uiButtonHoverScale;
 
         private IGameModel gameModel;
         private IConfigModel configModel;
@@ -45,8 +46,12 @@ namespace BirdGame
                 {
                     items[i].uiEffect.enabled = i == v;
                 }
+                UpdateHoverScale();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
-            
+            this.GetModel<IAccountModel>().Coins.Register(v =>
+            {
+                UpdateHoverScale();
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
             buyButton.onClick.AddListener(() =>
             {
                 // Prevent double-clicking by checking if already processing
@@ -76,8 +81,7 @@ namespace BirdGame
                 int price = configModel.ShopConfig.sceneEggs[mapIndex].eggs[gameModel.ShopEggSelectIndex.Value].price;
                 if (price <= this.GetModel<IAccountModel>().Coins.Value)
                 {
-                    this.GetSystem<IUISystem>().ShowBuyConfirm(() =>
-                    {
+                    
                         this.GetModel<IAccountModel>().Coins.Value -= price;
                         this.SendCommand<CreateBirdCommand>();
                         // 统一通过事件关闭商店，确保 shopButton 状态同步
@@ -85,7 +89,6 @@ namespace BirdGame
                         // Reset flag after purchase completes (though shop will close)
                         isProcessingPurchase = false;
                         buyButton.interactable = true;
-                    });
                     // Re-enable button after confirmation dialog is shown (using coroutine to ensure popup is displayed)
                     StartCoroutine(ReEnableButtonAfterDelay());
                 }
@@ -109,6 +112,27 @@ namespace BirdGame
             }
 
             items[gameModel.ShopEggSelectIndex.Value].uiEffect.enabled = true;
+            UpdateHoverScale();
+        }
+
+        private void UpdateHoverScale()
+        {
+            gameModel = this.GetModel<IGameModel>();
+            configModel = this.GetModel<IConfigModel>();
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            if (configModel.ShopConfig.sceneEggs[mapIndex].eggs[gameModel.ShopEggSelectIndex.Value].price >
+                this.GetModel<IAccountModel>().Coins.Value)
+            {
+                buyButton.interactable = false;
+                buyButton.GetComponent<HoverButton>().isLessCoin = true;
+                uiButtonHoverScale.localizationKey = "Insufficient coins";
+            }
+            else
+            {
+                buyButton.GetComponent<HoverButton>().isLessCoin = false;
+                buyButton.interactable = true;
+                uiButtonHoverScale.localizationKey = "Buy 1?";
+            }
         }
 
         private System.Collections.IEnumerator ReEnableButtonAfterDelay()

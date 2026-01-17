@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using NUnit.Framework;
+﻿using System.Collections.Generic;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -61,7 +59,7 @@ namespace BirdGame
                 string str1 = this.GetSystem<ILocalizationSystem>().GetString("Upgrade forest bird capacity to");
                 string str2 = this.GetSystem<ILocalizationSystem>().GetString("Current bird capacity");
                 description.SetKey(
-                    $"{str1} {item.selections[gameModel.SelectedToolDic[index].Value].selectionName}.\n<i>{str2}:{current}</i>");
+                    $"<i>{str2}:{current}</i>");
                 selectName.SetKey("Capacity Upgrade");
             }
             else
@@ -99,18 +97,21 @@ namespace BirdGame
                 {
                     // 已装备：显示"equipped"
                     priceText.SetKey("equipped");
+                    buyButton.targetGraphic.color = new Color32(159,159,159,255);
                     buyButton.interactable = false;
                 }
                 else if (isInitialPurchased)
                 {
                     // 已购买但未装备：显示"equip"
                     priceText.SetKey("equip");
+                    buyButton.targetGraphic.color =Color.white;
                 }
                 else
                 {
                     // 未购买：显示价格
                     priceText.ThisText.text = $"${item.selections[gameModel.SelectedToolDic[index].Value].price}";
                     buyButton.interactable = true;
+                    buyButton.targetGraphic.color =Color.white;
                 }
 
                 for (int i = 0; i < item.selections.Length; i++)
@@ -134,11 +135,13 @@ namespace BirdGame
                 if (isInitialPurchased)
                 {
                     priceText.SetKey("Purchased");
+                    buyButton.targetGraphic.color = new Color32(159, 159, 159, 255);
                     buyButton.enabled = false;
                 }
                 else
                 {
 
+                    buyButton.targetGraphic.color =Color.white;
                     buyButton.enabled = true;
                     priceText.ThisText.text = $"${item.selections[gameModel.SelectedToolDic[index].Value].price}";
                 }
@@ -182,11 +185,11 @@ namespace BirdGame
                     {
                         string str1 = this.GetSystem<ILocalizationSystem>().GetString(selectedTool.descriptionKey);
                         string str2 = this.GetSystem<ILocalizationSystem>().GetString(selectedTool.description);
-                        description.ThisText.text = $"{str1}";
+                        //description.ThisText.text = $"{str1}";
                     }
                     else
                     {
-                        description.SetKey(selectedTool.description);
+                        //description.SetKey(selectedTool.description);
                     }
                 }
                 else
@@ -198,7 +201,7 @@ namespace BirdGame
                         .GetString("Upgrade forest bird capacity to");
                     string str2 = this.GetSystem<ILocalizationSystem>().GetString("Current bird capacity");
                     description.SetKey(
-                        $"{str1} {item.selections[gameModel.SelectedToolDic[index].Value].selectionName}.\n<i>{str2}:{current}</i>");
+                        $"<i>{str2}:{current}</i>");
                 }
 
                 if (item.selections[0].type == ToolType.Food)
@@ -216,18 +219,21 @@ namespace BirdGame
                         // 已装备：显示"equipped"
                         priceText.SetKey("equipped");
                         buyButton.interactable = false;
+                        buyButton.targetGraphic.color = new Color32(159, 159, 159, 255);
                     }
                     else if (isPurchased)
                     {
                         // 已购买但未装备：显示"equip"
                         priceText.SetKey("equip");
                         buyButton.interactable = true;
+                        buyButton.targetGraphic.color = Color.white;
                     }
                     else
                     {
                         // 未购买：显示价格
                         priceText.ThisText.text = $"${selectedTool.price}";
                         buyButton.interactable = true;
+                        buyButton.targetGraphic.color = Color.white;
                     }
                 }
                 else if (item.selections[0].type == ToolType.BirdMaxCount)
@@ -237,11 +243,13 @@ namespace BirdGame
                     {
                         priceText.SetKey("Purchased");
                         buyButton.enabled = false;
+                        buyButton.targetGraphic.color = new Color32(159, 159, 159, 255);
                     }
                     else
                     {
                         priceText.ThisText.text = $"${selectedTool.price}";
                         buyButton.enabled = true;
+                        buyButton.targetGraphic.color = Color.white;
                     }
                 }
 
@@ -362,15 +370,19 @@ namespace BirdGame
                     priceText.SetKey("equipped");
                     buyButton.interactable = false;
                     uiButtonHoverScale.enabled = true;
+                    buyButton.targetGraphic.color = new Color32(159, 159, 159, 255);
                     uiButtonHoverScale.localizationKey = "hasbuy";
+                    buyButton.GetComponent<HoverButton>().isLessCoin = false;
                 }
                 else if (isInitialPurchased)
                 {
                     // 已购买但未装备：显示"equip"
                     priceText.SetKey("equip");
                     buyButton.interactable = true;
+                    buyButton.targetGraphic.color = Color.white;
                     uiButtonHoverScale.enabled = true;
                     uiButtonHoverScale.localizationKey = "hasbuy";
+                    buyButton.GetComponent<HoverButton>().isLessCoin = false;
                 }
                 else
                 {
@@ -381,13 +393,17 @@ namespace BirdGame
                     {
                         uiButtonHoverScale.enabled = true;
                         uiButtonHoverScale.localizationKey = "Insufficient coins";
+                        buyButton.GetComponent<HoverButton>().isLessCoin = true;
                         buyButton.interactable = false;
+                        buyButton.targetGraphic.color = new Color32(159, 159, 159, 255);
                     }
                     else
                     {
+                        buyButton.GetComponent<HoverButton>().isLessCoin = false;
                         uiButtonHoverScale.enabled = true;
                         uiButtonHoverScale.localizationKey = "can buy";
                         buyButton.interactable = true;
+                        buyButton.targetGraphic.color = Color.white;
                     }
 
                 }
@@ -405,7 +421,9 @@ namespace BirdGame
                 {
                     priceText.SetKey("Purchased");
                     buyButton.enabled = false;
+                    buyButton.targetGraphic.color = new Color32(159, 159, 159, 255);
                     uiButtonHoverScale.enabled = true;
+                    buyButton.GetComponent<HoverButton>().isLessCoin = false;
                     uiButtonHoverScale.localizationKey = "hasbuy";
                 }
                 else
@@ -417,12 +435,16 @@ namespace BirdGame
                         uiButtonHoverScale.enabled = true;
                         uiButtonHoverScale.localizationKey = "Insufficient coins";
                         buyButton.interactable = false;
+                        buyButton.GetComponent<HoverButton>().isLessCoin = true;
+                        buyButton.targetGraphic.color = new Color32(159, 159, 159, 255);
                     }
                     else
                     {
                         uiButtonHoverScale.enabled = true;
                         uiButtonHoverScale.localizationKey = "can buy";
                         buyButton.interactable = true;
+                        buyButton.GetComponent<HoverButton>().isLessCoin = false;
+                        buyButton.targetGraphic.color = Color.white;
                     }
                 }
             }
@@ -532,19 +554,19 @@ namespace BirdGame
                     {
                         // 设置当前食物类型
                         saveModel.AccountData.tools[itemIndex].equipedId = selectedToolIndex;
-                        string text = this.GetSystem<ILocalizationSystem>().GetString("Food skin equipped:");
-                        string equipName = this.GetSystem<ILocalizationSystem>()
-                            .GetString(selectedTool.selectionName);
-                        this.GetSystem<IUISystem>().ShowPrompt($"{text} {equipName}");
+                        // string text = this.GetSystem<ILocalizationSystem>().GetString("Food skin equipped:");
+                        // string equipName = this.GetSystem<ILocalizationSystem>()
+                        //     .GetString(selectedTool.selectionName);
+                        // this.GetSystem<IUISystem>().ShowPrompt($"{text} {equipName}");
                         //this.GetSystem<IUISystem>().ShowPrompt($"{text} {selectedTool.selectionName}");
                     }
                     else if (toolItem.name.ToLower() == "cursor")
                     {
                         // 应用光标类型
-                        string text = this.GetSystem<ILocalizationSystem>().GetString("Cursor skin equipped:");
-                        string equipName = this.GetSystem<ILocalizationSystem>()
-                            .GetString(selectedTool.selectionName);
-                        this.GetSystem<IUISystem>().ShowPrompt($"{text} {equipName}");
+                        // string text = this.GetSystem<ILocalizationSystem>().GetString("Cursor skin equipped:");
+                        // string equipName = this.GetSystem<ILocalizationSystem>()
+                        //     .GetString(selectedTool.selectionName);
+                        // this.GetSystem<IUISystem>().ShowPrompt($"{text} {equipName}");
                         //this.GetSystem<IUISystem>().ShowPrompt($"{text} {selectedTool.selectionName}");
                     }
 
