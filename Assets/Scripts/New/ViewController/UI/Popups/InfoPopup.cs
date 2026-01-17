@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using DG.Tweening;
 using QFramework;
 using TMPro;
@@ -389,14 +390,14 @@ namespace BirdGame
             }
 
             incomeText.text =
-                $"${(data.bird.isSmall ? data.individualEarningSmall : data.individualEarningBig):F1}/{this.GetSystem<ILocalizationSystem>().GetString("min")}";
+                $"${(data.bird.isSmall ? data.individualEarningSmall : data.individualEarningBig).ToString("F1", CultureInfo.InvariantCulture)}/{this.GetSystem<ILocalizationSystem>().GetString("min")}";
             //incomeText.text = "$" + data.individualEarningBig.ToString("F1") + this.GetSystem<ILocalizationSystem>().GetString("min");
-            priceText.text = "$" + price.ToString("F1");
+            priceText.text = "$" + price.ToString("F1", CultureInfo.InvariantCulture);
             this.RegisterEvent<ChangeLanguageEvent>(evt =>
             {
                 incomeText.text =
-                    $"${(data.bird.isSmall ? data.individualEarningSmall : data.individualEarningBig):F1}{this.GetSystem<ILocalizationSystem>().GetString("min")}";
-                priceText.text = "$" + price.ToString("F1");
+                    $"${(data.bird.isSmall ? data.individualEarningSmall : data.individualEarningBig).ToString("F1", CultureInfo.InvariantCulture)}{this.GetSystem<ILocalizationSystem>().GetString("min")}";
+                priceText.text = "$" + price.ToString("F1", CultureInfo.InvariantCulture);
                 string birdNameKey = this.GetModel<IConfigModel>().BirdConfig.GetBirdNameKey(data.birdType, mapIndex);
             
                 // 使用本地化系统获取翻译
