@@ -37,6 +37,7 @@ namespace BirdGame
             {
                 capacityText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Total Capacity")}:";
                 coinsPerMinuteText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Coins per minute")}:";
+                RefreshName();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
             mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;

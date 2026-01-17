@@ -17,11 +17,29 @@ namespace BirdGame
         public TMP_InputField dayText;  // 改为TMP_InputField
         public Button closeButton;
         public RectTransform bar;
-        private static Vector2 barPos = new Vector2(395f, 83.4f);
-        
+        private static Vector2 barPos = new Vector2(10000, 10000);
+        private static float barScale = 0;
+       
         private void Start()
         {
-            bar.anchoredPosition = barPos;
+            if (barPos == new Vector2(10000, 10000))
+            {
+                barPos = bar.anchoredPosition;
+            }
+            else
+            {
+                bar.anchoredPosition = barPos;
+            }
+
+            if (barScale == 0)
+            {
+                barScale = bar.localScale.x;
+            }
+            else
+            {
+                bar.localScale = new Vector3(barScale, barScale, 1);
+            }
+
             scheduleToggle.onClick.AddListener(() =>
             {
                 scheduleBar.SetActive(true);
@@ -78,6 +96,7 @@ namespace BirdGame
         private void OnDestroy()
         {
             barPos = bar.anchoredPosition;
+            barScale = bar.localScale.x;
         }
 
         /// <summary>

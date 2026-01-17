@@ -21,7 +21,7 @@ namespace BirdGame
             if (target == null)
                 target = GetComponent<RectTransform>();
         }
-
+        
         public void OnBeginDrag(PointerEventData eventData)
         {
             if (isDraggingFromHook) return; // 如果正在从钩子拖动，忽略EventSystem事件

@@ -1,4 +1,5 @@
-﻿using QFramework;
+﻿using System.Collections.Generic;
+using QFramework;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,6 +10,7 @@ namespace BirdGame
     {
         public TextMeshProUGUI songNameText;
         public GameObject lightOn;
+        public Toggle likeToggle;
         private int songIndex;
 
         private void Start()
@@ -31,6 +33,21 @@ namespace BirdGame
             songIndex = index;
             songNameText.text = $"{index + 1}. {songName}";
             lightOn.SetActive(this.GetModel<IRadioModel>().SongIndex == songIndex);
+            if (this.GetModel<ISaveModel>().MusicSettingData.likes == null)
+            {
+                this.GetModel<ISaveModel>().MusicSettingData.likes = new List<bool>();
+            }
+
+            while (this.GetModel<ISaveModel>().MusicSettingData.likes.Count <= index)
+            {
+                this.GetModel<ISaveModel>().MusicSettingData.likes.Add(false);
+            }
+
+            likeToggle.isOn = this.GetModel<ISaveModel>().MusicSettingData.likes[index];
+            likeToggle.onValueChanged.AddListener(isOn =>
+            {
+                this.GetModel<ISaveModel>().MusicSettingData.likes[index] = isOn;
+            });
         }
     }
 }

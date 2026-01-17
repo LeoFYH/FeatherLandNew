@@ -40,6 +40,7 @@ namespace BirdGame
         private RectTransform quitRect;
         private RectTransform languageRect;
         private bool isChangingMode = false; // 防止键盘切换时触发onValueChanged导致循环
+        private Canvas canvas;
         
         public void onClick()
         {
@@ -181,15 +182,18 @@ namespace BirdGame
             {
                 this.GetSystem<IUISystem>().SendEvent<OnSettingCloseEvent>();
             });
-            
+            canvas = GetComponent<Canvas>();
             // 添加清除存档按钮的点击监听器
             if (clearSaveButton != null)
             {
                 clearSaveButton.onClick.AddListener(() =>
                 {
+                    canvas.sortingOrder = 9;
                     this.GetSystem<IUISystem>().ShowConfirm("Are you sure you want to delete this save file?",
                         () =>
                         {
+                            canvas.sortingOrder = 10;
+                            this.GetSystem<IGameSystem>().SendEvent<DestroyEggEvent>();
                             this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
                             onClick(); // 调用清除存档功能
                         });

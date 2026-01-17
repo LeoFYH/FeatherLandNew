@@ -1,4 +1,5 @@
-﻿using QFramework;
+﻿using System;
+using QFramework;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -12,10 +13,30 @@ namespace BirdGame
         public Button deleteButton;
 
         public Button closeButton;
+        public RectTransform bar;
+        private static Vector2 barPos = new Vector2(10000, 10000);
+        private static float barScale = 0;
         // public GameObject musicView;
         // public GameObject environmentView;
         private void Start()
         {
+            if (barPos == new Vector2(10000, 10000))
+            {
+                barPos = bar.anchoredPosition;
+            }
+            else
+            {
+                bar.anchoredPosition = barPos;
+            }
+
+            if (barScale == 0)
+            {
+                barScale = bar.localScale.x;
+            }
+            else
+            {
+                bar.localScale = new Vector3(barScale, barScale, 1);
+            }
             var radioModel = this.GetModel<IRadioModel>();
             var saveModel = this.GetModel<ISaveModel>();
             
@@ -109,6 +130,13 @@ namespace BirdGame
             }
             
             Debug.Log("=====================================");
+        }
+
+
+        private void OnDestroy()
+        {
+            barPos = bar.anchoredPosition;
+            barScale = bar.localScale.x;
         }
     }
 }

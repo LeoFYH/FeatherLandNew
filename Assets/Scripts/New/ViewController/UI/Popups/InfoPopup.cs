@@ -388,14 +388,34 @@ namespace BirdGame
                 price = data.individualPriceBig;
             }
 
-            incomeText.text = "$" + data.individualEarningBig.ToString("F1") + this.GetSystem<ILocalizationSystem>().GetString("min");
+            incomeText.text =
+                $"${(data.bird.isSmall ? data.individualEarningSmall : data.individualEarningBig):F1}/{this.GetSystem<ILocalizationSystem>().GetString("min")}";
+            //incomeText.text = "$" + data.individualEarningBig.ToString("F1") + this.GetSystem<ILocalizationSystem>().GetString("min");
             priceText.text = "$" + price.ToString("F1");
+            this.RegisterEvent<ChangeLanguageEvent>(evt =>
+            {
+                incomeText.text =
+                    $"${(data.bird.isSmall ? data.individualEarningSmall : data.individualEarningBig):F1}{this.GetSystem<ILocalizationSystem>().GetString("min")}";
+                priceText.text = "$" + price.ToString("F1");
+                string birdNameKey = this.GetModel<IConfigModel>().BirdConfig.GetBirdNameKey(data.birdType, mapIndex);
             
+                // 使用本地化系统获取翻译
+                string birdNameText = this.GetSystem<ILocalizationSystem>().GetString(birdNameKey);
+                if (string.IsNullOrEmpty(birdNameText))
+                {
+                    birdNameText = birdNameKey; // 如果本地化没有找到，使用原始key作为显示文本
+                }
+            
+                // 更新文本和字体
+                birdName.text = birdNameText;
+                
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
             saleButton.onClick.AddListener(() =>
             {
                 this.GetModel<IAccountModel>().Coins.Value += price;
                 this.GetModel<IBirdModel>().RemoveBird(index);
                 this.GetSystem<IUISystem>().HidePopup(UIPopup.InfoPopup);
+                this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
             });
             closeButton.onClick.AddListener(() =>
             {

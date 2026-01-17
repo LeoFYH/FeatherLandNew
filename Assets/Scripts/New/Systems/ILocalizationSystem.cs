@@ -102,6 +102,8 @@ namespace BirdGame
         {
             var config = this.GetModel<IConfigModel>().LocalizationConfig;
             var currentLanguage = this.GetModel<ISaveModel>().SettingData.gameLanguage;
+            if (!config.languageDic.ContainsKey(currentLanguage))
+                return null;
             return config.languageDic[currentLanguage].fontAsset;
         }
 

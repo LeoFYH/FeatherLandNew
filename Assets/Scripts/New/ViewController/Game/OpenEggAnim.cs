@@ -19,6 +19,10 @@ namespace BirdGame
 
         private void Start()
         {
+            this.RegisterEvent<DestroyEggEvent>(evt =>
+            {
+                Destroy(gameObject);
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
             this.RegisterEvent<OnMaskClickEvent>(evt =>
             {
                 if (canWait)
