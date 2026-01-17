@@ -158,6 +158,7 @@ namespace BirdGame
 
         private void Start()
         {
+            this.GetModel<IGameModel>().IsSettingOpen = true;
             deleteRect = clearSaveButton.GetComponent<RectTransform>();
             tutorialRect = tutorialButton.GetComponent<RectTransform>();
             quitRect = quitButton.GetComponent<RectTransform>();
@@ -193,6 +194,8 @@ namespace BirdGame
                         () =>
                         {
                             canvas.sortingOrder = 10;
+                            this.GetModel<IBirdModel>().UnopenEggs = 0;
+                            this.GetSystem<IUISystem>().HideMask();
                             this.GetSystem<IGameSystem>().SendEvent<DestroyEggEvent>();
                             this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
                             onClick(); // 调用清除存档功能
@@ -411,6 +414,11 @@ namespace BirdGame
             }
             int index = languages.IndexOf(currentLanguage);
             languageDropdown.value = index;
+        }
+
+        private void OnDestroy()
+        {
+            this.GetModel<IGameModel>().IsSettingOpen = false;
         }
     }
 }

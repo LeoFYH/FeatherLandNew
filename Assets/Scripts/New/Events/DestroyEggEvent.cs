@@ -4,4 +4,8 @@
     {
         
     }
+
+    public struct RefreshSaleBirdEvent
+    {
+    }
 }

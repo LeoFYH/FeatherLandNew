@@ -90,6 +90,9 @@ namespace BirdGame
 
         public void OnClick()
         {
+            if(this.GetModel<IGameModel>().IsSettingOpen)
+                return;
+            
             this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Hatch);
             SpawnBird();
 

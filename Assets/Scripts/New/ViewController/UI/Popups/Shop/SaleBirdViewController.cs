@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using DG.Tweening;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -126,6 +127,10 @@ namespace BirdGame
                 this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
             });
             RefreshButtons();
+            this.RegisterEvent<RefreshSaleBirdEvent>(evt =>
+            {
+                RefreshBirdList();
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
         }
 
         private void RefreshName()
@@ -299,7 +304,10 @@ namespace BirdGame
             
             RefreshBirdList();
             RefreshName();  // 刷新容量显示
-            this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
+            DOTween.Sequence().AppendCallback(() =>
+            {
+                this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
+            }).SetDelay(0.5f);
         }
     }
 }

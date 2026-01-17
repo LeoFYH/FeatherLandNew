@@ -334,7 +334,7 @@ namespace BirdGame
                     UIPopup.IllustratedPopup, UIPopup.AlertPopup, UIPopup.MouseMenu, 
                     UIPopup.TutorialPopup, UIPopup.ThanksPopup, UIPopup.MapPopup, 
                     UIPopup.BuyConfirmPopup, UIPopup.HatchingBirdPopup, UIPopup.ExitConfirmPopup, 
-                    UIPopup.BuyFailPopup, UIPopup.AddCoinPopup, UIPopup.ConfirmPopup
+                    UIPopup.BuyFailPopup, UIPopup.AddCoinPopup
                 };
                 
                 foreach (var popup in allPopups)
