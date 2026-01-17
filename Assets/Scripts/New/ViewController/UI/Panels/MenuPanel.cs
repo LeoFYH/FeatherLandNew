@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using System.Globalization;
 using DG.Tweening;
 using QFramework;
 using TMPro;
@@ -362,10 +363,10 @@ namespace BirdGame
             content.anchoredPosition = new Vector2(400, 0);
             
             var accountModel = this.GetModel<IAccountModel>();
-            coinsNum.text = $"{accountModel.Coins.Value:F1}";
+            coinsNum.text = accountModel.Coins.Value.ToString("F1", CultureInfo.InvariantCulture);
             accountModel.Coins.Register(v =>
             {
-                coinsNum.text = $"{v:F1}";;
+                coinsNum.text = v.ToString("F1", CultureInfo.InvariantCulture);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
             //weatherIcon.sprite = weatherSps[this.GetModel<IGameModel>().WeatherIndex.Value];

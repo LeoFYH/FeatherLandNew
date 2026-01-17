@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -179,8 +180,8 @@ namespace BirdGame
                 rarityText.SetKey(birdInfo.reality);
                 if (this.GetModel<IConfigModel>().BirdConfig.colorSettings.ContainsKey(birdInfo.reality))
                     rarityText.ThisText.color = this.GetModel<IConfigModel>().BirdConfig.colorSettings[birdInfo.reality];
-                earningText.text = $"${birdInfo.eraningForSmall:F1}/${birdInfo.eraningForBig:F1}";//birdInfo.eraningForBig.ToString("F1");
-                priceText.text = $"${birdInfo.priceForBig:F1}";//birdInfo.priceForBig.ToString("F1");
+                earningText.text = $"${birdInfo.eraningForSmall.ToString("F1", CultureInfo.InvariantCulture)}/${birdInfo.eraningForBig.ToString("F1", CultureInfo.InvariantCulture)}";//birdInfo.eraningForBig.ToString("F1");
+                priceText.text = $"${birdInfo.priceForBig.ToString("F1", CultureInfo.InvariantCulture)}";//birdInfo.priceForBig.ToString("F1");
                 descriptionText.SetKey(birdInfo.description);
                 habitatText.SetKey(birdInfo.habitat);
             }
