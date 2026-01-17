@@ -83,6 +83,7 @@ namespace BirdGame
                 }
                 
                 PlayerPrefs.DeleteAll();
+                this.GetModel<ISaveModel>().SettingData.gameLanguage = SystemLanguage.English;
                 
                 // 清空内存中的数据
                this.GetSystem<ISaveSystem>().InitData();

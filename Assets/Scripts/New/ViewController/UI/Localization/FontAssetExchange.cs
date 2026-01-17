@@ -25,7 +25,9 @@ namespace BirdGame
 
         private void ChangeFont()
         {
-            thisText.font = this.GetSystem<ILocalizationSystem>().GetFontAsset();
+            var font = this.GetSystem<ILocalizationSystem>().GetFontAsset();
+            if (font != null)
+                thisText.font = font;
             thisText.ForceMeshUpdate();
         }
     }
