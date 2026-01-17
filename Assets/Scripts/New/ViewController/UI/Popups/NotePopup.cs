@@ -16,9 +16,12 @@ namespace BirdGame
         public GameObject diaryBar;
         public TMP_InputField dayText;  // 改为TMP_InputField
         public Button closeButton;
+        public RectTransform bar;
+        private static Vector2 barPos = new Vector2(395f, 83.4f);
         
         private void Start()
         {
+            bar.anchoredPosition = barPos;
             scheduleToggle.onClick.AddListener(() =>
             {
                 scheduleBar.SetActive(true);
@@ -71,7 +74,12 @@ namespace BirdGame
             scheduleToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-131.9f, 367.1f);
             diaryToggle.GetComponent<RectTransform>().anchoredPosition = new Vector2(21.6f, 386f);
         }
-        
+
+        private void OnDestroy()
+        {
+            barPos = bar.anchoredPosition;
+        }
+
         /// <summary>
         /// 处理day text编辑完成事件
         /// </summary>

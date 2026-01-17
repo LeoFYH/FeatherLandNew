@@ -51,7 +51,13 @@ namespace BirdGame
 
         private void Start()
         {
-            ((Text)scheduleInput.placeholder).text = this.GetSystem<ILocalizationSystem>().GetString("EnterText");
+            ((TextMeshProUGUI)scheduleInput.placeholder).text = this.GetSystem<ILocalizationSystem>().GetString("EnterText");
+            this.RegisterEvent<ChangeLanguageEvent>(evt =>
+            {
+                ((TextMeshProUGUI)scheduleInput.placeholder).text =
+                    this.GetSystem<ILocalizationSystem>().GetString("EnterText");
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            
             markToggle.onValueChanged.AddListener(isOn =>
             {
                 if (isOn)

@@ -46,12 +46,12 @@ namespace BirdGame
             }
         }
 
-        public void OnCloseClick()
+        private void OnCloseClick()
         {
             this.GetSystem<IUISystem>().HidePopup(UIPopup.BuyConfirmPopup);
         }
 
-        public void OnBuyClick()
+        private void OnBuyClick()
         {
             DOTween.Sequence().AppendCallback(() =>
             {

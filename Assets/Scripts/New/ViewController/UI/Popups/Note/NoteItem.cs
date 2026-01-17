@@ -34,6 +34,11 @@ namespace BirdGame
 
         private void Start()
         {
+            this.RegisterEvent<ChangeLanguageEvent>(evt =>
+            {
+                titleText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("BOOK")}{noteIndex + 1}";
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            
             thisToggle.onValueChanged.AddListener(isOn =>
             {
                 if (isOn)

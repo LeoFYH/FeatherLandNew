@@ -375,7 +375,16 @@ namespace BirdGame
             //     Debug.Log(value);
             // }
             var currentLanguage = this.GetModel<ISaveModel>().SettingData.gameLanguage;
-            
+            if (currentLanguage == SystemLanguage.Unknown)
+            {
+                currentLanguage = this.GetSystem<ISteamSystem>().GetUserLanguage();
+            }
+
+            if (currentLanguage != SystemLanguage.ChineseSimplified && currentLanguage != SystemLanguage.English)
+            {
+                currentLanguage = SystemLanguage.English;
+            }
+
             string value = this.GetSystem<ILocalizationSystem>().GetString("English");
             languageDropdown.options.Add(new TMP_Dropdown.OptionData(value,itemSprite, Color.white));
             value = this.GetSystem<ILocalizationSystem>().GetString("Chinese");

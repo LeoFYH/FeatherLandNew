@@ -24,13 +24,19 @@ namespace BirdGame
         private bool isEnter;
         private bool mouseWasOverButton = false;
         private bool isHovering = false;
-        
+
         public void Init(int index, Vector2 position)
         {
             mapIndex = index;
-            mapText.text = this.GetSystem<ILocalizationSystem>().GetString(this.GetModel<IConfigModel>().MapConfig.maps[index].mapName);
+            mapText.text = this.GetSystem<ILocalizationSystem>()
+                .GetString(this.GetModel<IConfigModel>().MapConfig.maps[index].mapName);
             GetComponent<RectTransform>().anchoredPosition = position;
-            
+            this.RegisterEvent<ChangeLanguageEvent>(evt =>
+            {
+                mapText.text = this.GetSystem<ILocalizationSystem>()
+                    .GetString(this.GetModel<IConfigModel>().MapConfig.maps[index].mapName);
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
             // 依次解锁显示逻辑：
             var saveModel = this.GetModel<ISaveModel>();
             int purchasedMapCount = saveModel.BirdInfoData.mapBirds.Count;

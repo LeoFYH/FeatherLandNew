@@ -27,6 +27,10 @@ namespace BirdGame
                 currentNoteIndex = evt.index;
                 noteInput.text = data.bookList[currentNoteIndex].noteText;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            this.RegisterEvent<ChangeLanguageEvent>(evt =>
+            {
+                ((Text)noteInput.placeholder).text = this.GetSystem<ILocalizationSystem>().GetString("EnterText");
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
             addButton.onClick.AddListener(() =>
             {

@@ -13,12 +13,6 @@ namespace BirdGame
         /// <returns></returns>
         string GetString(string key);
         /// <summary>
-        /// 获取对应翻译后的图片
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        //Sprite GetSprite(string key);
-        /// <summary>
         /// 获取当前字体文件
         /// </summary>
         /// <returns></returns>

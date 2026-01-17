@@ -84,8 +84,14 @@ namespace BirdGame
                 {
                     saveModel.AccountData.tools.Add(new ToolInfo());
                 }
+
+                if (!saveModel.AccountData.tools[itemIndex].unlockedList
+                    .Contains(0))
+                {
+                    saveModel.AccountData.tools[itemIndex].unlockedList.Add(0);
+                }
                 bool isInitialPurchased = saveModel.AccountData.tools[itemIndex].unlockedList
-                    .Contains(gameModel.SelectedToolDic[index].Value);
+                    .Contains(gameModel.SelectedToolDic[index].Value) || gameModel.SelectedToolDic[index].Value == 0;
                 bool isInitialEquipped = saveModel.AccountData.tools[itemIndex].equipedId ==
                                          gameModel.SelectedToolDic[index].Value;
 
@@ -93,16 +99,19 @@ namespace BirdGame
                 {
                     // 已装备：显示"equipped"
                     priceText.SetKey("equipped");
+                    buyButton.interactable = false;
                 }
                 else if (isInitialPurchased)
                 {
                     // 已购买但未装备：显示"equip"
                     priceText.SetKey("equip");
+                    buyButton.interactable = true;
                 }
                 else
                 {
                     // 未购买：显示价格
                     priceText.ThisText.text = $"${item.selections[gameModel.SelectedToolDic[index].Value].price}";
+                    buyButton.interactable = true;
                 }
                 for (int i = 0; i < item.selections.Length; i++)
                 {
@@ -162,7 +171,6 @@ namespace BirdGame
 
             gameModel.SelectedToolDic[itemIndex].Register(v =>
             {
-                
                 // 优先使用descriptionKey，如果没有设置则使用description
                 var selectedTool = item.selections[v];
                 if(item.selections[v].type == ToolType.Food)
@@ -195,23 +203,26 @@ namespace BirdGame
                     if(sp != null)
                         icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size;
                     // 检查食物状态，决定显示内容
-                    bool isPurchased = saveModel.AccountData.tools[index].unlockedList.Contains(v);
+                    bool isPurchased = saveModel.AccountData.tools[index].unlockedList.Contains(v) || v == 0;
                     bool isEquipped = saveModel.AccountData.tools[index].equipedId == v;
 
                     if (isEquipped)
                     {
                         // 已装备：显示"equipped"
                         priceText.SetKey("equipped");
+                        buyButton.interactable = false;
                     }
                     else if (isPurchased)
                     {
                         // 已购买但未装备：显示"equip"
                         priceText.SetKey("equip");
+                        buyButton.interactable = true;
                     }
                     else
                     {
                         // 未购买：显示价格
                         priceText.ThisText.text = $"${selectedTool.price}";
+                        buyButton.interactable = true;
                     }
                 }
                 else if(item.selections[0].type == ToolType.BirdMaxCount)
@@ -229,6 +240,75 @@ namespace BirdGame
                     }
                 }
                 UpdateButtonState();
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            this.RegisterEvent<ChangeLanguageEvent>(evt =>
+            {
+                itemName.SetKey(item.name);
+                if (item.selections[0].type == ToolType.BirdMaxCount)
+                { 
+                    int current = this.GetModel<IConfigModel>().BirdConfig.maxBirdCount +
+                                  this.GetModel<IBirdModel>().AddedBirdCount;
+                    string str1 = this.GetSystem<ILocalizationSystem>().GetString("Upgrade forest bird capacity to");
+                    string str2 = this.GetSystem<ILocalizationSystem>().GetString("Current bird capacity");
+                    description.SetKey($"{str1} {item.selections[gameModel.SelectedToolDic[index].Value].selectionName}.\n<i>{str2}:{current}</i>");
+                    selectName.SetKey("Capacity Upgrade");
+                }
+                else
+                {
+                    selectName.SetKey(item.selections[gameModel.SelectedToolDic[index].Value].selectionName);
+                    // 优先使用descriptionKey，如果没有设置则使用description
+                    var selectedTool = item.selections[gameModel.SelectedToolDic[index].Value];
+                    if (!string.IsNullOrEmpty(selectedTool.descriptionKey))
+                    {
+                        string str1 = this.GetSystem<ILocalizationSystem>().GetString(selectedTool.descriptionKey);
+                        string str2 = this.GetSystem<ILocalizationSystem>().GetString(selectedTool.description);
+                        description.ThisText.text = $"{str1}";
+                    }
+                    else
+                    {
+                        description.SetKey(selectedTool.description);
+                    }
+                }
+                
+                
+                if (item.selections[0].type == ToolType.Food)
+                {
+                    bool isInitialPurchased = saveModel.AccountData.tools[itemIndex].unlockedList
+                                                  .Contains(gameModel.SelectedToolDic[index].Value) ||
+                                              gameModel.SelectedToolDic[index].Value == 0;
+                    bool isInitialEquipped = saveModel.AccountData.tools[itemIndex].equipedId ==
+                                             gameModel.SelectedToolDic[index].Value;
+
+                    if (isInitialEquipped)
+                    {
+                        // 已装备：显示"equipped"
+                        priceText.SetKey("equipped");
+                    }
+                    else if (isInitialPurchased)
+                    {
+                        // 已购买但未装备：显示"equip"
+                        priceText.SetKey("equip");
+                    }
+                    else
+                    {
+                        // 未购买：显示价格
+                        priceText.ThisText.text = $"${item.selections[gameModel.SelectedToolDic[index].Value].price}";
+                    }
+                }
+                else if (item.selections[0].type == ToolType.BirdMaxCount)
+                {
+                    bool isInitialPurchased = saveModel.AccountData.tools[itemIndex].unlockedList
+                        .Contains(gameModel.SelectedToolDic[index].Value + 1);
+                    if (isInitialPurchased)
+                    {
+                        priceText.SetKey("Purchased");
+                    }
+                    else
+                    {
+                        priceText.ThisText.text = $"${item.selections[gameModel.SelectedToolDic[index].Value].price}";
+                    }
+                }
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
             UpdateButtonState();

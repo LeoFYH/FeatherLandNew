@@ -32,6 +32,12 @@ namespace BirdGame
         {
             capacityText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Total Capacity")}:";
             coinsPerMinuteText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Coins per minute")}:";
+            this.RegisterEvent<ChangeLanguageEvent>(evt =>
+            {
+                capacityText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Total Capacity")}:";
+                coinsPerMinuteText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Coins per minute")}:";
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            
             mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             RefreshName();
             sortingToggle0.isOn = true;
@@ -115,6 +121,7 @@ namespace BirdGame
                 }
                 RefreshBirdList();
                 RefreshName();  // 刷新容量显示
+                this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
             });
             RefreshButtons();
         }
@@ -290,6 +297,7 @@ namespace BirdGame
             
             RefreshBirdList();
             RefreshName();  // 刷新容量显示
+            this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
         }
     }
 }

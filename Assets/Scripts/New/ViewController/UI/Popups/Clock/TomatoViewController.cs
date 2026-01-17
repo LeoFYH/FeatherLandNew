@@ -40,6 +40,9 @@ namespace BirdGame
         public Slider volumeSlider;
         public Image volumeFill;
 
+        private string session;
+        private string breaks;
+        private string next;
         private List<RectTransform> lineList = new List<RectTransform>();
         private List<TextMeshProUGUI> nameTextList = new List<TextMeshProUGUI>();
         private List<RectTransform> currentLines = new List<RectTransform>();
@@ -220,6 +223,36 @@ namespace BirdGame
                     show = true
                 });
             });
+            session = this.GetSystem<ILocalizationSystem>().GetString("Session");
+            next = this.GetSystem<ILocalizationSystem>().GetString("Next Session");
+            breaks = this.GetSystem<ILocalizationSystem>().GetString("Breaks");
+            this.RegisterEvent<ChangeLanguageEvent>(evt =>
+            {
+                startPauseText.text = item.IsPause
+                    ? this.GetSystem<ILocalizationSystem>().GetString("Start")
+                    : this.GetSystem<ILocalizationSystem>().GetString("Pause");
+                session = this.GetSystem<ILocalizationSystem>().GetString("Session");
+                next = this.GetSystem<ILocalizationSystem>().GetString("Next Session");
+                breaks = this.GetSystem<ILocalizationSystem>().GetString("Breaks");
+                if (item.TimerType.Value == TomatoTimerType.Session)
+                {
+                    currentSessionName.text = $"{session} {item.TotalNumber - item.Number.Value + 1}";
+               
+                    nextSession.text = $"{next}: {breaks}";
+                }
+                else
+                {
+                    currentSessionName.text = breaks;
+                    if (item.Number.Value > 0)
+                    {
+                        nextSession.text = $"{next}: {session}";
+                    }
+                    else
+                    {
+                        nextSession.text = $"{next}: ";
+                    }
+                }
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
             this.RegisterEvent<StopTomatoEvent>(evt =>
             {
                 if (item.TimerCoroutine != null)
@@ -228,9 +261,7 @@ namespace BirdGame
                 Refresh(false);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
-            string session = this.GetSystem<ILocalizationSystem>().GetString("Session");
-            string next = this.GetSystem<ILocalizationSystem>().GetString("Next Session");
-            string breaks = this.GetSystem<ILocalizationSystem>().GetString("Breaks");
+            
             item.TimerType.Register(v =>
             {
                 if (v == TomatoTimerType.Session)
@@ -240,7 +271,7 @@ namespace BirdGame
                 }
                 else
                 {
-                    currentSessionName.text = this.GetSystem<ILocalizationSystem>().GetString("Breaks");
+                    currentSessionName.text = breaks;
                     if (item.Number.Value > 0)
                     {
                         nextSession.text = $"{next}: {session}";
@@ -390,7 +421,6 @@ namespace BirdGame
                 PopLine().anchoredPosition = new Vector2(posX, 0);
                 var nameTextObj = PopNameText();
                 nameTextObj.GetComponent<RectTransform>().anchoredPosition = new Vector2(lastPosX + (posX - lastPosX) * 0.5f, 0);
-                string session = this.GetSystem<ILocalizationSystem>().GetString("Session");
                 nameTextObj.text = $"{session} {i + 1}";
                 lastPosX = posX;
                 //Break
@@ -403,7 +433,7 @@ namespace BirdGame
 
                 nameTextObj = PopNameText();
                 nameTextObj.GetComponent<RectTransform>().anchoredPosition = new Vector2(lastPosX + (posX - lastPosX) * 0.5f, 0);
-                nameTextObj.text = this.GetSystem<ILocalizationSystem>().GetString("Breaks");
+                nameTextObj.text = breaks;
                 lastPosX = posX;
             }
         }
@@ -499,9 +529,9 @@ namespace BirdGame
 
             startButton.interactable = !isTiming;
             refreshButton.interactable = !isTiming;
+            var stopWatch = this.GetModel<IClockModel>().StopWatchItem;
             if (isTiming)
             {
-                var stopWatch = this.GetModel<IClockModel>().StopWatchItem;
                 if (stopWatch.TimerCoroutine != null)
                     this.GetSystem<IMonoSystem>().StopCoroutine(stopWatch.TimerCoroutine);
                 stopWatch.TimerCoroutine = null;
@@ -510,6 +540,9 @@ namespace BirdGame
                 stopWatch.Seconds.Value = 0;
                 stopWatch.Timer = 0;
             }
+            startPauseText.text = stopWatch.IsPause
+                ? this.GetSystem<ILocalizationSystem>().GetString("Start")
+                : this.GetSystem<ILocalizationSystem>().GetString("Pause");
         }
 
         private void OnUpClick(int index)
@@ -616,9 +649,43 @@ namespace BirdGame
                 yield return frame;
                 if (item.IsPause)
                 {
+                    if (item.IsSkip)
+                    {
+                        item.IsSkip = false;
+                        item.Timer.Value = 0;
+                        if (item.TimerType.Value == TomatoTimerType.Session)
+                        {
+                            item.TimerType.Value = TomatoTimerType.Break;
+                            item.Timer.Value = item.BreakMinutes.Value * 60;
+                            item.CurrentTimer += item.SessionMinutes.Value * 60;
+                            //触发Session结束提醒
+                            this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForSession;
+                            item.Number.Value--;
+                            this.SendCommand<AlertCommand>();
+                        }
+                        else if (item.TimerType.Value == TomatoTimerType.Break)
+                        {
+                            item.TimerType.Value = TomatoTimerType.Session;
+                            item.Timer.Value = item.SessionMinutes.Value * 60;
+                            item.CurrentTimer += item.BreakMinutes.Value * 60;
+
+                            if (item.Number.Value <= 0)
+                            {
+                                this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForTimer;
+                                this.SendCommand<AlertCommand>();
+                                break;
+                            }
+                            else
+                            {
+                                this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForBreak;
+                                this.SendCommand<AlertCommand>();
+                            }
+                        }
+
+                        item.Timer.Value += Time.fixedDeltaTime;
+                    }
                     continue;
                 }
-
                 if (item.IsSkip)
                 {
                     item.Timer.Value = 0;
