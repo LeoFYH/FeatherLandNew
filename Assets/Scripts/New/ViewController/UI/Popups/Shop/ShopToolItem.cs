@@ -230,7 +230,7 @@ namespace BirdGame
                         buyButton.interactable = true;
                     }
                 }
-                else if(item.selections[0].type == ToolType.BirdMaxCount)
+                else if (item.selections[0].type == ToolType.BirdMaxCount)
                 {
                     bool isPurchased = saveModel.AccountData.tools[index].unlockedList.Contains(v + 1);
                     if (isPurchased)
