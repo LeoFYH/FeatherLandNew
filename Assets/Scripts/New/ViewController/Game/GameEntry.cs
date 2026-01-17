@@ -347,6 +347,11 @@ namespace BirdGame
                 // Tutorial - TutorialPopup (没有对应的toggle按钮，保持原有行为)
                 this.GetSystem<IUISystem>().TogglePopup(UIPopup.TutorialPopup);
             }
+            else if (GetKeyDownAny(KeyCode.C))
+            {
+                // View Toggle - toggle viewGroup visibility
+                menuPanel.viewToggle.isOn = !menuPanel.viewToggle.isOn;
+            }
         }
         
         /// <summary>
