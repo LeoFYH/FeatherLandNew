@@ -61,10 +61,51 @@ namespace BirdGame
             {
                 if (item.TimerCoroutine != null)
                     this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
+                if(this.GetModel<IClockModel>().TomatoItem.TimerCoroutine != null)
+                    this.GetSystem<IMonoSystem>().StopCoroutine(this.GetModel<IClockModel>().TomatoItem.TimerCoroutine);
+                if(this.GetModel<IClockModel>().TimerItem.TimerCoroutine != null)
+                    this.GetSystem<IMonoSystem>().StopCoroutine(this.GetModel<IClockModel>().TimerItem.TimerCoroutine);
                 item.TimerCoroutine = null;
+                this.GetModel<IClockModel>().TimerItem.TimerCoroutine = null;
+                this.GetModel<IClockModel>().TomatoItem.TimerCoroutine = null;
                 startButton.interactable = true;
                 stopButton.interactable = false;
                 //clearButton.interactable = false;
+                this.GetModel<IClockModel>().TimerItem.IsPause = false;
+                this.GetModel<IClockModel>().TomatoItem.IsPause = false;
+                this.GetModel<IClockModel>().TomatoItem.IsSkip = false;
+                this.GetModel<IClockModel>().TimerItem.Timer = 0;
+                // 恢复为上一次设置的时间值，而不是重置为 0
+                // 如果还没有保存过值（用户还没有开始过计时），则保持当前值不变
+                if (this.GetModel<IClockModel>().TimerItem.LastHours > 0 || this.GetModel<IClockModel>().TimerItem.LastMinutes > 0 || this.GetModel<IClockModel>().TimerItem.LastSeconds > 0)
+                {
+                    this.GetModel<IClockModel>().TimerItem.Hours.Value = this.GetModel<IClockModel>().TimerItem.LastHours;
+                    this.GetModel<IClockModel>().TimerItem.Minutes.Value = this.GetModel<IClockModel>().TimerItem.LastMinutes;
+                    this.GetModel<IClockModel>().TimerItem.Seconds.Value = this.GetModel<IClockModel>().TimerItem.LastSeconds;
+                }
+                else
+                {
+                    // 如果从未开始过计时，保持默认值（默认5分钟）
+                    this.GetModel<IClockModel>().TimerItem.Hours.Value = 0;
+                    this.GetModel<IClockModel>().TimerItem.Minutes.Value = 5;
+                    this.GetModel<IClockModel>().TimerItem.Seconds.Value = 0;
+                }
+                
+                this.GetModel<IClockModel>().TomatoItem.Timer.Value = 0;
+                this.GetModel<IClockModel>().TomatoItem.SessionMinutes.Value =5;
+                this.GetModel<IClockModel>().TomatoItem.BreakMinutes.Value = 5;
+                // 恢复 Number 为上一次设定的值（TotalNumber），而不是设置为 0
+                // 如果 TotalNumber 还没有被设置（用户还没有开始过计时），则保持当前值不变
+                if (this.GetModel<IClockModel>().TomatoItem.TotalNumber > 0)
+                {
+                    this.GetModel<IClockModel>().TomatoItem.Number.Value = this.GetModel<IClockModel>().TomatoItem.TotalNumber;
+                }
+                else
+                {
+                    this.GetModel<IClockModel>().TomatoItem.Number.Value = 1;
+                }
+                this.GetModel<IClockModel>().TomatoItem.TimerType.Value = TomatoTimerType.Session;
+                
                 item.IsPause = false;
                 item.TimerString.Value = "00:00:00";
                 this.GetModel<IClockModel>().TimerType = TimerType.None;

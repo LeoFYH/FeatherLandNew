@@ -42,6 +42,7 @@ namespace BirdGame
         private float illustratedPosX;
         private float weatherPosX;
         private float mapPosX;
+        private float currentCoins;
         
         private bool isSyncingShopButton = false; // 标志位：正在同步 shopButton 状态，避免重复调用 HidePopup
         private bool isSyncingIllustratedButton = false; // 标志位：正在同步 illustratedButton 状态
@@ -364,9 +365,14 @@ namespace BirdGame
             
             var accountModel = this.GetModel<IAccountModel>();
             coinsNum.text = accountModel.Coins.Value.ToString("F1", CultureInfo.InvariantCulture);
+            currentCoins = accountModel.Coins.Value;
             accountModel.Coins.Register(v =>
             {
-                coinsNum.text = v.ToString("F1", CultureInfo.InvariantCulture);
+                DOTween.To(n =>
+                {
+                    coinsNum.text = n.ToString("F1", CultureInfo.InvariantCulture);
+                }, currentCoins, v, 0.5f);
+                currentCoins = v;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
             //weatherIcon.sprite = weatherSps[this.GetModel<IGameModel>().WeatherIndex.Value];

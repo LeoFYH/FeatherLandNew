@@ -19,6 +19,7 @@ namespace BirdGame
         public bool checkUIRaycast = true;
         public bool useRectTransform = true;  // 是否使用RectTransform，对于GameObject设为false
         public float price;
+        public UIButtonHoverScale uiButtonHoverScale;
         
         private int id;
         private bool mouseWasOverButton = false;
@@ -38,6 +39,37 @@ namespace BirdGame
             descriptionText.SetKey(item.description);
             price = item.price;
             priceText.text = $"${item.price}";
+            this.GetModel<IAccountModel>().Coins.Register(v =>
+            {
+                RefreshButtonStatus();
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            RefreshButtonStatus();
+        }
+
+        private void RefreshButtonStatus()
+        {
+            var accountData = this.GetModel<ISaveModel>().AccountData;
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            var decorationInfo = accountData.sceneDecorationInfos[mapIndex].decorations[id];
+            var decorationItem = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[mapIndex]
+                .decorations[id];
+            int totalCount = decorationItem.fixedPositions.Length;
+            int currentCount = decorationInfo.usedFixedPositionIndices.Count;
+            priceText.text = $"${price}";
+            if (price <= this.GetModel<IAccountModel>().Coins.Value)
+            {
+                buyButton.interactable = currentCount < totalCount;
+                if (currentCount >= totalCount)
+                {
+                    priceText.text = this.GetSystem<ILocalizationSystem>().GetString("Purchased");
+                }
+                uiButtonHoverScale.localizationKey =$"{this.GetSystem<ILocalizationSystem>().GetString("Hold")}: {currentCount}/{totalCount}";
+            }
+            else
+            {
+                uiButtonHoverScale.localizationKey = "Insufficient coins";
+                buyButton.interactable = false;
+            }
         }
 
         private void Start()
@@ -47,94 +79,70 @@ namespace BirdGame
             {
                 var item = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[mapIndex].decorations[id];
                 var accountData = this.GetModel<ISaveModel>().AccountData;
-                
+
                 // 获取当前已购买的数量
                 int currentQuantity = accountData.sceneDecorationInfos[mapIndex].decorations[id].count;
-                
+
                 // 检查是否达到数量限制
                 if (item.maxQuantity > 0 && currentQuantity >= item.maxQuantity)
                 {
-                    string text = this.GetSystem<ILocalizationSystem>().GetString("The maximum purchase quantity limit has been reached!");
+                    string text = this.GetSystem<ILocalizationSystem>()
+                        .GetString("The maximum purchase quantity limit has been reached!");
                     this.GetSystem<IUISystem>().ShowPrompt($"{text} ({currentQuantity}/{item.maxQuantity})");
                     return;
                 }
-                
-                int price = item.price;
+
                 if (price <= this.GetModel<IAccountModel>().Coins.Value)
                 {
-                    this.GetSystem<IUISystem>().ShowBuyConfirm(() =>
+                    // 扣除金币
+                    this.GetModel<IAccountModel>().Coins.Value -= price;
+
+                    var decorationInfo = accountData.sceneDecorationInfos[mapIndex].decorations[id];
+                    var decorationItem = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[mapIndex]
+                        .decorations[id];
+
+                    // 初始化 usedFixedPositionIndices（向后兼容）
+                    if (decorationInfo.usedFixedPositionIndices == null)
                     {
-                        // 扣除金币
-                        this.GetModel<IAccountModel>().Coins.Value -= price;
+                        decorationInfo.usedFixedPositionIndices = new List<int>();
+                    }
 
-                        // // 根据装饰品类型执行不同的购买逻辑
-                        // if (item.decorationType == DecorationType.Draggable)
-                        // {
-                        //     // 可拖拽类型：创建跟随鼠标的装饰品
-                        //     this.GetSystem<IGameSystem>().CreateDecoration(id,
-                        //         accountData.sceneDecorationInfos[mapIndex].decorations[id].count);
-                        //     accountData.sceneDecorationInfos[mapIndex].decorations[id].count++;
-                        //     accountData.sceneDecorationInfos[mapIndex].decorations[id].position.Add(Vector3.zero);
-                        //     string text = this.GetSystem<ILocalizationSystem>()
-                        //         .GetString("Purchase successful! Left-click to place the ornament");
-                        //     this.GetSystem<IUISystem>().ShowPrompt(text);
-                        //     //this.GetSystem<IUISystem>().ShowPrompt("购买成功！点击左键放置装饰品");
-                        //     this.GetSystem<IUISystem>().HidePopup(UIPopup.ShopPopup);
-                        // }
-                        // else if (item.decorationType == DecorationType.Fixed)
-                        // {
-                        // 固定类型：直接放置在指定位置
-                        var decorationInfo = accountData.sceneDecorationInfos[mapIndex].decorations[id];
-                        var decorationItem = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[mapIndex]
-                            .decorations[id];
-                        
-                        // 初始化 usedFixedPositionIndices（向后兼容）
-                        if (decorationInfo.usedFixedPositionIndices == null)
+                    // 获取可用的 fixedPositions 索引（优先使用被释放的索引）
+                    int availableIndex = -1;
+                    for (int i = 0; i < decorationItem.fixedPositions.Length; i++)
+                    {
+                        if (!decorationInfo.usedFixedPositionIndices.Contains(i))
                         {
-                            decorationInfo.usedFixedPositionIndices = new List<int>();
+                            availableIndex = i;
+                            break;
                         }
-                        
-                        // 获取可用的 fixedPositions 索引（优先使用被释放的索引）
-                        int availableIndex = -1;
-                        for (int i = 0; i < decorationItem.fixedPositions.Length; i++)
-                        {
-                            if (!decorationInfo.usedFixedPositionIndices.Contains(i))
-                            {
-                                availableIndex = i;
-                                break;
-                            }
-                        }
-                        
-                        // 如果没有可用的索引，提示错误
-                        if (availableIndex == -1)
-                        {
-                            string errorText = this.GetSystem<ILocalizationSystem>()
-                                .GetString("All decoration positions are occupied!");
-                            this.GetSystem<IUISystem>().ShowPrompt(errorText);
-                            return;
-                        }
-                        
-                        // 使用找到的索引创建装饰物
-                        this.GetSystem<IGameSystem>().CreateFixedDecoration(id, availableIndex);
-                        decorationInfo.count++;
-                        
-                        // 获取位置
-                        Vector3 pos = decorationItem.fixedPositions[availableIndex];
-                        
-                        // 将使用的索引添加到已使用列表
-                        decorationInfo.usedFixedPositionIndices.Add(availableIndex);
-                        
-                        // 添加位置到 position 列表
-                        decorationInfo.position.Add(pos);
-                        string text = this.GetSystem<ILocalizationSystem>()
-                            .GetString("Purchase successful! The decoration has been placed!");
-                        this.GetSystem<IUISystem>().ShowPrompt(text);
-                        //this.GetSystem<IUISystem>().ShowPrompt("购买成功！装饰品已放置在指定位置");
-                        
-                        // 统一通过事件关闭商店，确保 shopButton 状态同步
-                        this.GetSystem<IGameSystem>().SendEvent<OnShopCloseEvent>();
+                    }
 
-                    });
+                    // 如果没有可用的索引，提示错误
+                    if (availableIndex == -1)
+                    {
+                        string errorText = this.GetSystem<ILocalizationSystem>()
+                            .GetString("All decoration positions are occupied!");
+                        this.GetSystem<IUISystem>().ShowPrompt(errorText);
+                        return;
+                    }
+
+                    // 使用找到的索引创建装饰物
+                    this.GetSystem<IGameSystem>().CreateFixedDecoration(id, availableIndex);
+                    decorationInfo.count++;
+
+                    // 获取位置
+                    Vector3 pos = decorationItem.fixedPositions[availableIndex];
+
+                    // 将使用的索引添加到已使用列表
+                    decorationInfo.usedFixedPositionIndices.Add(availableIndex);
+
+                    // 添加位置到 position 列表
+                    decorationInfo.position.Add(pos);
+                    // string text = this.GetSystem<ILocalizationSystem>()
+                    //     .GetString("Purchase successful! The decoration has been placed!");
+                    // this.GetSystem<IUISystem>().ShowPrompt(text);
+                    RefreshButtonStatus();
                 }
                 else
                 {

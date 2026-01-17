@@ -383,6 +383,12 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         tooltipRect.anchoredPosition = pos + textOffset;
     }
 
+    public void SetText(string text)
+    {
+        if (tooltipText != null)
+            tooltipText.text = text;
+    }
+
     /// <summary>
     /// 更新提示文本（支持本地化）
     /// </summary>
