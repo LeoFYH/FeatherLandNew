@@ -395,7 +395,7 @@ namespace BirdGame
                         uiButtonHoverScale.localizationKey = "Insufficient coins";
                         buyButton.GetComponent<HoverButton>().isLessCoin = true;
                         buyButton.interactable = false;
-                        buyButton.targetGraphic.color = new Color32(159, 159, 159, 255);
+                        buyButton.targetGraphic.color = Color.white;
                     }
                     else
                     {
@@ -436,7 +436,7 @@ namespace BirdGame
                         uiButtonHoverScale.localizationKey = "Insufficient coins";
                         buyButton.interactable = false;
                         buyButton.GetComponent<HoverButton>().isLessCoin = true;
-                        buyButton.targetGraphic.color = new Color32(159, 159, 159, 255);
+                        buyButton.targetGraphic.color = Color.white;
                     }
                     else
                     {

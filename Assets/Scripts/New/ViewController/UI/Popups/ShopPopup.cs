@@ -99,6 +99,10 @@ namespace BirdGame
                     else
                         lastOpenObj = toolsContent;
                     lastOpenObj.SetActive(false);
+                    this.GetSystem<IGameSystem>().SendEvent(new EnableHoverEvent()
+                    {
+                        enabled = false
+                    });
                 }
                 else
                 {
@@ -109,6 +113,11 @@ namespace BirdGame
                         eggToggle.isOn = true;
                         eggContent.SetActive(true);
                     }
+                    
+                    this.GetSystem<IGameSystem>().SendEvent(new EnableHoverEvent()
+                    {
+                        enabled = true
+                    });
                 }
             });
 

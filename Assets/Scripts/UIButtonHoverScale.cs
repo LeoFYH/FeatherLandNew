@@ -142,7 +142,7 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
     
     void Start()
     {
-        this.GetSystem<IMonoSystem>().RegisterUpdate(OnUpdate);
+        //this.GetSystem<IMonoSystem>().RegisterUpdate(OnUpdate);
         thisRect = this.GetSystem<IUISystem>().GetCanvas().GetComponent<RectTransform>();
         //测试
         showTooltip = true;
@@ -206,7 +206,7 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         }
     }
     
-    void OnUpdate()
+    void Update()
     {
         if (disabled) return;
         if (!toolCanvas.overrideSorting)
@@ -822,7 +822,7 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
     
     void OnDestroy()
     {
-        this.GetSystem<IMonoSystem>().UnRegisterUpdate(OnUpdate);
+        //this.GetSystem<IMonoSystem>().UnRegisterUpdate(OnUpdate);
         // Clean up tooltip object
         if (tooltipObject != null)
         {

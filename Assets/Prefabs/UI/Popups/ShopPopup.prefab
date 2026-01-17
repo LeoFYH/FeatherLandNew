@@ -851,6 +851,7 @@ GameObject:
   - component: {fileID: 1129125117384817035}
   - component: {fileID: 4781750963341343706}
   - component: {fileID: 5678338098027523801}
+  - component: {fileID: 8845221445285784341}
   m_Layer: 0
   m_Name: BuyButton
   m_TagString: Click
@@ -1040,6 +1041,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isLessCoin: 0
   image: {fileID: 7298572098276960737}
+--- !u!114 &8845221445285784341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 586656301537261642}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 107203398da940bb9ae5c17692920f16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &627649042615983484
 GameObject:
   m_ObjectHideFlags: 0
@@ -2715,6 +2728,7 @@ GameObject:
   - component: {fileID: 3956215574946200453}
   - component: {fileID: 720056572724626791}
   - component: {fileID: 3130049755328855867}
+  - component: {fileID: 6612580999962666636}
   m_Layer: 0
   m_Name: BuyButton
   m_TagString: Click
@@ -2892,6 +2906,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isLessCoin: 0
   image: {fileID: 4258393109275885206}
+--- !u!114 &6612580999962666636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2007193476739605858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 107203398da940bb9ae5c17692920f16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2012419720480694172
 GameObject:
   m_ObjectHideFlags: 0
@@ -3445,6 +3471,7 @@ GameObject:
   - component: {fileID: 7052295837936101544}
   - component: {fileID: 476600809736222836}
   - component: {fileID: 216031476397479570}
+  - component: {fileID: 6194616316438697239}
   m_Layer: 0
   m_Name: BuyButton
   m_TagString: Click
@@ -3622,6 +3649,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isLessCoin: 0
   image: {fileID: 5843035034273230030}
+--- !u!114 &6194616316438697239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2318860924554549083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 107203398da940bb9ae5c17692920f16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2347776007372042270
 GameObject:
   m_ObjectHideFlags: 0
