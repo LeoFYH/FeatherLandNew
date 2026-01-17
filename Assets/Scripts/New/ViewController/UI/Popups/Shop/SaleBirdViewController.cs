@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -145,7 +146,7 @@ namespace BirdGame
             if (coinsPerMinuteText != null)
             {
                 float totalEarningPerMinute = CalculateCoinsPerMinute();
-                coinsPerMinuteValue.text = $"${totalEarningPerMinute:F1}";
+                coinsPerMinuteValue.text = $"${totalEarningPerMinute.ToString("F1", CultureInfo.InvariantCulture)}";
             }
         }
         

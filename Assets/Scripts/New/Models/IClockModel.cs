@@ -42,12 +42,16 @@ namespace BirdGame
         public Coroutine TimerCoroutine { get; set; }
         public float Timer { get; set; }
         public BindableProperty<int> Seconds { get; } = new BindableProperty<int>();
-        public BindableProperty<int> Minutes { get; } = new BindableProperty<int>();
+        public BindableProperty<int> Minutes { get; } = new BindableProperty<int>(5);
         public BindableProperty<int> Hours { get; } = new BindableProperty<int>();
         public BindableProperty<string> TimeString { get; } = new BindableProperty<string>();
         public BindableProperty<int> AudioSelected { get; } = new BindableProperty<int>();
         public BindableProperty<float> AudioVolume { get; } = new BindableProperty<float>(0.5f);
         public bool IsPause { get; set; }
+        // 保存上一次设置的时间值，用于取消后恢复
+        public int LastHours { get; set; }
+        public int LastMinutes { get; set; }
+        public int LastSeconds { get; set; }
     }
 
     public class TomatoItem

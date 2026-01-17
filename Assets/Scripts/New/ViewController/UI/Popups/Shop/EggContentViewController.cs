@@ -17,6 +17,7 @@ namespace BirdGame
         private IGameModel gameModel;
         private IConfigModel configModel;
         private List<ShopEggItem> items = new List<ShopEggItem>();
+        private bool isProcessingPurchase = false;
         
         private void Awake()
         {
@@ -48,6 +49,16 @@ namespace BirdGame
             
             buyButton.onClick.AddListener(() =>
             {
+                // Prevent double-clicking by checking if already processing
+                if (isProcessingPurchase)
+                {
+                    return;
+                }
+                
+                // Disable button to prevent double-clicking
+                buyButton.interactable = false;
+                isProcessingPurchase = true;
+                
                 int currentCount = configModel.ShopConfig.sceneEggs[mapIndex].eggs[gameModel.ShopEggSelectIndex.Value]
                     .birdCount;
                 int maxCount = this.GetModel<IConfigModel>().BirdConfig.maxBirdCount;
@@ -56,6 +67,9 @@ namespace BirdGame
                 {
                     string text = this.GetSystem<ILocalizationSystem>().GetString("MaxEggLimitKey");
                     this.GetSystem<IUISystem>().ShowPrompt($"{text} ({this.GetModel<IBirdModel>().BirdList.Count}/{maxCount + addedCount})");
+                    // Re-enable button after showing prompt
+                    buyButton.interactable = true;
+                    isProcessingPurchase = false;
                     return;
                 }
 
@@ -68,12 +82,20 @@ namespace BirdGame
                         this.SendCommand<CreateBirdCommand>();
                         // 统一通过事件关闭商店，确保 shopButton 状态同步
                         this.GetSystem<IGameSystem>().SendEvent<OnShopCloseEvent>();
+                        // Reset flag after purchase completes (though shop will close)
+                        isProcessingPurchase = false;
+                        buyButton.interactable = true;
                     });
+                    // Re-enable button after confirmation dialog is shown (using coroutine to ensure popup is displayed)
+                    StartCoroutine(ReEnableButtonAfterDelay());
                 }
                 else
                 {
                     string text = this.GetSystem<ILocalizationSystem>().GetString("Insufficient coins");
                     this.GetSystem<IUISystem>().ShowPrompt(text);
+                    // Re-enable button after showing prompt
+                    buyButton.interactable = true;
+                    isProcessingPurchase = false;
                 }
             });
 
@@ -87,6 +109,15 @@ namespace BirdGame
             }
 
             items[gameModel.ShopEggSelectIndex.Value].uiEffect.enabled = true;
+        }
+
+        private System.Collections.IEnumerator ReEnableButtonAfterDelay()
+        {
+            // Wait a frame to ensure the popup is displayed and blocking interaction
+            yield return null;
+            // Re-enable button so user can click again if they cancel the confirmation
+            buyButton.interactable = true;
+            isProcessingPurchase = false;
         }
     }
 }

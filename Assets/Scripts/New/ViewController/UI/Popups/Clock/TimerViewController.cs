@@ -4,6 +4,7 @@ using QFramework;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 namespace BirdGame
 {
@@ -21,6 +22,13 @@ namespace BirdGame
         public Toggle[] audioToggles;
         public Slider volumeSlider;
         public Image volumeFill;
+
+        private Coroutine[] upButtonHoldCoroutines = new Coroutine[3];
+        private Coroutine[] downButtonHoldCoroutines = new Coroutine[3];
+        private bool[] isUpButtonHeld = new bool[3];
+        private bool[] isDownButtonHeld = new bool[3];
+        private float[] buttonPressStartTime = new float[6]; // 3 up + 3 down buttons
+        private bool[] buttonHoldIncrementExecuted = new bool[6]; // Track if hold increment was executed
 
         private void Start()
         {
@@ -144,14 +152,32 @@ namespace BirdGame
             for (int i = 0; i < 3; i++)
             {
                 int index = i;
+                
+                // Add onClick for one-time click (only if it was a quick click, not a hold)
                 upButtons[i].onClick.AddListener(() =>
                 {
-                    OnUpClick(index);
+                    int buttonIndex = index * 2; // Up buttons: 0, 2, 4
+                    // Only execute onClick if no hold increment was executed
+                    if (!buttonHoldIncrementExecuted[buttonIndex])
+                    {
+                        OnUpClick(index);
+                    }
+                    buttonHoldIncrementExecuted[buttonIndex] = false; // Reset for next press
                 });
                 downButtons[i].onClick.AddListener(() =>
                 {
-                    OnDownClick(index);
+                    int buttonIndex = index * 2 + 1; // Down buttons: 1, 3, 5
+                    // Only execute onClick if no hold increment was executed
+                    if (!buttonHoldIncrementExecuted[buttonIndex])
+                    {
+                        OnDownClick(index);
+                    }
+                    buttonHoldIncrementExecuted[buttonIndex] = false; // Reset for next press
                 });
+                
+                // Add button hold functionality (increments only after holding 0.5 seconds)
+                AddButtonHoldSupport(upButtons[i], index, true);
+                AddButtonHoldSupport(downButtons[i], index, false);
             }
             refreshButton.onClick.AddListener(() =>
             {
@@ -169,9 +195,29 @@ namespace BirdGame
                     return;
                 }
 
+                // 在开始计时前，先同步输入框的值到模型（确保键盘输入的值被正确读取）
+                if (int.TryParse(hourText.text, out int hours) && hours >= 0 && hours <= 59)
+                {
+                    item.Hours.Value = hours;
+                }
+                if (int.TryParse(minuteText.text, out int minutes) && minutes >= 0 && minutes <= 59)
+                {
+                    item.Minutes.Value = minutes;
+                }
+                if (int.TryParse(secondText.text, out int seconds) && seconds >= 0 && seconds <= 59)
+                {
+                    item.Seconds.Value = seconds;
+                }
+                
                 item.Timer = item.Hours.Value * 3600 + item.Minutes.Value * 60 + item.Seconds.Value;
                 if(item.Timer == 0)
                     return;
+                
+                // 保存当前设置的时间值，用于取消后恢复
+                item.LastHours = item.Hours.Value;
+                item.LastMinutes = item.Minutes.Value;
+                item.LastSeconds = item.Seconds.Value;
+                
                 item.TimerCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(StartTimer());
                 Refresh(true, item.IsPause);
                 this.GetModel<IClockModel>().TimerType = TimerType.Timer;
@@ -199,10 +245,21 @@ namespace BirdGame
                     show = false
                 });
                 item.Timer = 0;
-                item.Hours.Value = 0;
-                item.Minutes.Value = 0;
-                item.Seconds.Value = 0;
-                
+                // 恢复为上一次设置的时间值，而不是重置为 0
+                // 如果还没有保存过值（用户还没有开始过计时），则保持当前值不变
+                if (item.LastHours > 0 || item.LastMinutes > 0 || item.LastSeconds > 0)
+                {
+                    item.Hours.Value = item.LastHours;
+                    item.Minutes.Value = item.LastMinutes;
+                    item.Seconds.Value = item.LastSeconds;
+                }
+                else
+                {
+                    // 如果从未开始过计时，保持默认值（默认5分钟）
+                    item.Hours.Value = 0;
+                    item.Minutes.Value = 5;
+                    item.Seconds.Value = 0;
+                }
             });
 
             this.RegisterEvent<StopTimerEvent>(evt =>
@@ -332,9 +389,19 @@ namespace BirdGame
                 item.Timer -= Time.fixedDeltaTime;
             }
 
-            item.Hours.Value = 0;
-            item.Minutes.Value = 0;
-            item.Seconds.Value = 0;
+            // 恢复为上一次设置的时间值，而不是重置为 0
+            if (item.LastHours > 0 || item.LastMinutes > 0 || item.LastSeconds > 0)
+            {
+                item.Hours.Value = item.LastHours;
+                item.Minutes.Value = item.LastMinutes;
+                item.Seconds.Value = item.LastSeconds;
+            }
+            else
+            {
+                item.Hours.Value = 0;
+                item.Minutes.Value = 0;
+                item.Seconds.Value = 0;
+            }
             this.GetModel<IClockModel>().TimerType = TimerType.None;
             this.GetModel<IClockModel>().TimerItem.TimerCoroutine = null;
             int coins = (int)(timer / 300 );
@@ -358,6 +425,137 @@ namespace BirdGame
                 this.GetModel<IClockModel>().TimerItem.AudioSelected.Value = index;
                 this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForTimer;
                 this.GetSystem<IAudioSystem>().PlayAlert();
+            }
+        }
+
+        private void AddButtonHoldSupport(Button button, int index, bool isUpButton)
+        {
+            var eventTrigger = button.gameObject.GetComponent<EventTrigger>();
+            if (eventTrigger == null)
+            {
+                eventTrigger = button.gameObject.AddComponent<EventTrigger>();
+            }
+
+            // Pointer Down
+            var pointerDown = new EventTrigger.Entry();
+            pointerDown.eventID = EventTriggerType.PointerDown;
+            pointerDown.callback.AddListener((data) =>
+            {
+                int buttonIndex = isUpButton ? index * 2 : index * 2 + 1;
+                buttonPressStartTime[buttonIndex] = Time.time;
+                buttonHoldIncrementExecuted[buttonIndex] = false; // Reset flag
+                
+                if (isUpButton)
+                {
+                    isUpButtonHeld[index] = true;
+                    if (upButtonHoldCoroutines[index] != null)
+                    {
+                        this.GetSystem<IMonoSystem>().StopCoroutine(upButtonHoldCoroutines[index]);
+                    }
+                    upButtonHoldCoroutines[index] = this.GetSystem<IMonoSystem>().StartCoroutine(ButtonHoldCoroutine(index, true));
+                }
+                else
+                {
+                    isDownButtonHeld[index] = true;
+                    if (downButtonHoldCoroutines[index] != null)
+                    {
+                        this.GetSystem<IMonoSystem>().StopCoroutine(downButtonHoldCoroutines[index]);
+                    }
+                    downButtonHoldCoroutines[index] = this.GetSystem<IMonoSystem>().StartCoroutine(ButtonHoldCoroutine(index, false));
+                }
+            });
+            eventTrigger.triggers.Add(pointerDown);
+
+            // Pointer Up
+            var pointerUp = new EventTrigger.Entry();
+            pointerUp.eventID = EventTriggerType.PointerUp;
+            pointerUp.callback.AddListener((data) =>
+            {
+                if (isUpButton)
+                {
+                    isUpButtonHeld[index] = false;
+                    if (upButtonHoldCoroutines[index] != null)
+                    {
+                        this.GetSystem<IMonoSystem>().StopCoroutine(upButtonHoldCoroutines[index]);
+                        upButtonHoldCoroutines[index] = null;
+                    }
+                }
+                else
+                {
+                    isDownButtonHeld[index] = false;
+                    if (downButtonHoldCoroutines[index] != null)
+                    {
+                        this.GetSystem<IMonoSystem>().StopCoroutine(downButtonHoldCoroutines[index]);
+                        downButtonHoldCoroutines[index] = null;
+                    }
+                }
+            });
+            eventTrigger.triggers.Add(pointerUp);
+
+            // Pointer Exit (stop holding if mouse leaves button area)
+            var pointerExit = new EventTrigger.Entry();
+            pointerExit.eventID = EventTriggerType.PointerExit;
+            pointerExit.callback.AddListener((data) =>
+            {
+                if (isUpButton)
+                {
+                    isUpButtonHeld[index] = false;
+                    if (upButtonHoldCoroutines[index] != null)
+                    {
+                        this.GetSystem<IMonoSystem>().StopCoroutine(upButtonHoldCoroutines[index]);
+                        upButtonHoldCoroutines[index] = null;
+                    }
+                }
+                else
+                {
+                    isDownButtonHeld[index] = false;
+                    if (downButtonHoldCoroutines[index] != null)
+                    {
+                        this.GetSystem<IMonoSystem>().StopCoroutine(downButtonHoldCoroutines[index]);
+                        downButtonHoldCoroutines[index] = null;
+                    }
+                }
+            });
+            eventTrigger.triggers.Add(pointerExit);
+        }
+
+        private IEnumerator ButtonHoldCoroutine(int index, bool isUp)
+        {
+            // Wait 0.5 seconds before doing the first increment
+            yield return new WaitForSeconds(0.5f);
+            
+            // If still held, do the first increment and then start repeating
+            bool stillHeld = isUp ? isUpButtonHeld[index] : isDownButtonHeld[index];
+            if (!stillHeld) yield break;
+
+            // Do the first increment after 0.5 seconds of holding
+            int buttonIndex = isUp ? index * 2 : index * 2 + 1;
+            buttonHoldIncrementExecuted[buttonIndex] = true; // Mark that hold increment was executed
+            if (isUp)
+            {
+                OnUpClick(index);
+            }
+            else
+            {
+                OnDownClick(index);
+            }
+
+            // Repeat while held with faster interval (0.1 seconds)
+            while (isUp ? isUpButtonHeld[index] : isDownButtonHeld[index])
+            {
+                yield return new WaitForSeconds(0.1f);
+                
+                // Check again if still held before incrementing
+                if (!(isUp ? isUpButtonHeld[index] : isDownButtonHeld[index])) break;
+                
+                if (isUp)
+                {
+                    OnUpClick(index);
+                }
+                else
+                {
+                    OnDownClick(index);
+                }
             }
         }
     }

@@ -162,7 +162,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Key: Whether to purchase?
+  Key: NeedToPayCoinsToPurchase
 --- !u!1 &4180947968999294855
 GameObject:
   m_ObjectHideFlags: 0
@@ -386,6 +386,7 @@ GameObject:
   - component: {fileID: 4635036513716777678}
   - component: {fileID: 3809995740553614453}
   - component: {fileID: 4674517028243011951}
+  - component: {fileID: 1107650877114461967}
   m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Click
@@ -523,6 +524,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e984ebdff2b4348b2d29ab8ce8e9038, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1107650877114461967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4856391042847064571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7922057eac047c68909c14f51351ba5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Key: Confirm
 --- !u!1 &8021581029250558638
 GameObject:
   m_ObjectHideFlags: 0

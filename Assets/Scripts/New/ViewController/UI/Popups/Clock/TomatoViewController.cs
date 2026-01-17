@@ -6,6 +6,7 @@ using QFramework;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 
@@ -47,6 +48,13 @@ namespace BirdGame
         private List<TextMeshProUGUI> nameTextList = new List<TextMeshProUGUI>();
         private List<RectTransform> currentLines = new List<RectTransform>();
         private List<TextMeshProUGUI> currentNames = new List<TextMeshProUGUI>();
+
+        private Coroutine[] upButtonHoldCoroutines = new Coroutine[3];
+        private Coroutine[] downButtonHoldCoroutines = new Coroutine[3];
+        private bool[] isUpButtonHeld = new bool[3];
+        private bool[] isDownButtonHeld = new bool[3];
+        private float[] buttonPressStartTime = new float[6]; // 3 up + 3 down buttons
+        private bool[] buttonHoldIncrementExecuted = new bool[6]; // Track if hold increment was executed
         
         private void Start()
         {
@@ -172,14 +180,32 @@ namespace BirdGame
             for (int i = 0; i < 3; i++)
             {
                 int index = i;
+                
+                // Add onClick for one-time click (only if it was a quick click, not a hold)
                 upButtons[i].onClick.AddListener(() =>
                 {
-                    OnUpClick(index);
+                    int buttonIndex = index * 2; // Up buttons: 0, 2, 4
+                    // Only execute onClick if no hold increment was executed
+                    if (!buttonHoldIncrementExecuted[buttonIndex])
+                    {
+                        OnUpClick(index);
+                    }
+                    buttonHoldIncrementExecuted[buttonIndex] = false; // Reset for next press
                 });
                 downButtons[i].onClick.AddListener(() =>
                 {
-                    OnDownClick(index);
+                    int buttonIndex = index * 2 + 1; // Down buttons: 1, 3, 5
+                    // Only execute onClick if no hold increment was executed
+                    if (!buttonHoldIncrementExecuted[buttonIndex])
+                    {
+                        OnDownClick(index);
+                    }
+                    buttonHoldIncrementExecuted[buttonIndex] = false; // Reset for next press
                 });
+                
+                // Add button hold functionality (increments only after holding 0.5 seconds)
+                AddButtonHoldSupport(upButtons[i], index, true);
+                AddButtonHoldSupport(downButtons[i], index, false);
             }
             refreshButton.onClick.AddListener(() =>
             {
@@ -753,6 +779,137 @@ namespace BirdGame
                 this.GetModel<IClockModel>().TomatoItem.AudioSelected.Value = index;
                 this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForSession;
                 this.GetSystem<IAudioSystem>().PlayAlert();
+            }
+        }
+
+        private void AddButtonHoldSupport(Button button, int index, bool isUpButton)
+        {
+            var eventTrigger = button.gameObject.GetComponent<EventTrigger>();
+            if (eventTrigger == null)
+            {
+                eventTrigger = button.gameObject.AddComponent<EventTrigger>();
+            }
+
+            // Pointer Down
+            var pointerDown = new EventTrigger.Entry();
+            pointerDown.eventID = EventTriggerType.PointerDown;
+            pointerDown.callback.AddListener((data) =>
+            {
+                int buttonIndex = isUpButton ? index * 2 : index * 2 + 1;
+                buttonPressStartTime[buttonIndex] = Time.time;
+                buttonHoldIncrementExecuted[buttonIndex] = false; // Reset flag
+                
+                if (isUpButton)
+                {
+                    isUpButtonHeld[index] = true;
+                    if (upButtonHoldCoroutines[index] != null)
+                    {
+                        this.GetSystem<IMonoSystem>().StopCoroutine(upButtonHoldCoroutines[index]);
+                    }
+                    upButtonHoldCoroutines[index] = this.GetSystem<IMonoSystem>().StartCoroutine(ButtonHoldCoroutine(index, true));
+                }
+                else
+                {
+                    isDownButtonHeld[index] = true;
+                    if (downButtonHoldCoroutines[index] != null)
+                    {
+                        this.GetSystem<IMonoSystem>().StopCoroutine(downButtonHoldCoroutines[index]);
+                    }
+                    downButtonHoldCoroutines[index] = this.GetSystem<IMonoSystem>().StartCoroutine(ButtonHoldCoroutine(index, false));
+                }
+            });
+            eventTrigger.triggers.Add(pointerDown);
+
+            // Pointer Up
+            var pointerUp = new EventTrigger.Entry();
+            pointerUp.eventID = EventTriggerType.PointerUp;
+            pointerUp.callback.AddListener((data) =>
+            {
+                if (isUpButton)
+                {
+                    isUpButtonHeld[index] = false;
+                    if (upButtonHoldCoroutines[index] != null)
+                    {
+                        this.GetSystem<IMonoSystem>().StopCoroutine(upButtonHoldCoroutines[index]);
+                        upButtonHoldCoroutines[index] = null;
+                    }
+                }
+                else
+                {
+                    isDownButtonHeld[index] = false;
+                    if (downButtonHoldCoroutines[index] != null)
+                    {
+                        this.GetSystem<IMonoSystem>().StopCoroutine(downButtonHoldCoroutines[index]);
+                        downButtonHoldCoroutines[index] = null;
+                    }
+                }
+            });
+            eventTrigger.triggers.Add(pointerUp);
+
+            // Pointer Exit (stop holding if mouse leaves button area)
+            var pointerExit = new EventTrigger.Entry();
+            pointerExit.eventID = EventTriggerType.PointerExit;
+            pointerExit.callback.AddListener((data) =>
+            {
+                if (isUpButton)
+                {
+                    isUpButtonHeld[index] = false;
+                    if (upButtonHoldCoroutines[index] != null)
+                    {
+                        this.GetSystem<IMonoSystem>().StopCoroutine(upButtonHoldCoroutines[index]);
+                        upButtonHoldCoroutines[index] = null;
+                    }
+                }
+                else
+                {
+                    isDownButtonHeld[index] = false;
+                    if (downButtonHoldCoroutines[index] != null)
+                    {
+                        this.GetSystem<IMonoSystem>().StopCoroutine(downButtonHoldCoroutines[index]);
+                        downButtonHoldCoroutines[index] = null;
+                    }
+                }
+            });
+            eventTrigger.triggers.Add(pointerExit);
+        }
+
+        private IEnumerator ButtonHoldCoroutine(int index, bool isUp)
+        {
+            // Wait 0.5 seconds before doing the first increment
+            yield return new WaitForSeconds(0.5f);
+            
+            // If still held, do the first increment and then start repeating
+            bool stillHeld = isUp ? isUpButtonHeld[index] : isDownButtonHeld[index];
+            if (!stillHeld) yield break;
+
+            // Do the first increment after 0.5 seconds of holding
+            int buttonIndex = isUp ? index * 2 : index * 2 + 1;
+            buttonHoldIncrementExecuted[buttonIndex] = true; // Mark that hold increment was executed
+            if (isUp)
+            {
+                OnUpClick(index);
+            }
+            else
+            {
+                OnDownClick(index);
+            }
+
+            // Repeat while held with faster interval (0.1 seconds)
+            while (isUp ? isUpButtonHeld[index] : isDownButtonHeld[index])
+            {
+                yield return new WaitForSeconds(0.1f);
+                
+                // Check again if still held before incrementing
+                if (!(isUp ? isUpButtonHeld[index] : isDownButtonHeld[index])) break;
+                
+                if (isUp)
+                {
+                    OnUpClick(index);
+                }
+                else
+                {
+                    OnDownClick(index);
+                }
             }
         }
     }
