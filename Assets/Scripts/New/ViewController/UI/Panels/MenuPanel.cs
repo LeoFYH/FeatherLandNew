@@ -438,31 +438,8 @@ namespace BirdGame
 
         private void Update()
         {
-            // Support both Unity input and hook input for desktop mode
-            if (GetKeyDownAny(KeyCode.Escape))
-            {
-                // 检查设置界面是否已经打开
-                var settingPopup = this.GetSystem<IUISystem>().GetPopup<UIBase>(UIPopup.SettingPopup);
-                if (settingPopup != null)
-                {
-                    // 如果已经打开，则关闭
-                    settingButton.isOn = false;
-                }
-                else
-                {
-                    // 如果没打开，则打开
-                    settingButton.isOn = true;
-                }
-            }
-            
-            if (GetKeyDownAny(KeyCode.W))
-            {
-                // 按下 W 键打开/关闭天气选项
-                if (weatherButton != null)
-                {
-                    weatherButton.onClick.Invoke();
-                }
-            }
+            // 所有快捷键处理已移至 GameEntry.HandleKeyboardShortcuts() 统一管理
+            // 这里不再处理任何快捷键，避免冲突
 
             // if (Input.GetKeyDown(KeyCode.N))
             // {
