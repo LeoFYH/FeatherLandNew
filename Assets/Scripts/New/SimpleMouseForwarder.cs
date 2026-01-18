@@ -146,17 +146,6 @@ namespace BirdGame
         private static Vector2 mouseDownPosition = Vector2.zero; // Track where mouse was pressed down
         private static bool shouldTriggerClickOnRelease = false; // Track if we should trigger click on release
         private static SimpleMouseForwarder instance;
-        
-        // Cache for hover state checking - only update when mouse moves
-        private static Vector2 lastHoverCheckPosition = Vector2.zero;
-        private const float HOVER_CHECK_DISTANCE_THRESHOLD = 2f; // Only check hover when mouse moves at least 2 pixels
-        
-        // Performance optimization: Throttle hover checks in hook callback
-        // Hook callback is called VERY frequently (potentially hundreds per second), so we need to throttle expensive operations
-        private static Vector2 lastHookHoverCheckPosition = Vector2.zero;
-        private const float HOOK_HOVER_CHECK_DISTANCE_THRESHOLD = 3f; // Higher threshold for hook callback (more aggressive throttling)
-        private static float lastHookHoverCheckTime = 0f;
-        private const float HOOK_HOVER_CHECK_MIN_INTERVAL = 0.02f; // Minimum 20ms between hook hover checks (50 checks/second max)
 
         private void OnEnable()
         {
@@ -780,93 +769,72 @@ namespace BirdGame
                     
                     if (shouldUpdateHoverStates)
                     {
-                        // Performance optimization: Throttle expensive hover checks in hook callback
-                        // Hook callback runs on every mouse movement (hundreds per second), so we need aggressive throttling
-                        float currentTime = Time.time;
-                        float mouseMovementDistance = Vector2.Distance(currentMousePosition, lastHookHoverCheckPosition);
-                        float timeSinceLastCheck = currentTime - lastHookHoverCheckTime;
+                        // Get the ACTUAL real-time mouse position to catch fast movements
+                        // The hook position might be outdated by the time we process hover states
+                        Vector2 actualMousePos = GetCurrentMousePositionRealtime();
                         
-                        // Only do expensive hover checks if:
-                        // 1. Mouse moved significantly (>= 3 pixels)
-                        // 2. Enough time has passed since last check (>= 20ms, i.e., max 50 checks/second)
-                        if (mouseMovementDistance < HOOK_HOVER_CHECK_DISTANCE_THRESHOLD || timeSinceLastCheck < HOOK_HOVER_CHECK_MIN_INTERVAL)
+                        // Handle all UI elements enter/exit (Buttons, Toggles, etc.)
+                        HashSet<GameObject> currentUIElements = FindAllUIElementsUnderMouse(actualMousePos);
+                        
+                        // Exit all UI elements that are no longer under the mouse
+                        var elementsToExit = new List<GameObject>(_currentHoveredUIElements);
+                        foreach (var element in elementsToExit)
                         {
-                            // Skip expensive hover checks - they'll be handled by Update() method with better throttling
-                            // Just update position for next check
-                        }
-                        else
-                        {
-                            // Update throttle tracking
-                            lastHookHoverCheckPosition = currentMousePosition;
-                            lastHookHoverCheckTime = currentTime;
-                            
-                            // Get the ACTUAL real-time mouse position to catch fast movements
-                            // The hook position might be outdated by the time we process hover states
-                            Vector2 actualMousePos = GetCurrentMousePositionRealtime();
-                            
-                            // Handle all UI elements enter/exit (Buttons, Toggles, etc.)
-                            HashSet<GameObject> currentUIElements = FindAllUIElementsUnderMouse(actualMousePos);
-                            
-                            // Exit all UI elements that are no longer under the mouse
-                            var elementsToExit = new List<GameObject>(_currentHoveredUIElements);
-                            foreach (var element in elementsToExit)
+                            if (element != null && !currentUIElements.Contains(element))
                             {
-                                if (element != null && !currentUIElements.Contains(element))
+                                // Don't exit the drag target during slider or scrollbar drag
+                                if ((isSliderDrag || isScrollbarDrag) && element == currentDragTarget)
                                 {
-                                    // Don't exit the drag target during slider or scrollbar drag
-                                    if ((isSliderDrag || isScrollbarDrag) && element == currentDragTarget)
-                                    {
-                                        continue;
-                                    }
-                                    
-                                    HandlePointerExit(element, actualMousePos);
-                                    _currentHoveredUIElements.Remove(element);
-                                }
-                                else if (element == null)
-                                {
-                                    // Object was destroyed, just remove from set
-                                    _currentHoveredUIElements.Remove(element);
-                                }
-                            }
-                            
-                            // Enter all new UI elements under the mouse
-                            foreach (var element in currentUIElements)
-                            {
-                                if (!_currentHoveredUIElements.Contains(element))
-                                {
-                                    HandlePointerEnter(element, actualMousePos);
-                                    _currentHoveredUIElements.Add(element);
-                                }
-                            }
-                            
-                            // Make sure the slider drag target stays in the hovered set
-                            if (isSliderDrag && !_currentHoveredUIElements.Contains(currentDragTarget))
-                            {
-                                _currentHoveredUIElements.Add(currentDragTarget);
-                            }
-
-                            // Handle PointerEvent enter/exit (for backward compatibility)
-                            GameObject pointerEventTarget = FindPointerEventTarget(actualMousePos);
-                            
-                            // Check if we're entering a new PointerEvent
-                            if (pointerEventTarget != null && pointerEventTarget != _currentHoveredPointerEvent)
-                            {
-                                // Exit the previous one if exists
-                                if (_currentHoveredPointerEvent != null)
-                                {
-                                    HandlePointerExit(_currentHoveredPointerEvent, actualMousePos);
+                                    continue;
                                 }
                                 
-                                // Enter the new one
-                                _currentHoveredPointerEvent = pointerEventTarget;
-                                HandlePointerEnter(_currentHoveredPointerEvent, actualMousePos);
+                                HandlePointerExit(element, actualMousePos);
+                                _currentHoveredUIElements.Remove(element);
                             }
-                            // Check if we're exiting the current PointerEvent
-                            else if (_currentHoveredPointerEvent != null && pointerEventTarget != _currentHoveredPointerEvent)
+                            else if (element == null)
+                            {
+                                // Object was destroyed, just remove from set
+                                _currentHoveredUIElements.Remove(element);
+                            }
+                        }
+                        
+                        // Enter all new UI elements under the mouse
+                        foreach (var element in currentUIElements)
+                        {
+                            if (!_currentHoveredUIElements.Contains(element))
+                            {
+                                HandlePointerEnter(element, actualMousePos);
+                                _currentHoveredUIElements.Add(element);
+                            }
+                        }
+                        
+                        // Make sure the slider drag target stays in the hovered set
+                        if (isSliderDrag && !_currentHoveredUIElements.Contains(currentDragTarget))
+                        {
+                            _currentHoveredUIElements.Add(currentDragTarget);
+                        }
+
+                        // Handle PointerEvent enter/exit (for backward compatibility)
+                        GameObject pointerEventTarget = FindPointerEventTarget(actualMousePos);
+                        
+                        // Check if we're entering a new PointerEvent
+                        if (pointerEventTarget != null && pointerEventTarget != _currentHoveredPointerEvent)
+                        {
+                            // Exit the previous one if exists
+                            if (_currentHoveredPointerEvent != null)
                             {
                                 HandlePointerExit(_currentHoveredPointerEvent, actualMousePos);
-                                _currentHoveredPointerEvent = null;
                             }
+                            
+                            // Enter the new one
+                            _currentHoveredPointerEvent = pointerEventTarget;
+                            HandlePointerEnter(_currentHoveredPointerEvent, actualMousePos);
+                        }
+                        // Check if we're exiting the current PointerEvent
+                        else if (_currentHoveredPointerEvent != null && pointerEventTarget != _currentHoveredPointerEvent)
+                        {
+                            HandlePointerExit(_currentHoveredPointerEvent, actualMousePos);
+                            _currentHoveredPointerEvent = null;
                         }
                     }
 
@@ -1624,93 +1592,56 @@ namespace BirdGame
                     // This catches fast mouse movements that the hook might have missed
                     Vector2 realtimeMousePos = GetCurrentMousePositionRealtime();
                     
-                    // Performance optimization: Only check hover states when mouse actually moves
-                    // This prevents expensive raycasts every frame when mouse is stationary
-                    float mouseMovementDistance = Vector2.Distance(realtimeMousePos, lastHoverCheckPosition);
-                    if (mouseMovementDistance < HOVER_CHECK_DISTANCE_THRESHOLD)
-                    {
-                        // Mouse hasn't moved enough, skip expensive hover checks
-                        // We still need to validate destroyed objects, but less frequently
-                        // Only do minimal validation every few frames
-                        if (Time.frameCount % 3 == 0) // Check every 3 frames for destroyed objects
-                        {
-                            // Quick validation: just check if hovered objects still exist
-                            var elementsToExit = new List<GameObject>(_currentHoveredUIElements);
-                            foreach (var element in elementsToExit)
-                            {
-                                if (element == null || !element.activeInHierarchy)
-                                {
-                                    HandlePointerExit(element, realtimeMousePos);
-                                    _currentHoveredUIElements.Remove(element);
-                                }
-                            }
-                            
-                            if (_currentHoveredPointerEvent != null && !_currentHoveredPointerEvent.activeInHierarchy)
-                            {
-                                HandlePointerExit(_currentHoveredPointerEvent, realtimeMousePos);
-                                _currentHoveredPointerEvent = null;
-                            }
-                        }
-                        // Skip the expensive raycast checks when mouse hasn't moved - exit early from this if block
-                    }
-                    else
-                    {
-                        // Mouse has moved significantly, update hover states
-                        lastHoverCheckPosition = realtimeMousePos;
-                        
-                        // Validate that all currently hovered UI elements are still valid
-                        // This handles cases where the mouse left the window, object was destroyed, or mouse moved too fast
-                        HashSet<GameObject> currentUIElements = FindAllUIElementsUnderMouse(realtimeMousePos);
+                    // Validate that all currently hovered UI elements are still valid
+                    // This handles cases where the mouse left the window, object was destroyed, or mouse moved too fast
+                    HashSet<GameObject> currentUIElements = FindAllUIElementsUnderMouse(realtimeMousePos);
                     
-                        // Exit all UI elements that are no longer valid or no longer under the mouse
-                        var elementsToExit = new List<GameObject>(_currentHoveredUIElements);
-                        foreach (var element in elementsToExit)
+                    // Exit all UI elements that are no longer valid or no longer under the mouse
+                    var elementsToExit = new List<GameObject>(_currentHoveredUIElements);
+                    foreach (var element in elementsToExit)
+                    {
+                        if (element == null)
                         {
-                            if (element == null)
-                            {
-                                // Object was destroyed, just remove from set
-                                _currentHoveredUIElements.Remove(element);
-                            }
-                            else if (!element.activeInHierarchy || !currentUIElements.Contains(element))
-                            {
-                                HandlePointerExit(element, realtimeMousePos);
-                                _currentHoveredUIElements.Remove(element);
-                            }
+                            // Object was destroyed, just remove from set
+                            _currentHoveredUIElements.Remove(element);
                         }
-                        
-                        // Enter all new UI elements under the mouse
-                        foreach (var element in currentUIElements)
+                        else if (!element.activeInHierarchy || !currentUIElements.Contains(element))
                         {
-                            if (!_currentHoveredUIElements.Contains(element))
-                            {
-                                HandlePointerEnter(element, realtimeMousePos);
-                                _currentHoveredUIElements.Add(element);
-                            }
+                            HandlePointerExit(element, realtimeMousePos);
+                            _currentHoveredUIElements.Remove(element);
                         }
+                    }
+                    
+                    // Enter all new UI elements under the mouse
+                    foreach (var element in currentUIElements)
+                    {
+                        if (!_currentHoveredUIElements.Contains(element))
+                        {
+                            HandlePointerEnter(element, realtimeMousePos);
+                            _currentHoveredUIElements.Add(element);
+                        }
+                    }
 
-                        // Validate that the currently hovered pointer event is still valid
-                        // This handles cases where the mouse left the window, object was destroyed, or mouse moved too fast
-                        if (_currentHoveredPointerEvent != null)
+                    // Validate that the currently hovered pointer event is still valid
+                    // This handles cases where the mouse left the window, object was destroyed, or mouse moved too fast
+                    if (_currentHoveredPointerEvent != null)
+                    {
+                        // Check if the object still exists and is active
+                        if (!_currentHoveredPointerEvent.activeInHierarchy)
                         {
-                            // Check if the object still exists and is active
-                            if (!_currentHoveredPointerEvent.activeInHierarchy)
+                            // Object was destroyed or disabled, clear the hovered state
+                            HandlePointerExit(_currentHoveredPointerEvent, realtimeMousePos);
+                            _currentHoveredPointerEvent = null;
+                        }
+                        else
+                        {
+                            // Verify that the mouse is still actually over the object
+                            GameObject currentPointerEventTarget = FindPointerEventTarget(realtimeMousePos);
+                            if (currentPointerEventTarget != _currentHoveredPointerEvent)
                             {
-                                // Object was destroyed or disabled, clear the hovered state
+                                // Mouse is no longer over the object, trigger exit
                                 HandlePointerExit(_currentHoveredPointerEvent, realtimeMousePos);
                                 _currentHoveredPointerEvent = null;
-                            }
-                            else
-                            {
-                                // Only verify pointer event target if we've already done the full hover check
-                                // (This check happens after the full hover validation above)
-                                // Verify that the mouse is still actually over the object
-                                GameObject currentPointerEventTarget = FindPointerEventTarget(realtimeMousePos);
-                                if (currentPointerEventTarget != _currentHoveredPointerEvent)
-                                {
-                                    // Mouse is no longer over the object, trigger exit
-                                    HandlePointerExit(_currentHoveredPointerEvent, realtimeMousePos);
-                                    _currentHoveredPointerEvent = null;
-                                }
                             }
                         }
                     }
