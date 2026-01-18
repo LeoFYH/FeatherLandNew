@@ -45,8 +45,7 @@ namespace BirdGame
     {
         public float coins = 600;
         public List<SceneDecorationInfo> sceneDecorationInfos = new List<SceneDecorationInfo>();
-        public List<ToolInfo> tools = new List<ToolInfo>();
-        public int addedMaxBirdValue = 0;
+        public List<SceneToolInfo> sceneTools = new List<SceneToolInfo>();
     }
 
     [Serializable]
@@ -64,6 +63,12 @@ namespace BirdGame
         /// 记录已使用的 fixedPositions 索引，用于在删除后重新购买时使用正确的索引
         /// </summary>
         public List<int> usedFixedPositionIndices = new List<int>();
+    }
+
+    [Serializable]
+    public class SceneToolInfo
+    {
+        public List<ToolInfo> tools = new List<ToolInfo>();
     }
 
     [Serializable]
@@ -110,6 +115,7 @@ namespace BirdGame
     {
         public int currentMap = 0;
         public List<MapBirdList> mapBirds = new List<MapBirdList>();
+        public List<int> addedBirdCountList = new List<int>();
     }
 
     [Serializable]

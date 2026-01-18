@@ -103,26 +103,38 @@ namespace BirdGame
             this.GetSystem<ISaveSystem>().InitData();
             this.GetSystem<IGameSystem>().InitAccount();
             InitializeDefaultFood();
-            var saveModel = this.GetModel<ISaveModel>();
-            var birdModel = this.GetModel<IBirdModel>();
-            if (saveModel.AccountData.tools.Count <= 1)
-            {
-                birdModel.AddedBirdCount = 0;
-            }
-            else if( saveModel.AccountData.tools[1].unlockedList == null || saveModel.AccountData.tools[1].unlockedList.Count ==0)
-            {
-                birdModel.AddedBirdCount = 0;
-            }
-            else
-            {
-                birdModel.AddedBirdCount = 0;
-                for (int i = 0; i < saveModel.AccountData.tools[1].unlockedList.Count; i++)
-                {
-                    birdModel.AddedBirdCount += 10;
-                }
-            }
-            
+            // var saveModel = this.GetModel<ISaveModel>();
+            // var birdModel = this.GetModel<IBirdModel>();
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            // if (this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList == null)
+            // {
+            //     this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList = new List<int>();
+            // }
+            //
+            // while (mapIndex >= this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList.Count)
+            // {
+            //     this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList.Add(0);
+            // }
+            //
+            // int addedCount = this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList[mapIndex];
+            // if (saveModel.AccountData.tools.Count <= 1)
+            // {
+            //     birdModel.AddedBirdCount = 0;
+            // }
+            // else if( saveModel.AccountData.tools[1].unlockedList == null || saveModel.AccountData.tools[1].unlockedList.Count ==0)
+            // {
+            //     birdModel.AddedBirdCount = 0;
+            // }
+            // else
+            // {
+            //     birdModel.AddedBirdCount = 0;
+            //     for (int i = 0; i < saveModel.AccountData.tools[1].unlockedList.Count; i++)
+            //     {
+            //         birdModel.AddedBirdCount += 10;
+            //     }
+            // }
+            //
+            
             this.GetSystem<ISceneSystem>().LoadScene(mapIndex, progress =>
             {
                 OnProgress("Loading Scene", progress);
@@ -182,19 +194,20 @@ namespace BirdGame
         {
             var configModel = this.GetModel<IConfigModel>();
             var saveModel = this.GetModel<ISaveModel>();
-            if (saveModel.AccountData.tools == null)
-                saveModel.AccountData.tools = new List<ToolInfo>();
+            if (saveModel.AccountData.sceneTools == null)
+                saveModel.AccountData.sceneTools = new List<SceneToolInfo>();
+            saveModel.AccountData.sceneTools.Add(new SceneToolInfo());
             // 查找食物工具配置
             for (int i = 0; i < configModel.ShopConfig.tools.Length; i++)
             {
-                if (saveModel.AccountData.tools.Count <= i)
+                if (saveModel.AccountData.sceneTools[0].tools.Count <= i)
                 {
-                    saveModel.AccountData.tools.Add(new ToolInfo());
+                    saveModel.AccountData.sceneTools[0].tools.Add(new ToolInfo());
                 }
 
-                if (saveModel.AccountData.tools[i].unlockedList == null)
+                if (saveModel.AccountData.sceneTools[0].tools[i].unlockedList == null)
                 {
-                    saveModel.AccountData.tools[i].unlockedList = new List<int>() { 0 };
+                    saveModel.AccountData.sceneTools[0].tools[i].unlockedList = new List<int>() { 0 };
                 }
 
                 // var toolItem = configModel.ShopConfig.tools[i];

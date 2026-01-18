@@ -145,8 +145,19 @@ namespace BirdGame
                 }
                 return;  // 避免访问越界的索引
             }
+            if (this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList == null)
+            {
+                this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList = new List<int>();
+            }
+
+            while (mapIndex >= this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList.Count)
+            {
+                this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList.Add(0);
+            }
+
+            int addedCount = this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList[mapIndex];
             capacityValue.text =
-                $"{this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.Count}/{this.GetModel<IBirdModel>().AddedBirdCount + this.GetModel<IConfigModel>().BirdConfig.maxBirdCount}";
+                $"{this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.Count}/{addedCount + this.GetModel<IConfigModel>().BirdConfig.maxBirdCount}";
             
             // 计算每分钟收益
             if (coinsPerMinuteText != null)
