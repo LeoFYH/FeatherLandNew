@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -83,6 +84,13 @@ namespace BirdGame
                 {
                     
                         this.GetModel<IAccountModel>().Coins.Value -= price;
+                        
+                        // 播放购买音效（延迟0.5秒，和sell bird一样）
+                        DOTween.Sequence().AppendCallback(() =>
+                        {
+                            this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
+                        }).SetDelay(0.2f);
+                        
                         this.SendCommand<CreateBirdCommand>();
                         // 统一通过事件关闭商店，确保 shopButton 状态同步
                         this.GetSystem<IGameSystem>().SendEvent<OnShopCloseEvent>();
