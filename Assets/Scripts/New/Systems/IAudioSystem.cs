@@ -78,7 +78,7 @@ namespace BirdGame
         private IRadioModel radioModel;
         private AudioSource radioAudio;
         private List<AudioSource> environmentAudios = new List<AudioSource>();
-        private AudioSource effectAudio;
+        private List<AudioSource> effectAudios = new List<AudioSource>();
         private AudioSource birdAudio;
         private AudioSource alertAudio;
         private AudioSource pettingAudio;
@@ -95,8 +95,6 @@ namespace BirdGame
             radioAudio = obj.AddComponent<AudioSource>();
             radioAudio.playOnAwake = false;
             radioAudio.loop = radioModel.Loop.Value;
-            effectAudio = obj.AddComponent<AudioSource>();
-            effectAudio.loop = false;
             birdAudio = obj.AddComponent<AudioSource>();
             birdAudio.loop = false;
             radioAudio.volume = radioModel.Volume.Value;
@@ -278,7 +276,8 @@ namespace BirdGame
                     group = this.GetModel<IConfigModel>().RadioConfig.effects[6].group;
                     break;
             }
-            
+
+            var effectAudio = GetEffectAudio();
             effectAudio.clip = clip;
             effectAudio.outputAudioMixerGroup = group;
             //撒食物音效调整
@@ -301,6 +300,20 @@ namespace BirdGame
             }
             
             effectAudio.Play();
+        }
+
+        private AudioSource GetEffectAudio()
+        {
+            foreach (var audio in effectAudios)
+            {
+                if (!audio.isPlaying)
+                    return audio;
+            }
+
+            var effectAu = obj.AddComponent<AudioSource>();
+            effectAu.loop = false;
+            effectAudios.Add(effectAu);
+            return effectAu;
         }
 
         public void PlayBirdEffect(int birdIndex)

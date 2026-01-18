@@ -89,6 +89,11 @@ namespace BirdGame
 
             if (item.selections[0].type == ToolType.Food)
             {
+                if (saveModel.AccountData.sceneTools == null)
+                    saveModel.AccountData.sceneTools = new List<SceneToolInfo>();
+                if (saveModel.AccountData.sceneTools.Count == 0) 
+                    saveModel.AccountData.sceneTools.Add(new SceneToolInfo());
+                
                 while (saveModel.AccountData.sceneTools[0].tools.Count <= itemIndex)
                 {
                     saveModel.AccountData.sceneTools[0].tools.Add(new ToolInfo());
