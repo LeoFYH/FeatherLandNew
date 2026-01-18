@@ -1730,7 +1730,8 @@ namespace BirdGame
                 bool foundInputField = false;
                 bool foundSlider = false;
                 
-                // Process ALL raycast results to trigger events on all objects
+                // First, check all raycast results for special handlers (input fields, sliders)
+                // These need to be found regardless of their depth in the hierarchy
                 foreach (var result in raycastResults)
                 {
                     GameObject hitObject = result.gameObject;
@@ -1751,7 +1752,7 @@ namespace BirdGame
                         Debug.Log($"[SimpleMouseForwarder] TMP输入框激活: {hitObject.name}");
                         foundInputField = true;
                         // Input fields consume the click, stop processing
-                        break;
+                        return;
                     }
 
                     // Check for legacy InputField handler
@@ -1764,7 +1765,7 @@ namespace BirdGame
                         Debug.Log($"[SimpleMouseForwarder] Legacy输入框激活: {hitObject.name}");
                         foundInputField = true;
                         // Input fields consume the click, stop processing
-                        break;
+                        return;
                     }
 
                     // Check for slider handlers
@@ -1776,16 +1777,20 @@ namespace BirdGame
                         Debug.Log($"[SimpleMouseForwarder] 滑块交互: {hitObject.name}");
                         foundSlider = true;
                         // Sliders consume the click, stop processing
-                        break;
+                        return;
                     }
-
-                    // Execute pointer click on this object
-                    // This will trigger ALL objects in the raycast hierarchy
-                    ExecuteEvents.Execute(hitObject, pointerData, ExecuteEvents.pointerClickHandler);
+                }
+                
+                // If no special handler was found, send click event only to the topmost (first) object
+                // Raycast results are sorted by depth, so the first result is the topmost
+                if (!foundInputField && !foundSlider)
+                {
+                    GameObject topmostObject = raycastResults[0].gameObject;
+                    ExecuteEvents.Execute(topmostObject, pointerData, ExecuteEvents.pointerClickHandler);
                     
                     if (showDebugLog)
                     {
-                        Debug.Log($"[SimpleMouseForwarder] 点击对象: {hitObject.name}");
+                        Debug.Log($"[SimpleMouseForwarder] 点击对象: {topmostObject.name}");
                     }
                 }
             }
