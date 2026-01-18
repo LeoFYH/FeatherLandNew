@@ -124,13 +124,18 @@ namespace BirdGame
                 }
                 RefreshBirdList();
                 RefreshName();  // 刷新容量显示
-                //this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
+                this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
             });
             RefreshButtons();
             this.RegisterEvent<RefreshSaleBirdEvent>(evt =>
             {
                 RefreshBirdList();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+        }
+
+        private void OnEnable()
+        {
+            RefreshName();
         }
 
         private void RefreshName()
@@ -317,7 +322,7 @@ namespace BirdGame
             RefreshName();  // 刷新容量显示
             // DOTween.Sequence().AppendCallback(() =>
             // {
-            //     this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
+            this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
             // }).SetDelay(0.5f);
         }
     }

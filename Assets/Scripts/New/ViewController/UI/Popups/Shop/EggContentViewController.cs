@@ -15,6 +15,7 @@ namespace BirdGame
         public TextMeshProUGUI priceText;
         public GameObject itemPrefab;
         public UIButtonHoverScale uiButtonHoverScale;
+        public ButtonHighlight highlight;
 
         private IGameModel gameModel;
         private IConfigModel configModel;
@@ -96,10 +97,7 @@ namespace BirdGame
                         this.GetModel<IAccountModel>().Coins.Value -= price;
                         
                         // 播放购买音效（延迟0.5秒，和sell bird一样）
-                        DOTween.Sequence().AppendCallback(() =>
-                        {
-                            this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
-                        }).SetDelay(0.2f);
+                        this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
                         
                         this.SendCommand<CreateBirdCommand>();
                         // 统一通过事件关闭商店，确保 shopButton 状态同步
@@ -142,6 +140,7 @@ namespace BirdGame
                 this.GetModel<IAccountModel>().Coins.Value)
             {
                 buyButton.interactable = false;
+                highlight.enabled = false;
                 buyButton.GetComponent<HoverButton>().isLessCoin = true;
                 uiButtonHoverScale.localizationKey = "Insufficient coins";
             }
@@ -149,6 +148,7 @@ namespace BirdGame
             {
                 buyButton.GetComponent<HoverButton>().isLessCoin = false;
                 buyButton.interactable = true;
+                highlight.enabled = true;
                 uiButtonHoverScale.localizationKey = "Buy 1?";
             }
         }

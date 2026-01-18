@@ -418,10 +418,7 @@ namespace BirdGame
                 int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
                 this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.RemoveAt(index);
                 this.GetSystem<IUISystem>().HidePopup(UIPopup.InfoPopup);
-                DOTween.Sequence().AppendCallback(() =>
-                {
-                    this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
-                }).SetDelay(0.2f);
+                this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
                 this.GetSystem<IGameSystem>().SendEvent<RefreshSaleBirdEvent>();
             });
             closeButton.onClick.AddListener(() =>

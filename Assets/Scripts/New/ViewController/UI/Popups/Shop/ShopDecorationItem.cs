@@ -21,6 +21,7 @@ namespace BirdGame
         public bool useRectTransform = true;  // 是否使用RectTransform，对于GameObject设为false
         public float price;
         public UIButtonHoverScale uiButtonHoverScale;
+        public ButtonHighlight highlight;
         
         private int id;
         private bool mouseWasOverButton = false;
@@ -66,10 +67,12 @@ namespace BirdGame
                 buyButton.targetGraphic.color = new Color32(159, 159, 159, 255);
                 buyButton.GetComponent<HoverButton>().isLessCoin = false;
                 uiButtonHoverScale.enabled = false;
+                highlight.enabled = false;
             }
             else if (price <= this.GetModel<IAccountModel>().Coins.Value)
             {
                 buyButton.interactable = true;
+                highlight.enabled = true;
                 buyButton.targetGraphic.color = Color.white;
                 uiButtonHoverScale.enabled = true;
                 uiButtonHoverScale.localizationKey =$"{this.GetSystem<ILocalizationSystem>().GetString("Hold")}: {currentCount}/{totalCount}";
@@ -80,6 +83,7 @@ namespace BirdGame
                 uiButtonHoverScale.enabled = true;
                 uiButtonHoverScale.localizationKey = "Insufficient coins";
                 buyButton.interactable = false;
+                highlight.enabled = false;
                 buyButton.targetGraphic.color = Color.white;
                 buyButton.GetComponent<HoverButton>().isLessCoin = true;
             }
@@ -111,10 +115,7 @@ namespace BirdGame
                     this.GetModel<IAccountModel>().Coins.Value -= price;
                     
                     // 播放购买音效（延迟0.5秒，和sell bird一样）
-                    DOTween.Sequence().AppendCallback(() =>
-                    {
-                        this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
-                    }).SetDelay(0.2f);
+                    this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
 
                     var decorationInfo = accountData.sceneDecorationInfos[mapIndex].decorations[id];
                     var decorationItem = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[mapIndex]

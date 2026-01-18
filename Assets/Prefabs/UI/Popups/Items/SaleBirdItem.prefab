@@ -1470,6 +1470,7 @@ GameObject:
   - component: {fileID: 5368595070959881983}
   - component: {fileID: 3593037766840585748}
   - component: {fileID: 1660680101043120040}
+  - component: {fileID: 7786637643955041703}
   m_Layer: 0
   m_Name: SaleButton
   m_TagString: Click
@@ -1554,7 +1555,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 2
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -1591,6 +1592,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7786637643955041703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8517487698097623382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0280a81849a4ceabdc8645d6aa12e87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  normalSprite: {fileID: -1331662771705909115, guid: 1aa2bf54239e7374387bc46d3b136fe5, type: 3}
+  highlightSprite: {fileID: -4117881023469739028, guid: 9fa8944590ceede4aaee5fb56880d3f9, type: 3}
 --- !u!1 &8639735005094709578
 GameObject:
   m_ObjectHideFlags: 0

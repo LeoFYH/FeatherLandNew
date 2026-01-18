@@ -54,6 +54,12 @@ namespace BirdGame
                     : data.customName;
                 nameText.text = this.GetSystem<ILocalizationSystem>().GetString(birdName);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            lockToggle.isOn = data.isLocked;
+            lockToggle.onValueChanged.AddListener(isOn =>
+            {
+                data.isLocked = isOn;
+                saleButton.interactable = !isOn;
+            });
         }
 
         private void Start()
@@ -78,11 +84,6 @@ namespace BirdGame
             {
                 onSaleEvent?.Invoke(index);
             });
-            lockToggle.onValueChanged.AddListener(isOn =>
-            {
-                saleButton.interactable = !isOn;
-            });
-            lockToggle.isOn = false;
         }
     }
 }

@@ -18,6 +18,7 @@ namespace BirdGame
         public TextMeshProUGUI buyButtonText;
         public GameObject selectionPrefab;
         public UIButtonHoverScale uiButtonHoverScale;
+        public ButtonHighlight highlight;
 
         private int itemIndex;
         private List<ShopToolSelection> selections = new List<ShopToolSelection>();
@@ -68,10 +69,11 @@ namespace BirdGame
 
                 int addedCount = this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList[mapIndex];
                 int current = this.GetModel<IConfigModel>().BirdConfig.maxBirdCount + addedCount;
-                string str1 = this.GetSystem<ILocalizationSystem>().GetString("Upgrade forest bird capacity to");
+                string str1 = this.GetSystem<ILocalizationSystem>()
+                    .GetString("Upgrade forest bird capacity to");
                 string str2 = this.GetSystem<ILocalizationSystem>().GetString("Current bird capacity");
                 description.SetKey(
-                    $"<i>{str2}:{current}</i>");
+                    $"{str1} {item.selections[gameModel.SelectedToolDic[index].Value].selectionName}.\n<i>{str2}:{current}</i>");
                 selectName.SetKey("Capacity Upgrade");
             }
             else
@@ -116,6 +118,7 @@ namespace BirdGame
                     priceText.SetKey("equipped");
                     buyButton.targetGraphic.color = new Color32(159,159,159,255);
                     buyButton.interactable = false;
+                    highlight.enabled = false;
                 }
                 else if (isInitialPurchased)
                 {
@@ -128,6 +131,7 @@ namespace BirdGame
                     // 未购买：显示价格
                     priceText.ThisText.text = $"${item.selections[gameModel.SelectedToolDic[index].Value].price}";
                     buyButton.interactable = true;
+                    highlight.enabled = true;
                     buyButton.targetGraphic.color =Color.white;
                 }
 
@@ -159,12 +163,14 @@ namespace BirdGame
                     priceText.SetKey("Purchased");
                     buyButton.targetGraphic.color = new Color32(159, 159, 159, 255);
                     buyButton.enabled = false;
+                    highlight.enabled = false;
                 }
                 else
                 {
 
                     buyButton.targetGraphic.color =Color.white;
                     buyButton.enabled = true;
+                    highlight.enabled = true;
                     priceText.ThisText.text = $"${item.selections[gameModel.SelectedToolDic[index].Value].price}";
                 }
 
@@ -225,14 +231,17 @@ namespace BirdGame
                     {
                         this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList.Add(0);
                     }
-
+                    
                     int addedCount = this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList[mapIndex];
+                    
                     selectName.SetKey("Capacity Upgrade");
+
                     int current = this.GetModel<IConfigModel>().BirdConfig.maxBirdCount + addedCount;
                     string str1 = this.GetSystem<ILocalizationSystem>()
                         .GetString("Upgrade forest bird capacity to");
                     string str2 = this.GetSystem<ILocalizationSystem>().GetString("Current bird capacity");
-                    description.SetKey($"{str1} {item.selections[gameModel.SelectedToolDic[index].Value].selectionName}.\n<i>{str2}:{current}</i>");
+                    description.SetKey(
+                        $"{str1} {item.selections[gameModel.SelectedToolDic[index].Value].selectionName}.\n<i>{str2}:{current}</i>");
                 }
 
                 if (item.selections[0].type == ToolType.Food)
@@ -250,6 +259,7 @@ namespace BirdGame
                         // 已装备：显示"equipped"
                         priceText.SetKey("equipped");
                         buyButton.interactable = false;
+                        highlight.enabled = false;
                         buyButton.targetGraphic.color = new Color32(159, 159, 159, 255);
                     }
                     else if (isPurchased)
@@ -257,6 +267,7 @@ namespace BirdGame
                         // 已购买但未装备：显示"equip"
                         priceText.SetKey("equip");
                         buyButton.interactable = true;
+                        highlight.enabled = true;
                         buyButton.targetGraphic.color = Color.white;
                     }
                     else
@@ -264,6 +275,7 @@ namespace BirdGame
                         // 未购买：显示价格
                         priceText.ThisText.text = $"${selectedTool.price}";
                         buyButton.interactable = true;
+                        highlight.enabled = true;
                         buyButton.targetGraphic.color = Color.white;
                     }
                 }
@@ -274,12 +286,14 @@ namespace BirdGame
                     {
                         priceText.SetKey("Purchased");
                         buyButton.enabled = false;
+                        highlight.enabled = false;
                         buyButton.targetGraphic.color = new Color32(159, 159, 159, 255);
                     }
                     else
                     {
                         priceText.ThisText.text = $"${selectedTool.price}";
                         buyButton.enabled = true;
+                        highlight.enabled = true;
                         buyButton.targetGraphic.color = Color.white;
                     }
                 }
@@ -312,6 +326,7 @@ namespace BirdGame
                     string str2 = this.GetSystem<ILocalizationSystem>().GetString("Current bird capacity");
                     description.SetKey(
                         $"{str1} {item.selections[gameModel.SelectedToolDic[index].Value].selectionName}.\n<i>{str2}:{current}</i>");
+                    
                     selectName.SetKey("Capacity Upgrade");
                 }
                 else
@@ -406,6 +421,7 @@ namespace BirdGame
                     // 已装备：显示"equipped"
                     priceText.SetKey("equipped");
                     buyButton.interactable = false;
+                    highlight.enabled = false;
                     uiButtonHoverScale.enabled = false;
                     buyButton.targetGraphic.color = new Color32(159, 159, 159, 255);
                     //uiButtonHoverScale.localizationKey = "hasbuy";
@@ -416,6 +432,7 @@ namespace BirdGame
                     // 已购买但未装备：显示"equip"
                     priceText.SetKey("equip");
                     buyButton.interactable = true;
+                    highlight.enabled = true;
                     buyButton.targetGraphic.color = Color.white;
                     uiButtonHoverScale.enabled = false;
                     //uiButtonHoverScale.localizationKey = "hasbuy";
@@ -432,6 +449,7 @@ namespace BirdGame
                         uiButtonHoverScale.localizationKey = "Insufficient coins";
                         buyButton.GetComponent<HoverButton>().isLessCoin = true;
                         buyButton.interactable = false;
+                        highlight.enabled = false;
                         buyButton.targetGraphic.color = Color.white;
                     }
                     else
@@ -440,6 +458,7 @@ namespace BirdGame
                         uiButtonHoverScale.enabled = true;
                         uiButtonHoverScale.localizationKey = "can buy";
                         buyButton.interactable = true;
+                        highlight.enabled = true;
                         buyButton.targetGraphic.color = Color.white;
                     }
                 }
@@ -462,6 +481,7 @@ namespace BirdGame
                 {
                     priceText.SetKey("Purchased");
                     buyButton.enabled = false;
+                    highlight.enabled = false;
                     buyButton.targetGraphic.color = new Color32(159, 159, 159, 255);
                     uiButtonHoverScale.enabled = false;
                     buyButton.GetComponent<HoverButton>().isLessCoin = false;
@@ -475,6 +495,7 @@ namespace BirdGame
                         uiButtonHoverScale.enabled = true;
                         uiButtonHoverScale.localizationKey = "Insufficient coins";
                         buyButton.interactable = false;
+                        highlight.enabled = false;
                         buyButton.GetComponent<HoverButton>().isLessCoin = true;
                         buyButton.targetGraphic.color = Color.white;
                     }
@@ -483,11 +504,21 @@ namespace BirdGame
                         uiButtonHoverScale.enabled = true;
                         uiButtonHoverScale.localizationKey = "can buy";
                         buyButton.interactable = true;
+                        highlight.enabled = true;
                         buyButton.GetComponent<HoverButton>().isLessCoin = false;
                         buyButton.targetGraphic.color = Color.white;
                     }
+                    
                 }
 
+                int addedCount = this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList[mapIndex];
+                int current = this.GetModel<IConfigModel>().BirdConfig.maxBirdCount + addedCount;
+                string str1 = this.GetSystem<ILocalizationSystem>()
+                    .GetString("Upgrade forest bird capacity to");
+                string str2 = this.GetSystem<ILocalizationSystem>().GetString("Current bird capacity");
+                description.SetKey(
+                    $"{str1} {item.selections[gameModel.SelectedToolDic[itemIndex].Value].selectionName}.\n<i>{str2}:{current}</i>");
+                
                 if (saveModel.AccountData.sceneTools[mapIndex].tools[itemIndex].unlockedList.Count == 0)
                 {
                     return;
@@ -536,10 +567,9 @@ namespace BirdGame
                         this.GetModel<IAccountModel>().Coins.Value -= price;
                         
                         // 播放购买音效（延迟0.5秒，和sell bird一样）
-                        DOTween.Sequence().AppendCallback(() =>
-                        {
-                            this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
-                        }).SetDelay(0.2f);
+                        
+                        this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
+                        
 
                         // 添加到已购买列表
 

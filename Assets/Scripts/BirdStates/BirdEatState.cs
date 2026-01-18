@@ -44,6 +44,13 @@ namespace BirdGame
                 _brid.BirdEatDistanceY,
                 0
             );
+
+            if (!NavigationManager.Instance.IsPointInNavMeshArea(_brid.walkArea, eatPosition))
+            {
+                currMachine.ChangeState<BirdIdleState>();
+                return;
+            }
+
             _brid.agent.SetDestination(eatPosition);
             _brid.agent.isStopped = false;
             _brid.anim.SetFloat("MoveSpeed", 1f);
@@ -100,6 +107,13 @@ namespace BirdGame
                     _brid.BirdEatDistanceY,
                     0
                 );
+                
+                if (!NavigationManager.Instance.IsPointInNavMeshArea(_brid.walkArea, _brid.transform.position))
+                {
+                    currMachine.ChangeState<BirdIdleState>();
+                    return;
+                }
+                
                 _brid.agent.SetDestination(eatPosition);
                 if (this.GetModel<IConfigModel>().BirdConfig.isDrawPathLine)
                     DrawPath();
