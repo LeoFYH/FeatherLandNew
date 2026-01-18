@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1491628499174157635}
   - component: {fileID: 3547472438388179587}
   - component: {fileID: 9154463047300577059}
+  - component: {fileID: 2410167294284583145}
   m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -69,8 +70,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Time's up!
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: f7ffd71761713684a94dc40f5e30b830, type: 2}
-  m_sharedMaterial: {fileID: 4111881798330064937, guid: f7ffd71761713684a94dc40f5e30b830, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: e71396d30154c044c8e0765ccd888d36, type: 2}
+  m_sharedMaterial: {fileID: 353428533605214050, guid: e71396d30154c044c8e0765ccd888d36, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -152,6 +153,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Key: Time's up!
 --- !u!114 &9154463047300577059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3227714734260297722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e984ebdff2b4348b2d29ab8ce8e9038, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2410167294284583145
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

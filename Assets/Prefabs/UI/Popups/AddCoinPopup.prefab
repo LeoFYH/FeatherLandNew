@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4182706861436966789}
   - component: {fileID: 6228453370071154066}
   - component: {fileID: 8822408632202849055}
+  - component: {fileID: 6359185919094838528}
   m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -69,8 +70,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Whether to purchase?
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: f7ffd71761713684a94dc40f5e30b830, type: 2}
-  m_sharedMaterial: {fileID: 4111881798330064937, guid: f7ffd71761713684a94dc40f5e30b830, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: e71396d30154c044c8e0765ccd888d36, type: 2}
+  m_sharedMaterial: {fileID: 353428533605214050, guid: e71396d30154c044c8e0765ccd888d36, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -163,6 +164,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Key: Whether to purchase?
+--- !u!114 &6359185919094838528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2111234884154374345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e984ebdff2b4348b2d29ab8ce8e9038, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4180947968999294855
 GameObject:
   m_ObjectHideFlags: 0
