@@ -382,13 +382,27 @@ public class ScrollRectMouseWheelHandler : MonoBehaviour,
     private float GetScrollRectWidth()
     {
         if (scrollRect == null || scrollRect.content == null) return 1f;
-        return Mathf.Max(1f, scrollRect.content.rect.width * (1f - scrollRect.horizontalNormalizedPosition));
+        
+        // Calculate the scrollable width (content width - viewport width)
+        // This remains constant regardless of scroll position
+        float contentWidth = scrollRect.content.rect.width;
+        float viewportWidth = scrollRect.viewport != null ? scrollRect.viewport.rect.width : scrollRect.GetComponent<RectTransform>().rect.width;
+        float scrollableWidth = Mathf.Max(1f, contentWidth - viewportWidth);
+        
+        return scrollableWidth;
     }
 
     private float GetScrollRectHeight()
     {
         if (scrollRect == null || scrollRect.content == null) return 1f;
-        return Mathf.Max(1f, scrollRect.content.rect.height * (1f - scrollRect.verticalNormalizedPosition));
+        
+        // Calculate the scrollable height (content height - viewport height)
+        // This remains constant regardless of scroll position
+        float contentHeight = scrollRect.content.rect.height;
+        float viewportHeight = scrollRect.viewport != null ? scrollRect.viewport.rect.height : scrollRect.GetComponent<RectTransform>().rect.height;
+        float scrollableHeight = Mathf.Max(1f, contentHeight - viewportHeight);
+        
+        return scrollableHeight;
     }
 
     // Public method for external control
