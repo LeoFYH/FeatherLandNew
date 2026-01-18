@@ -45,8 +45,7 @@ namespace BirdGame
     {
         public float coins = 600;
         public List<SceneDecorationInfo> sceneDecorationInfos = new List<SceneDecorationInfo>();
-        public List<ToolInfo> tools = new List<ToolInfo>();
-        public int addedMaxBirdValue = 0;
+        public List<SceneToolInfo> sceneTools = new List<SceneToolInfo>();
     }
 
     [Serializable]
@@ -64,6 +63,12 @@ namespace BirdGame
         /// 记录已使用的 fixedPositions 索引，用于在删除后重新购买时使用正确的索引
         /// </summary>
         public List<int> usedFixedPositionIndices = new List<int>();
+    }
+
+    [Serializable]
+    public class SceneToolInfo
+    {
+        public List<ToolInfo> tools = new List<ToolInfo>();
     }
 
     [Serializable]
@@ -87,9 +92,7 @@ namespace BirdGame
         {
             screenMode = 2;
             Debug.Log($"当前Windows系统语言: {Application.systemLanguage}");
-            // 强制使用英文，忽略系统语言
-            gameLanguage = SystemLanguage.English;
-            Debug.Log($"强制设置的游戏语言: {gameLanguage}");
+            gameLanguage = SystemLanguage.Unknown;
         }
     }
 
@@ -101,6 +104,7 @@ namespace BirdGame
     {
         public float bgmVolume = 0.5f;
         public List<float> environmentVolumes = new List<float>();
+        public List<bool> likes = new List<bool>();
     }
 
     /// <summary>
@@ -111,6 +115,7 @@ namespace BirdGame
     {
         public int currentMap = 0;
         public List<MapBirdList> mapBirds = new List<MapBirdList>();
+        public List<int> addedBirdCountList = new List<int>();
     }
 
     [Serializable]
@@ -141,6 +146,7 @@ namespace BirdGame
         public float petTime;
         public Vector3 position;
         public int walkArea;
+        public bool isLocked;
         
         // 个体化数值（必须保存以保持一致性）
         public float individualEarningSmall;
@@ -173,7 +179,11 @@ namespace BirdGame
     [Serializable]
     public class ScheduleData : SavableData
     {
-        public List<ScheduleItemData> scheduleList = new List<ScheduleItemData>();
+        public List<ScheduleItemData> scheduleList = new List<ScheduleItemData>(){new ScheduleItemData()
+        {
+            isCompleted =  false,
+            scheduleText = ""
+        }};
     }
 
     /// <summary>

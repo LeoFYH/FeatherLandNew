@@ -56,35 +56,35 @@ namespace BirdGame
                 }
             }
 
-            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            // int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             transform.parent.position = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[sceneId]
                 .decorations[decorationId]
                 .fixedPositions[decorationIndex];
         }
 
-        private void OnMouseOver()
-        {
-            // 检查是否点击到UI元素
-            if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
-            {
-                return;
-            }
-
-            // 右键直接销毁装饰品
-            // 检查标准Unity输入或SimpleMouseForwarder的钩子输入
-            bool rightClickDetected = Input.GetMouseButtonDown(1) || SimpleMouseForwarder.rightButtonDown;
-            
-            if (rightClickDetected)
-            {
-                // 重置钩子的右键状态（如果使用了钩子）
-                if (SimpleMouseForwarder.rightButtonDown)
-                {
-                    SimpleMouseForwarder.rightButtonDown = false;
-                }
-                
-                DestroyDecoration();
-            }
-        }
+        // private void OnMouseOver()
+        // {
+        //     // 检查是否点击到UI元素
+        //     if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+        //     {
+        //         return;
+        //     }
+        //
+        //     // 右键直接销毁装饰品
+        //     // 检查标准Unity输入或SimpleMouseForwarder的钩子输入
+        //     bool rightClickDetected = Input.GetMouseButtonDown(1) || SimpleMouseForwarder.rightButtonDown;
+        //     
+        //     if (rightClickDetected)
+        //     {
+        //         // 重置钩子的右键状态（如果使用了钩子）
+        //         if (SimpleMouseForwarder.rightButtonDown)
+        //         {
+        //             SimpleMouseForwarder.rightButtonDown = false;
+        //         }
+        //         
+        //         DestroyDecoration();
+        //     }
+        // }
 
         private void DestroyDecoration()
         {

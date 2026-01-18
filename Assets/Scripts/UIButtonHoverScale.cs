@@ -123,6 +123,7 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
     private TextMeshProUGUI tooltipText;
     private Image backgroundImage;
     private Canvas canvas;
+    private Canvas toolCanvas;
     public bool isHovering = false;
     private float hoverTimer = 0f;
     private bool disabled;
@@ -141,6 +142,7 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
     
     void Start()
     {
+        //this.GetSystem<IMonoSystem>().RegisterUpdate(OnUpdate);
         thisRect = this.GetSystem<IUISystem>().GetCanvas().GetComponent<RectTransform>();
         //测试
         showTooltip = true;
@@ -207,7 +209,10 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
     void Update()
     {
         if (disabled) return;
-
+        if (!toolCanvas.overrideSorting)
+        {
+            toolCanvas.overrideSorting = true;
+        }
         SetPos();
         RectTransform textRect = tooltipText.GetComponent<RectTransform>();
         tooltipObject.GetComponent<RectTransform>().sizeDelta = new Vector2(textRect.sizeDelta.x + 50, textRect.sizeDelta.y + 15);
@@ -376,6 +381,12 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         
         // 设置位置，添加小偏移避免遮挡鼠标
         tooltipRect.anchoredPosition = pos + textOffset;
+    }
+
+    public void SetText(string text)
+    {
+        if (tooltipText != null)
+            tooltipText.text = text;
     }
 
     /// <summary>
@@ -698,6 +709,9 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         tooltipRect.anchorMax = new Vector2(0.5f, 0.5f);
         tooltipRect.pivot = new Vector2(0.5f, 0.5f);
         
+        toolCanvas = tooltipObject.AddComponent<Canvas>();
+        toolCanvas.overrideSorting = true;
+        toolCanvas.sortingOrder = 3;
         // 创建背景
         // if (showBackground)
         // {
@@ -755,7 +769,6 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
         
         // 应用整体缩放
         tooltipObject.transform.localScale = Vector3.one * tooltipScale;
-        
     }
     
     private void UpdateTooltipPosition()
@@ -809,6 +822,7 @@ public class UIButtonHoverScale : ViewControllerBase, IPointerEnterHandler, IPoi
     
     void OnDestroy()
     {
+        //this.GetSystem<IMonoSystem>().UnRegisterUpdate(OnUpdate);
         // Clean up tooltip object
         if (tooltipObject != null)
         {

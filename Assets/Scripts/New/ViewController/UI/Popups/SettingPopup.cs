@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using DG.Tweening;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -40,6 +41,7 @@ namespace BirdGame
         private RectTransform quitRect;
         private RectTransform languageRect;
         private bool isChangingMode = false; // 防止键盘切换时触发onValueChanged导致循环
+        private Canvas canvas;
         
         public void onClick()
         {
@@ -86,6 +88,7 @@ namespace BirdGame
                 // 清空内存中的数据
                this.GetSystem<ISaveSystem>().InitData();
                this.GetModel<IAccountModel>().Coins.Value = this.GetModel<IConfigModel>().ShopConfig.startCoins;
+                this.GetModel<ISaveModel>().SettingData.gameLanguage = this.GetSystem<ISteamSystem>().GetUserLanguage();
                 
                 // // 清空鸟模型中的数据
                 // var birdModel = this.GetModel<IBirdModel>();
@@ -115,6 +118,15 @@ namespace BirdGame
 
                 // 等待一帧确保消息显示
                 //this.GetSystem<IMonoSystem>().StartCoroutine(RestartApplication());
+                DOTween.Sequence().AppendCallback(() =>
+                {
+                    ClockPopup.barPos = new Vector2(10000, 10000);
+                    ClockPopup.barScale = 0;
+                    NotePopup.barPos = new Vector2(10000, 10000);
+                    NotePopup.barScale = 0;
+                    RadioPopup.barPos = new Vector2(10000, 10000);
+                    RadioPopup.barScale = 0;
+                }).SetDelay(0.5f);
             }
             catch (System.Exception e)
             {
@@ -157,6 +169,7 @@ namespace BirdGame
 
         private void Start()
         {
+            this.GetModel<IGameModel>().IsSettingOpen = true;
             deleteRect = clearSaveButton.GetComponent<RectTransform>();
             tutorialRect = tutorialButton.GetComponent<RectTransform>();
             quitRect = quitButton.GetComponent<RectTransform>();
@@ -181,15 +194,20 @@ namespace BirdGame
             {
                 this.GetSystem<IUISystem>().SendEvent<OnSettingCloseEvent>();
             });
-            
+            canvas = GetComponent<Canvas>();
             // 添加清除存档按钮的点击监听器
             if (clearSaveButton != null)
             {
                 clearSaveButton.onClick.AddListener(() =>
                 {
+                    canvas.sortingOrder = 9;
                     this.GetSystem<IUISystem>().ShowConfirm("Are you sure you want to delete this save file?",
                         () =>
                         {
+                            canvas.sortingOrder = 10;
+                            this.GetModel<IBirdModel>().UnopenEggs = 0;
+                            this.GetSystem<IUISystem>().HideMask();
+                            this.GetSystem<IGameSystem>().SendEvent<DestroyEggEvent>();
                             this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
                             onClick(); // 调用清除存档功能
                         });
@@ -375,7 +393,16 @@ namespace BirdGame
             //     Debug.Log(value);
             // }
             var currentLanguage = this.GetModel<ISaveModel>().SettingData.gameLanguage;
-            
+            if (currentLanguage == SystemLanguage.Unknown)
+            {
+                currentLanguage = this.GetSystem<ISteamSystem>().GetUserLanguage();
+            }
+
+            if (currentLanguage != SystemLanguage.ChineseSimplified && currentLanguage != SystemLanguage.English)
+            {
+                currentLanguage = SystemLanguage.English;
+            }
+
             string value = this.GetSystem<ILocalizationSystem>().GetString("English");
             languageDropdown.options.Add(new TMP_Dropdown.OptionData(value,itemSprite, Color.white));
             value = this.GetSystem<ILocalizationSystem>().GetString("Chinese");
@@ -398,6 +425,11 @@ namespace BirdGame
             }
             int index = languages.IndexOf(currentLanguage);
             languageDropdown.value = index;
+        }
+
+        private void OnDestroy()
+        {
+            this.GetModel<IGameModel>().IsSettingOpen = false;
         }
     }
 }

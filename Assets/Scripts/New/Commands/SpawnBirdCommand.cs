@@ -27,8 +27,19 @@ namespace BirdGame
                 val = eggIndex;
             else
             {
-                int maxCount = this.GetModel<IBirdModel>().AddedBirdCount +
-                               this.GetModel<IConfigModel>().BirdConfig.maxBirdCount;
+                int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+                if (this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList == null)
+                {
+                    this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList = new List<int>();
+                }
+
+                while (mapIndex >= this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList.Count)
+                {
+                    this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList.Add(0);
+                }
+
+                int addedCount = this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList[mapIndex];
+                int maxCount = addedCount + this.GetModel<IConfigModel>().BirdConfig.maxBirdCount;
                 if (maxCount - this.GetModel<IBirdModel>().BirdList.Count <= 5)
                 {
                     var list = GetUnlockedBirds();
@@ -42,7 +53,6 @@ namespace BirdGame
                         var sb = new StringBuilder();
                         sb.Append("未解锁的鸟: ");
                         var config = this.GetModel<IConfigModel>().BirdConfig;
-                        int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
                         foreach (var id in list)
                         {
                             sb.Append(id);

@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using System.Globalization;
 using DG.Tweening;
 using QFramework;
 using TMPro;
@@ -41,6 +42,7 @@ namespace BirdGame
         private float illustratedPosX;
         private float weatherPosX;
         private float mapPosX;
+        private float currentCoins;
         
         private bool isSyncingShopButton = false; // 标志位：正在同步 shopButton 状态，避免重复调用 HidePopup
         private bool isSyncingIllustratedButton = false; // 标志位：正在同步 illustratedButton 状态
@@ -362,10 +364,15 @@ namespace BirdGame
             content.anchoredPosition = new Vector2(400, 0);
             
             var accountModel = this.GetModel<IAccountModel>();
-            coinsNum.text = $"{accountModel.Coins.Value:F1}";
+            coinsNum.text = accountModel.Coins.Value.ToString("F1", CultureInfo.InvariantCulture);
+            currentCoins = accountModel.Coins.Value;
             accountModel.Coins.Register(v =>
             {
-                coinsNum.text = $"{v:F1}";;
+                DOTween.To(n =>
+                {
+                    coinsNum.text = n.ToString("F1", CultureInfo.InvariantCulture);
+                }, currentCoins, v, 0.5f);
+                currentCoins = v;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
             //weatherIcon.sprite = weatherSps[this.GetModel<IGameModel>().WeatherIndex.Value];
@@ -438,31 +445,8 @@ namespace BirdGame
 
         private void Update()
         {
-            // Support both Unity input and hook input for desktop mode
-            if (GetKeyDownAny(KeyCode.Escape))
-            {
-                // 检查设置界面是否已经打开
-                var settingPopup = this.GetSystem<IUISystem>().GetPopup<UIBase>(UIPopup.SettingPopup);
-                if (settingPopup != null)
-                {
-                    // 如果已经打开，则关闭
-                    settingButton.isOn = false;
-                }
-                else
-                {
-                    // 如果没打开，则打开
-                    settingButton.isOn = true;
-                }
-            }
-            
-            if (GetKeyDownAny(KeyCode.W))
-            {
-                // 按下 W 键打开/关闭天气选项
-                if (weatherButton != null)
-                {
-                    weatherButton.onClick.Invoke();
-                }
-            }
+            // 所有快捷键处理已移至 GameEntry.HandleKeyboardShortcuts() 统一管理
+            // 这里不再处理任何快捷键，避免冲突
 
             // if (Input.GetKeyDown(KeyCode.N))
             // {

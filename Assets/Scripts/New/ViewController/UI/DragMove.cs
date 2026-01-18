@@ -8,7 +8,7 @@ namespace BirdGame
     public class DragMove : ViewControllerBase, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         public RectTransform target;
-        public float margin = 5f;
+        public RectOffset margin; 
         
         [Header("Hook Settings")] public bool enableHookSupport = true; // 启用钩子支持
         
@@ -21,7 +21,7 @@ namespace BirdGame
             if (target == null)
                 target = GetComponent<RectTransform>();
         }
-
+        
         public void OnBeginDrag(PointerEventData eventData)
         {
             if (isDraggingFromHook) return; // 如果正在从钩子拖动，忽略EventSystem事件
@@ -116,15 +116,15 @@ namespace BirdGame
             float height = top - bottom;
         
             // 调整位置使其保持在边界内
-            if (left < canvasLeft + margin)
-                position.x += canvasLeft + margin - left;
-            else if (right > canvasRight - margin)
-                position.x += canvasRight - margin - right;
+            if (left < canvasLeft + margin.left)
+                position.x += canvasLeft + margin.left - left;
+            else if (right > canvasRight - margin.right)
+                position.x += canvasRight - margin.right - right;
             
-            if (bottom < canvasBottom + margin)
-                position.y += canvasBottom + margin - bottom;
-            else if (top > canvasTop - margin)
-                position.y += canvasTop - margin - top;
+            if (bottom < canvasBottom + margin.bottom)
+                position.y += canvasBottom + margin.bottom - bottom;
+            else if (top > canvasTop - margin.top)
+                position.y += canvasTop - margin.top - top;
         
             target.position = position;
         }

@@ -235,6 +235,11 @@ namespace BirdGame
             }
         }
 
+        private void OnDestroy()
+        {
+            this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
+        }
+
         private void CheckCursor()
         {
             if(this.GetSystem<ICursorSystem>().IsPlayingAnim())
@@ -273,10 +278,103 @@ namespace BirdGame
         /// </summary>
         private void HandleKeyboardShortcuts()
         {
-            // 检查是否有输入框处于焦点状态，如果有则不处理快捷键
+            // 获取MenuPanel以便访问toggle按钮
+            var menuPanel = this.GetSystem<IUISystem>().GetPanel<MenuPanel>();
+            
+            // 优先处理 ESC 键 → 始终可用（不受任何限制，包括输入框焦点、弹窗显示、未开启的蛋等）
+            if (GetKeyDownAny(KeyCode.Escape))
+            {
+                if (menuPanel != null)
+                {
+                    var settingPopup = this.GetSystem<IUISystem>().GetPopup<UIBase>(UIPopup.SettingPopup);
+                    if (settingPopup != null)
+                    {
+                        // 如果已经打开，则关闭
+                        menuPanel.settingButton.isOn = false;
+                    }
+                    else
+                    {
+                        // 如果没打开，则打开
+                        menuPanel.settingButton.isOn = true;
+                    }
+                }
+                return;
+            }
+            
+            // 1. 检查输入框焦点 → 如果有焦点，不处理其他快捷键（ESC已在上面处理）
             if (IsInputFieldFocused())
             {
                 return;
+            }
+            
+            // 3. 检查 BuyConfirmPopup 或 BuyFailPopup 或 PromptPopup → 如果显示，禁用其他所有快捷键（ESC已在上面处理）
+            bool isBuyConfirmPopupShowing = this.GetSystem<IUISystem>().GetPopup<BuyConfirmPopup>(UIPopup.BuyConfirmPopup) != null;
+            bool isBuyFailPopupShowing = this.GetSystem<IUISystem>().GetPopup<BuyFailPopup>(UIPopup.BuyFailPopup) != null;
+            bool isPromptPopupShowing = this.GetSystem<IUISystem>().GetPopup<PromptPopup>(UIPopup.PromptPopup) != null;
+            
+            if (isBuyConfirmPopupShowing || isBuyFailPopupShowing || isPromptPopupShowing)
+            {
+                return;
+            }
+            
+            // 4. 检查未开启的蛋 → 如果有，禁用其他快捷键（包括W），除了ESC，并强制关闭所有popup（逻辑和视觉上）
+            // 注意：设置界面（SettingPopup）不受此限制，因为ESC键可以打开它
+            bool hasUnopenEggs = this.GetModel<IBirdModel>().UnopenEggs > 0;
+            if (hasUnopenEggs)
+            {
+                // 检查设置界面是否打开，如果打开则保留它
+                bool isSettingPopupOpen = this.GetSystem<IUISystem>().GetPopup<UIBase>(UIPopup.SettingPopup) != null;
+                
+                // 强制关闭所有popup（视觉上），但保留设置界面
+                var uiSystem = this.GetSystem<IUISystem>();
+                // 逐个关闭除了设置界面之外的所有popup
+                UIPopup[] allPopups = {
+                    UIPopup.ShopPopup, UIPopup.RadioPopup, UIPopup.NotePopup, 
+                    UIPopup.ClockPopup, UIPopup.InfoPopup, UIPopup.PromptPopup, 
+                    UIPopup.IllustratedPopup, UIPopup.AlertPopup, UIPopup.MouseMenu, 
+                    UIPopup.TutorialPopup, UIPopup.ThanksPopup, UIPopup.MapPopup, 
+                    UIPopup.BuyConfirmPopup, UIPopup.HatchingBirdPopup, UIPopup.ExitConfirmPopup, 
+                    UIPopup.BuyFailPopup, UIPopup.AddCoinPopup
+                };
+                
+                foreach (var popup in allPopups)
+                {
+                    if (uiSystem.GetPopup<UIBase>(popup) != null)
+                    {
+                        uiSystem.HidePopup(popup);
+                    }
+                }
+                // 不关闭设置界面
+                
+                // 强制关闭天气内容
+                this.GetSystem<IGameSystem>().SendEvent<HideWeatherContentEvent>();
+                
+                // 强制关闭所有其他popup（逻辑上 - 同步所有按钮状态，但保留设置按钮）
+                if (menuPanel != null)
+                {
+                    menuPanel.shopButton.isOn = false;
+                    menuPanel.illustratedButton.isOn = false;
+                    menuPanel.mapButton.isOn = false;
+                    menuPanel.noteToggle.isOn = false;
+                    menuPanel.radioToggle.isOn = false;
+                    menuPanel.clockToggle.isOn = false;
+                    // 不关闭设置按钮，允许设置界面保持打开或通过ESC打开
+                    // menuPanel.settingButton.isOn = false; // 注释掉
+                }
+                
+                // 禁用W键（天气选项）
+                if (GetKeyDownAny(KeyCode.W))
+                {
+                    return; // 直接返回，不处理W键
+                }
+                
+                return;
+            }
+            
+            // 5. 正常处理其他快捷键
+            if (menuPanel == null)
+            {
+                return; // MenuPanel未加载，不处理快捷键
             }
 
             // 检测屏幕模式切换快捷键：1=窗口模式, 2=壁纸模式, 3=全屏模式
@@ -301,13 +399,6 @@ namespace BirdGame
             {
                 SetScreenMode(2);
                 return; // Early return to prevent processing other keys in the same frame
-            }
-            
-            // 获取MenuPanel以便访问toggle按钮
-            var menuPanel = this.GetSystem<IUISystem>().GetPanel<MenuPanel>();
-            if (menuPanel == null)
-            {
-                return; // MenuPanel未加载，不处理快捷键
             }
 
             // 检测快捷键按下（使用 GetKeyDown 确保每次按键只触发一次）
@@ -346,6 +437,19 @@ namespace BirdGame
             {
                 // Tutorial - TutorialPopup (没有对应的toggle按钮，保持原有行为)
                 this.GetSystem<IUISystem>().TogglePopup(UIPopup.TutorialPopup);
+            }
+            else if (GetKeyDownAny(KeyCode.C))
+            {
+                // View Toggle - toggle viewGroup visibility
+                menuPanel.viewToggle.isOn = !menuPanel.viewToggle.isOn;
+            }
+            else if (GetKeyDownAny(KeyCode.W))
+            {
+                // Weather - 天气选项
+                if (menuPanel.weatherButton != null)
+                {
+                    menuPanel.weatherButton.onClick.Invoke();
+                }
             }
         }
         

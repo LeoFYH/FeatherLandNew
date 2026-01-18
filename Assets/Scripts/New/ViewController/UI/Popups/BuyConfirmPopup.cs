@@ -21,7 +21,7 @@ namespace BirdGame
         
         public void Init(string price, Action onConfirmHandle)
         {
-            buyButton.GetComponentInChildren<TextMeshProUGUI>().text = price;
+            buyButton.GetComponentInChildren<TextMeshProUGUI>().text = $"${price}";
             onConfirm = onConfirmHandle;
         }
 
@@ -46,17 +46,16 @@ namespace BirdGame
             }
         }
 
-        public void OnCloseClick()
+        private void OnCloseClick()
         {
             this.GetSystem<IUISystem>().HidePopup(UIPopup.BuyConfirmPopup);
         }
 
-        public void OnBuyClick()
+        private void OnBuyClick()
         {
-            DOTween.Sequence().AppendCallback(() =>
-            {
-                this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
-            }).SetDelay(0.05f);
+            
+            this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
+            
             onConfirm?.Invoke();
             this.GetSystem<IUISystem>().HidePopup(UIPopup.BuyConfirmPopup);
         }

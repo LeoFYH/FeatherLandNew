@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -13,10 +14,13 @@ namespace BirdGame
         public Button buyButton;
         public TextMeshProUGUI priceText;
         public GameObject itemPrefab;
+        public UIButtonHoverScale uiButtonHoverScale;
+        public ButtonHighlight highlight;
 
         private IGameModel gameModel;
         private IConfigModel configModel;
         private List<ShopEggItem> items = new List<ShopEggItem>();
+        private bool isProcessingPurchase = false;
         
         private void Awake()
         {
@@ -44,36 +48,73 @@ namespace BirdGame
                 {
                     items[i].uiEffect.enabled = i == v;
                 }
+                UpdateHoverScale();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
-            
+            this.GetModel<IAccountModel>().Coins.Register(v =>
+            {
+                UpdateHoverScale();
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
             buyButton.onClick.AddListener(() =>
             {
+                // Prevent double-clicking by checking if already processing
+                if (isProcessingPurchase)
+                {
+                    return;
+                }
+                
+                // Disable button to prevent double-clicking
+                buyButton.interactable = false;
+                isProcessingPurchase = true;
+                
                 int currentCount = configModel.ShopConfig.sceneEggs[mapIndex].eggs[gameModel.ShopEggSelectIndex.Value]
                     .birdCount;
                 int maxCount = this.GetModel<IConfigModel>().BirdConfig.maxBirdCount;
-                int addedCount = this.GetModel<IBirdModel>().AddedBirdCount;
+                if (this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList == null)
+                {
+                    this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList = new List<int>();
+                }
+
+                while (mapIndex >= this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList.Count)
+                {
+                    this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList.Add(0);
+                }
+
+                int addedCount = this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList[mapIndex];
                 if (currentCount + this.GetModel<IBirdModel>().BirdList.Count > maxCount + addedCount)
                 {
                     string text = this.GetSystem<ILocalizationSystem>().GetString("MaxEggLimitKey");
                     this.GetSystem<IUISystem>().ShowPrompt($"{text} ({this.GetModel<IBirdModel>().BirdList.Count}/{maxCount + addedCount})");
+                    // Re-enable button after showing prompt
+                    buyButton.interactable = true;
+                    isProcessingPurchase = false;
                     return;
                 }
 
                 int price = configModel.ShopConfig.sceneEggs[mapIndex].eggs[gameModel.ShopEggSelectIndex.Value].price;
                 if (price <= this.GetModel<IAccountModel>().Coins.Value)
                 {
-                    this.GetSystem<IUISystem>().ShowBuyConfirm(() =>
-                    {
+                    
                         this.GetModel<IAccountModel>().Coins.Value -= price;
+                        
+                        // 播放购买音效（延迟0.5秒，和sell bird一样）
+                        this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
+                        
                         this.SendCommand<CreateBirdCommand>();
                         // 统一通过事件关闭商店，确保 shopButton 状态同步
                         this.GetSystem<IGameSystem>().SendEvent<OnShopCloseEvent>();
-                    });
+                        // Reset flag after purchase completes (though shop will close)
+                        isProcessingPurchase = false;
+                        buyButton.interactable = true;
+                    // Re-enable button after confirmation dialog is shown (using coroutine to ensure popup is displayed)
+                    StartCoroutine(ReEnableButtonAfterDelay());
                 }
                 else
                 {
                     string text = this.GetSystem<ILocalizationSystem>().GetString("Insufficient coins");
                     this.GetSystem<IUISystem>().ShowPrompt(text);
+                    // Re-enable button after showing prompt
+                    buyButton.interactable = true;
+                    isProcessingPurchase = false;
                 }
             });
 
@@ -87,6 +128,38 @@ namespace BirdGame
             }
 
             items[gameModel.ShopEggSelectIndex.Value].uiEffect.enabled = true;
+            UpdateHoverScale();
+        }
+
+        private void UpdateHoverScale()
+        {
+            gameModel = this.GetModel<IGameModel>();
+            configModel = this.GetModel<IConfigModel>();
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            if (configModel.ShopConfig.sceneEggs[mapIndex].eggs[gameModel.ShopEggSelectIndex.Value].price >
+                this.GetModel<IAccountModel>().Coins.Value)
+            {
+                buyButton.interactable = false;
+                highlight.enabled = false;
+                buyButton.GetComponent<HoverButton>().isLessCoin = true;
+                uiButtonHoverScale.localizationKey = "Insufficient coins";
+            }
+            else
+            {
+                buyButton.GetComponent<HoverButton>().isLessCoin = false;
+                buyButton.interactable = true;
+                highlight.enabled = true;
+                uiButtonHoverScale.localizationKey = "Buy 1?";
+            }
+        }
+
+        private System.Collections.IEnumerator ReEnableButtonAfterDelay()
+        {
+            // Wait a frame to ensure the popup is displayed and blocking interaction
+            yield return null;
+            // Re-enable button so user can click again if they cancel the confirmation
+            buyButton.interactable = true;
+            isProcessingPurchase = false;
         }
     }
 }

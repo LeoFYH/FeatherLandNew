@@ -92,20 +92,21 @@ namespace BirdGame
                 var saveModel = this.GetModel<ISaveModel>();
                 var configModel = this.GetModel<IConfigModel>();
                 
-                if (saveModel.AccountData.tools == null)
-                    saveModel.AccountData.tools = new List<ToolInfo>();
-                
+                if (saveModel.AccountData.sceneTools == null)
+                    saveModel.AccountData.sceneTools = new List<SceneToolInfo>();
+                if(saveModel.AccountData.sceneTools.Count == 0)
+                    saveModel.AccountData.sceneTools.Add(new SceneToolInfo());
                 // 查找食物工具配置
                 for (int i = 0; i < configModel.ShopConfig.tools.Length; i++)
                 {
                     var toolItem = configModel.ShopConfig.tools[i];
-                    if (saveModel.AccountData.tools.Count <= i)
+                    if (saveModel.AccountData.sceneTools[0].tools.Count <= i)
                     {
-                        saveModel.AccountData.tools.Add(new ToolInfo());
+                        saveModel.AccountData.sceneTools[0].tools.Add(new ToolInfo());
                     }
-                    if (saveModel.AccountData.tools[i].unlockedList == null)
+                    if (saveModel.AccountData.sceneTools[0].tools[i].unlockedList == null)
                     {
-                        saveModel.AccountData.tools[i].unlockedList = new List<int>() { 0 };
+                        saveModel.AccountData.sceneTools[0].tools[i].unlockedList = new List<int>() { 0 };
                     }
                     
                     if (toolItem.name.ToLower() == "food")
@@ -114,7 +115,7 @@ namespace BirdGame
                         for (int j = 0; j < toolItem.selections.Length; j++)
                         {
                             var selection = toolItem.selections[j];
-                            if (j == saveModel.AccountData.tools[i].equipedId)
+                            if (j == saveModel.AccountData.sceneTools[0].tools[i].equipedId)
                             {
                                 // 更换食物的sprite
                                 SpriteRenderer spriteRenderer = food.GetComponent<SpriteRenderer>();

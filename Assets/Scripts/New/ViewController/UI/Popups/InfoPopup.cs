@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using DG.Tweening;
 using QFramework;
 using TMPro;
@@ -388,14 +389,37 @@ namespace BirdGame
                 price = data.individualPriceBig;
             }
 
-            incomeText.text = "$" + data.individualEarningBig.ToString("F1") + this.GetSystem<ILocalizationSystem>().GetString("min");
-            priceText.text = "$" + price.ToString("F1");
+            incomeText.text =
+                $"${(data.bird.isSmall ? data.individualEarningSmall : data.individualEarningBig).ToString("F1", CultureInfo.InvariantCulture)}/{this.GetSystem<ILocalizationSystem>().GetString("min")}";
+            //incomeText.text = "$" + data.individualEarningBig.ToString("F1") + this.GetSystem<ILocalizationSystem>().GetString("min");
+            priceText.text = "$" + price.ToString("F1", CultureInfo.InvariantCulture);
+            this.RegisterEvent<ChangeLanguageEvent>(evt =>
+            {
+                incomeText.text =
+                    $"${(data.bird.isSmall ? data.individualEarningSmall : data.individualEarningBig).ToString("F1", CultureInfo.InvariantCulture)}{this.GetSystem<ILocalizationSystem>().GetString("min")}";
+                priceText.text = "$" + price.ToString("F1", CultureInfo.InvariantCulture);
+                string birdNameKey = this.GetModel<IConfigModel>().BirdConfig.GetBirdNameKey(data.birdType, mapIndex);
             
+                // 使用本地化系统获取翻译
+                string birdNameText = this.GetSystem<ILocalizationSystem>().GetString(birdNameKey);
+                if (string.IsNullOrEmpty(birdNameText))
+                {
+                    birdNameText = birdNameKey; // 如果本地化没有找到，使用原始key作为显示文本
+                }
+            
+                // 更新文本和字体
+                birdName.text = birdNameText;
+                
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
             saleButton.onClick.AddListener(() =>
             {
                 this.GetModel<IAccountModel>().Coins.Value += price;
                 this.GetModel<IBirdModel>().RemoveBird(index);
+                int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+                this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.RemoveAt(index);
                 this.GetSystem<IUISystem>().HidePopup(UIPopup.InfoPopup);
+                this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
+                this.GetSystem<IGameSystem>().SendEvent<RefreshSaleBirdEvent>();
             });
             closeButton.onClick.AddListener(() =>
             {

@@ -16,9 +16,30 @@ namespace BirdGame
         public GameObject timer;
         public GameObject tomato;
         public Button closeButton;
+        public RectTransform bar;
+        public static Vector2 barPos = new Vector2(10000, 10000);
+        public static float barScale = 0;
 
         private void Start()
         {
+            if (barPos == new Vector2(10000, 10000))
+            {
+                barPos = bar.anchoredPosition;
+            }
+            else
+            {
+                bar.anchoredPosition = barPos;
+            }
+
+            if (barScale == 0)
+            {
+                barScale = bar.localScale.x;
+            }
+            else
+            {
+                bar.localScale = new Vector3(barScale, barScale, 1);
+            }
+
             // closeButton.onClick.AddListener(() =>
             // {
             //     this.GetSystem<IUISystem>().HidePopup(UIPopup.ClockPopup);
@@ -58,6 +79,8 @@ namespace BirdGame
                     show = true
                 });
             }
+            barPos = bar.anchoredPosition;
+            barScale = bar.localScale.x;
         }
     }
 }

@@ -19,6 +19,10 @@ namespace BirdGame
 
         private void Start()
         {
+            this.RegisterEvent<DestroyEggEvent>(evt =>
+            {
+                Destroy(gameObject);
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
             this.RegisterEvent<OnMaskClickEvent>(evt =>
             {
                 if (canWait)
@@ -53,6 +57,12 @@ namespace BirdGame
             // 使用本地化系统获取鸟类名称
             string birdNameKey = config.GetBirdNameKey(index, mapIndex);
             string localizedBirdName = this.GetSystem<ILocalizationSystem>().GetString(birdNameKey);
+            this.RegisterEvent<ChangeLanguageEvent>(evt =>
+            {
+                birdNameKey = config.GetBirdNameKey(index, mapIndex);
+                localizedBirdName = this.GetSystem<ILocalizationSystem>().GetString(birdNameKey);
+                nameText.text = localizedBirdName;
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
             if (string.IsNullOrEmpty(localizedBirdName))
             {
                 localizedBirdName = birdNameKey; // 如果本地化没有找到，使用原始key作为显示文本

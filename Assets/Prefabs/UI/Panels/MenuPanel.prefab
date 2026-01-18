@@ -120,6 +120,7 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.78431374}
   backgroundPadding: {x: 10, y: 5}
+  cornerRadius: 10
   isHovering: 0
 --- !u!114 &4780737901360466006
 MonoBehaviour:
@@ -368,6 +369,7 @@ MonoBehaviour:
   showBackground: 0
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
+  cornerRadius: 10
   isHovering: 0
 --- !u!114 &5337471428692035775
 MonoBehaviour:
@@ -599,6 +601,7 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.78431374}
   backgroundPadding: {x: 10, y: 5}
+  cornerRadius: 10
   isHovering: 0
 --- !u!114 &4638782097887041272
 MonoBehaviour:
@@ -1453,6 +1456,7 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
+  cornerRadius: 10
   isHovering: 0
 --- !u!114 &5574375622302482491
 MonoBehaviour:
@@ -2439,6 +2443,7 @@ MonoBehaviour:
   showBackground: 0
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
+  cornerRadius: 10
   isHovering: 0
 --- !u!114 &528711197421641470
 MonoBehaviour:
@@ -2855,6 +2860,7 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
+  cornerRadius: 10
   isHovering: 0
 --- !u!114 &9060913658855729618
 MonoBehaviour:
@@ -3252,6 +3258,7 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
+  cornerRadius: 10
   isHovering: 0
 --- !u!1 &3591878814414197913
 GameObject:
@@ -3668,6 +3675,7 @@ MonoBehaviour:
   showBackground: 0
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
+  cornerRadius: 10
   isHovering: 0
 --- !u!114 &8283822379062504908
 MonoBehaviour:
@@ -3803,6 +3811,7 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.78431374}
   backgroundPadding: {x: 10, y: 5}
+  cornerRadius: 10
   isHovering: 0
 --- !u!114 &1337173987301918705
 MonoBehaviour:
@@ -4032,6 +4041,7 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.78431374}
   backgroundPadding: {x: 10, y: 5}
+  cornerRadius: 10
   isHovering: 0
 --- !u!114 &509656030865211633
 MonoBehaviour:
@@ -4232,6 +4242,7 @@ MonoBehaviour:
   showBackground: 0
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
+  cornerRadius: 10
   isHovering: 0
 --- !u!114 &7099736987165176522
 MonoBehaviour:
@@ -5075,6 +5086,7 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.78431374}
   backgroundPadding: {x: 10, y: 5}
+  cornerRadius: 10
   isHovering: 0
 --- !u!114 &8387943612537301174
 MonoBehaviour:
@@ -5463,6 +5475,8 @@ GameObject:
   - component: {fileID: 670174266089374583}
   - component: {fileID: 2160884002228910952}
   - component: {fileID: 506033544631832074}
+  - component: {fileID: 562197481467162380}
+  - component: {fileID: 2478237332924550061}
   m_Layer: 5
   m_Name: SettingButton
   m_TagString: Click
@@ -5616,6 +5630,7 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.78431374}
   backgroundPadding: {x: 10, y: 5}
+  cornerRadius: 10
   isHovering: 0
 --- !u!114 &506033544631832074
 MonoBehaviour:
@@ -5629,6 +5644,46 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a39e353e32d45a1b440e0bef8cae49a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!223 &562197481467162380
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5592588052942518516}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 2
+  m_TargetDisplay: 0
+--- !u!114 &2478237332924550061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5592588052942518516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 63
 --- !u!1 &5634660051002685781
 GameObject:
   m_ObjectHideFlags: 0
@@ -6478,6 +6533,7 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.78431374}
   backgroundPadding: {x: 10, y: 5}
+  cornerRadius: 10
   isHovering: 0
 --- !u!114 &4121928402144375412
 MonoBehaviour:
@@ -6502,6 +6558,7 @@ GameObject:
   - component: {fileID: 2853281876282325676}
   - component: {fileID: 3641464557414188002}
   - component: {fileID: 6774739416397774764}
+  - component: {fileID: 3416535728576359595}
   m_Layer: 5
   m_Name: CoinsText
   m_TagString: Untagged
@@ -6525,8 +6582,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -71.7041, y: -44.72766}
-  m_SizeDelta: {x: 138.7987, y: 83.2205}
+  m_AnchoredPosition: {x: -79, y: -44.72766}
+  m_SizeDelta: {x: 163.3584, y: 83.2205}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3641464557414188002
 CanvasRenderer:
@@ -6556,10 +6613,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 99999
+  m_text: 500000.0
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: f7ffd71761713684a94dc40f5e30b830, type: 2}
-  m_sharedMaterial: {fileID: 4111881798330064937, guid: f7ffd71761713684a94dc40f5e30b830, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: e71396d30154c044c8e0765ccd888d36, type: 2}
+  m_sharedMaterial: {fileID: 353428533605214050, guid: e71396d30154c044c8e0765ccd888d36, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -6627,6 +6684,18 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3416535728576359595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6576888212394274134}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e984ebdff2b4348b2d29ab8ce8e9038, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6790771380157344790
 GameObject:
   m_ObjectHideFlags: 0
@@ -6889,6 +6958,7 @@ MonoBehaviour:
   showBackground: 0
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
+  cornerRadius: 10
   isHovering: 0
 --- !u!114 &6624806143762009848
 MonoBehaviour:
@@ -7403,6 +7473,7 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.78431374}
   backgroundPadding: {x: 10, y: 5}
+  cornerRadius: 10
   isHovering: 0
 --- !u!114 &8639171049475182622
 MonoBehaviour:
@@ -7537,6 +7608,7 @@ MonoBehaviour:
   showBackground: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.78431374}
   backgroundPadding: {x: 10, y: 5}
+  cornerRadius: 10
   isHovering: 0
 --- !u!114 &667887962907108147
 MonoBehaviour:
@@ -8195,6 +8267,7 @@ GameObject:
   - component: {fileID: 4966579900389951058}
   - component: {fileID: 2487343498616243282}
   - component: {fileID: 7428765524579788869}
+  - component: {fileID: 3260423097543026010}
   m_Layer: 5
   m_Name: CoinsText (1)
   m_TagString: Untagged
@@ -8218,7 +8291,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -78, y: -44.72766}
+  m_AnchoredPosition: {x: -94.599976, y: -44.72766}
   m_SizeDelta: {x: 160.6987, y: 83.2205}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2487343498616243282
@@ -8251,8 +8324,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: $
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: f7ffd71761713684a94dc40f5e30b830, type: 2}
-  m_sharedMaterial: {fileID: 4111881798330064937, guid: f7ffd71761713684a94dc40f5e30b830, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: e71396d30154c044c8e0765ccd888d36, type: 2}
+  m_sharedMaterial: {fileID: 353428533605214050, guid: e71396d30154c044c8e0765ccd888d36, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -8320,6 +8393,18 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3260423097543026010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8950101950161402989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e984ebdff2b4348b2d29ab8ce8e9038, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8980440639253195356
 GameObject:
   m_ObjectHideFlags: 0

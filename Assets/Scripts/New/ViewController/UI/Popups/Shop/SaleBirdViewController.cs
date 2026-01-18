@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using DG.Tweening;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -32,6 +34,13 @@ namespace BirdGame
         {
             capacityText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Total Capacity")}:";
             coinsPerMinuteText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Coins per minute")}:";
+            this.RegisterEvent<ChangeLanguageEvent>(evt =>
+            {
+                capacityText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Total Capacity")}:";
+                coinsPerMinuteText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Coins per minute")}:";
+                RefreshName();
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            
             mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             RefreshName();
             sortingToggle0.isOn = true;
@@ -115,8 +124,18 @@ namespace BirdGame
                 }
                 RefreshBirdList();
                 RefreshName();  // 刷新容量显示
+                this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
             });
             RefreshButtons();
+            this.RegisterEvent<RefreshSaleBirdEvent>(evt =>
+            {
+                RefreshBirdList();
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+        }
+
+        private void OnEnable()
+        {
+            RefreshName();
         }
 
         private void RefreshName()
@@ -131,14 +150,25 @@ namespace BirdGame
                 }
                 return;  // 避免访问越界的索引
             }
+            if (this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList == null)
+            {
+                this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList = new List<int>();
+            }
+
+            while (mapIndex >= this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList.Count)
+            {
+                this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList.Add(0);
+            }
+
+            int addedCount = this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList[mapIndex];
             capacityValue.text =
-                $"{this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.Count}/{this.GetModel<IBirdModel>().AddedBirdCount + this.GetModel<IConfigModel>().BirdConfig.maxBirdCount}";
+                $"{this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.Count}/{addedCount + this.GetModel<IConfigModel>().BirdConfig.maxBirdCount}";
             
             // 计算每分钟收益
             if (coinsPerMinuteText != null)
             {
                 float totalEarningPerMinute = CalculateCoinsPerMinute();
-                coinsPerMinuteValue.text = $"${totalEarningPerMinute:F1}";
+                coinsPerMinuteValue.text = $"${totalEarningPerMinute.ToString("F1", CultureInfo.InvariantCulture)}";
             }
         }
         
@@ -290,6 +320,10 @@ namespace BirdGame
             
             RefreshBirdList();
             RefreshName();  // 刷新容量显示
+            // DOTween.Sequence().AppendCallback(() =>
+            // {
+            this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
+            // }).SetDelay(0.5f);
         }
     }
 }

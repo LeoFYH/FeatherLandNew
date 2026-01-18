@@ -20,7 +20,10 @@ namespace BirdGame
         {
             // 切换地图时关闭所有popup界面
             this.GetSystem<IUISystem>().HideAllPopups();
-            
+            foreach (var select in this.GetModel<IGameModel>().SelectedToolDic)
+            {
+                select.Value.Value = 0;
+            }
             this.SendEvent<ClearFoodEvent>();
             var gameModel = this.GetModel<IGameModel>();
             gameModel.CurrentTent = null;

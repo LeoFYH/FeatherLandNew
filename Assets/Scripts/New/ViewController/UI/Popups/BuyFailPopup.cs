@@ -12,7 +12,9 @@ namespace BirdGame
 
         private void Start()
         {
-            infoText.text = $"You need to pay {this.GetModel<IGameModel>().BuyMapCost} to purchase it.";
+            string text = this.GetSystem<ILocalizationSystem>().GetString("NeedToPayCoinsToPurchase");
+            text = string.Format(text, this.GetModel<IGameModel>().BuyMapCost);
+            infoText.text = text;
             closeButton.onClick.AddListener(() =>
             {
                 this.GetSystem<IUISystem>().HidePopup(UIPopup.BuyFailPopup);

@@ -80,6 +80,7 @@ namespace BirdGame
         [TableList(ShowIndexLabels = true), BoxGroup("工具配置")]
         public ToolItem[] tools;
     }
+    
 
     [Serializable]
     public class SceneEgg

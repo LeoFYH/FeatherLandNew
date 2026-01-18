@@ -25,6 +25,7 @@ namespace BirdGame
         int CurrentHatchingBirdIndex { get; set; }
         int OpenEggIndex { get; set; }
         int BuyMapCost { get; set; }
+        bool IsSettingOpen { get; set; }
     }
 
     public class GameModel : AbstractModel, IGameModel
@@ -55,6 +56,7 @@ namespace BirdGame
         public int CurrentHatchingBirdIndex { get; set; } = -1;
         public int OpenEggIndex { get; set; } = -1;
         public int BuyMapCost { get; set; }
+        public bool IsSettingOpen { get; set; }
         public int EggInfoIndex { get; set; }
     }
 }

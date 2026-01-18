@@ -13,12 +13,6 @@ namespace BirdGame
         /// <returns></returns>
         string GetString(string key);
         /// <summary>
-        /// 获取对应翻译后的图片
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        //Sprite GetSprite(string key);
-        /// <summary>
         /// 获取当前字体文件
         /// </summary>
         /// <returns></returns>
@@ -108,6 +102,8 @@ namespace BirdGame
         {
             var config = this.GetModel<IConfigModel>().LocalizationConfig;
             var currentLanguage = this.GetModel<ISaveModel>().SettingData.gameLanguage;
+            if (!config.languageDic.ContainsKey(currentLanguage))
+                return null;
             return config.languageDic[currentLanguage].fontAsset;
         }
 

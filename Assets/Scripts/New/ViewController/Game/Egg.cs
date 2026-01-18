@@ -63,6 +63,11 @@ namespace BirdGame
 
         private void Start()
         {
+            this.RegisterEvent<DestroyEggEvent>(evt =>
+            {
+                Destroy(gameObject);
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            
             if (spriteRenderer == null)
             {
                 Debug.LogError("SpriteRenderer not found on the Egg object!");
@@ -85,6 +90,9 @@ namespace BirdGame
 
         public void OnClick()
         {
+            if(this.GetModel<IGameModel>().IsSettingOpen)
+                return;
+            
             this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Hatch);
             SpawnBird();
 
