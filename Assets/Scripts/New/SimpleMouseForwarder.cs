@@ -79,6 +79,10 @@ namespace BirdGame
         private const float DRAG_TIME_THRESHOLD = 0.1f; // Minimum time before drag can start (100ms)
         private const float DRAG_DISTANCE_THRESHOLD = 5f; // Minimum distance in pixels before drag starts
         public static bool isOnDesktop = false;
+        
+        // Button holding state for wallpaper mode
+        private static GameObject _currentHeldButton = null;
+        private static Vector2 _buttonHoldStartPosition = Vector2.zero;
 
         [StructLayout(LayoutKind.Sequential)]
         private struct POINT
@@ -560,6 +564,18 @@ namespace BirdGame
                             }
                         }
                     }
+                    
+                    // Check for buttons and fire pointer down events for holding support
+                    if (currentDragTarget == null)
+                    {
+                        GameObject buttonUnderMouse = FindButtonUnderMouse(currentMousePosition);
+                        if (buttonUnderMouse != null)
+                        {
+                            _currentHeldButton = buttonUnderMouse;
+                            _buttonHoldStartPosition = currentMousePosition;
+                            ForwardPointerDownToButton(buttonUnderMouse, currentMousePosition);
+                        }
+                    }
 
                     if (instance.showDebugLog)
                     {
@@ -580,6 +596,13 @@ namespace BirdGame
                         if (timeSinceMouseDown >= DRAG_TIME_THRESHOLD && distanceMoved > DRAG_DISTANCE_THRESHOLD)
                         {
                             isLeftMouseDragging = true;
+                            
+                            // Clear held button when drag starts
+                            if (_currentHeldButton != null)
+                            {
+                                ForwardPointerUpToButton(_currentHeldButton, currentMousePosition);
+                                _currentHeldButton = null;
+                            }
                             
                             // Clear all hover states when drag starts to prevent sticky hover issues
                             // Use real-time position for accuracy
@@ -844,6 +867,13 @@ namespace BirdGame
                         }
                     }
                     
+                    // Fire pointer up event for held button
+                    if (_currentHeldButton != null)
+                    {
+                        ForwardPointerUpToButton(_currentHeldButton, currentMousePosition);
+                        _currentHeldButton = null;
+                    }
+                    
                     if (isLeftMouseDragging && currentDragTarget != null)
                     {
                         // End drag
@@ -1028,6 +1058,134 @@ namespace BirdGame
             }
 
             return null;
+        }
+
+        private static GameObject FindButtonUnderMouse(Vector2 screenPosition)
+        {
+            if (EventSystem.current == null) return null;
+
+            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            {
+                position = screenPosition,
+                button = PointerEventData.InputButton.Left
+            };
+
+            var raycastResults = new System.Collections.Generic.List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointerData, raycastResults);
+
+            foreach (var result in raycastResults)
+            {
+                // Look for Button components on the hit object or any of its parents
+                Transform current = result.gameObject.transform;
+                while (current != null)
+                {
+                    Button button = current.GetComponent<Button>();
+                    if (button != null && button.interactable)
+                    {
+                        return current.gameObject;
+                    }
+                    current = current.parent;
+                }
+            }
+
+            return null;
+        }
+
+        private static void ForwardPointerDownToButton(GameObject button, Vector2 screenPosition)
+        {
+            if (button == null || EventSystem.current == null) return;
+
+            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            {
+                position = screenPosition,
+                button = PointerEventData.InputButton.Left,
+                pressPosition = screenPosition,
+                clickTime = Time.time,
+                clickCount = 1
+            };
+
+            // Perform raycast to get proper hit information
+            var raycastResults = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointerData, raycastResults);
+            
+            // Find the button or its child in the raycast results
+            RaycastResult buttonResult = default(RaycastResult);
+            bool foundButtonHit = false;
+            
+            foreach (var result in raycastResults)
+            {
+                Transform current = result.gameObject.transform;
+                while (current != null)
+                {
+                    if (current == button.transform)
+                    {
+                        buttonResult = result;
+                        foundButtonHit = true;
+                        break;
+                    }
+                    current = current.parent;
+                }
+                if (foundButtonHit) break;
+            }
+            
+            // Set the raycast result on the pointer event data
+            if (foundButtonHit)
+            {
+                pointerData.pointerEnter = buttonResult.gameObject;
+                pointerData.pointerPress = button;
+                pointerData.rawPointerPress = buttonResult.gameObject;
+                pointerData.pointerCurrentRaycast = buttonResult;
+                pointerData.pointerPressRaycast = buttonResult;
+            }
+            else
+            {
+                pointerData.pointerPress = button;
+                pointerData.rawPointerPress = button;
+            }
+
+            // Execute pointer down event - this will trigger EventTriggers for holding
+            ExecuteEvents.Execute(button, pointerData, ExecuteEvents.pointerDownHandler);
+
+            if (instance != null && instance.showDebugLog)
+            {
+                Debug.Log($"[SimpleMouseForwarder] Pointer down on button: {button.name}, Position: {screenPosition}");
+            }
+        }
+
+        private static void ForwardPointerUpToButton(GameObject button, Vector2 screenPosition)
+        {
+            if (button == null || EventSystem.current == null) return;
+
+            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            {
+                position = screenPosition,
+                button = PointerEventData.InputButton.Left,
+                pointerPress = button
+            };
+
+            // Perform raycast to get current hit information
+            var raycastResults = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointerData, raycastResults);
+            
+            if (raycastResults.Count > 0)
+            {
+                pointerData.pointerCurrentRaycast = raycastResults[0];
+            }
+
+            // Execute pointer up event - this will stop EventTrigger holding coroutines
+            ExecuteEvents.Execute(button, pointerData, ExecuteEvents.pointerUpHandler);
+            
+            // Also execute pointer exit if mouse is no longer over the button
+            GameObject currentButtonUnderMouse = FindButtonUnderMouse(screenPosition);
+            if (currentButtonUnderMouse != button)
+            {
+                ExecuteEvents.Execute(button, pointerData, ExecuteEvents.pointerExitHandler);
+            }
+
+            if (instance != null && instance.showDebugLog)
+            {
+                Debug.Log($"[SimpleMouseForwarder] Pointer up on button: {button.name}, Position: {screenPosition}");
+            }
         }
 
         private static HashSet<GameObject> FindAllUIElementsUnderMouse(Vector2 screenPosition)
@@ -1394,6 +1552,20 @@ namespace BirdGame
                     }
                 }
 
+                // Check if mouse moved away from held button while still pressed
+                if (_currentHeldButton != null && isMouseDown && !isLeftMouseDragging)
+                {
+                    Vector2 realtimeMousePos = GetCurrentMousePositionRealtime();
+                    GameObject currentButtonUnderMouse = FindButtonUnderMouse(realtimeMousePos);
+                    
+                    // If mouse is no longer over the held button, fire pointer exit/up events
+                    if (currentButtonUnderMouse != _currentHeldButton)
+                    {
+                        ForwardPointerUpToButton(_currentHeldButton, realtimeMousePos);
+                        _currentHeldButton = null;
+                    }
+                }
+                
                 // Only validate hover states when NOT dragging
                 // During drag operations, hover states are intentionally cleared
                 if (!isLeftMouseDragging)
@@ -1498,6 +1670,13 @@ namespace BirdGame
             {
                 // Get real-time position for exit events
                 Vector2 realtimeMousePos = GetCurrentMousePositionRealtime();
+                
+                // Clear held button when not on desktop
+                if (_currentHeldButton != null)
+                {
+                    ForwardPointerUpToButton(_currentHeldButton, realtimeMousePos);
+                    _currentHeldButton = null;
+                }
                 
                 // Clear all hovered UI elements when not on desktop
                 var elementsToExit = new List<GameObject>(_currentHoveredUIElements);
@@ -1634,6 +1813,13 @@ namespace BirdGame
                 Debug.Log("[SimpleMouseForwarder] 键盘钩子已卸载 (OnDisable)");
             }
 
+            // Clear held button when component is disabled
+            if (_currentHeldButton != null)
+            {
+                ForwardPointerUpToButton(_currentHeldButton, currentMousePosition);
+                _currentHeldButton = null;
+            }
+            
             // Clear all hovered UI elements when component is disabled
             var elementsToExit = new List<GameObject>(_currentHoveredUIElements);
             foreach (var element in elementsToExit)
@@ -1672,6 +1858,13 @@ namespace BirdGame
                 _keyboardHookID = IntPtr.Zero;
             }
 
+            // Clear held button when component is destroyed
+            if (_currentHeldButton != null)
+            {
+                ForwardPointerUpToButton(_currentHeldButton, currentMousePosition);
+                _currentHeldButton = null;
+            }
+            
             // Clear all hovered UI elements when component is destroyed
             var elementsToExit = new List<GameObject>(_currentHoveredUIElements);
             foreach (var element in elementsToExit)

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using QFramework;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace BirdGame
@@ -21,6 +23,11 @@ namespace BirdGame
         public Toggle[] audioToggles;
         public Slider volumeSlider;
         public Image volumeFill;
+
+        private Dictionary<int, Coroutine> upButtonHoldCoroutines = new Dictionary<int, Coroutine>();
+        private Dictionary<int, Coroutine> downButtonHoldCoroutines = new Dictionary<int, Coroutine>();
+        private const float holdInitialDelay = 0.5f; // Initial delay before holding starts
+        private const float holdRepeatInterval = 0.1f; // Interval between repeats while holding
 
         private void Start()
         {
@@ -152,6 +159,11 @@ namespace BirdGame
                 {
                     OnDownClick(index);
                 });
+                
+                // Add holding events for up buttons
+                SetupButtonHold(upButtons[i], index, true);
+                // Add holding events for down buttons
+                SetupButtonHold(downButtons[i], index, false);
             }
             refreshButton.onClick.AddListener(() =>
             {
@@ -241,6 +253,24 @@ namespace BirdGame
         private void OnDisable()
         {
             this.GetSystem<IAudioSystem>().StopAlert();
+            
+            // Stop all holding coroutines
+            foreach (var coroutine in upButtonHoldCoroutines.Values)
+            {
+                if (coroutine != null)
+                {
+                    this.GetSystem<IMonoSystem>().StopCoroutine(coroutine);
+                }
+            }
+            foreach (var coroutine in downButtonHoldCoroutines.Values)
+            {
+                if (coroutine != null)
+                {
+                    this.GetSystem<IMonoSystem>().StopCoroutine(coroutine);
+                }
+            }
+            upButtonHoldCoroutines.Clear();
+            downButtonHoldCoroutines.Clear();
         }
 
         private void Refresh(bool isTiming, bool isPause)
@@ -358,6 +388,97 @@ namespace BirdGame
                 this.GetModel<IClockModel>().TimerItem.AudioSelected.Value = index;
                 this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForTimer;
                 this.GetSystem<IAudioSystem>().PlayAlert();
+            }
+        }
+
+        private void SetupButtonHold(Button button, int index, bool isUpButton)
+        {
+            EventTrigger trigger = button.gameObject.GetComponent<EventTrigger>();
+            if (trigger == null)
+            {
+                trigger = button.gameObject.AddComponent<EventTrigger>();
+            }
+
+            // Pointer Down Event
+            EventTrigger.Entry pointerDown = new EventTrigger.Entry();
+            pointerDown.eventID = EventTriggerType.PointerDown;
+            pointerDown.callback.AddListener((data) => { OnButtonPointerDown(index, isUpButton); });
+            trigger.triggers.Add(pointerDown);
+
+            // Pointer Up Event
+            EventTrigger.Entry pointerUp = new EventTrigger.Entry();
+            pointerUp.eventID = EventTriggerType.PointerUp;
+            pointerUp.callback.AddListener((data) => { OnButtonPointerUp(index, isUpButton); });
+            trigger.triggers.Add(pointerUp);
+
+            // Pointer Exit Event (stop holding if pointer leaves button)
+            EventTrigger.Entry pointerExit = new EventTrigger.Entry();
+            pointerExit.eventID = EventTriggerType.PointerExit;
+            pointerExit.callback.AddListener((data) => { OnButtonPointerUp(index, isUpButton); });
+            trigger.triggers.Add(pointerExit);
+        }
+
+        private void OnButtonPointerDown(int index, bool isUpButton)
+        {
+            if (isUpButton)
+            {
+                if (!upButtonHoldCoroutines.ContainsKey(index) || upButtonHoldCoroutines[index] == null)
+                {
+                    upButtonHoldCoroutines[index] = this.GetSystem<IMonoSystem>().StartCoroutine(HoldUpButton(index));
+                }
+            }
+            else
+            {
+                if (!downButtonHoldCoroutines.ContainsKey(index) || downButtonHoldCoroutines[index] == null)
+                {
+                    downButtonHoldCoroutines[index] = this.GetSystem<IMonoSystem>().StartCoroutine(HoldDownButton(index));
+                }
+            }
+        }
+
+        private void OnButtonPointerUp(int index, bool isUpButton)
+        {
+            if (isUpButton)
+            {
+                if (upButtonHoldCoroutines.ContainsKey(index) && upButtonHoldCoroutines[index] != null)
+                {
+                    this.GetSystem<IMonoSystem>().StopCoroutine(upButtonHoldCoroutines[index]);
+                    upButtonHoldCoroutines[index] = null;
+                }
+            }
+            else
+            {
+                if (downButtonHoldCoroutines.ContainsKey(index) && downButtonHoldCoroutines[index] != null)
+                {
+                    this.GetSystem<IMonoSystem>().StopCoroutine(downButtonHoldCoroutines[index]);
+                    downButtonHoldCoroutines[index] = null;
+                }
+            }
+        }
+
+        private IEnumerator HoldUpButton(int index)
+        {
+            // Wait for initial delay
+            yield return new WaitForSeconds(holdInitialDelay);
+            
+            // Continuously call OnUpClick while held
+            while (true)
+            {
+                OnUpClick(index);
+                yield return new WaitForSeconds(holdRepeatInterval);
+            }
+        }
+
+        private IEnumerator HoldDownButton(int index)
+        {
+            // Wait for initial delay
+            yield return new WaitForSeconds(holdInitialDelay);
+            
+            // Continuously call OnDownClick while held
+            while (true)
+            {
+                OnDownClick(index);
+                yield return new WaitForSeconds(holdRepeatInterval);
             }
         }
     }
