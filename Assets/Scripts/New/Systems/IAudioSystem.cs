@@ -221,16 +221,26 @@ namespace BirdGame
         {
             radioModel.CurrentTime.Value = radioAudio.time;
             radioModel.SongProgress.Value = radioAudio.time / radioAudio.clip.length;
-            while (radioAudio.time <= radioAudio.clip.length - 0.1f)
+            
+            while (radioAudio.isPlaying && radioAudio.clip != null)
             {
                 radioModel.CurrentTime.Value = radioAudio.time;
                 radioModel.SongProgress.Value = radioAudio.time / radioAudio.clip.length;
                 yield return new WaitForFixedUpdate();
+                
+                // 如果音乐播放到结尾且不是循环模式，跳出循环
+                if (radioAudio.time >= radioAudio.clip.length - 0.1f && !radioModel.Loop.Value)
+                {
+                    break;
+                }
             }
             
-            if(radioModel.Loop.Value)
-                yield break;
-            NextSong();
+            // 只有当音乐还在播放状态（不是暂停）且不是循环模式时，才播放下一首
+            // 如果是因为暂停导致退出循环，PlayingSong.Value 会是 false，不应该播放下一首
+            if (radioModel.PlayingSong.Value && !radioModel.Loop.Value && radioAudio.clip != null)
+            {
+                NextSong();
+            }
         }
 
         public void PlayEffect(EffectType type)

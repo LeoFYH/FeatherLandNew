@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using DG.Tweening;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -485,6 +486,12 @@ namespace BirdGame
 
                         // 扣除金币
                         this.GetModel<IAccountModel>().Coins.Value -= price;
+                        
+                        // 播放购买音效（延迟0.5秒，和sell bird一样）
+                        DOTween.Sequence().AppendCallback(() =>
+                        {
+                            this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
+                        }).SetDelay(0.2f);
 
                         // 添加到已购买列表
 

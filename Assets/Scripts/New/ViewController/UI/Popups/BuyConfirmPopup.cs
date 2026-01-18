@@ -56,7 +56,7 @@ namespace BirdGame
             DOTween.Sequence().AppendCallback(() =>
             {
                 this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
-            }).SetDelay(0.05f);
+            }).SetDelay(0.2f);
             onConfirm?.Invoke();
             this.GetSystem<IUISystem>().HidePopup(UIPopup.BuyConfirmPopup);
         }

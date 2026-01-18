@@ -421,7 +421,7 @@ namespace BirdGame
                 DOTween.Sequence().AppendCallback(() =>
                 {
                     this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
-                }).SetDelay(0.5f);
+                }).SetDelay(0.2f);
                 this.GetSystem<IGameSystem>().SendEvent<RefreshSaleBirdEvent>();
             });
             closeButton.onClick.AddListener(() =>

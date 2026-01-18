@@ -1509,6 +1509,7 @@ GameObject:
   - component: {fileID: 6060080129575938715}
   - component: {fileID: 2127907847286236032}
   - component: {fileID: 2472117942239604096}
+  - component: {fileID: 1539875511208544764}
   m_Layer: 5
   m_Name: Add
   m_TagString: Untagged
@@ -1617,6 +1618,48 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1539875511208544764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2153313412248486069}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 1
+  hoverScale: 1.1
+  animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  showDebugInfo: 0
+  localizationKey: NewVolumeUp
+  useLocalization: 1
+  checkUIRaycast: 1
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls: []
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 30
+  fontStyle: 0
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
+  cornerRadius: 10
+  isHovering: 0
 --- !u!1 &2172973169776666038
 GameObject:
   m_ObjectHideFlags: 0
@@ -3166,6 +3209,7 @@ GameObject:
   - component: {fileID: 9100366355449331444}
   - component: {fileID: 3882927470805276664}
   - component: {fileID: 3703176060097576202}
+  - component: {fileID: 9137918814465039121}
   m_Layer: 5
   m_Name: Delete
   m_TagString: Untagged
@@ -3274,6 +3318,48 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &9137918814465039121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4231967562858872021}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 1
+  hoverScale: 1.1
+  animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  showDebugInfo: 0
+  localizationKey: NewVolumeDown
+  useLocalization: 1
+  checkUIRaycast: 1
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls: []
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 30
+  fontStyle: 0
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
+  cornerRadius: 10
+  isHovering: 0
 --- !u!1 &4237080845110770554
 GameObject:
   m_ObjectHideFlags: 0
@@ -3578,6 +3664,7 @@ GameObject:
   - component: {fileID: 2161007847979668461}
   - component: {fileID: 666125310265188165}
   - component: {fileID: 5206809110709590034}
+  - component: {fileID: 328589779082853078}
   m_Layer: 5
   m_Name: Handle
   m_TagString: Click
@@ -3642,6 +3729,48 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &328589779082853078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4696396256901978760}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 1
+  hoverScale: 1.1
+  animTime: 0.1
+  useRectTransform: 1
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  showDebugInfo: 0
+  localizationKey: NewVolumeBar
+  useLocalization: 1
+  checkUIRaycast: 1
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls: []
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 30
+  fontStyle: 0
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
+  cornerRadius: 10
+  isHovering: 0
 --- !u!1 &4698791250786217411
 GameObject:
   m_ObjectHideFlags: 0
