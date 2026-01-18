@@ -298,6 +298,7 @@ namespace BirdGame
                 item.TimerCoroutine = null;
                 Refresh(false, item.IsPause);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            audioToggles[item.AudioSelected.Value].isOn = true;
             for (var i = 0; i < audioToggles.Length; i++)
             {
                 var id = i;
@@ -311,8 +312,7 @@ namespace BirdGame
                 volumeFill.fillAmount = v;
                 item.AudioVolume.Value = v;
             });
-
-            audioToggles[item.AudioSelected.Value].isOn = true;
+            
             volumeSlider.value = item.AudioVolume.Value;
             volumeFill.fillAmount = item.AudioVolume.Value;
             Refresh(item.TimerCoroutine != null, item.IsPause);

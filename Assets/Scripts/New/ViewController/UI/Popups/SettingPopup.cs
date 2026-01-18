@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using DG.Tweening;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -83,11 +84,11 @@ namespace BirdGame
                 }
                 
                 PlayerPrefs.DeleteAll();
-                this.GetModel<ISaveModel>().SettingData.gameLanguage = SystemLanguage.English;
                 
                 // 清空内存中的数据
                this.GetSystem<ISaveSystem>().InitData();
                this.GetModel<IAccountModel>().Coins.Value = this.GetModel<IConfigModel>().ShopConfig.startCoins;
+                this.GetModel<ISaveModel>().SettingData.gameLanguage = this.GetSystem<ISteamSystem>().GetUserLanguage();
                 
                 // // 清空鸟模型中的数据
                 // var birdModel = this.GetModel<IBirdModel>();
@@ -117,6 +118,15 @@ namespace BirdGame
 
                 // 等待一帧确保消息显示
                 //this.GetSystem<IMonoSystem>().StartCoroutine(RestartApplication());
+                DOTween.Sequence().AppendCallback(() =>
+                {
+                    ClockPopup.barPos = new Vector2(10000, 10000);
+                    ClockPopup.barScale = 0;
+                    NotePopup.barPos = new Vector2(10000, 10000);
+                    NotePopup.barScale = 0;
+                    RadioPopup.barPos = new Vector2(10000, 10000);
+                    RadioPopup.barScale = 0;
+                }).SetDelay(0.5f);
             }
             catch (System.Exception e)
             {

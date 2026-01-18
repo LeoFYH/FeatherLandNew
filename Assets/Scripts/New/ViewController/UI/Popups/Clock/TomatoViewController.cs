@@ -431,7 +431,7 @@ namespace BirdGame
                     this.GetModel<IClockModel>().TimerItem.Seconds.Value = 0;
                 }
             });
-
+            audioToggles[item.AudioSelected.Value].isOn = true;
             for (var i = 0; i < audioToggles.Length; i++)
             {
                 var index = i;
@@ -446,7 +446,7 @@ namespace BirdGame
                 item.AudioVolume.Value = v;
             });
 
-            audioToggles[item.AudioSelected.Value].isOn = true;
+           
             volumeSlider.value = item.AudioVolume.Value;
             volumeFill.fillAmount = item.AudioVolume.Value;
             Refresh(item.TimerCoroutine != null);

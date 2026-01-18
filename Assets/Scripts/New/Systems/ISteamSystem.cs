@@ -79,6 +79,7 @@ namespace BirdGame
 
         public SystemLanguage GetUserLanguage()
         {
+            if (!SteamManager.Initialized) return SystemLanguage.English;
             string language = SteamApps.GetCurrentGameLanguage();
             return Convert(language);
         }

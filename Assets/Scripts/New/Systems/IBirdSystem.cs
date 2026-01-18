@@ -70,7 +70,8 @@ namespace BirdGame
                     individualPriceSmall = birdData.individualPriceSmall,
                     individualPriceBig = birdData.individualPriceBig
                 };
-
+                if(saveModel.BirdInfoData.mapBirds.Count <= mapIndex)
+                    return;
                 saveModel.BirdInfoData.mapBirds[mapIndex].birdList.Add(serializableData);
             }
 

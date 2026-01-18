@@ -14,8 +14,8 @@ namespace BirdGame
 
         public Button closeButton;
         public RectTransform bar;
-        private static Vector2 barPos = new Vector2(10000, 10000);
-        private static float barScale = 0;
+        public static Vector2 barPos = new Vector2(10000, 10000);
+        public static float barScale = 0;
         // public GameObject musicView;
         // public GameObject environmentView;
         private void Start()

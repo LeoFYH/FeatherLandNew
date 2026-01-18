@@ -64,16 +64,19 @@ namespace BirdGame
                 priceText.text = this.GetSystem<ILocalizationSystem>().GetString("Purchased");
                 buyButton.targetGraphic.color = new Color32(159, 159, 159, 255);
                 buyButton.GetComponent<HoverButton>().isLessCoin = false;
+                uiButtonHoverScale.enabled = false;
             }
             else if (price <= this.GetModel<IAccountModel>().Coins.Value)
             {
                 buyButton.interactable = true;
                 buyButton.targetGraphic.color = Color.white;
+                uiButtonHoverScale.enabled = true;
                 uiButtonHoverScale.localizationKey =$"{this.GetSystem<ILocalizationSystem>().GetString("Hold")}: {currentCount}/{totalCount}";
                 buyButton.GetComponent<HoverButton>().isLessCoin = false;
             }
             else
             {
+                uiButtonHoverScale.enabled = true;
                 uiButtonHoverScale.localizationKey = "Insufficient coins";
                 buyButton.interactable = false;
                 buyButton.targetGraphic.color = Color.white;

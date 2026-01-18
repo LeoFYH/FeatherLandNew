@@ -337,12 +337,8 @@ namespace BirdGame
 
         private void UpdateButtonState()
         {
-            var configModel = this.GetModel<IConfigModel>();
             var gameModel = this.GetModel<IGameModel>();
             var saveModel = this.GetModel<ISaveModel>();
-            var selectedToolIndex = gameModel.SelectedToolDic[itemIndex].Value;
-            var toolItem = configModel.ShopConfig.tools[itemIndex];
-            var selectedTool = toolItem.selections[selectedToolIndex];
             var item = this.GetModel<IConfigModel>().ShopConfig.tools[itemIndex];
 
             if (item.selections[0].type == ToolType.Food)
@@ -369,9 +365,9 @@ namespace BirdGame
                     // 已装备：显示"equipped"
                     priceText.SetKey("equipped");
                     buyButton.interactable = false;
-                    uiButtonHoverScale.enabled = true;
+                    uiButtonHoverScale.enabled = false;
                     buyButton.targetGraphic.color = new Color32(159, 159, 159, 255);
-                    uiButtonHoverScale.localizationKey = "hasbuy";
+                    //uiButtonHoverScale.localizationKey = "hasbuy";
                     buyButton.GetComponent<HoverButton>().isLessCoin = false;
                 }
                 else if (isInitialPurchased)
@@ -380,8 +376,8 @@ namespace BirdGame
                     priceText.SetKey("equip");
                     buyButton.interactable = true;
                     buyButton.targetGraphic.color = Color.white;
-                    uiButtonHoverScale.enabled = true;
-                    uiButtonHoverScale.localizationKey = "hasbuy";
+                    uiButtonHoverScale.enabled = false;
+                    //uiButtonHoverScale.localizationKey = "hasbuy";
                     buyButton.GetComponent<HoverButton>().isLessCoin = false;
                 }
                 else
@@ -405,7 +401,6 @@ namespace BirdGame
                         buyButton.interactable = true;
                         buyButton.targetGraphic.color = Color.white;
                     }
-
                 }
             }
             else if (item.selections[0].type == ToolType.BirdMaxCount)
@@ -422,9 +417,8 @@ namespace BirdGame
                     priceText.SetKey("Purchased");
                     buyButton.enabled = false;
                     buyButton.targetGraphic.color = new Color32(159, 159, 159, 255);
-                    uiButtonHoverScale.enabled = true;
+                    uiButtonHoverScale.enabled = false;
                     buyButton.GetComponent<HoverButton>().isLessCoin = false;
-                    uiButtonHoverScale.localizationKey = "hasbuy";
                 }
                 else
                 {
@@ -446,6 +440,20 @@ namespace BirdGame
                         buyButton.GetComponent<HoverButton>().isLessCoin = false;
                         buyButton.targetGraphic.color = Color.white;
                     }
+                }
+
+                if (saveModel.AccountData.tools[itemIndex].unlockedList.Count == 0)
+                {
+                    return;
+                }
+                int index = saveModel.AccountData.tools[itemIndex].unlockedList[^1];
+                if (index < item.selections.Length)
+                {
+                    var selection = selections[index];
+                    selection.SetActive(true);
+                    var toggle = selection.GetComponent<Toggle>();
+                    toggle.enabled = true;
+                    toggle.targetGraphic.gameObject.SetActive(true);
                 }
             }
         }
