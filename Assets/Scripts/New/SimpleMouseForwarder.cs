@@ -715,13 +715,14 @@ namespace BirdGame
                     }
 
                     // Check if we should update hover states
-                    // For sliders and scrollbars, we continue updating hover states so elements behind can receive events
-                    // For other drag types (window move, resize), we skip hover updates
+                    // Always update hover states so buttons and other UI elements can receive hover events even during dragging
+                    // However, we need to exclude the drag target itself from exit events during dragging
                     bool isSliderDrag = isLeftMouseDragging && currentDragTarget != null && 
                                        currentDragTarget.GetComponent<SliderBarClickHandler>() != null;
                     bool isScrollbarDrag = isLeftMouseDragging && currentDragTarget != null && 
                                           currentDragTarget.GetComponent<Scrollbar>() != null;
-                    bool shouldUpdateHoverStates = !isLeftMouseDragging || isSliderDrag || isScrollbarDrag;
+                    // Always update hover states, but track drag type for exclusion logic
+                    bool shouldUpdateHoverStates = true;
                     
                     if (shouldUpdateHoverStates)
                     {
@@ -758,8 +759,9 @@ namespace BirdGame
                             {
                                 if (element != null && !currentUIElements.Contains(element))
                                 {
-                                    // Don't exit the drag target during slider or scrollbar drag
-                                    if ((isSliderDrag || isScrollbarDrag) && element == currentDragTarget)
+                                    // Don't exit the drag target during any drag operation
+                                    // This prevents the drag target from losing its visual state while being dragged
+                                    if (isLeftMouseDragging && element == currentDragTarget)
                                     {
                                         continue;
                                     }
@@ -784,8 +786,8 @@ namespace BirdGame
                                 }
                             }
                             
-                            // Make sure the slider drag target stays in the hovered set
-                            if (isSliderDrag && !_currentHoveredUIElements.Contains(currentDragTarget))
+                            // Make sure the drag target stays in the hovered set during any drag operation
+                            if (isLeftMouseDragging && currentDragTarget != null && !_currentHoveredUIElements.Contains(currentDragTarget))
                             {
                                 _currentHoveredUIElements.Add(currentDragTarget);
                             }
@@ -888,6 +890,20 @@ namespace BirdGame
                     isLeftMouseDragging = false;
                     dragStartTime = 0f;
                     currentDragTarget = null;
+                    
+                    // Trigger click events on mouse up (only if it wasn't a drag)
+                    // This includes buttons, input fields, sliders, and other interactable UI elements
+                    if (!wasDragging && instance != null && instance.enableForwarding)
+                    {
+                        clickCount++;
+                        Vector2 actualMousePos = GetCurrentMousePositionRealtime();
+                        instance.SimulateMouseClick(actualMousePos);
+                        
+                        if (instance.showDebugLog)
+                        {
+                            Debug.Log($"[SimpleMouseForwarder] 转发点击到Unity EventSystem (鼠标抬起): {actualMousePos}");
+                        }
+                    }
                     
                     // After drag ends, re-evaluate what's under the mouse cursor
                     // This ensures hover states are correct after a drag operation
@@ -1529,16 +1545,11 @@ namespace BirdGame
             // Get the current foreground window handle
             if (isOnDesktop)
             {
-                if (leftButtonDown && instance.enableForwarding)
+                // Note: Left button click events are now handled in WM_LBUTTONUP (mouse up)
+                // We only reset the flag here
+                if (leftButtonDown)
                 {
-                    clickCount++;
                     leftButtonDown = false;
-                    SimulateMouseClick(mousePosition);
-
-                    if (showDebugLog)
-                    {
-                        Debug.Log($"[SimpleMouseForwarder] 转发点击到Unity EventSystem: {mousePosition}");
-                    }
                 }
 
                 if (rightButtonDown && instance.enableForwarding)
@@ -1566,9 +1577,9 @@ namespace BirdGame
                     }
                 }
                 
-                // Only validate hover states when NOT dragging
-                // During drag operations, hover states are intentionally cleared
-                if (!isLeftMouseDragging)
+                // Validate hover states even during dragging so buttons and other UI elements can receive hover events
+                // The drag target itself will be excluded from exit events to maintain its visual state
+                if (true) // Always validate hover states
                 {
                     // Get the ACTUAL current mouse position in real-time
                     // This catches fast mouse movements that the hook might have missed
@@ -1623,6 +1634,13 @@ namespace BirdGame
                             }
                             else if (!element.activeInHierarchy || !currentUIElements.Contains(element))
                             {
+                                // Don't exit the drag target during any drag operation
+                                // This prevents the drag target from losing its visual state while being dragged
+                                if (isLeftMouseDragging && element == currentDragTarget)
+                                {
+                                    continue;
+                                }
+                                
                                 HandlePointerExit(element, realtimeMousePos);
                                 _currentHoveredUIElements.Remove(element);
                             }
@@ -1636,6 +1654,12 @@ namespace BirdGame
                                 HandlePointerEnter(element, realtimeMousePos);
                                 _currentHoveredUIElements.Add(element);
                             }
+                        }
+                        
+                        // Make sure the drag target stays in the hovered set during any drag operation
+                        if (isLeftMouseDragging && currentDragTarget != null && !_currentHoveredUIElements.Contains(currentDragTarget))
+                        {
+                            _currentHoveredUIElements.Add(currentDragTarget);
                         }
 
                         // Validate that the currently hovered pointer event is still valid
@@ -1705,6 +1729,29 @@ namespace BirdGame
             pressedKeysThisFrame.Clear();
         }
 
+        private static GameObject FindInteractableParent(System.Collections.Generic.List<RaycastResult> raycastResults)
+        {
+            // Go through raycast results from top to bottom
+            foreach (var result in raycastResults)
+            {
+                // For each hit object, traverse up the parent hierarchy to find a Selectable component
+                Transform current = result.gameObject.transform;
+                while (current != null)
+                {
+                    Selectable selectable = current.GetComponent<Selectable>();
+                    if (selectable != null && selectable.interactable)
+                    {
+                        // Found an interactable Selectable, return it
+                        return current.gameObject;
+                    }
+                    current = current.parent;
+                }
+            }
+            
+            // No interactable parent found
+            return null;
+        }
+
         private void SimulateMouseClick(Vector2 screenPosition)
         {
             if (EventSystem.current == null)
@@ -1730,7 +1777,8 @@ namespace BirdGame
                 bool foundInputField = false;
                 bool foundSlider = false;
                 
-                // Process ALL raycast results to trigger events on all objects
+                // First, check all raycast results for special handlers (input fields, sliders)
+                // These need to be found regardless of their depth in the hierarchy
                 foreach (var result in raycastResults)
                 {
                     GameObject hitObject = result.gameObject;
@@ -1751,7 +1799,7 @@ namespace BirdGame
                         Debug.Log($"[SimpleMouseForwarder] TMP输入框激活: {hitObject.name}");
                         foundInputField = true;
                         // Input fields consume the click, stop processing
-                        break;
+                        return;
                     }
 
                     // Check for legacy InputField handler
@@ -1764,28 +1812,43 @@ namespace BirdGame
                         Debug.Log($"[SimpleMouseForwarder] Legacy输入框激活: {hitObject.name}");
                         foundInputField = true;
                         // Input fields consume the click, stop processing
-                        break;
+                        return;
                     }
 
                     // Check for slider handlers
+                    // Note: pointerDownHandler for sliders is handled separately in drag logic
+                    // Here we only trigger click event on mouse up
                     SliderBarClickHandler sliderHandler = hitObject.GetComponent<SliderBarClickHandler>();
                     if (sliderHandler != null && !foundSlider)
                     {
                         ExecuteEvents.Execute(hitObject, pointerData, ExecuteEvents.pointerClickHandler);
-                        ExecuteEvents.Execute(hitObject, pointerData, ExecuteEvents.pointerDownHandler);
-                        Debug.Log($"[SimpleMouseForwarder] 滑块交互: {hitObject.name}");
+                        if (showDebugLog)
+                        {
+                            Debug.Log($"[SimpleMouseForwarder] 滑块点击: {hitObject.name}");
+                        }
                         foundSlider = true;
                         // Sliders consume the click, stop processing
-                        break;
+                        return;
                     }
-
-                    // Execute pointer click on this object
-                    // This will trigger ALL objects in the raycast hierarchy
-                    ExecuteEvents.Execute(hitObject, pointerData, ExecuteEvents.pointerClickHandler);
+                }
+                
+                // If no special handler was found, check for parent interactable components
+                // If a parent has a Selectable component (Button, Toggle, etc.), click that instead
+                if (!foundInputField && !foundSlider)
+                {
+                    GameObject targetObject = FindInteractableParent(raycastResults);
+                    
+                    // If no interactable parent found, use the topmost object as fallback
+                    if (targetObject == null)
+                    {
+                        targetObject = raycastResults[0].gameObject;
+                    }
+                    
+                    ExecuteEvents.Execute(targetObject, pointerData, ExecuteEvents.pointerClickHandler);
                     
                     if (showDebugLog)
                     {
-                        Debug.Log($"[SimpleMouseForwarder] 点击对象: {hitObject.name}");
+                        Debug.Log($"[SimpleMouseForwarder] 点击对象: {targetObject.name}");
                     }
                 }
             }

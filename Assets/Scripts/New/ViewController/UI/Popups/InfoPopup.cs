@@ -315,7 +315,48 @@ namespace BirdGame
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             editorButton.onClick.AddListener(()=>
             {
-                cutomName.ActivateInputField();
+                // In wallpaper mode, we need to use HookTMPInputHandler to properly activate the input field
+                // so that keyboard input routing works correctly
+                bool isWallpaperMode = this.GetUtility<IFullScreenUtility>().EnableWallpaperMode;
+                if (isWallpaperMode)
+                {
+                    // Find HookTMPInputHandler component on the input field GameObject or its children/parents
+                    HookTMPInputHandler tmpHandler = cutomName.GetComponent<HookTMPInputHandler>();
+                    if (tmpHandler == null)
+                    {
+                        tmpHandler = cutomName.GetComponentInParent<HookTMPInputHandler>();
+                    }
+                    if (tmpHandler == null)
+                    {
+                        tmpHandler = cutomName.GetComponentInChildren<HookTMPInputHandler>();
+                    }
+                    
+                    if (tmpHandler != null)
+                    {
+                        // Activate the input field through the handler
+                        tmpHandler.ActivateInputField();
+                        
+                        // Set the focused input field in SimpleMouseForwarder using reflection
+                        // This is necessary for keyboard input routing in wallpaper mode
+                        var mouseForwarderType = typeof(SimpleMouseForwarder);
+                        var focusedField = mouseForwarderType.GetField("_focusedTMPInputField", 
+                            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+                        if (focusedField != null)
+                        {
+                            focusedField.SetValue(null, tmpHandler.gameObject);
+                        }
+                    }
+                    else
+                    {
+                        // Fallback to direct activation if no handler found
+                        cutomName.ActivateInputField();
+                    }
+                }
+                else
+                {
+                    // Normal mode - direct activation works fine
+                    cutomName.ActivateInputField();
+                }
             });
             
             int index = this.GetModel<IGameModel>().CurrentSelectedBirdIndex;
