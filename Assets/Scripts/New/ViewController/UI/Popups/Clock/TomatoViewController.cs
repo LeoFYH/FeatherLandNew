@@ -320,6 +320,11 @@ namespace BirdGame
                 startPauseText.text = item.IsPause
                     ? this.GetSystem<ILocalizationSystem>().GetString("Start")
                     : this.GetSystem<ILocalizationSystem>().GetString("Pause");
+                if(!item.IsPause && item.TimerCoroutine == null)
+                {
+                    item.TimerCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(StartTimer());
+                }
+
             });
             startPauseText.text = item.IsPause
                 ? this.GetSystem<ILocalizationSystem>().GetString("Start")

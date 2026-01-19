@@ -178,9 +178,14 @@ namespace BirdGame
                 {
                     item.IsPause = false;
                     Refresh(true, false);
+                    this.GetModel<IClockModel>().TimerType = TimerType.Timer;
+                    Debug.Log("[Time] 继续计时器！");
+                    if(item.TimerCoroutine == null)
+                        item.TimerCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(StartTimer());
                     return;
                 }
 
+                Debug.Log("[Time] 开始计时器！");
                 item.Timer = item.Hours.Value * 3600 + item.Minutes.Value * 60 + item.Seconds.Value;
                 if(item.Timer == 0)
                     return;
@@ -197,6 +202,7 @@ namespace BirdGame
             {
                 item.IsPause = true;
                 Refresh(true, true);
+                Debug.Log("[Time] 暂停计时器！");
             });
             clearButton.onClick.AddListener(() =>
             {
@@ -377,10 +383,11 @@ namespace BirdGame
             {
                 if (item.IsPause)
                 {
+                    Debug.Log("[Count] 计时器暂停中");
                     yield return null;
                     continue;
                 }
-                
+                Debug.Log("[Count] 计时器计时中");
                 int totalSeconds = (int)item.Timer;
                 item.Hours.Value = totalSeconds / 3600;
                 item.Minutes.Value = totalSeconds / 60 % 60;

@@ -35,12 +35,17 @@ namespace BirdGame
                     item.IsPause = false;
                     startButton.interactable = false;
                     stopButton.interactable = true;
+                    this.GetModel<IClockModel>().TimerType = TimerType.StopWatch;
+                    Debug.Log("[Time] 继续秒表！");
+                    if(item.TimerCoroutine == null)
+                        item.TimerCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(StartTimer());
                     //clearButton.interactable = true;
                     return;
                 }
-
+                Debug.Log("[Time] 开始秒表！");
                 startButton.interactable = false;
                 stopButton.interactable = true;
+                item.IsPause= false;
                 //clearButton.interactable = true;
                 this.GetModel<IClockModel>().TimerType = TimerType.StopWatch;
                 item.TimerCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(StartTimer());
@@ -55,6 +60,7 @@ namespace BirdGame
                 item.IsPause = true;
                 startButton.interactable = true;
                 stopButton.interactable = false;
+                Debug.Log("[Time] 暂停秒表！");
                 //clearButton.interactable = true;
             });
             clearButton.onClick.AddListener(() =>
@@ -146,14 +152,14 @@ namespace BirdGame
             minuteText.text = string.Format("{0:00}", item.Minutes.Value);
             secondText.text = string.Format("{0:00}", item.Seconds.Value);
             
-            startButton.interactable = item.TimerCoroutine == null;
-            stopButton.interactable = item.TimerCoroutine != null;
+            startButton.interactable = item.TimerCoroutine == null || item.IsPause;
+            stopButton.interactable = item.TimerCoroutine != null && !item.IsPause;
         }
 
         private void OnEnable()
         {
-            startButton.interactable = this.GetModel<IClockModel>().StopWatchItem.TimerCoroutine == null;
-            stopButton.interactable = this.GetModel<IClockModel>().StopWatchItem.TimerCoroutine != null;
+            startButton.interactable = this.GetModel<IClockModel>().StopWatchItem.TimerCoroutine == null || this.GetModel<IClockModel>().StopWatchItem.IsPause;
+            stopButton.interactable = this.GetModel<IClockModel>().StopWatchItem.TimerCoroutine != null && !this.GetModel<IClockModel>().StopWatchItem.IsPause;
         }
 
         private IEnumerator StartTimer()
@@ -166,9 +172,11 @@ namespace BirdGame
             {
                 if (item.IsPause)
                 {
+                    Debug.Log("[Count] 秒表暂停中");
                     yield return null;
                     continue;
                 }
+                Debug.Log("[Count] 秒表计时中");
                 int totalSeconds = (int)item.Timer;
                 item.Hours.Value = totalSeconds / 3600;
                 item.Minutes.Value = totalSeconds / 60 % 60;
