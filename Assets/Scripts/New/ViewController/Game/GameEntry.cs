@@ -15,6 +15,10 @@ namespace BirdGame
         private float _lastModeChangeTime = -999f;
         private const float MODE_CHANGE_COOLDOWN = 0.5f; // 500ms cooldown between mode changes
         
+        // Mouse click tracking for wallpaper mode support
+        private int previousClickCount = 0;
+        private int previousRightClickCount = 0;
+        
         private void Start()
         {
             // 延迟一帧来确保所有系统都已初始化
@@ -106,14 +110,72 @@ namespace BirdGame
             // 检测快捷键（仅在非输入状态下）
             HandleKeyboardShortcuts();
             
-            if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+            // Check for mouse clicks from both Unity Input and SimpleMouseForwarder (for wallpaper mode)
+            bool leftClickDetected = Input.GetMouseButtonDown(0) || SimpleMouseForwarder.clickCount > previousClickCount;
+            bool rightClickDetected = Input.GetMouseButtonDown(1) || SimpleMouseForwarder.rightClickCount > previousRightClickCount;
+            
+            if (leftClickDetected || rightClickDetected)
             {
-                // 检查是否点击到UI元素
-                if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+                // Update click count tracking
+                bool clickFromForwarder = false;
+                if (SimpleMouseForwarder.clickCount > previousClickCount)
                 {
-                    if (UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject != null &&
-                        UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.CompareTag("Click"))
+                    previousClickCount = SimpleMouseForwarder.clickCount;
+                    clickFromForwarder = true;
+                }
+                if (SimpleMouseForwarder.rightClickCount > previousRightClickCount)
+                {
+                    previousRightClickCount = SimpleMouseForwarder.rightClickCount;
+                    clickFromForwarder = true;
+                }
+                
+                // 检查是否点击到UI元素
+                // In wallpaper mode, IsPointerOverGameObject() may not be reliable, so use RaycastAll instead
+                bool isPointerOverUI = false;
+                if (clickFromForwarder && this.GetUtility<IFullScreenUtility>().EnableWallpaperMode)
+                {
+                    // 壁纸模式下使用RaycastAll进行检测
+                    PointerEventData eventData = new PointerEventData(EventSystem.current)
+                    {
+                        position = Input.mousePosition
+                    };
+                    var results = new System.Collections.Generic.List<RaycastResult>();
+                    EventSystem.current.RaycastAll(eventData, results);
+                    isPointerOverUI = results.Count > 0;
+                    
+                    // Check if the clicked object or any parent has "Click" tag
+                    if (isPointerOverUI && results.Count > 0)
+                    {
+                        GameObject clickedObject = results[0].gameObject;
+                        if (clickedObject != null)
+                        {
+                            // Traverse up the hierarchy to find "Click" tag
+                            Transform current = clickedObject.transform;
+                            while (current != null)
+                            {
+                                if (current.CompareTag("Click"))
+                                {
+                                    this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Click);
+                                    break;
+                                }
+                                current = current.parent;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    // 正常模式下使用IsPointerOverGameObject
+                    isPointerOverUI = EventSystem.current.IsPointerOverGameObject();
+                    if (isPointerOverUI && EventSystem.current.currentSelectedGameObject != null &&
+                        EventSystem.current.currentSelectedGameObject.CompareTag("Click"))
+                    {
                         this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Click);
+                    }
+                }
+                
+                if (isPointerOverUI)
+                {
                     return;
                 }
                 
