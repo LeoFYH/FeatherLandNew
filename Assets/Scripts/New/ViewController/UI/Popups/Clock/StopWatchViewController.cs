@@ -39,11 +39,11 @@ namespace BirdGame
                     return;
                 }
 
-                item.TimerCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(StartTimer());
                 startButton.interactable = false;
                 stopButton.interactable = true;
                 //clearButton.interactable = true;
                 this.GetModel<IClockModel>().TimerType = TimerType.StopWatch;
+                item.TimerCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(StartTimer());
                 this.SendCommand<StopOtherTimerCommand>();
                 this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
                 {
@@ -159,8 +159,9 @@ namespace BirdGame
         private IEnumerator StartTimer()
         {
             var item = this.GetModel<IClockModel>().StopWatchItem;
-            item.TimerString.Value = "00:00:00";
+            item.TimerString.Value = "";
             var frame = new WaitForFixedUpdate();
+            item.TimerString.Value = "00:00:00";
             while (true)
             {
                 if (item.IsPause)

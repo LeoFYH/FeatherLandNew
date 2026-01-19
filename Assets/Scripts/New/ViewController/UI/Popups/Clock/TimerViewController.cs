@@ -370,7 +370,9 @@ namespace BirdGame
         {
             float timer = 0;
             var item = this.GetModel<IClockModel>().TimerItem;
+            item.TimeString.Value = "";
             var frame = new WaitForFixedUpdate();
+            item.TimeString.Value = "00:00:00";
             while (item.Timer > 0)
             {
                 if (item.IsPause)
