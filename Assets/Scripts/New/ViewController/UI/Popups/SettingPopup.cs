@@ -86,8 +86,8 @@ namespace BirdGame
                 PlayerPrefs.DeleteAll();
                 
                 // 清空内存中的数据
-               this.GetSystem<ISaveSystem>().InitData();
-               this.GetModel<IAccountModel>().Coins.Value = this.GetModel<IConfigModel>().ShopConfig.startCoins;
+                this.GetSystem<ISaveSystem>().InitData();
+                this.GetModel<IAccountModel>().Coins.Value = this.GetModel<IConfigModel>().ShopConfig.startCoins;
                 this.GetModel<ISaveModel>().SettingData.gameLanguage = this.GetSystem<ISteamSystem>().GetUserLanguage();
                 
                 // // 清空鸟模型中的数据
@@ -118,6 +118,41 @@ namespace BirdGame
 
                 // 等待一帧确保消息显示
                 //this.GetSystem<IMonoSystem>().StartCoroutine(RestartApplication());
+                var stopWatch = this.GetModel<IClockModel>().StopWatchItem;
+                var timer = this.GetModel<IClockModel>().TimerItem;
+                var tomato = this.GetModel<IClockModel>().TomatoItem;
+
+                if(stopWatch.TimerCoroutine != null)
+                {
+                    this.GetSystem<IMonoSystem>().StopCoroutine(stopWatch.TimerCoroutine);
+                    stopWatch.TimerCoroutine = null;
+                    stopWatch.Hours.Value=0;
+                    stopWatch.IsPause =false;
+                    stopWatch.Minutes.Value = 0;
+                    stopWatch.Seconds.Value = 0;
+                }
+                if(timer.TimerCoroutine != null)
+                {
+                    this.GetSystem<IMonoSystem>().StopCoroutine(timer.TimerCoroutine);
+                    timer.TimerCoroutine = null;
+                    timer.Hours.Value = 0;
+                    timer.IsPause = false;
+                    timer.Minutes.Value = 5;
+                    timer.Seconds.Value =0;
+                }
+                if(tomato.TimerCoroutine != null)
+                {
+                    this.GetSystem<IMonoSystem>().StopCoroutine(tomato.TimerCoroutine);
+                    tomato.TimerCoroutine = null;
+                    tomato.IsPause=false;
+                    tomato.IsSkip =false;
+                    tomato.Number.Value= 1;
+                    tomato.SessionMinutes.Value =5;
+                    tomato.Timer.Value = 0;
+                    tomato.BreakMinutes.Value =5;
+                    tomato.TimerType.Value = TomatoTimerType.Session;
+                }
+                this.GetModel<IClockModel>().TimerType = TimerType.None;
                 DOTween.Sequence().AppendCallback(() =>
                 {
                     ClockPopup.barPos = new Vector2(10000, 10000);

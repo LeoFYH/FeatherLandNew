@@ -1,4 +1,6 @@
 ﻿using QFramework;
+using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace BirdGame
 {
@@ -8,6 +10,8 @@ namespace BirdGame
         {
             // 设置目标帧率为45FPS
             //UnityEngine.Application.targetFrameRate = 60;
+            OnDemandRendering.renderFrameInterval = 2;
+            QualitySettings.vSyncCount = 0;
             
             this.RegisterUtility<IFullScreenUtility>(new FullScreenUtility());
             

@@ -356,6 +356,8 @@ namespace BirdGame
                 }
                 item.TimerType.Value = TomatoTimerType.Session;
             });
+            
+            audioToggles[item.AudioSelected.Value].isOn = true;
 
             for (var i = 0; i < audioToggles.Length; i++)
             {
@@ -371,7 +373,7 @@ namespace BirdGame
                 item.AudioVolume.Value = v;
             });
 
-            audioToggles[item.AudioSelected.Value].isOn = true;
+            
             volumeSlider.value = item.AudioVolume.Value;
             volumeFill.fillAmount = item.AudioVolume.Value;
             Refresh(item.TimerCoroutine != null);
