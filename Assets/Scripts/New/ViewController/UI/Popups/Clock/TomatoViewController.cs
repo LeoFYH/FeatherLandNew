@@ -220,10 +220,11 @@ namespace BirdGame
                 item.TimerCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(StartTimer());
                 item.IsPause = false;
                 item.CurrentTimer = 0f;
+                Refresh(true);
+                // Update startPauseText after Refresh to ensure sessionView is active
                 startPauseText.text = item.IsPause
                     ? this.GetSystem<ILocalizationSystem>().GetString("Start")
                     : this.GetSystem<ILocalizationSystem>().GetString("Pause");
-                Refresh(true);
                 this.GetModel<IClockModel>().TimerType = TimerType.Tomato;
                 this.SendCommand<StopOtherTimerCommand>();
                 this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
@@ -378,7 +379,16 @@ namespace BirdGame
 
         private void OnEnable()
         {
-            Refresh(this.GetModel<IClockModel>().TomatoItem.TimerCoroutine != null);
+            var item = this.GetModel<IClockModel>().TomatoItem;
+            bool isTiming = item.TimerCoroutine != null;
+            Refresh(isTiming);
+            // Update startPauseText if timer is running
+            if (isTiming)
+            {
+                startPauseText.text = item.IsPause
+                    ? this.GetSystem<ILocalizationSystem>().GetString("Start")
+                    : this.GetSystem<ILocalizationSystem>().GetString("Pause");
+            }
         }
 
         private void OnDisable()
@@ -518,6 +528,11 @@ namespace BirdGame
                 ClearAllNames();
                 ClearAllLines();
                 InitLineAndText();
+                // Update startPauseText when switching to session view
+                var item = this.GetModel<IClockModel>().TomatoItem;
+                startPauseText.text = item.IsPause
+                    ? this.GetSystem<ILocalizationSystem>().GetString("Start")
+                    : this.GetSystem<ILocalizationSystem>().GetString("Pause");
             }
 
             for (int i = 0; i < 3; i++)
@@ -734,28 +749,34 @@ namespace BirdGame
                 item.TimeString.Value = string.Format("{0:00}:{1:00}:{2:00}  {3}/{4}", hour, minute, second,
                     currentCount, item.TotalNumber);
                 yield return frame;
-                if (item.IsPause)
-                {
-                    continue;
-                }
-
+                
+                // Check for skip first, even when paused
                 if (item.IsSkip)
                 {
                     item.Timer.Value = 0;
                     item.IsSkip = false;
                 }
+                else if (!item.IsPause)
+                {
+                    // Only decrement timer when not paused
+                    item.Timer.Value -= Time.fixedDeltaTime;
+                    timer += Time.fixedDeltaTime;
+                }
                 else
                 {
-                    item.Timer.Value -= Time.fixedDeltaTime;
+                    // When paused and not skipping, continue without decrementing
+                    continue;
                 }
-                timer += Time.fixedDeltaTime;
+                
+                // Handle timer transition when timer reaches 0 or is skipped
                 if (item.Timer.Value <= 0)
                 {
                     if (item.TimerType.Value == TomatoTimerType.Session)
                     {
+                        // Update CurrentTimer BEFORE changing TimerType and Timer to ensure UI updates correctly
+                        item.CurrentTimer += item.SessionMinutes.Value * 60;
                         item.TimerType.Value = TomatoTimerType.Break;
                         item.Timer.Value = item.BreakMinutes.Value * 60;
-                        item.CurrentTimer += item.SessionMinutes.Value * 60;
                         //触发Session结束提醒
                         this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForSession;
                         item.Number.Value--;
@@ -763,9 +784,10 @@ namespace BirdGame
                     }
                     else if (item.TimerType.Value == TomatoTimerType.Break)
                     {
+                        // Update CurrentTimer BEFORE changing TimerType and Timer to ensure UI updates correctly
+                        item.CurrentTimer += item.BreakMinutes.Value * 60;
                         item.TimerType.Value = TomatoTimerType.Session;
                         item.Timer.Value = item.SessionMinutes.Value * 60;
-                        item.CurrentTimer += item.BreakMinutes.Value * 60;
                         
                         if (item.Number.Value <= 0)
                         {
