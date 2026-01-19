@@ -55,6 +55,7 @@ namespace BirdGame
                 nameText.text = this.GetSystem<ILocalizationSystem>().GetString(birdName);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             lockToggle.isOn = data.isLocked;
+            saleButton.interactable = !data.isLocked;
             lockToggle.onValueChanged.AddListener(isOn =>
             {
                 data.isLocked = isOn;

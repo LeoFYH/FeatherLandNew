@@ -25,6 +25,7 @@ namespace BirdGame
         public TextMeshProUGUI coinsPerMinuteText;
         public TextMeshProUGUI capacityValue;
         public TextMeshProUGUI coinsPerMinuteValue;
+        public GameObject tipText;
         
         private int mapIndex;
         private int sortType;
@@ -38,6 +39,11 @@ namespace BirdGame
             {
                 capacityText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Total Capacity")}:";
                 coinsPerMinuteText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Coins per minute")}:";
+                RefreshName();
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            
+            this.RegisterEvent<RefreshSaleBirdEvent>(evt =>
+            {
                 RefreshName();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
@@ -98,6 +104,7 @@ namespace BirdGame
             });
             releaseAll.onClick.AddListener(() =>
             {
+                bool isRelease = false;
                 int count = birdItems.Count;
                 for (int i = count - 1; i >= 0; i--)
                 {
@@ -106,6 +113,7 @@ namespace BirdGame
                         continue;
                     }
 
+                    isRelease = true;
                     var data = this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList[i];
                     if (data.isSmall)
                     {
@@ -122,9 +130,13 @@ namespace BirdGame
                     }
                     this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.RemoveAt(i);
                 }
-                RefreshBirdList();
-                RefreshName();  // 刷新容量显示
-                this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
+
+                if (isRelease)
+                {
+                    RefreshBirdList();
+                    RefreshName(); // 刷新容量显示
+                    this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
+                }
             });
             RefreshButtons();
             this.RegisterEvent<RefreshSaleBirdEvent>(evt =>
@@ -224,6 +236,7 @@ namespace BirdGame
                 birdItems.Add(item);
                 index++;
             }
+            tipText.SetActive(list.Count == 0);
             Sorting();
         }
 

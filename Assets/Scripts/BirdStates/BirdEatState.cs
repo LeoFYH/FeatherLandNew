@@ -51,9 +51,16 @@ namespace BirdGame
                 return;
             }
 
-            _brid.agent.SetDestination(eatPosition);
-            _brid.agent.isStopped = false;
-            _brid.anim.SetFloat("MoveSpeed", 1f);
+            if (_brid.agent.SetDestination(eatPosition))
+            {
+                _brid.agent.isStopped = false;
+                _brid.anim.SetFloat("MoveSpeed", 1f);
+            }
+            else
+            {
+                currMachine.ChangeState<BirdIdleState>();
+                return;
+            }
         }
 
         public override void OnUpdate()
@@ -113,8 +120,13 @@ namespace BirdGame
                     currMachine.ChangeState<BirdIdleState>();
                     return;
                 }
-                
-                _brid.agent.SetDestination(eatPosition);
+
+                if (!_brid.agent.SetDestination(eatPosition))
+                {
+                    currMachine.ChangeState<BirdIdleState>();
+                    return;
+                }
+
                 if (this.GetModel<IConfigModel>().BirdConfig.isDrawPathLine)
                     DrawPath();
                 if (Mathf.Abs(_brid.agent.velocity.x) > 0.001f)

@@ -440,7 +440,7 @@ namespace BirdGame
             {
                 cutomName.text = this.GetSystem<ILocalizationSystem>().GetString("customName");
             }
-        }
+        } 
         
         private void UpdateBirdNameText()
         {

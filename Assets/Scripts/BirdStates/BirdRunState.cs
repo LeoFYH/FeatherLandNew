@@ -65,7 +65,7 @@ namespace BirdGame
             // }
 
             target = NavigationManager.Instance.GetRandomTarget(_brid.walkArea);
-            while (target == Vector3.zero)
+            while (target == Vector3.zero || !NavigationManager.Instance.IsPointInNavMeshArea(_brid.walkArea, target))
             {
                 target = NavigationManager.Instance.GetRandomTarget(_brid.walkArea);
             }
@@ -77,6 +77,8 @@ namespace BirdGame
             else
             {
                 Debug.LogError("目标超出渲染地面范围！");
+                currMachine.ChangeState<BirdIdleState>();
+                return;
             }
 
             float distance = _brid.agent.remainingDistance;
@@ -107,6 +109,8 @@ namespace BirdGame
                 currMachine.ChangeState<BirdIdleState>();
                 return;
             }
+            
+            
 
             // 处理跟随鼠标逻辑
             // if (isFollowingMouse)
