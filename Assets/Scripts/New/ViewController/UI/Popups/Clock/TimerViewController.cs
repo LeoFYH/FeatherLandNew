@@ -202,7 +202,13 @@ namespace BirdGame
             {
                 if (item.TimerCoroutine != null)
                     this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
+                if(this.GetModel<IClockModel>().TomatoItem.TimerCoroutine != null)
+                    this.GetSystem<IMonoSystem>().StopCoroutine(this.GetModel<IClockModel>().TomatoItem.TimerCoroutine);
+                if(this.GetModel<IClockModel>().StopWatchItem.TimerCoroutine != null)
+                    this.GetSystem<IMonoSystem>().StopCoroutine(this.GetModel<IClockModel>().StopWatchItem.TimerCoroutine);    
                 item.TimerCoroutine = null;
+                this.GetModel<IClockModel>().TomatoItem.TimerCoroutine=null;
+                this.GetModel<IClockModel>().StopWatchItem.TimerCoroutine =null;
                 item.IsPause = false;
                 Refresh(false, item.IsPause);
                 this.GetModel<IClockModel>().TimerType = TimerType.None;
@@ -214,7 +220,26 @@ namespace BirdGame
                 item.Hours.Value = 0;
                 item.Minutes.Value = 0;
                 item.Seconds.Value = 0;
-                
+                this.GetModel<IClockModel>().TomatoItem.IsPause = false;
+                this.GetModel<IClockModel>().TomatoItem.IsSkip = false;
+                this.GetModel<IClockModel>().TomatoItem.Timer.Value = 0;
+                this.GetModel<IClockModel>().TomatoItem.SessionMinutes.Value =5;
+                this.GetModel<IClockModel>().TomatoItem.BreakMinutes.Value = 5;
+                this.GetModel<IClockModel>().StopWatchItem.Timer = 0;
+                this.GetModel<IClockModel>().StopWatchItem.Hours.Value = 0;
+                this.GetModel<IClockModel>().StopWatchItem.Minutes.Value = 0;
+                this.GetModel<IClockModel>().StopWatchItem.Seconds.Value = 0;
+                // 恢复 Number 为上一次设定的值（TotalNumber），而不是设置为 0
+                // 如果 TotalNumber 还没有被设置（用户还没有开始过计时），则保持当前值不变
+                if (this.GetModel<IClockModel>().TomatoItem.TotalNumber > 0)
+                {
+                    this.GetModel<IClockModel>().TomatoItem.Number.Value = this.GetModel<IClockModel>().TomatoItem.TotalNumber;
+                }
+                else
+                {
+                    this.GetModel<IClockModel>().TomatoItem.Number.Value = 1;
+                }
+                this.GetModel<IClockModel>().TomatoItem.TimerType.Value = TomatoTimerType.Session;
             });
 
             this.RegisterEvent<StopTimerEvent>(evt =>
