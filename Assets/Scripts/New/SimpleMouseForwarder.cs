@@ -889,6 +889,20 @@ namespace BirdGame
                     dragStartTime = 0f;
                     currentDragTarget = null;
                     
+                    // Trigger click events on mouse up (only if it wasn't a drag)
+                    // This includes buttons, input fields, sliders, and other interactable UI elements
+                    if (!wasDragging && instance != null && instance.enableForwarding)
+                    {
+                        clickCount++;
+                        Vector2 actualMousePos = GetCurrentMousePositionRealtime();
+                        instance.SimulateMouseClick(actualMousePos);
+                        
+                        if (instance.showDebugLog)
+                        {
+                            Debug.Log($"[SimpleMouseForwarder] 转发点击到Unity EventSystem (鼠标抬起): {actualMousePos}");
+                        }
+                    }
+                    
                     // After drag ends, re-evaluate what's under the mouse cursor
                     // This ensures hover states are correct after a drag operation
                     if (wasDragging)
@@ -1529,16 +1543,11 @@ namespace BirdGame
             // Get the current foreground window handle
             if (isOnDesktop)
             {
-                if (leftButtonDown && instance.enableForwarding)
+                // Note: Left button click events are now handled in WM_LBUTTONUP (mouse up)
+                // We only reset the flag here
+                if (leftButtonDown)
                 {
-                    clickCount++;
                     leftButtonDown = false;
-                    SimulateMouseClick(mousePosition);
-
-                    if (showDebugLog)
-                    {
-                        Debug.Log($"[SimpleMouseForwarder] 转发点击到Unity EventSystem: {mousePosition}");
-                    }
                 }
 
                 if (rightButtonDown && instance.enableForwarding)
@@ -1792,12 +1801,16 @@ namespace BirdGame
                     }
 
                     // Check for slider handlers
+                    // Note: pointerDownHandler for sliders is handled separately in drag logic
+                    // Here we only trigger click event on mouse up
                     SliderBarClickHandler sliderHandler = hitObject.GetComponent<SliderBarClickHandler>();
                     if (sliderHandler != null && !foundSlider)
                     {
                         ExecuteEvents.Execute(hitObject, pointerData, ExecuteEvents.pointerClickHandler);
-                        ExecuteEvents.Execute(hitObject, pointerData, ExecuteEvents.pointerDownHandler);
-                        Debug.Log($"[SimpleMouseForwarder] 滑块交互: {hitObject.name}");
+                        if (showDebugLog)
+                        {
+                            Debug.Log($"[SimpleMouseForwarder] 滑块点击: {hitObject.name}");
+                        }
                         foundSlider = true;
                         // Sliders consume the click, stop processing
                         return;
