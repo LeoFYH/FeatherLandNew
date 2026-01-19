@@ -7,6 +7,111 @@ using Random = UnityEngine.Random;
 
 namespace BirdGame
 {
+    // 简单的食物对象池
+    public class FoodPool
+    {
+        private Queue<Food> pool = new Queue<Food>();
+        private GameObject prefab;
+        private Transform parent;
+        private int initialSize = 10;
+        private int maxSize = 20;
+
+        public FoodPool(GameObject prefab, Transform parent = null, int initialSize = 10, int maxSize = 20)
+        {
+            this.prefab = prefab;
+            this.parent = parent;
+            this.initialSize = initialSize;
+            this.maxSize = maxSize;
+            
+            // 预创建一些对象
+            for (int i = 0; i < initialSize; i++)
+            {
+                Food food = CreateNewFood();
+                ReturnToPool(food);
+            }
+        }
+
+        private Food CreateNewFood()
+        {
+            GameObject go = GameObject.Instantiate(prefab, parent);
+            Food food = go.GetComponent<Food>();
+            go.SetActive(false);
+            return food;
+        }
+
+        public Food Get()
+        {
+            Food food;
+            
+            if (pool.Count > 0)
+            {
+                food = pool.Dequeue();
+            }
+            else
+            {
+                food = CreateNewFood();
+            }
+            
+            food.gameObject.SetActive(true);
+            return food;
+        }
+
+        public void ReturnToPool(Food food)
+        {
+            if (food == null || food.gameObject == null) return;
+            
+            // 停止所有协程
+            food.StopAllCoroutines();
+            
+            // 重置状态
+            food.isTargeted = false;
+            food.isDisabling = false;
+            food.hp = 1;
+            
+            // 重置颜色
+            SpriteRenderer sr = food.GetComponent<SpriteRenderer>();
+            if (sr != null)
+            {
+                sr.color = Color.white;
+            }
+            
+            // 重置位置和旋转
+            food.transform.position = Vector3.zero;
+            food.transform.rotation = Quaternion.identity;
+            food.transform.localScale = Vector3.one;
+            
+            // 重置Rigidbody2D
+            Rigidbody2D rb = food.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.bodyType = RigidbodyType2D.Static;
+            }
+            
+            food.gameObject.SetActive(false);
+            
+            if (pool.Count < maxSize)
+            {
+                pool.Enqueue(food);
+            }
+            else
+            {
+                GameObject.Destroy(food.gameObject);
+            }
+        }
+
+        public void Clear()
+        {
+            while (pool.Count > 0)
+            {
+                Food food = pool.Dequeue();
+                if (food != null && food.gameObject != null)
+                {
+                    GameObject.Destroy(food.gameObject);
+                }
+            }
+        }
+    }
+
     public interface IGameSystem : ISystem
     {
         Vector3 FoodDropOffset { get; }
@@ -39,6 +144,10 @@ namespace BirdGame
         private int currentPlacingDecorationId; // 当前正在放置的装饰品ID
         private int currentIndex;
         
+        // 对象池相关
+        private FoodPool foodPool;
+        private Transform foodPoolParent; // 对象池的父对象，用于组织层级
+        
         [Header("食物位置偏移")]
         [Tooltip("食物落下位置相对于鼠标的偏移量")]
         private Vector3 foodDropOffset = new Vector3(0f, 0, 0f); // 基础偏移量（X轴改为0，让食物在左右两侧均匀随机）
@@ -54,9 +163,17 @@ namespace BirdGame
         protected override void OnInit()
         {
             birdModel = this.GetModel<IBirdModel>();
+            
+            // 创建对象池的父对象
+            GameObject poolParent = new GameObject("FoodPool");
+            foodPoolParent = poolParent.transform;
+            GameObject.DontDestroyOnLoad(poolParent);
+            
             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("Food", obj =>
             {
                 foodPrefab = obj;
+                // 初始化对象池
+                foodPool = new FoodPool(foodPrefab, foodPoolParent, initialSize: 10, maxSize: 20);
             });
             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("Num", obj =>
             {
@@ -84,7 +201,18 @@ namespace BirdGame
             {
                 this.GetSystem<ICursorSystem>().Feed();
                 this.GetSystem<IAudioSystem>().PlayEffect(EffectType.DropFood);
-                Food food = GameObject.Instantiate(foodPrefab).GetComponent<Food>();
+                
+                // 使用对象池获取食物
+                Food food;
+                if (foodPool == null || foodPrefab == null)
+                {
+                    Debug.LogWarning("FoodPool未初始化，使用Instantiate创建食物");
+                    food = GameObject.Instantiate(foodPrefab).GetComponent<Food>();
+                }
+                else
+                {
+                    food = foodPool.Get();
+                }
                 food.isTargeted = false;
 
                 // 根据当前选择的食物类型更换sprite
@@ -152,18 +280,31 @@ namespace BirdGame
                 if (rb != null)
                 {
                     rb.bodyType = RigidbodyType2D.Static;
-                    // 或者
-                    // rb.constraints = RigidbodyConstraints2D.FreezeAll;
+                }
+                
+                // 重新初始化食物的协程（因为对象池复用，需要手动初始化）
+                // 如果使用Instantiate，Start()会自动调用Initialize()
+                if (foodPool != null)
+                {
+                    food.StopAllCoroutines();
+                    food.Initialize();
                 }
                 
                 birdModel.Foods.Add(food);
 
                 if (birdModel.Foods.Count > 8)
                 {
-                    // 删除最早的食物
+                    // 回收最早的食物到对象池
                     var foodToRemove = birdModel.Foods[0];
                     birdModel.Foods.RemoveAt(0);
-                    GameObject.Destroy(foodToRemove.gameObject);
+                    if (foodPool != null)
+                    {
+                        foodPool.ReturnToPool(foodToRemove);
+                    }
+                    else
+                    {
+                        GameObject.Destroy(foodToRemove.gameObject);
+                    }
                 }
             }
         }
@@ -175,14 +316,30 @@ namespace BirdGame
             {
                 CreateNum("+1", food.transform.position);
                 birdModel.Foods.Remove(food);
-                GameObject.Destroy(food.gameObject);
+                // 使用对象池回收
+                if (foodPool != null)
+                {
+                    foodPool.ReturnToPool(food);
+                }
+                else
+                {
+                    GameObject.Destroy(food.gameObject);
+                }
             }
         }
 
         public void RecycleFood(Food food)
         {
             birdModel.Foods.Remove(food);
-            GameObject.Destroy(food.gameObject);
+            // 使用对象池回收
+            if (foodPool != null)
+            {
+                foodPool.ReturnToPool(food);
+            }
+            else
+            {
+                GameObject.Destroy(food.gameObject);
+            }
         }
 
         public bool TryGetUntargetedFood(Vector3 position, out Food food)
