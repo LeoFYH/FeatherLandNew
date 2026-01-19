@@ -110,6 +110,9 @@ public class HookLegacyInputHandler : MonoBehaviour, IPointerClickHandler, IPoin
             // The caret position will be set by Unity's default behavior
         }
 
+        // Submit input on mouse click
+        SubmitInput();
+
         if (enableDebugLog)
         {
             Debug.Log($"[HookLegacyInputHandler] Legacy InputField clicked: {gameObject.name}, Caret: {inputField.caretPosition}");
