@@ -218,13 +218,14 @@ namespace BirdGame
                 });
                 item.Timer = 0;
                 item.Hours.Value = 0;
-                item.Minutes.Value = 0;
+                item.Minutes.Value = 5;
                 item.Seconds.Value = 0;
                 this.GetModel<IClockModel>().TomatoItem.IsPause = false;
                 this.GetModel<IClockModel>().TomatoItem.IsSkip = false;
                 this.GetModel<IClockModel>().TomatoItem.Timer.Value = 0;
                 this.GetModel<IClockModel>().TomatoItem.SessionMinutes.Value =5;
                 this.GetModel<IClockModel>().TomatoItem.BreakMinutes.Value = 5;
+                this.GetModel<IClockModel>().StopWatchItem.IsPause = false;
                 this.GetModel<IClockModel>().StopWatchItem.Timer = 0;
                 this.GetModel<IClockModel>().StopWatchItem.Hours.Value = 0;
                 this.GetModel<IClockModel>().StopWatchItem.Minutes.Value = 0;
