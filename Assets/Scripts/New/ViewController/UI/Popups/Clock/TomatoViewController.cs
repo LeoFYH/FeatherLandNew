@@ -334,7 +334,13 @@ namespace BirdGame
             {
                 if(item.TimerCoroutine != null)
                     this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
+                if(this.GetModel<IClockModel>().TimerItem.TimerCoroutine != null)
+                    this.GetSystem<IMonoSystem>().StopCoroutine(this.GetModel<IClockModel>().TimerItem.TimerCoroutine);
+                if(this.GetModel<IClockModel>().StopWatchItem.TimerCoroutine != null)
+                    this.GetSystem<IMonoSystem>().StopCoroutine(this.GetModel<IClockModel>().StopWatchItem.TimerCoroutine);    
                 item.TimerCoroutine = null;
+                this.GetModel<IClockModel>().TimerItem.TimerCoroutine = null;
+                this.GetModel<IClockModel>().TimerItem.TimerCoroutine = null;
                 this.GetModel<IClockModel>().TimerType = TimerType.None;
                 this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
                 {
@@ -355,8 +361,29 @@ namespace BirdGame
                     item.Number.Value = 1;
                 }
                 item.TimerType.Value = TomatoTimerType.Session;
+
+                this.GetModel<IClockModel>().TimerItem.IsPause = false;
+                this.GetModel<IClockModel>().TimerItem.Timer = 0;
+                if (this.GetModel<IClockModel>().TimerItem.LastHours > 0 || this.GetModel<IClockModel>().TimerItem.LastMinutes > 0 || this.GetModel<IClockModel>().TimerItem.LastSeconds > 0)
+                {
+                    this.GetModel<IClockModel>().TimerItem.Hours.Value = this.GetModel<IClockModel>().TimerItem.LastHours;
+                    this.GetModel<IClockModel>().TimerItem.Minutes.Value = this.GetModel<IClockModel>().TimerItem.LastMinutes;
+                    this.GetModel<IClockModel>().TimerItem.Seconds.Value = this.GetModel<IClockModel>().TimerItem.LastSeconds;
+                }
+                else
+                {
+                    // 如果从未开始过计时，保持默认值（默认5分钟）
+                    this.GetModel<IClockModel>().TimerItem.Hours.Value = 0;
+                    this.GetModel<IClockModel>().TimerItem.Minutes.Value = 5;
+                    this.GetModel<IClockModel>().TimerItem.Seconds.Value = 0;
+                }
+
+                this.GetModel<IClockModel>().StopWatchItem.Timer = 0;
+                this.GetModel<IClockModel>().StopWatchItem.Hours.Value = 0;
+                this.GetModel<IClockModel>().StopWatchItem.Minutes.Value = 0;
+                this.GetModel<IClockModel>().StopWatchItem.Seconds.Value = 0;
             });
-            
+
             audioToggles[item.AudioSelected.Value].isOn = true;
 
             for (var i = 0; i < audioToggles.Length; i++)
