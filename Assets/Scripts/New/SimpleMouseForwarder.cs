@@ -1705,6 +1705,29 @@ namespace BirdGame
             pressedKeysThisFrame.Clear();
         }
 
+        private static GameObject FindInteractableParent(System.Collections.Generic.List<RaycastResult> raycastResults)
+        {
+            // Go through raycast results from top to bottom
+            foreach (var result in raycastResults)
+            {
+                // For each hit object, traverse up the parent hierarchy to find a Selectable component
+                Transform current = result.gameObject.transform;
+                while (current != null)
+                {
+                    Selectable selectable = current.GetComponent<Selectable>();
+                    if (selectable != null && selectable.interactable)
+                    {
+                        // Found an interactable Selectable, return it
+                        return current.gameObject;
+                    }
+                    current = current.parent;
+                }
+            }
+            
+            // No interactable parent found
+            return null;
+        }
+
         private void SimulateMouseClick(Vector2 screenPosition)
         {
             if (EventSystem.current == null)
@@ -1781,16 +1804,23 @@ namespace BirdGame
                     }
                 }
                 
-                // If no special handler was found, send click event only to the topmost (first) object
-                // Raycast results are sorted by depth, so the first result is the topmost
+                // If no special handler was found, check for parent interactable components
+                // If a parent has a Selectable component (Button, Toggle, etc.), click that instead
                 if (!foundInputField && !foundSlider)
                 {
-                    GameObject topmostObject = raycastResults[0].gameObject;
-                    ExecuteEvents.Execute(topmostObject, pointerData, ExecuteEvents.pointerClickHandler);
+                    GameObject targetObject = FindInteractableParent(raycastResults);
+                    
+                    // If no interactable parent found, use the topmost object as fallback
+                    if (targetObject == null)
+                    {
+                        targetObject = raycastResults[0].gameObject;
+                    }
+                    
+                    ExecuteEvents.Execute(targetObject, pointerData, ExecuteEvents.pointerClickHandler);
                     
                     if (showDebugLog)
                     {
-                        Debug.Log($"[SimpleMouseForwarder] 点击对象: {topmostObject.name}");
+                        Debug.Log($"[SimpleMouseForwarder] 点击对象: {targetObject.name}");
                     }
                 }
             }
