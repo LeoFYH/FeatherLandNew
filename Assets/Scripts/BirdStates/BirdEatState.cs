@@ -55,6 +55,16 @@ namespace BirdGame
             {
                 _brid.agent.isStopped = false;
                 _brid.anim.SetFloat("MoveSpeed", 1f);
+
+                foreach (var pos in _brid.agent.path.corners)
+                {
+                    if (!NavigationManager.Instance.IsPointInNavMeshArea(_brid.walkArea, pos))
+                    {
+                        currMachine.ChangeState<BirdIdleState>();
+                        return;
+                    }
+                }
+                
             }
             else
             {
@@ -126,6 +136,16 @@ namespace BirdGame
                     currMachine.ChangeState<BirdIdleState>();
                     return;
                 }
+                
+                foreach (var pos in _brid.agent.path.corners)
+                {
+                    if (!NavigationManager.Instance.IsPointInNavMeshArea(_brid.walkArea, pos))
+                    {
+                        currMachine.ChangeState<BirdIdleState>();
+                        return;
+                    }
+                }
+
 
                 if (this.GetModel<IConfigModel>().BirdConfig.isDrawPathLine)
                     DrawPath();
