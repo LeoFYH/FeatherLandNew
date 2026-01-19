@@ -39,9 +39,11 @@ namespace BirdGame
                     Debug.Log("[Time] 继续秒表！");
                     if(item.TimerCoroutine == null)
                         item.TimerCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(StartTimer());
+                    this.GetModel<IClockModel>().TimerItem.IsPause = true;
                     //clearButton.interactable = true;
                     return;
                 }
+                this.GetModel<IClockModel>().TimerItem.IsPause = true;
                 Debug.Log("[Time] 开始秒表！");
                 startButton.interactable = false;
                 stopButton.interactable = true;

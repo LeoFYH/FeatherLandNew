@@ -182,9 +182,11 @@ namespace BirdGame
                     Debug.Log("[Time] 继续计时器！");
                     if(item.TimerCoroutine == null)
                         item.TimerCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(StartTimer());
+                    
+                    this.GetModel<IClockModel>().StopWatchItem.IsPause = true;
                     return;
                 }
-
+                this.GetModel<IClockModel>().StopWatchItem.IsPause = true;
                 Debug.Log("[Time] 开始计时器！");
                 item.Timer = item.Hours.Value * 3600 + item.Minutes.Value * 60 + item.Seconds.Value;
                 if(item.Timer == 0)
