@@ -108,7 +108,7 @@ namespace BirdGame
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             GameObject go = GameObject.Instantiate(config.GetBird(birdIndex, mapIndex).prefab);
             this.GetModel<IBirdModel>().AddBird(birdIndex, go.GetComponent<Brid>());
-            this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
+            //this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
             if (this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].eggList.Count > 0)
                 this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].eggList.RemoveAt(0);
             var agent = go.GetComponent<NavMeshAgent>();

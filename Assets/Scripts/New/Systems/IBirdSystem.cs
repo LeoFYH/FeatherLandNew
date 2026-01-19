@@ -46,35 +46,35 @@ namespace BirdGame
             if (saveModel?.BirdInfoData == null) return;
 
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
-            // // 更新birdList
-            // if (mapIndex < saveModel.BirdInfoData.mapBirds.Count)
-            //     saveModel.BirdInfoData.mapBirds[mapIndex].birdList.Clear();
-            // foreach (var birdData in birdModel.BirdList)
-            // {
-            //     if (birdData.bird == null) continue;
-            //
-            //     var serializableData = new SerializableBirdData
-            //     {
-            //         birdType = birdData.birdType,
-            //         customName = birdData.customName,
-            //         isSmall = birdData.bird.isSmall,
-            //         currentExp = birdData.bird.currentExp.Value,
-            //         currentFavorability = birdData.bird.currentFavorability.Value,
-            //         totalFavorability = birdData.bird.totalFavorability,
-            //         petTime = 0, // petTime是私有字段，暂时设为0
-            //         position = birdData.bird.transform.position,
-            //         walkArea = birdData.bird.walkArea,
-            //         // 保存个体化数值
-            //         individualEarningSmall = birdData.individualEarningSmall,
-            //         individualEarningBig = birdData.individualEarningBig,
-            //         individualPriceSmall = birdData.individualPriceSmall,
-            //         individualPriceBig = birdData.individualPriceBig,
-            //         isLocked = birdData.
-            //     };
-            //     if(saveModel.BirdInfoData.mapBirds.Count <= mapIndex)
-            //         return;
-            //     saveModel.BirdInfoData.mapBirds[mapIndex].birdList.Add(serializableData);
-            // }
+            // 更新birdList
+            if (mapIndex < saveModel.BirdInfoData.mapBirds.Count)
+                saveModel.BirdInfoData.mapBirds[mapIndex].birdList.Clear();
+            foreach (var birdData in birdModel.BirdList)
+            {
+                if (birdData.bird == null) continue;
+            
+                var serializableData = new SerializableBirdData
+                {
+                    birdType = birdData.birdType,
+                    customName = birdData.customName,
+                    isSmall = birdData.bird.isSmall,
+                    currentExp = birdData.bird.currentExp.Value,
+                    currentFavorability = birdData.bird.currentFavorability.Value,
+                    totalFavorability = birdData.bird.totalFavorability,
+                    petTime = 0, // petTime是私有字段，暂时设为0
+                    position = birdData.bird.transform.position,
+                    walkArea = birdData.bird.walkArea,
+                    // 保存个体化数值
+                    individualEarningSmall = birdData.individualEarningSmall,
+                    individualEarningBig = birdData.individualEarningBig,
+                    individualPriceSmall = birdData.individualPriceSmall,
+                    individualPriceBig = birdData.individualPriceBig,
+                    isLocked = birdData.islocked,
+                };
+                if(saveModel.BirdInfoData.mapBirds.Count <= mapIndex)
+                    return;
+                saveModel.BirdInfoData.mapBirds[mapIndex].birdList.Add(serializableData);
+            }
 
             // 同步图鉴数据
             SyncIllustratedDataFromBirds();
@@ -188,7 +188,7 @@ namespace BirdGame
             // 同步图鉴数据 - 确保所有已拥有的鸟都在图鉴中
             SyncIllustratedDataFromBirds();
             
-            this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
+           // this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
             
         }
         

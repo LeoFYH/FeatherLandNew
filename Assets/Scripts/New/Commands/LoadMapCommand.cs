@@ -18,6 +18,8 @@ namespace BirdGame
 
         protected override void OnExecute()
         {
+            this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
+            
             // 切换地图时关闭所有popup界面
             this.GetSystem<IUISystem>().HideAllPopups();
             foreach (var select in this.GetModel<IGameModel>().SelectedToolDic)

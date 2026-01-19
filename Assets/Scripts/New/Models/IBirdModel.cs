@@ -44,6 +44,11 @@ namespace BirdGame
             float u2 = UnityEngine.Random.value;
             float randNormal = Mathf.Sqrt(-2.0f * Mathf.Log(u1)) * Mathf.Sin(2.0f * Mathf.PI * u2);
             float multiplier = Mathf.Clamp(1.0f + randNormal * 0.15f, 0.7f, 1.3f);
+            var isLock = true;
+            if (this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.Count > bird.birdIndex)
+            {
+                isLock = this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList[bird.birdIndex].isLocked;
+            }
             
             var data = new BirdData()
             {
@@ -53,7 +58,8 @@ namespace BirdGame
                 individualEarningSmall = birdConfig.eraningForSmall * multiplier,
                 individualEarningBig = birdConfig.eraningForBig * multiplier,
                 individualPriceSmall = birdConfig.priceForSmall * multiplier,
-                individualPriceBig = birdConfig.priceForBig * multiplier
+                individualPriceBig = birdConfig.priceForBig * multiplier,
+                islocked = true
             };
             
             bird.birdIndex = BirdList.Count;
@@ -93,6 +99,7 @@ namespace BirdGame
         public Brid bird;
         public bool isAddedToDesktop;
         public string customName; // 自定义名称
+        public bool islocked;
         
         // 个体化数值（实例化时计算一次，之后不变）
         public float individualEarningSmall;  // 幼鸟每分钟收入

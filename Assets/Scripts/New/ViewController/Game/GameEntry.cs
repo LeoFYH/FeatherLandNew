@@ -235,11 +235,6 @@ namespace BirdGame
             }
         }
 
-        private void OnDestroy()
-        {
-            this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
-        }
-
         private void CheckCursor()
         {
             if(this.GetSystem<ICursorSystem>().IsPlayingAnim())
