@@ -55,9 +55,23 @@ namespace BirdGame
                 // 更新按钮状态
                 UpdateAddButtonState();
             });
+            // Use onValueChanged for wallpaper mode compatibility
+            // onEndEdit may not fire reliably in wallpaper mode when input is routed through HookLegacyInputHandler
+            noteInput.onValueChanged.AddListener(text =>
+            {
+                if (currentNoteIndex >= 0 && currentNoteIndex < data.bookList.Count)
+                {
+                    data.bookList[currentNoteIndex].noteText = text;
+                }
+            });
+            
+            // Also keep onEndEdit as a backup for normal mode
             noteInput.onEndEdit.AddListener(text =>
             {
-                data.bookList[currentNoteIndex].noteText = text;
+                if (currentNoteIndex >= 0 && currentNoteIndex < data.bookList.Count)
+                {
+                    data.bookList[currentNoteIndex].noteText = text;
+                }
             });
 
             int count = data.bookList.Count;
