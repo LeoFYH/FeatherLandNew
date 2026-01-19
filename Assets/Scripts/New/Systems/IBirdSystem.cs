@@ -188,7 +188,7 @@ namespace BirdGame
             // 同步图鉴数据 - 确保所有已拥有的鸟都在图鉴中
             SyncIllustratedDataFromBirds();
             
-           // this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
+           this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
             
         }
         
