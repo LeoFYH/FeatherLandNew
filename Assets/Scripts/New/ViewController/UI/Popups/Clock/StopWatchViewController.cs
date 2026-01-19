@@ -30,6 +30,7 @@ namespace BirdGame
             
             startButton.onClick.AddListener(() =>
             {
+                var tomato = this.GetModel<IClockModel>().TomatoItem;
                 if (item.IsPause)
                 {
                     item.IsPause = false;
@@ -40,9 +41,20 @@ namespace BirdGame
                     if(item.TimerCoroutine == null)
                         item.TimerCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(StartTimer());
                     this.GetModel<IClockModel>().TimerItem.IsPause = true;
+                    if(tomato.TimerCoroutine != null)
+                    {
+                        this.GetSystem<IMonoSystem>().StopCoroutine(tomato.TimerCoroutine);
+                        tomato.TimerCoroutine = null;
+                    }
                     //clearButton.interactable = true;
                     return;
                 }
+                tomato = this.GetModel<IClockModel>().TomatoItem;
+                    if(tomato.TimerCoroutine != null)
+                    {
+                        this.GetSystem<IMonoSystem>().StopCoroutine(tomato.TimerCoroutine);
+                        tomato.TimerCoroutine = null;
+                    }
                 this.GetModel<IClockModel>().TimerItem.IsPause = true;
                 Debug.Log("[Time] 开始秒表！");
                 startButton.interactable = false;

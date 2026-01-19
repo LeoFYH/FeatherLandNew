@@ -174,6 +174,7 @@ namespace BirdGame
             });
             startButton.onClick.AddListener(() =>
             {
+                var tomato = this.GetModel<IClockModel>().TomatoItem;
                 if (item.IsPause)
                 {
                     item.IsPause = false;
@@ -184,8 +185,19 @@ namespace BirdGame
                         item.TimerCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(StartTimer());
                     
                     this.GetModel<IClockModel>().StopWatchItem.IsPause = true;
+                    tomato = this.GetModel<IClockModel>().TomatoItem;
+                    if(tomato.TimerCoroutine != null)
+                    {
+                        this.GetSystem<IMonoSystem>().StopCoroutine(tomato.TimerCoroutine);
+                        tomato.TimerCoroutine = null;
+                    }
                     return;
                 }
+                    if(tomato.TimerCoroutine != null)
+                    {
+                        this.GetSystem<IMonoSystem>().StopCoroutine(tomato.TimerCoroutine);
+                        tomato.TimerCoroutine = null;
+                    }
                 this.GetModel<IClockModel>().StopWatchItem.IsPause = true;
                 Debug.Log("[Time] 开始计时器！");
                 item.Timer = item.Hours.Value * 3600 + item.Minutes.Value * 60 + item.Seconds.Value;
@@ -320,6 +332,13 @@ namespace BirdGame
             startButton.interactable = !isTiming || isPause;
             stopButton.interactable = isTiming && !isPause;
             refreshButton.interactable = !isTiming;
+            if(!isTiming)
+            {
+                this.GetModel<IClockModel>().TimerItem.Hours.Value = 0;
+                this.GetModel<IClockModel>().TimerItem.Minutes.Value = 5;
+                this.GetModel<IClockModel>().TimerItem.Seconds.Value = 0;
+                this.GetModel<IClockModel>().TimerItem.IsPause = false;
+            }
         }
 
         private void OnUpClick(int index)
