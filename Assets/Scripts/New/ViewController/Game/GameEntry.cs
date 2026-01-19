@@ -1,10 +1,8 @@
 using System;
-using DG.Tweening;
 using QFramework;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using TMPro;
-using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 namespace BirdGame
@@ -21,12 +19,8 @@ namespace BirdGame
         private int previousClickCount = 0;
         private int previousRightClickCount = 0;
         
-        
         private void Start()
         {
-            OnDemandRendering.renderFrameInterval = 2;
-            QualitySettings.vSyncCount = 0;
-            
             // 延迟一帧来确保所有系统都已初始化
             StartCoroutine(InitializeAfterSystems());
             this.SendCommand<LoadGameCommand>();

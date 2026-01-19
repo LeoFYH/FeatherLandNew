@@ -129,7 +129,6 @@ namespace BirdGame
             
             originalPos = transform.position;
             anim = GetComponentInChildren<Animator>();
-            anim.speed = 0.8f;
             sr = GetComponentInChildren<SpriteRenderer>();
             //sr.sharedMaterial = this.GetModel<IBirdModel>().BirdMaterial;
             //sr.SetMaterials(new List<Material>(){this.GetModel<IBirdModel>().BirdMaterial});
