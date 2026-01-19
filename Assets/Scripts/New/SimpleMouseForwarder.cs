@@ -715,13 +715,14 @@ namespace BirdGame
                     }
 
                     // Check if we should update hover states
-                    // For sliders and scrollbars, we continue updating hover states so elements behind can receive events
-                    // For other drag types (window move, resize), we skip hover updates
+                    // Always update hover states so buttons and other UI elements can receive hover events even during dragging
+                    // However, we need to exclude the drag target itself from exit events during dragging
                     bool isSliderDrag = isLeftMouseDragging && currentDragTarget != null && 
                                        currentDragTarget.GetComponent<SliderBarClickHandler>() != null;
                     bool isScrollbarDrag = isLeftMouseDragging && currentDragTarget != null && 
                                           currentDragTarget.GetComponent<Scrollbar>() != null;
-                    bool shouldUpdateHoverStates = !isLeftMouseDragging || isSliderDrag || isScrollbarDrag;
+                    // Always update hover states, but track drag type for exclusion logic
+                    bool shouldUpdateHoverStates = true;
                     
                     if (shouldUpdateHoverStates)
                     {
@@ -758,8 +759,9 @@ namespace BirdGame
                             {
                                 if (element != null && !currentUIElements.Contains(element))
                                 {
-                                    // Don't exit the drag target during slider or scrollbar drag
-                                    if ((isSliderDrag || isScrollbarDrag) && element == currentDragTarget)
+                                    // Don't exit the drag target during any drag operation
+                                    // This prevents the drag target from losing its visual state while being dragged
+                                    if (isLeftMouseDragging && element == currentDragTarget)
                                     {
                                         continue;
                                     }
@@ -784,8 +786,8 @@ namespace BirdGame
                                 }
                             }
                             
-                            // Make sure the slider drag target stays in the hovered set
-                            if (isSliderDrag && !_currentHoveredUIElements.Contains(currentDragTarget))
+                            // Make sure the drag target stays in the hovered set during any drag operation
+                            if (isLeftMouseDragging && currentDragTarget != null && !_currentHoveredUIElements.Contains(currentDragTarget))
                             {
                                 _currentHoveredUIElements.Add(currentDragTarget);
                             }
@@ -1575,9 +1577,9 @@ namespace BirdGame
                     }
                 }
                 
-                // Only validate hover states when NOT dragging
-                // During drag operations, hover states are intentionally cleared
-                if (!isLeftMouseDragging)
+                // Validate hover states even during dragging so buttons and other UI elements can receive hover events
+                // The drag target itself will be excluded from exit events to maintain its visual state
+                if (true) // Always validate hover states
                 {
                     // Get the ACTUAL current mouse position in real-time
                     // This catches fast mouse movements that the hook might have missed
@@ -1632,6 +1634,13 @@ namespace BirdGame
                             }
                             else if (!element.activeInHierarchy || !currentUIElements.Contains(element))
                             {
+                                // Don't exit the drag target during any drag operation
+                                // This prevents the drag target from losing its visual state while being dragged
+                                if (isLeftMouseDragging && element == currentDragTarget)
+                                {
+                                    continue;
+                                }
+                                
                                 HandlePointerExit(element, realtimeMousePos);
                                 _currentHoveredUIElements.Remove(element);
                             }
@@ -1645,6 +1654,12 @@ namespace BirdGame
                                 HandlePointerEnter(element, realtimeMousePos);
                                 _currentHoveredUIElements.Add(element);
                             }
+                        }
+                        
+                        // Make sure the drag target stays in the hovered set during any drag operation
+                        if (isLeftMouseDragging && currentDragTarget != null && !_currentHoveredUIElements.Contains(currentDragTarget))
+                        {
+                            _currentHoveredUIElements.Add(currentDragTarget);
                         }
 
                         // Validate that the currently hovered pointer event is still valid
