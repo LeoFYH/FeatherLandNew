@@ -11,7 +11,7 @@ namespace BirdGame
         public Transform content;
         public GameObject bookPrefab;
         public Button addButton;
-        public InputField noteInput;
+        public TMP_InputField noteInput;
 
         private int currentNoteIndex;
         private List<NoteItem> items = new List<NoteItem>();
@@ -19,7 +19,7 @@ namespace BirdGame
         
         private void Start()
         {
-            ((Text)noteInput.placeholder).text = this.GetSystem<ILocalizationSystem>().GetString("EnterText");
+            ((TMP_Text)noteInput.placeholder).text = this.GetSystem<ILocalizationSystem>().GetString("EnterText");
             var data = this.GetModel<ISaveModel>().NoteData;
             var group = content.GetComponent<ToggleGroup>();
             this.RegisterEvent<RefreshNoteIndexEvent>(evt =>
@@ -29,7 +29,7 @@ namespace BirdGame
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             this.RegisterEvent<ChangeLanguageEvent>(evt =>
             {
-                ((Text)noteInput.placeholder).text = this.GetSystem<ILocalizationSystem>().GetString("EnterText");
+                ((TMP_Text)noteInput.placeholder).text = this.GetSystem<ILocalizationSystem>().GetString("EnterText");
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
             addButton.onClick.AddListener(() =>
