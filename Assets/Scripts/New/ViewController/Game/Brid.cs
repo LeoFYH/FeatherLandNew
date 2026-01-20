@@ -91,6 +91,8 @@ namespace BirdGame
         // 高亮效果相关
         private Color originalOutlineColor;
         private bool hasOriginalColor = false;
+        private float originalThickness;
+        private bool hasOriginalThickness = false;
 
         [ReadOnly]
         public float animScale = 1f;
@@ -501,7 +503,7 @@ namespace BirdGame
         }
 
         /// <summary>
-        /// 保存原始轮廓颜色
+        /// 保存原始轮廓颜色和宽度
         /// </summary>
         private void SaveOriginalOutlineColor()
         {
@@ -509,18 +511,18 @@ namespace BirdGame
             
             Material currentMaterial = sr.material;
             
-            // 尝试不同的可能属性名称
-            string[] possibleNames = { "_SolidOutline", "_GradientOutline1", "_GradientOutline2" };
-            
-            foreach (string propName in possibleNames)
+            // 使用 _SolidOutline 属性（对应 Inspector 中的 "Outline Color Base"）
+            if (currentMaterial.HasProperty("_SolidOutline"))
             {
-                if (currentMaterial.HasProperty(propName))
-                {
-                    originalOutlineColor = currentMaterial.GetColor(propName);
-                    hasOriginalColor = true;
-                    Debug.Log($"保存原始轮廓颜色: {propName} = {originalOutlineColor}");
-                    break;
-                }
+                originalOutlineColor = currentMaterial.GetColor("_SolidOutline");
+                hasOriginalColor = true;
+            }
+            
+            // 保存原始 Width 属性（对应 Inspector 中的 "Width (Max recommended 100)"）
+            if (currentMaterial.HasProperty("_Thickness"))
+            {
+                originalThickness = currentMaterial.GetFloat("_Thickness");
+                hasOriginalThickness = true;
             }
         }
 
@@ -542,60 +544,42 @@ namespace BirdGame
                 return;
             }
 
-            Debug.Log("=== 开始设置鸟的轮廓为白色 ===");
-            Debug.Log($"材质名称: {currentMaterial.name}");
-            Debug.Log($"Shader名称: {currentMaterial.shader.name}");
-            
-            // 尝试不同的可能属性名称
-            string[] possibleNames = { "_SolidOutline", "_GradientOutline1", "_GradientOutline2" };
-            bool foundProperty = false;
-            
-            foreach (string propName in possibleNames)
+            // 直接使用 _SolidOutline 属性（对应 Inspector 中的 "Outline Color Base"）
+            if (currentMaterial.HasProperty("_SolidOutline"))
             {
-                if (currentMaterial.HasProperty(propName))
-                {
-                    Color currentColor = currentMaterial.GetColor(propName);
-                    Debug.Log($"找到属性 {propName}，当前颜色: {currentColor}");
-                    
-                    currentMaterial.SetColor(propName, Color.white);
-                    Debug.Log($"成功设置 {propName} 为白色");
-                    foundProperty = true;
-                }
+                currentMaterial.SetColor("_SolidOutline", Color.white);
+            }
+            else
+            {
+                Debug.LogWarning($"材质 {currentMaterial.name} 没有找到 _SolidOutline 属性！");
             }
             
-            if (!foundProperty)
+            // 设置 Width 属性（对应 Inspector 中的 "Width (Max recommended 100)"）
+            if (currentMaterial.HasProperty("_Thickness"))
             {
-                Debug.LogWarning("没有找到任何轮廓颜色属性！");
-                // 打印所有材质属性用于调试
-                Shader shader = currentMaterial.shader;
-                for (int i = 0; i < shader.GetPropertyCount(); i++)
-                {
-                    string propName = shader.GetPropertyName(i);
-                    Debug.Log($"可用属性: {propName}");
-                }
+                currentMaterial.SetFloat("_Thickness", 3.8f);
             }
-            
-            
         }
         
         /// <summary>
-        /// 恢复原始轮廓颜色
+        /// 恢复原始轮廓颜色和宽度
         /// </summary>
         private void RestoreOriginalOutlineColor()
         {
-            if (sr == null || sr.material == null || !hasOriginalColor) return;
+            if (sr == null || sr.material == null) return;
             
             Material currentMaterial = sr.material;
-            string[] possibleNames = { "_SolidOutline", "_GradientOutline1", "_GradientOutline2" };
             
-            foreach (string propName in possibleNames)
+            // 使用 _SolidOutline 属性（对应 Inspector 中的 "Outline Color Base"）
+            if (currentMaterial.HasProperty("_SolidOutline") && hasOriginalColor)
             {
-                if (currentMaterial.HasProperty(propName))
-                {
-                    currentMaterial.SetColor(propName, originalOutlineColor);
-                    Debug.Log($"恢复 {propName} 为原始颜色: {originalOutlineColor}");
-                    break;
-                }
+                currentMaterial.SetColor("_SolidOutline", originalOutlineColor);
+            }
+            
+            // 恢复原始 Width 属性（对应 Inspector 中的 "Width (Max recommended 100)"）
+            if (currentMaterial.HasProperty("_Thickness") && hasOriginalThickness)
+            {
+                currentMaterial.SetFloat("_Thickness", originalThickness);
             }
         }
 
