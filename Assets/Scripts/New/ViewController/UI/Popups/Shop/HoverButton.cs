@@ -12,16 +12,16 @@ namespace BirdGame
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if (isLessCoin)
-            {
-                image.color = Color.gray;
-            }
+            // if (isLessCoin)
+            // {
+            //     image.color = Color.gray;
+            // }
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            if (isLessCoin)
-                image.color = Color.white;
+            // if (isLessCoin)
+            //     image.color = Color.white;
         }
     }
 }
