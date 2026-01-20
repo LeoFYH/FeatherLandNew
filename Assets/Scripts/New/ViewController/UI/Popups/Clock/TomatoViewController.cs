@@ -837,7 +837,17 @@ namespace BirdGame
                     }
                 }
             }
-            int coins = (int)(timer / 300);
+
+            int min = (int)(timer / 300);
+            int coins = 0;
+            if (min >= 5)
+            {
+                coins = (min-5) * 3 + 5;
+            }
+            else
+            {
+                coins = min;
+            }
             this.GetModel<IAccountModel>().Coins.Value += coins;
             this.GetModel<IAccountModel>().AddedCoins = coins;
             this.GetModel<IClockModel>().TomatoItem.TimerCoroutine = null;
