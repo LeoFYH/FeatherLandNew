@@ -16,6 +16,9 @@ namespace BirdGame
 
         public override void OnEnter()
         {
+            // 进入飞行状态，增大碰撞体
+            _brid.AdjustColliderForFlying(true);
+            
             _brid.sr.sortingOrder = 50;
             _brid.anim.SetBool("Fly", true);
             _brid.anim.SetBool("IsTakeOff", false);
@@ -110,7 +113,8 @@ namespace BirdGame
 
         public override void OnExit()
         {
-
+            // 退出飞行状态，恢复原始碰撞体
+            _brid.AdjustColliderForFlying(false);
         }
     }
 }

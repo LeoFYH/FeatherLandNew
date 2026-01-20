@@ -153,7 +153,7 @@ namespace BirdGame
                     _brid.sr.flipX = _brid.agent.velocity.x >= 0;
                 
                 // 只要在移动就播放走路动画
-                // if (_brid.agent.velocity.magnitude > 0.001f)
+                // if (_brid.agent.velocity.sqrMagnitude > 0.000001f) // 0.001f * 0.001f
                 // {
                 //     //_brid.anim.SetFloat("MoveSpeed", 1f);
                 //     _brid.sr.flipX = _brid.agent.velocity.x >= 0;

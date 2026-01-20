@@ -17,6 +17,9 @@ namespace BirdGame
 
         public override void OnEnter()
         {
+            // 进入飞行状态，增大碰撞体
+            _brid.AdjustColliderForFlying(true);
+            
             if (this.GetModel<IBirdModel>().FlyPositions.Count > 0)
             {
                 int random = Random.Range(0, this.GetModel<IBirdModel>().FlyPositions.Count);
@@ -124,7 +127,8 @@ namespace BirdGame
 
         public override void OnExit()
         {
-
+            // 退出飞行状态，恢复原始碰撞体
+            _brid.AdjustColliderForFlying(false);
         }
     }
 }

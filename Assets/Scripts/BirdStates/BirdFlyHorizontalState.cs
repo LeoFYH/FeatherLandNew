@@ -18,6 +18,9 @@ namespace BirdGame
 
         public override void OnEnter()
         {
+            // 进入飞行状态，增大碰撞体
+            _brid.AdjustColliderForFlying(true);
+            
             _brid.agent.enabled = false;
             // 随机误差后的飞行高度
             float flyY = _brid.flyInAirStartPosition.y + Random.Range(-2f, 2f);
@@ -134,6 +137,8 @@ namespace BirdGame
             isInStartPosition = false;
             // 恢复原始sortingOrder
             _brid.sr.sortingOrder = originalSortingOrder;
+            // 退出飞行状态，恢复原始碰撞体
+            _brid.AdjustColliderForFlying(false);
         }
     }
 }

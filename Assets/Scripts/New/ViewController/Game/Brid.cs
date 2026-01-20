@@ -232,9 +232,6 @@ namespace BirdGame
         {
             if (!isDesktopBird && maskList.Count == 0)
             {
-                // 检测飞行状态并调整碰撞体
-                CheckFlyingStateAndAdjustCollider();
-                
                 if (isEnter)
                 {
                     if (Input.GetMouseButtonDown(1) || SimpleMouseForwarder.rightClickCount > previousRightClickCount)
@@ -350,7 +347,8 @@ namespace BirdGame
             // 统一处理走路动画 - 只要在移动就播放走路动画
             if (agent != null && agent.enabled)
             {
-                if (agent.velocity.magnitude > 0.01f)
+                // 使用 sqrMagnitude 避免开方运算，提升性能
+                if (agent.velocity.sqrMagnitude > 0.0001f) // 0.01f * 0.01f = 0.0001f
                 {
                     anim.SetFloat("MoveSpeed", 1f);
                 }
@@ -449,41 +447,10 @@ namespace BirdGame
         }
 
         /// <summary>
-        /// 检测飞行状态并调整碰撞体大小，让飞行中的鸟更容易被点击
-        /// </summary>
-        private void CheckFlyingStateAndAdjustCollider()
-        {
-            if (birdCollider == null) return;
-            
-            // 检测当前是否在飞行状态
-            bool currentlyFlying = _stateMachine.CurrentState == typeof(BirdFlyState) || 
-                                 _stateMachine.CurrentState == typeof(BirdFlyHorizontalState) || 
-                                 _stateMachine.CurrentState == typeof(BirdFlyDownState) ||
-                                 _stateMachine.CurrentState == typeof(BirdFlyWaitState);
-            
-            // 如果飞行状态发生变化
-            if (currentlyFlying != isFlying)
-            {
-                isFlying = currentlyFlying;
-                
-                if (isFlying)
-                {
-                    // 进入飞行状态，增大碰撞体
-                    AdjustColliderForFlying(true);
-                }
-                else
-                {
-                    // 退出飞行状态，恢复原始碰撞体
-                    AdjustColliderForFlying(false);
-                }
-            }
-        }
-        
-        /// <summary>
         /// 调整碰撞体大小以适应飞行状态
         /// </summary>
         /// <param name="isFlying">是否在飞行</param>
-        private void AdjustColliderForFlying(bool isFlying)
+        public void AdjustColliderForFlying(bool isFlying)
         {
             if (birdCollider == null || !(birdCollider is BoxCollider2D)) return;
             

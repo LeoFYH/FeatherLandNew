@@ -15,6 +15,9 @@ namespace BirdGame
 
         public override void OnEnter()
         {
+            // 进入飞行状态，增大碰撞体
+            _brid.AdjustColliderForFlying(true);
+            
             _brid.anim.SetBool("IsTakeOff", false);
             _brid.anim.SetBool("Fly", false);
             //_brid.anim.Play("FlyWait");
@@ -51,7 +54,8 @@ namespace BirdGame
 
         public override void OnExit()
         {
-
+            // 退出飞行状态，恢复原始碰撞体
+            _brid.AdjustColliderForFlying(false);
         }
 
         /// <summary>
