@@ -16,10 +16,7 @@ namespace BirdGame
         private SpriteRenderer spriteRenderer;
         private float fadeDuration = 4f; // 总淡出时间
         private float timer = 0f; // 淡出计时器
-
-        private Coroutine delayCoroutine;
-        private Coroutine autoDestroyCoroutine;
-        private Coroutine delayDestroyCoroutine;
+        
 
         void Awake()
         {
@@ -36,9 +33,10 @@ namespace BirdGame
         {
             spriteRenderer.color = new Color32(255, 255, 255, 255);
             isTargeted = false;
+            isDisabling = false;
             y = transform.position.y;
-            delayCoroutine = StartCoroutine(DelayedStart());
-            autoDestroyCoroutine = StartCoroutine(nameof(AutoDestroyIfUntargeted));
+            StartCoroutine(DelayedStart());
+            StartCoroutine(nameof(AutoDestroyIfUntargeted));
         }
 
         /// <summary>
@@ -52,7 +50,7 @@ namespace BirdGame
             if (!isTargeted && !isDisabling)
             {
                 // 启动淡出效果
-                delayDestroyCoroutine = StartCoroutine(nameof(DestroyDelay));
+                StartCoroutine(nameof(DestroyDelay));
             }
         }
 
@@ -115,23 +113,23 @@ namespace BirdGame
             this.GetSystem<IGameSystem>().RecycleFood(this);
         }
 
-        private void OnDisable()
-        {
-            if (delayCoroutine != null)
-            {
-                this.GetSystem<IMonoSystem>()?.StopCoroutine(delayCoroutine);
-                delayCoroutine = null;
-            }
-            if (autoDestroyCoroutine != null)
-            {
-                this.GetSystem<IMonoSystem>()?.StopCoroutine(autoDestroyCoroutine);
-                autoDestroyCoroutine = null;
-            }
-            if (delayDestroyCoroutine != null)
-            {
-                this.GetSystem<IMonoSystem>()?.StopCoroutine(delayDestroyCoroutine);
-                delayDestroyCoroutine = null;
-            }
-        }
+        // private void OnDisable()
+        // {
+        //     if (delayCoroutine != null)
+        //     {
+        //         this.GetSystem<IMonoSystem>()?.StopCoroutine(delayCoroutine);
+        //         delayCoroutine = null;
+        //     }
+        //     if (autoDestroyCoroutine != null)
+        //     {
+        //         this.GetSystem<IMonoSystem>()?.StopCoroutine(autoDestroyCoroutine);
+        //         autoDestroyCoroutine = null;
+        //     }
+        //     if (delayDestroyCoroutine != null)
+        //     {
+        //         this.GetSystem<IMonoSystem>()?.StopCoroutine(delayDestroyCoroutine);
+        //         delayDestroyCoroutine = null;
+        //     }
+        // }
     }
 }
