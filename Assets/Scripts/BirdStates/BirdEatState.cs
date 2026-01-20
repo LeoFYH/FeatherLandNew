@@ -330,23 +330,23 @@ namespace BirdGame
 
         private void DrawPath()
         {
-            _brid.agent.CalculatePath(eatPosition, currentPath);
-            int pathLength = currentPath.corners.Length;
-            if (pathLength < 2)
-            {
-                _brid.lineRenderer.positionCount = 2;
-                _brid.lineRenderer.SetPosition(0, _brid.transform.position);
-                _brid.lineRenderer.SetPosition(1, eatPosition);
-            }
-            else
-            {
-                _brid.lineRenderer.positionCount = pathLength + 1;
-                for (int i = 0; i < pathLength; i++)
-                {
-                    _brid.lineRenderer.SetPosition(i, currentPath.corners[i]);
-                }
-                _brid.lineRenderer.SetPosition(pathLength, eatPosition);
-            }
+            // _brid.agent.CalculatePath(eatPosition, currentPath);
+            // int pathLength = currentPath.corners.Length;
+            // if (pathLength < 2)
+            // {
+            //     _brid.lineRenderer.positionCount = 2;
+            //     _brid.lineRenderer.SetPosition(0, _brid.transform.position);
+            //     _brid.lineRenderer.SetPosition(1, eatPosition);
+            // }
+            // else
+            // {
+            //     _brid.lineRenderer.positionCount = pathLength + 1;
+            //     for (int i = 0; i < pathLength; i++)
+            //     {
+            //         _brid.lineRenderer.SetPosition(i, currentPath.corners[i]);
+            //     }
+            //     _brid.lineRenderer.SetPosition(pathLength, eatPosition);
+            // }
         }
     }
 }
