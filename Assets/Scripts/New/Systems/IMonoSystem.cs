@@ -33,37 +33,37 @@ namespace BirdGame
 
         public Coroutine StartCoroutine(string methodName)
         {
-            return gameEntry.StartCoroutine(methodName);
+            return gameEntry?.StartCoroutine(methodName);
         }
 
         public Coroutine StartCoroutine(string methodName, object value)
         {
-            return gameEntry.StartCoroutine(methodName, value);
+            return gameEntry?.StartCoroutine(methodName, value);
         }
 
         public Coroutine StartCoroutine(IEnumerator routine)
         {
-            return gameEntry.StartCoroutine(routine);
+            return gameEntry?.StartCoroutine(routine);
         }
 
         public void StopCoroutine(string method)
         {
-            gameEntry.StopCoroutine(method);
+            gameEntry?.StopCoroutine(method);
         }
 
         public void StopCoroutine(IEnumerator routine)
         {
-            gameEntry.StopCoroutine(routine);
+            gameEntry?.StopCoroutine(routine);
         }
 
         public void StopCoroutine(Coroutine coroutine)
         {
-            gameEntry.StopCoroutine(coroutine);
+            gameEntry?.StopCoroutine(coroutine);
         }
 
         public void StopAllCoroutines()
         {
-            gameEntry.StopAllCoroutines();
+            gameEntry?.StopAllCoroutines();
         }
 
         public void RegisterUpdate(Action onUpdate)

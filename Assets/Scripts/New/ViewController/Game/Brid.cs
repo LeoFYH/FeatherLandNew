@@ -4,6 +4,7 @@ using BirdGame;
 using DG.Tweening;
 using QFramework;
 using Sirenix.OdinInspector;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -116,6 +117,8 @@ namespace BirdGame
         private bool hasOriginalColor = false;
         private float originalThickness;
         private bool hasOriginalThickness = false;
+        private Material materialNormal;
+    
         
         // 静态变量跟踪当前高亮的鸟，避免每次查找所有鸟
         private static Brid currentHighlightedBird = null;
@@ -172,6 +175,23 @@ namespace BirdGame
             {
                 originalColliderSize = birdCollider.bounds.size;
             }
+
+            materialNormal = sr.material;
+            if(this.GetModel<IBirdModel>().MaterialHighlight == null)
+            {
+                this.GetSystem<IAssetSystem>().LoadAssetAsync<Material>("MaterialHighlight", 
+                v =>
+                {
+                    if(v != null)
+                    {
+                        this.GetModel<IBirdModel>().MaterialHighlight = v;
+                    }
+                    else
+                    {
+                        this.GetModel<IBirdModel>().MaterialHighlight = materialNormal;
+                    }
+            });
+            }
             
             // 保存原始轮廓颜色
             SaveOriginalOutlineColor();
@@ -207,20 +227,6 @@ namespace BirdGame
             startTimer = Time.time;
 
             transform.localScale = Vector3.one * BabyBirdSize;
-        }
-
-        /// Handles bird interaction when clicked
-        private void OnMouseDown()
-        {
-            // if (!isSmall)
-            // {
-            //     level++;
-            //     GameObject go = Instantiate(heartPre);
-            //     go.transform.SetParent(transform);
-            //     go.transform.position = heartPos.position;
-            //     go.transform.localScale = Vector3.one * BabyBirdSize;
-            //     
-            // }
         }
 
         public void OnMouseEnter()
@@ -272,20 +278,6 @@ namespace BirdGame
                         // 先恢复所有鸟的材质颜色，然后设置当前鸟为白色轮廓
                         RestoreAllBirdsOutlineColor();
                         SetBirdOutlineToWhite();
-                        // if (isSmall)
-                        // {
-                        //     // UIManager.Instance.ShowInfoPanel(gameObject, smallPrice, title, desc, 0,
-                        //     //     eatFoodCount * 1f / eatCountForBig, currentFavorability * 1f / totalFavorability, false);
-                        //     //this.SendCommand(new ShowBirdInfoCommand(smallPrice, title, desc, 0, eatFoodCount.Value * 1f / eatCountForBig, currentFavorability * 1f / totalFavorability, false));
-                        // }
-                        // else
-                        // {
-                        //     //UIManager.Instance.infoPanel.IntimacyFill.gameObject.SetActive(true);
-                        //     // UIManager.Instance.ShowInfoPanel(gameObject, bigPrice, title, desc, incomeForBig,
-                        //     //     1, currentFavorability * 1f / totalFavorability, true);
-                        //     //this.SendCommand(new ShowBirdInfoCommand(bigPrice, title, desc, incomeForBig,
-                        //         //1, currentFavorability * 1f / totalFavorability, true));
-                        // }
                     }
 
                     if (Input.GetMouseButtonDown(0) || SimpleMouseForwarder.clickCount > previousClickCount)
@@ -502,21 +494,7 @@ namespace BirdGame
         {
             if (sr == null || sr.material == null) return;
             
-            Material currentMaterial = sr.material;
-            
-            // 使用 _SolidOutline 属性（对应 Inspector 中的 "Outline Color Base"）
-            if (currentMaterial.HasProperty("_SolidOutline"))
-            {
-                originalOutlineColor = currentMaterial.GetColor("_SolidOutline");
-                hasOriginalColor = true;
-            }
-            
-            // 保存原始 Width 属性（对应 Inspector 中的 "Width (Max recommended 100)"）
-            if (currentMaterial.HasProperty("_Thickness"))
-            {
-                originalThickness = currentMaterial.GetFloat("_Thickness");
-                hasOriginalThickness = true;
-            }
+            sr.material = materialNormal;
         }
 
         /// <summary>
@@ -530,31 +508,33 @@ namespace BirdGame
                 return;
             }
 
-            Material currentMaterial = sr.material;
-            if (currentMaterial == null)
-            {
-                Debug.LogError("鸟的材质为空！");
-                return;
-            }
+            sr.material = this.GetModel<IBirdModel>().MaterialHighlight;
 
-            // 直接使用 _SolidOutline 属性（对应 Inspector 中的 "Outline Color Base"）
-            if (currentMaterial.HasProperty("_SolidOutline"))
-            {
-                currentMaterial.SetColor("_SolidOutline", Color.white);
-            }
-            else
-            {
-                Debug.LogWarning($"材质 {currentMaterial.name} 没有找到 _SolidOutline 属性！");
-            }
+            // Material currentMaterial = sr.material;
+            // if (currentMaterial == null)
+            // {
+            //     Debug.LogError("鸟的材质为空！");
+            //     return;
+            // }
+
+            // // 直接使用 _SolidOutline 属性（对应 Inspector 中的 "Outline Color Base"）
+            // if (currentMaterial.HasProperty("_SolidOutline"))
+            // {
+            //     currentMaterial.SetColor("_SolidOutline", Color.white);
+            // }
+            // else
+            // {
+            //     Debug.LogWarning($"材质 {currentMaterial.name} 没有找到 _SolidOutline 属性！");
+            // }
             
-            // 设置 Width 属性（对应 Inspector 中的 "Width (Max recommended 100)"）
-            if (currentMaterial.HasProperty("_Thickness"))
-            {
-                currentMaterial.SetFloat("_Thickness", 3.8f);
-            }
+            // // 设置 Width 属性（对应 Inspector 中的 "Width (Max recommended 100)"）
+            // if (currentMaterial.HasProperty("_Thickness"))
+            // {
+            //     currentMaterial.SetFloat("_Thickness", 3.8f);
+            // }
             
-            // 更新静态变量，记录当前高亮的鸟
-            currentHighlightedBird = this;
+            // // 更新静态变量，记录当前高亮的鸟
+            // currentHighlightedBird = this;
         }
         
         /// <summary>
@@ -564,19 +544,20 @@ namespace BirdGame
         {
             if (sr == null || sr.material == null) return;
             
-            Material currentMaterial = sr.material;
+            sr.material = materialNormal;
+            // Material currentMaterial = sr.material;
             
-            // 使用 _SolidOutline 属性（对应 Inspector 中的 "Outline Color Base"）
-            if (currentMaterial.HasProperty("_SolidOutline") && hasOriginalColor)
-            {
-                currentMaterial.SetColor("_SolidOutline", originalOutlineColor);
-            }
+            // // 使用 _SolidOutline 属性（对应 Inspector 中的 "Outline Color Base"）
+            // if (currentMaterial.HasProperty("_SolidOutline") && hasOriginalColor)
+            // {
+            //     currentMaterial.SetColor("_SolidOutline", originalOutlineColor);
+            // }
             
-            // 恢复原始 Width 属性（对应 Inspector 中的 "Width (Max recommended 100)"）
-            if (currentMaterial.HasProperty("_Thickness") && hasOriginalThickness)
-            {
-                currentMaterial.SetFloat("_Thickness", originalThickness);
-            }
+            // // 恢复原始 Width 属性（对应 Inspector 中的 "Width (Max recommended 100)"）
+            // if (currentMaterial.HasProperty("_Thickness") && hasOriginalThickness)
+            // {
+            //     currentMaterial.SetFloat("_Thickness", originalThickness);
+            // }
         }
 
         /// <summary>

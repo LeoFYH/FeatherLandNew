@@ -17,6 +17,7 @@ namespace BirdGame
         void RemoveBird(int index);
         Material BirdMaterial { get; set; }
         BindableProperty<Color32> BirdColor { get; }
+        Material MaterialHighlight{get;set;}
     }
 
     public class BirdModel : AbstractModel, IBirdModel, ICanGetSystem, ICanGetModel
@@ -30,6 +31,7 @@ namespace BirdGame
         public List<Food> Foods { get; } = new List<Food>();
         public List<Transform> FlyPositions { get; set; }
         public List<BirdData> BirdList { get; } = new List<BirdData>();
+        public Material MaterialHighlight{get;set;}
 
         public void AddBird(int type, Brid bird)
         {

@@ -8,7 +8,7 @@ namespace BirdGame
         public float lifetime = 0.5f; // 心形特效存活时间
         private float timer = 0f;
         private bool isRecycling = false;
-        private SpriteRenderer heartSr;
+        private SpriteRenderer[] heartSr;
         private SpriteRenderer birdSr;
 
         private void OnEnable()
@@ -20,9 +20,9 @@ namespace BirdGame
             // 获取心形特效的SpriteRenderer
             if (heartSr == null)
             {
-                heartSr = GetComponentInChildren<SpriteRenderer>();
+                heartSr = GetComponentsInChildren<SpriteRenderer>();
             }
-            
+            transform.localRotation = Quaternion.identity;
             // 获取鸟的SpriteRenderer（从父物体或父物体的父物体）
             if (birdSr == null)
             {
@@ -44,7 +44,13 @@ namespace BirdGame
             // 同步鸟的翻转状态
             if (heartSr != null && birdSr != null)
             {
-                heartSr.flipX = birdSr.flipX;
+                for(int i=0;i<heartSr.Length;i++)
+                {
+                    heartSr[i].flipX = !birdSr.flipX;
+                }
+                float x = heartSr[0].transform.localPosition.x;
+                float y = heartSr[0].transform.localPosition.y;
+                heartSr[0].transform.localPosition = birdSr.flipX ? new Vector2(x,y):new Vector2(-x,y);
             }
             
             // 计时器
