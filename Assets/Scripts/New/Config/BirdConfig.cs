@@ -159,6 +159,8 @@ namespace BirdGame
     {
         [LabelText("名称"), VerticalGroup("Info")]
         public string birdName;
+        [LabelText("是否显示"), VerticalGroup("Info")]
+        public bool canView= true;
         [OdinSerialize, TableList(ShowIndexLabels = true), VerticalGroup("Info")]
         public List<BirdItem> birds = new List<BirdItem>();
         

@@ -28,6 +28,7 @@ namespace BirdGame
 
         private List<GameObject> skinItems = new List<GameObject>();
         private int currentSelectedIndex = 0; // 记录当前选中的鸟类索引
+        private int map;
         
         private void Start()
         {
@@ -57,7 +58,7 @@ namespace BirdGame
             // 调试：显示图鉴数据
             var illustratedData = this.GetModel<ISaveModel>().IllustratedData;
             var items = new List<IllustratedItem>();
-            for(int i=0;i<config.sceneBirds.Count;i++)
+            for(int i=0;i<2;i++)
             {
                 int mapIndex = i;
                 for (int j = 0; j < config.sceneBirds[mapIndex].birdClasses.Length; j++)
@@ -66,6 +67,10 @@ namespace BirdGame
                     var item = GameObject.Instantiate(illustratedItemPrefabs[itemIndex], illustratedContent).GetComponent<IllustratedItem>();
                     item.Init(mapIndex, j, group, OnSelectedItem);
                     items.Add(item);
+                    if(!config.sceneBirds[mapIndex].birdClasses[j].canView)
+                    {
+                        item.gameObject.SetActive(false);
+                    }
                 }
             }
 
@@ -81,7 +86,7 @@ namespace BirdGame
         private void OnSelectedItem(int mapIndex, int index)
         {
             currentSelectedIndex = index; // 记录当前选中的索引
-        
+            map = mapIndex;
             var classInfo = this.GetModel<IConfigModel>().BirdConfig.sceneBirds[mapIndex].birdClasses[index];
             
             UpdateBirdNameText();
@@ -111,15 +116,14 @@ namespace BirdGame
         /// </summary>
         private void UpdateBirdNameText()
         {
-            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             if (birdNameText == null || currentSelectedIndex < 0 || 
-                currentSelectedIndex >= this.GetModel<IConfigModel>().BirdConfig.sceneBirds[mapIndex].birdClasses.Length)
+                currentSelectedIndex >= this.GetModel<IConfigModel>().BirdConfig.sceneBirds[map].birdClasses.Length)
             {
                 return;
             }
             
             // 使用BirdConfig的方法获取本地化key
-            string birdNameKey = this.GetModel<IConfigModel>().BirdConfig.GetBirdNameKeyByClassIndex(currentSelectedIndex, mapIndex);
+            string birdNameKey = this.GetModel<IConfigModel>().BirdConfig.GetBirdNameKeyByClassIndex(currentSelectedIndex, map);
             string localizedBirdName = this.GetSystem<ILocalizationSystem>().GetString(birdNameKey);
             if (string.IsNullOrEmpty(localizedBirdName))
             {
