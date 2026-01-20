@@ -10,13 +10,15 @@ namespace BirdGame
         public Image icon;
 
         private int index;
-        private Action<int> onSelected;
+        private Action<int, int> onSelected;
+        private int map;
 
-        public void Init(int birdIndex, Action<int> onSkinSelected)
+        public void Init(int mapIndex, int birdIndex, Action<int, int> onSkinSelected)
         {
+            map = mapIndex;
             index = birdIndex;
             onSelected = onSkinSelected;
-            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+    
             var sp = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).preview;
             icon.sprite = sp;
             if (!this.GetModel<ISaveModel>().IllustratedData.birds.Contains(birdIndex))
@@ -32,7 +34,7 @@ namespace BirdGame
         {
             GetComponent<Button>().onClick.AddListener(() =>
             {
-                onSelected?.Invoke(index);
+                onSelected?.Invoke(map, index);
             });
         }
     }

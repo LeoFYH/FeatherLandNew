@@ -56,34 +56,32 @@ namespace BirdGame
             
             // 调试：显示图鉴数据
             var illustratedData = this.GetModel<ISaveModel>().IllustratedData;
-            Debug.Log($"图鉴数据: 包含 {illustratedData.birds.Count} 种鸟");
-            foreach (var birdId in illustratedData.birds)
-            {
-                Debug.Log($"  - 鸟ID: {birdId}");
-            }
-            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             var items = new List<IllustratedItem>();
-            for (int i = 0; i < config.sceneBirds[mapIndex].birdClasses.Length; i++)
+            for(int i=0;i<config.sceneBirds.Count;i++)
             {
-                int itemIndex = i % illustratedItemPrefabs.Length;
-                var item = GameObject.Instantiate(illustratedItemPrefabs[itemIndex], illustratedContent).GetComponent<IllustratedItem>();
-                item.Init(i, group, OnSelectedItem);
-                items.Add(item);
+                int mapIndex = i;
+                for (int j = 0; j < config.sceneBirds[mapIndex].birdClasses.Length; j++)
+                {
+                    int itemIndex = j % illustratedItemPrefabs.Length;
+                    var item = GameObject.Instantiate(illustratedItemPrefabs[itemIndex], illustratedContent).GetComponent<IllustratedItem>();
+                    item.Init(mapIndex, j, group, OnSelectedItem);
+                    items.Add(item);
+                }
             }
 
             items[0].clickButton.isOn = true;
             items[0].outline.enabled = true;
-            OnSelectedItem(0);
+            OnSelectedItem(0, 0);
 
             this.GetModel<IGameModel>().HasNewBirdIllustrated.Value = false;
         }
         
 
 
-        private void OnSelectedItem(int index)
+        private void OnSelectedItem(int mapIndex, int index)
         {
             currentSelectedIndex = index; // 记录当前选中的索引
-            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+        
             var classInfo = this.GetModel<IConfigModel>().BirdConfig.sceneBirds[mapIndex].birdClasses[index];
             
             UpdateBirdNameText();
@@ -93,7 +91,7 @@ namespace BirdGame
             foreach (var bird in classInfo.birds)
             {
                 var item = GameObject.Instantiate(skinPrefab, skinContent).GetComponent<BirdSkin>();
-                item.Init(bird.id, OnSkinSelected);
+                item.Init(mapIndex, bird.id, OnSkinSelected);
                 skinItems.Add(item.gameObject);
                 int birdIndex = bird.id;
                 if (unlockedIndex == -1 && this.GetModel<ISaveModel>().IllustratedData.birds.Contains(birdIndex))
@@ -103,9 +101,9 @@ namespace BirdGame
             }
 
             if (unlockedIndex == -1)
-                OnSkinSelected(classInfo.birds[0].id);
+                OnSkinSelected(mapIndex, classInfo.birds[0].id);
             else 
-                OnSkinSelected(unlockedIndex);
+                OnSkinSelected(mapIndex, unlockedIndex);
         }
         
         /// <summary>
@@ -144,10 +142,10 @@ namespace BirdGame
             }
         }
         
-        private void OnSkinSelected(int index)
+        private void OnSkinSelected(int mapIndex, int index)
         {
             int classIndex;
-            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+        
             var birdInfo = this.GetModel<IConfigModel>().BirdConfig.GetBird(index, mapIndex, out classIndex);
             animator.Play("Idle " + birdInfo.id);
             // animator.runtimeAnimatorController.animationClips[0] = birdInfo.idleClip;

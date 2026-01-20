@@ -13,24 +13,25 @@ namespace BirdGame
         public UIEffect outline;
 
         private int index;
-        private Action<int> onItemSelected;
+        private Action<int, int> onItemSelected;
+        private int mapIndex =0;
         
         private void Start()
         {
             clickButton.onValueChanged.AddListener(isOn =>
             {
                 if (isOn)
-                    onItemSelected?.Invoke(index);
+                    onItemSelected?.Invoke(mapIndex, index);
                 outline.enabled = isOn;
             });
         }
 
-        public void Init(int classIndex, ToggleGroup group, Action<int> onSelected)
+        public void Init(int mapIndex, int classIndex, ToggleGroup group, Action<int, int> onSelected)
         {
+            this.mapIndex= mapIndex;
             index = classIndex;
             onItemSelected = onSelected;
             clickButton.group = group;
-            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             var classInfo = this.GetModel<IConfigModel>().BirdConfig.sceneBirds[mapIndex].birdClasses[classIndex];
             foreach (var bird in classInfo.birds)
             {
@@ -46,12 +47,11 @@ namespace BirdGame
                 }
             }
             
-            ShowLocked(classInfo.birds[0].id);
+            ShowLocked(mapIndex, classInfo.birds[0].id);
         }
 
-        private void ShowLocked(int birdIndex)
+        private void ShowLocked(int mapIndex, int birdIndex)
         {
-            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             var sp = this.GetModel<IConfigModel>().BirdConfig.GetBird(birdIndex, mapIndex).preview;
             icon.sprite = sp;
             float scale = 56f / sp.rect.height;
