@@ -18,8 +18,8 @@ namespace BirdGame
             // 进入飞行状态，增大碰撞体
             _brid.AdjustColliderForFlying(true);
             
-            _brid.anim.SetBool("IsTakeOff", false);
-            _brid.anim.SetBool("Fly", false);
+            _brid.anim.SetBool(AnimatorHashes.IsTakeOff, false);
+            _brid.anim.SetBool(AnimatorHashes.Fly, false);
             //_brid.anim.Play("FlyWait");
 
             // 确保初始状态为呼吸（不张望）

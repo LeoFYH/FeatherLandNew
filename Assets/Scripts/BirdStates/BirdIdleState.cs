@@ -36,7 +36,7 @@ namespace BirdGame
                 DOTween.Sequence().AppendCallback(() =>
                 {
                     isLicking = true; // 标记开始舔毛
-                    _brid.anim.SetTrigger("Licking");
+                    _brid.anim.SetTrigger(AnimatorHashes.Licking);
                 }).SetDelay(lickingTime);
             }
         }
@@ -112,7 +112,7 @@ namespace BirdGame
             }
             
 
-            if (_brid.anim.GetCurrentAnimatorStateInfo(0).IsName("Stroke"))
+            if (_brid.anim.GetCurrentAnimatorStateInfo(0).shortNameHash == AnimatorHashes.StrokeState)
             {
                 if (_brid.shouldFollowMouse)
                 {

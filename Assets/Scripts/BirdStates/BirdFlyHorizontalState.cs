@@ -35,8 +35,8 @@ namespace BirdGame
             else
             {
                 // 先斜着飞到目标高度
-                _brid.anim.SetBool("Fly", true);
-                _brid.anim.Play("TakeOff");
+                _brid.anim.SetBool(AnimatorHashes.Fly, true);
+                _brid.anim.Play(AnimatorHashes.TakeOffAnim);
 
                 // 计算45度角飞行的目标点
                 float deltaY = flyY - _brid.transform.position.y;
@@ -79,8 +79,8 @@ namespace BirdGame
         {
             // 保存原始sortingOrder，并设置为-15
             originalSortingOrder = _brid.sr.sortingOrder;
-            _brid.anim.Play("FlyInAir");
-            _brid.anim.SetBool("Fly", false);
+            _brid.anim.Play(AnimatorHashes.FlyInAirAnim);
+            _brid.anim.SetBool(AnimatorHashes.Fly, false);
             Fly();
         }
 

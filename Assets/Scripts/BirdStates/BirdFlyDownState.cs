@@ -20,9 +20,9 @@ namespace BirdGame
             _brid.AdjustColliderForFlying(true);
             
             _brid.sr.sortingOrder = 50;
-            _brid.anim.SetBool("Fly", true);
-            _brid.anim.SetBool("IsTakeOff", false);
-            _brid.anim.Play("FlyFromBranch");
+            _brid.anim.SetBool(AnimatorHashes.Fly, true);
+            _brid.anim.SetBool(AnimatorHashes.IsTakeOff, false);
+            _brid.anim.Play(AnimatorHashes.FlyFromBranchAnim);
 
             // 获取降落点
             int area = Random.Range(3, 8);
@@ -56,8 +56,8 @@ namespace BirdGame
                 anim.Append(_brid.transform.DOMove(target, time).SetEase(Ease.Linear));
                 anim.AppendCallback(() =>
                 {
-                    _brid.anim.SetBool("IsTakeOff", true);
-                    _brid.anim.SetBool("Fly", false);
+                    _brid.anim.SetBool(AnimatorHashes.IsTakeOff, true);
+                    _brid.anim.SetBool(AnimatorHashes.Fly, false);
                     //_brid.anim.Play("Landing");
                     _brid.sr.sortingOrder = 50;
                 });

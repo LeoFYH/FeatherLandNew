@@ -10,6 +10,29 @@ using UnityEngine.AI;
 
 namespace BirdGame
 {
+    /// <summary>
+    /// 动画参数哈希值缓存类，避免每次都使用字符串比较
+    /// </summary>
+    public static class AnimatorHashes
+    {
+        // 动画状态名称哈希值
+        public static readonly int StrokeState = Animator.StringToHash("Stroke");
+        
+        // 动画参数哈希值
+        public static readonly int MoveSpeed = Animator.StringToHash("MoveSpeed");
+        public static readonly int Eat = Animator.StringToHash("Eat");
+        public static readonly int Fly = Animator.StringToHash("Fly");
+        public static readonly int IsTakeOff = Animator.StringToHash("IsTakeOff");
+        
+        // 触发器哈希值
+        public static readonly int StrokeTrigger = Animator.StringToHash("Stroke");
+        public static readonly int Licking = Animator.StringToHash("Licking");
+        
+        // 动画片段名称哈希值
+        public static readonly int TakeOffAnim = Animator.StringToHash("TakeOff");
+        public static readonly int FlyInAirAnim = Animator.StringToHash("FlyInAir");
+        public static readonly int FlyFromBranchAnim = Animator.StringToHash("FlyFromBranch");
+    }
 
     /// Controls bird behavior including movement, growth stages, and interactions
     public class Brid : ViewControllerBase
@@ -315,14 +338,14 @@ namespace BirdGame
                                         currFood = null;
                                     }
 
-                                    anim.SetBool("Eat", false);
-                                    _stateMachine.ChangeState<BirdIdleState>();
-                                }
+                                anim.SetBool(AnimatorHashes.Eat, false);
+                                _stateMachine.ChangeState<BirdIdleState>();
+                            }
 
-                                this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Stroke);
-                                this.GetSystem<IAudioSystem>().PlayBirdEffect(index);
-                                anim.SetTrigger("Stroke");
-                                this.GetSystem<IAudioSystem>().RandomPlayPetting();
+                            this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Stroke);
+                            this.GetSystem<IAudioSystem>().PlayBirdEffect(index);
+                            anim.SetTrigger(AnimatorHashes.StrokeTrigger);
+                            this.GetSystem<IAudioSystem>().RandomPlayPetting();
                                 // 使用对象池获取心形特效
                                 this.GetSystem<IObjectPoolSystem>().Get("Heart", heartPos, null);
                                 if (petTime > 0.5)
@@ -344,19 +367,19 @@ namespace BirdGame
             //     _stateMachine.ChangeState<BirdRunState>();
             // }
 
-            // 统一处理走路动画 - 只要在移动就播放走路动画
-            if (agent != null && agent.enabled)
+        // 统一处理走路动画 - 只要在移动就播放走路动画
+        if (agent != null && agent.enabled)
+        {
+            // 使用 sqrMagnitude 避免开方运算，提升性能
+            if (agent.velocity.sqrMagnitude > 0.0001f) // 0.01f * 0.01f = 0.0001f
             {
-                // 使用 sqrMagnitude 避免开方运算，提升性能
-                if (agent.velocity.sqrMagnitude > 0.0001f) // 0.01f * 0.01f = 0.0001f
-                {
-                    anim.SetFloat("MoveSpeed", 1f);
-                }
-                else
-                {
-                    anim.SetFloat("MoveSpeed", 0f);
-                }
+                anim.SetFloat(AnimatorHashes.MoveSpeed, 1f);
             }
+            else
+            {
+                anim.SetFloat(AnimatorHashes.MoveSpeed, 0f);
+            }
+        }
 
             //检查是否在WalkableArea中并做透视缩放
             // var walkableArea = NavigationManager.Instance.GetWalkableArea(walkArea);
