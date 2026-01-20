@@ -82,16 +82,15 @@ namespace BirdGame
                 }
 
                 var data = this.GetModel<ISaveModel>().ScheduleData.scheduleList[scheduleIndex];
-                if (!data.isCompleted)
-                {
-                    data.isCompleted = isOn;
-                    var sec = (DateTime.Now - data.StartTime).TotalSeconds;
-                    int coins = (int)(sec / 300);
-                    this.GetModel<IAccountModel>().Coins.Value += coins;
-                    this.GetModel<IAccountModel>().AddedCoins = coins;
-                    if(coins > 0)
-                        this.GetSystem<IUISystem>().ShowPopup(UIPopup.AddCoinPopup);
-                }
+                data.isCompleted = isOn;
+                // if (!data.isCompleted)
+                // {
+                //     // var sec = (DateTime.Now - data.StartTime).TotalSeconds;
+                //     // int coins = (int)(sec / 300);
+                //     // this.GetModel<IAccountModel>().Coins.Value += coins;
+                //     // this.GetModel<IAccountModel>().AddedCoins = coins;
+                
+                // }
                 
             });
             

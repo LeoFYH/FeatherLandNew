@@ -104,7 +104,7 @@ namespace BirdGame
 
         public override void OnUpdate()
         {
-            if (_brid.anim.GetCurrentAnimatorStateInfo(0).IsName("Stroke") && !isFollowingMouse)
+            if (_brid.anim.GetCurrentAnimatorStateInfo(0).shortNameHash == AnimatorHashes.StrokeState && !isFollowingMouse)
             {
                 currMachine.ChangeState<BirdIdleState>();
                 return;
@@ -167,7 +167,7 @@ namespace BirdGame
                 if(this.GetModel<IConfigModel>().BirdConfig.isDrawPathLine)
                     DrawPath();
                 _brid.sr.flipX = _brid.agent.velocity.x >= 0;
-                _brid.anim.SetFloat("MoveSpeed", 1);
+                _brid.anim.SetFloat(AnimatorHashes.MoveSpeed, 1);
             }
         }
         
@@ -196,7 +196,7 @@ namespace BirdGame
         {
             _brid.onNearOtherBird = null;
             _brid.lineRenderer.positionCount = 0;
-            _brid.anim.SetFloat("MoveSpeed", 0f);
+            _brid.anim.SetFloat(AnimatorHashes.MoveSpeed, 0f);
             _brid.agent.speed = _brid.moveSpeed;
             _brid.agent.isStopped = true;
             _brid.agent.velocity = Vector3.zero;

@@ -32,7 +32,7 @@ namespace BirdGame
 
     public class GameSystem : AbstractSystem, IGameSystem
     {
-        private GameObject foodPrefab;
+        //private GameObject foodPrefab;
         private GameObject numPrefab;
         private IBirdModel birdModel;
         private GameObject currentPlacingDecoration; // 当前正在放置的装饰品
@@ -54,10 +54,10 @@ namespace BirdGame
         protected override void OnInit()
         {
             birdModel = this.GetModel<IBirdModel>();
-            this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("Food", obj =>
-            {
-                foodPrefab = obj;
-            });
+            // this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("Food", obj =>
+            // {
+            //     foodPrefab = obj;
+            // });
             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("Num", obj =>
             {
                 numPrefab = obj;
@@ -84,87 +84,96 @@ namespace BirdGame
             {
                 this.GetSystem<ICursorSystem>().Feed();
                 this.GetSystem<IAudioSystem>().PlayEffect(EffectType.DropFood);
-                Food food = GameObject.Instantiate(foodPrefab).GetComponent<Food>();
-                food.isTargeted = false;
 
-                // 根据当前选择的食物类型更换sprite
-                var gameModel = this.GetModel<IGameModel>();
-                var saveModel = this.GetModel<ISaveModel>();
-                var configModel = this.GetModel<IConfigModel>();
-                
-                if (saveModel.AccountData.sceneTools == null)
-                    saveModel.AccountData.sceneTools = new List<SceneToolInfo>();
-                if(saveModel.AccountData.sceneTools.Count == 0)
-                    saveModel.AccountData.sceneTools.Add(new SceneToolInfo());
-                // 查找食物工具配置
-                for (int i = 0; i < configModel.ShopConfig.tools.Length; i++)
+                this.GetSystem<IObjectPoolSystem>().Get("Food", null, obj =>
                 {
-                    var toolItem = configModel.ShopConfig.tools[i];
-                    if (saveModel.AccountData.sceneTools[0].tools.Count <= i)
+                    Food food = obj.GetComponent<Food>();
+                    food.isTargeted = false;
+
+                    // 根据当前选择的食物类型更换sprite
+                    //var gameModel = this.GetModel<IGameModel>();
+                    var saveModel = this.GetModel<ISaveModel>();
+                    var configModel = this.GetModel<IConfigModel>();
+
+                    if (saveModel.AccountData.sceneTools == null)
+                        saveModel.AccountData.sceneTools = new List<SceneToolInfo>();
+                    if (saveModel.AccountData.sceneTools.Count == 0)
+                        saveModel.AccountData.sceneTools.Add(new SceneToolInfo());
+                    // 查找食物工具配置
+                    for (int i = 0; i < configModel.ShopConfig.tools.Length; i++)
                     {
-                        saveModel.AccountData.sceneTools[0].tools.Add(new ToolInfo());
+                        var toolItem = configModel.ShopConfig.tools[i];
+                        if (saveModel.AccountData.sceneTools[0].tools.Count <= i)
+                        {
+                            saveModel.AccountData.sceneTools[0].tools.Add(new ToolInfo());
+                        }
+
+                        if (saveModel.AccountData.sceneTools[0].tools[i].unlockedList == null)
+                        {
+                            saveModel.AccountData.sceneTools[0].tools[i].unlockedList = new List<int>() { 0 };
+                        }
+
+                        if (toolItem.name.ToLower() == "food")
+                        {
+                            // 查找匹配的食物类型
+                            for (int j = 0; j < toolItem.selections.Length; j++)
+                            {
+                                var selection = toolItem.selections[j];
+                                if (j == saveModel.AccountData.sceneTools[0].tools[i].equipedId)
+                                {
+                                    // 更换食物的sprite
+                                    SpriteRenderer spriteRenderer = food.GetComponent<SpriteRenderer>();
+                                    if (spriteRenderer != null && selection.icon != null)
+                                    {
+                                        spriteRenderer.sprite = selection.icon;
+                                    }
+
+                                    food.addValue = selection.addValue;
+                                    // 设置食物大小
+                                    food.transform.localScale = Vector3.one * selection.foodScale;
+                                    break;
+                                }
+                            }
+
+                            break;
+                        }
                     }
-                    if (saveModel.AccountData.sceneTools[0].tools[i].unlockedList == null)
+
+                    Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    mouseWorldPos.z = 0; // 确保Z轴位置正确
+
+                    // 生成有间距的随机位置
+                    Vector3 finalPosition = GetValidFoodPosition(mouseWorldPos + foodDropOffset);
+
+                    // 设置位置
+                    food.transform.position = finalPosition;
+
+                    // 添加随机旋转
+                    float randomRotation = Random.Range(0f, 360f);
+                    food.transform.rotation = Quaternion.Euler(0f, 0f, randomRotation);
+
+                    // 如果有Rigidbody2D，确保它不会移动
+                    Rigidbody2D rb = food.GetComponent<Rigidbody2D>();
+                    if (rb != null)
                     {
-                        saveModel.AccountData.sceneTools[0].tools[i].unlockedList = new List<int>() { 0 };
+                        rb.bodyType = RigidbodyType2D.Static;
+                        // 或者
+                        // rb.constraints = RigidbodyConstraints2D.FreezeAll;
                     }
                     
-                    if (toolItem.name.ToLower() == "food")
+                    food.Init();
+
+                    birdModel.Foods.Add(food);
+
+                    if (birdModel.Foods.Count > 8)
                     {
-                        // 查找匹配的食物类型
-                        for (int j = 0; j < toolItem.selections.Length; j++)
-                        {
-                            var selection = toolItem.selections[j];
-                            if (j == saveModel.AccountData.sceneTools[0].tools[i].equipedId)
-                            {
-                                // 更换食物的sprite
-                                SpriteRenderer spriteRenderer = food.GetComponent<SpriteRenderer>();
-                                if (spriteRenderer != null && selection.icon != null)
-                                {
-                                    spriteRenderer.sprite = selection.icon;
-                                }
-
-                                food.addValue = selection.addValue;
-                                // 设置食物大小
-                                food.transform.localScale = Vector3.one * selection.foodScale;
-                                break;
-                            }
-                        }
-                        break;
+                        // 删除最早的食物
+                        var foodToRemove = birdModel.Foods[0];
+                        birdModel.Foods.RemoveAt(0);
+                        this.GetSystem<IObjectPoolSystem>().Recycle("Food", foodToRemove.gameObject);
+                        //GameObject.Destroy(foodToRemove.gameObject);
                     }
-                }
-
-                Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                mouseWorldPos.z = 0; // 确保Z轴位置正确
-                
-                // 生成有间距的随机位置
-                Vector3 finalPosition = GetValidFoodPosition(mouseWorldPos + foodDropOffset);
-                
-                // 设置位置
-                food.transform.position = finalPosition;
-                
-                // 添加随机旋转
-                float randomRotation = Random.Range(0f, 360f);
-                food.transform.rotation = Quaternion.Euler(0f, 0f, randomRotation);
-            
-                // 如果有Rigidbody2D，确保它不会移动
-                Rigidbody2D rb = food.GetComponent<Rigidbody2D>();
-                if (rb != null)
-                {
-                    rb.bodyType = RigidbodyType2D.Static;
-                    // 或者
-                    // rb.constraints = RigidbodyConstraints2D.FreezeAll;
-                }
-                
-                birdModel.Foods.Add(food);
-
-                if (birdModel.Foods.Count > 8)
-                {
-                    // 删除最早的食物
-                    var foodToRemove = birdModel.Foods[0];
-                    birdModel.Foods.RemoveAt(0);
-                    GameObject.Destroy(foodToRemove.gameObject);
-                }
+                }); //GameObject.Instantiate(foodPrefab).GetComponent<Food>();
             }
         }
 
@@ -175,14 +184,16 @@ namespace BirdGame
             {
                 CreateNum("+1", food.transform.position);
                 birdModel.Foods.Remove(food);
-                GameObject.Destroy(food.gameObject);
+                this.GetSystem<IObjectPoolSystem>().Recycle("Food", food.gameObject);
+                //GameObject.Destroy(food.gameObject);
             }
         }
 
         public void RecycleFood(Food food)
         {
             birdModel.Foods.Remove(food);
-            GameObject.Destroy(food.gameObject);
+            //GameObject.Destroy(food.gameObject);
+            this.GetSystem<IObjectPoolSystem>().Recycle("Food", food.gameObject);
         }
 
         public bool TryGetUntargetedFood(Vector3 position, out Food food)

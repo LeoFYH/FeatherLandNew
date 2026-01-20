@@ -54,7 +54,7 @@ namespace BirdGame
             if (_brid.agent.SetDestination(eatPosition))
             {
                 _brid.agent.isStopped = false;
-                _brid.anim.SetFloat("MoveSpeed", 1f);
+                _brid.anim.SetFloat(AnimatorHashes.MoveSpeed, 1f);
 
                 foreach (var pos in _brid.agent.path.corners)
                 {
@@ -75,7 +75,7 @@ namespace BirdGame
 
         public override void OnUpdate()
         {
-            if (_brid.anim.GetCurrentAnimatorStateInfo(0).IsName("Stroke"))
+            if (_brid.anim.GetCurrentAnimatorStateInfo(0).shortNameHash == AnimatorHashes.StrokeState)
             {
                 currMachine.ChangeState<BirdIdleState>();
                 return;
@@ -92,8 +92,8 @@ namespace BirdGame
                 if (this.GetModel<IConfigModel>().BirdConfig.isDrawPathLine)
                     _brid.lineRenderer.positionCount = 0;
                 
-                _brid.anim.SetFloat("MoveSpeed", 0);
-                _brid.anim.SetBool("Eat", true);
+                _brid.anim.SetFloat(AnimatorHashes.MoveSpeed, 0);
+                _brid.anim.SetBool(AnimatorHashes.Eat, true);
                 _brid.agent.isStopped = true;
                 _brid.agent.velocity = Vector3.zero;
                 EatFood();
@@ -153,7 +153,7 @@ namespace BirdGame
                     _brid.sr.flipX = _brid.agent.velocity.x >= 0;
                 
                 // 只要在移动就播放走路动画
-                // if (_brid.agent.velocity.magnitude > 0.001f)
+                // if (_brid.agent.velocity.sqrMagnitude > 0.000001f) // 0.001f * 0.001f
                 // {
                 //     //_brid.anim.SetFloat("MoveSpeed", 1f);
                 //     _brid.sr.flipX = _brid.agent.velocity.x >= 0;
@@ -182,7 +182,7 @@ namespace BirdGame
             if (_brid.currFood == null)
             {
                 // Food was destroyed, exit eating state
-                _brid.anim.SetBool("Eat", false);
+                _brid.anim.SetBool(AnimatorHashes.Eat, false);
                 currMachine.ChangeState<BirdIdleState>();
                 return;
             }
@@ -221,7 +221,7 @@ namespace BirdGame
                         _brid.animScale = v;
                     }, _brid.BabyBirdSize / _brid.AdultBirdSize, 1f, 0.5f).OnComplete(() =>
                     {
-                        _brid.anim.SetTrigger("Stroke");
+                        _brid.anim.SetTrigger(AnimatorHashes.StrokeTrigger);
                     });
                     this.GetSystem<IAudioSystem>().PlayEffect(EffectType.GrowUp);
                     //_brid.transform.DOScale(_brid.AdultBirdSize, 0.2f);
@@ -235,7 +235,7 @@ namespace BirdGame
                     _brid.currFood = null;
                 }
 
-                _brid.anim.SetBool("Eat", false);
+                _brid.anim.SetBool(AnimatorHashes.Eat, false);
                 
                 // 设置吃完食物后的随机等待时间（0-3秒）
                 _brid.lastEatTime = Time.time;
@@ -249,8 +249,8 @@ namespace BirdGame
         public override void OnExit()
         {
             _brid.onNearOtherBird = null;
-            _brid.anim.SetFloat("MoveSpeed", 0);
-            _brid.anim.SetBool("Eat", false);
+            _brid.anim.SetFloat(AnimatorHashes.MoveSpeed, 0);
+            _brid.anim.SetBool(AnimatorHashes.Eat, false);
             eatFoodTimer = 0;
 
             // Release the food target when leaving the state
@@ -330,23 +330,23 @@ namespace BirdGame
 
         private void DrawPath()
         {
-            _brid.agent.CalculatePath(eatPosition, currentPath);
-            int pathLength = currentPath.corners.Length;
-            if (pathLength < 2)
-            {
-                _brid.lineRenderer.positionCount = 2;
-                _brid.lineRenderer.SetPosition(0, _brid.transform.position);
-                _brid.lineRenderer.SetPosition(1, eatPosition);
-            }
-            else
-            {
-                _brid.lineRenderer.positionCount = pathLength + 1;
-                for (int i = 0; i < pathLength; i++)
-                {
-                    _brid.lineRenderer.SetPosition(i, currentPath.corners[i]);
-                }
-                _brid.lineRenderer.SetPosition(pathLength, eatPosition);
-            }
+            // _brid.agent.CalculatePath(eatPosition, currentPath);
+            // int pathLength = currentPath.corners.Length;
+            // if (pathLength < 2)
+            // {
+            //     _brid.lineRenderer.positionCount = 2;
+            //     _brid.lineRenderer.SetPosition(0, _brid.transform.position);
+            //     _brid.lineRenderer.SetPosition(1, eatPosition);
+            // }
+            // else
+            // {
+            //     _brid.lineRenderer.positionCount = pathLength + 1;
+            //     for (int i = 0; i < pathLength; i++)
+            //     {
+            //         _brid.lineRenderer.SetPosition(i, currentPath.corners[i]);
+            //     }
+            //     _brid.lineRenderer.SetPosition(pathLength, eatPosition);
+            // }
         }
     }
 }

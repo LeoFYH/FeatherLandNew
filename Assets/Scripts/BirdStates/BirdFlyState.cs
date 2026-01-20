@@ -17,6 +17,9 @@ namespace BirdGame
 
         public override void OnEnter()
         {
+            // 进入飞行状态，增大碰撞体
+            _brid.AdjustColliderForFlying(true);
+            
             if (this.GetModel<IBirdModel>().FlyPositions.Count > 0)
             {
                 int random = Random.Range(0, this.GetModel<IBirdModel>().FlyPositions.Count);
@@ -87,8 +90,8 @@ namespace BirdGame
                 _brid.sr.sortingOrder = 50;
                 if(flightAngle <= 60)
                 {
-                    _brid.anim.SetBool("IsTakeOff", true);
-                    _brid.anim.SetBool("Fly", true);
+                    _brid.anim.SetBool(AnimatorHashes.IsTakeOff, true);
+                    _brid.anim.SetBool(AnimatorHashes.Fly, true);
                     _brid.agent.enabled = false;
                     // 角度合适，直接斜着飞向目标
                     _brid.sr.flipX = target.x > _brid.transform.position.x;
@@ -124,7 +127,8 @@ namespace BirdGame
 
         public override void OnExit()
         {
-
+            // 退出飞行状态，恢复原始碰撞体
+            _brid.AdjustColliderForFlying(false);
         }
     }
 }

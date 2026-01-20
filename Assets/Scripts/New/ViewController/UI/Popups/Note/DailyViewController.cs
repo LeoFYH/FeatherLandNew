@@ -8,10 +8,11 @@ namespace BirdGame
 {
     public class DailyViewController : ViewControllerBase
     {
-        public Transform content;
+        public GridLayoutGroup content;
         public GameObject bookPrefab;
         public Button addButton;
         public TMP_InputField noteInput;
+        public Transform background;
 
         private int currentNoteIndex;
         private List<NoteItem> items = new List<NoteItem>();
@@ -31,7 +32,7 @@ namespace BirdGame
             {
                 ((TMP_Text)noteInput.placeholder).text = this.GetSystem<ILocalizationSystem>().GetString("EnterText");
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
-            
+            float x = content.padding.left + content.cellSize.x * 0.5f;
             addButton.onClick.AddListener(() =>
             {
                 // 检查是否已达到日记上限
@@ -42,10 +43,14 @@ namespace BirdGame
                     return;
                 }
                 
-                var item = GameObject.Instantiate(bookPrefab, content).GetComponent<NoteItem>();
+                var item = GameObject.Instantiate(bookPrefab, content.transform).GetComponent<NoteItem>();
                 int index = items.Count;
-                item.transform.SetSiblingIndex(index);
-                item.Init(index, group, OnCloseNote);
+                //item.transform.SetSiblingIndex(index);
+                var rect = item.transform as RectTransform;
+                rect.sizeDelta = content.cellSize;
+                float posY = 420f -(content.padding.top + content.cellSize.y*0.5f * (index + 1) + (content.spacing.y + content.cellSize.y * 0.5f) * index);
+                rect.anchoredPosition = new Vector2(x, posY);
+                item.Init(index, group, background, OnCloseNote);
                 items.Add(item);
                 data.bookList.Add(new BookData());
                 currentNoteIndex = index;
@@ -80,12 +85,19 @@ namespace BirdGame
                 data.bookList.Add(new BookData());
                 count = 1;
             }
+            float y = content.padding.top;
+            
             for (int i = 0; i < count; i++)
             {
-                var item = GameObject.Instantiate(bookPrefab, content).GetComponent<NoteItem>();
-                item.transform.SetSiblingIndex(i);
-                item.Init(i, group, OnCloseNote);
+                var item = GameObject.Instantiate(bookPrefab, content.transform).GetComponent<NoteItem>();
+                //item.transform.SetSiblingIndex(i);
+                var rect = item.transform as RectTransform;
+                rect.sizeDelta = content.cellSize;
+                y += content.cellSize.y*0.5f;
+                rect.anchoredPosition = new Vector2(x, 420f - y);
+                item.Init(i, group, background, OnCloseNote);
                 items.Add(item);
+                y+=content.spacing.y + content.cellSize.y * 0.5f;
             }
 
             currentNoteIndex = 0;
@@ -94,6 +106,29 @@ namespace BirdGame
             
             // 初始化时更新按钮状态
             UpdateAddButtonState();
+        }
+
+        private void RefreshItemPos()
+        {
+            float x = content.padding.left + content.cellSize.x * 0.5f;
+            float y = content.padding.top;
+            foreach(var item in items)
+            {
+                bool setParent = false;
+                if(item.transform.parent != content.transform)
+                {
+                    setParent = true;
+                    item.transform.SetParent(content.transform);
+                }
+                var rect = item.transform as RectTransform;
+                y += content.cellSize.y*0.5f;
+                rect.anchoredPosition = new Vector2(x, 420f - y);
+                y+=content.spacing.y + content.cellSize.y * 0.5f;
+                if(setParent)
+                {
+                    item.transform.SetParent(background);
+                }
+            }
         }
         
         /// <summary>
@@ -137,7 +172,7 @@ namespace BirdGame
 
             // 删除日记后更新按钮状态
             UpdateAddButtonState();
-            
+            RefreshItemPos();
             // if (items.Count <= currentNoteIndex)
             //     currentNoteIndex = items.Count - 1;
             // items[currentNoteIndex].thisToggle.isOn = true;
