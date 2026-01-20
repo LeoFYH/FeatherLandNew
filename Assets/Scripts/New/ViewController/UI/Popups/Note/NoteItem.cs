@@ -12,17 +12,19 @@ namespace BirdGame
         
         public TextMeshProUGUI titleText;
         public Toggle thisToggle;
-        public Canvas canvas;
+    
         public Button closeButton;
 
         private int noteIndex;
+        private Transform parent;
+        private Transform originParent;
         
-        public void Init(int index, ToggleGroup group, Action<int> onCloseAction)
+        public void Init(int index, ToggleGroup group, Transform targetParent, Action<int> onCloseAction)
         {
             noteIndex = index;
             titleText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("BOOK")}{index + 1}";
             thisToggle.group = group;
-            
+            parent = targetParent;
             onClose = onCloseAction;
         }
 
@@ -34,11 +36,13 @@ namespace BirdGame
 
         private void Start()
         {
+            originParent = transform.parent;
             this.RegisterEvent<ChangeLanguageEvent>(evt =>
             {
                 titleText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("BOOK")}{noteIndex + 1}";
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
+        
             thisToggle.onValueChanged.AddListener(isOn =>
             {
                 if (isOn)
@@ -47,11 +51,13 @@ namespace BirdGame
                     {
                         index = noteIndex
                     });
-                    canvas.sortingOrder = 2;
+                    transform.SetParent(parent);
                 }
                 else
                 {
-                    canvas.sortingOrder = 0;
+                    transform.SetParent(originParent);
+                    // transform.SetSiblingIndex(noteIndex);
+                    //canvas.sortingOrder = 0;
                 }
             });
 
@@ -61,11 +67,13 @@ namespace BirdGame
                 {
                     index = noteIndex
                 });
-                canvas.sortingOrder = 2;
+                transform.SetParent(parent);
             }
             else
             {
-                canvas.sortingOrder = 0;
+                //canvas.sortingOrder = 0;
+                transform.SetParent(originParent);
+                // transform.SetSiblingIndex(noteIndex);
             }
 
             closeButton.onClick.AddListener(()=>

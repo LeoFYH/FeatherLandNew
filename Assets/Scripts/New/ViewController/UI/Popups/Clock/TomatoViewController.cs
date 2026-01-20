@@ -766,6 +766,7 @@ namespace BirdGame
         private IEnumerator StartTimer()
         {
             float timer = 0;
+            float workTime = 0;
             var item = this.GetModel<IClockModel>().TomatoItem;
             item.TotalNumber = item.Number.Value;
             var frame = new WaitForFixedUpdate();
@@ -801,7 +802,11 @@ namespace BirdGame
                     // When paused and not skipping, continue without decrementing
                     continue;
                 }
-                
+
+                if (item.TimerType.Value == TomatoTimerType.Session)
+                {
+                    workTime += Time.fixedDeltaTime;
+                }
                 // Handle timer transition when timer reaches 0 or is skipped
                 if (item.Timer.Value <= 0)
                 {
@@ -837,7 +842,17 @@ namespace BirdGame
                     }
                 }
             }
-            int coins = (int)(timer / 300);
+            int min = (int)(workTime / 300);
+            int coins = 0;
+            if(min > 5)
+            {
+                coins = (min - 5) * 3 + 5;
+            }
+            else
+            {
+                coins = min;
+            }
+
             this.GetModel<IAccountModel>().Coins.Value += coins;
             this.GetModel<IAccountModel>().AddedCoins = coins;
             this.GetModel<IClockModel>().TomatoItem.TimerCoroutine = null;

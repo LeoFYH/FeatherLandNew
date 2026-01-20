@@ -18,6 +18,9 @@ namespace BirdGame
 
         public override void OnEnter()
         {
+            // 进入飞行状态，增大碰撞体
+            _brid.AdjustColliderForFlying(true);
+            
             _brid.agent.enabled = false;
             // 随机误差后的飞行高度
             float flyY = _brid.flyInAirStartPosition.y + Random.Range(-2f, 2f);
@@ -32,8 +35,8 @@ namespace BirdGame
             else
             {
                 // 先斜着飞到目标高度
-                _brid.anim.SetBool("Fly", true);
-                _brid.anim.Play("TakeOff");
+                _brid.anim.SetBool(AnimatorHashes.Fly, true);
+                _brid.anim.Play(AnimatorHashes.TakeOffAnim);
 
                 // 计算45度角飞行的目标点
                 float deltaY = flyY - _brid.transform.position.y;
@@ -76,8 +79,8 @@ namespace BirdGame
         {
             // 保存原始sortingOrder，并设置为-15
             originalSortingOrder = _brid.sr.sortingOrder;
-            _brid.anim.Play("FlyInAir");
-            _brid.anim.SetBool("Fly", false);
+            _brid.anim.Play(AnimatorHashes.FlyInAirAnim);
+            _brid.anim.SetBool(AnimatorHashes.Fly, false);
             Fly();
         }
 
@@ -134,6 +137,8 @@ namespace BirdGame
             isInStartPosition = false;
             // 恢复原始sortingOrder
             _brid.sr.sortingOrder = originalSortingOrder;
+            // 退出飞行状态，恢复原始碰撞体
+            _brid.AdjustColliderForFlying(false);
         }
     }
 }

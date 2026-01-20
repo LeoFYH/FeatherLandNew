@@ -4,12 +4,36 @@ using BirdGame;
 using DG.Tweening;
 using QFramework;
 using Sirenix.OdinInspector;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 using UnityEngine.AI;
 
 
 namespace BirdGame
 {
+    /// <summary>
+    /// 动画参数哈希值缓存类，避免每次都使用字符串比较
+    /// </summary>
+    public static class AnimatorHashes
+    {
+        // 动画状态名称哈希值
+        public static readonly int StrokeState = Animator.StringToHash("Stroke");
+        
+        // 动画参数哈希值
+        public static readonly int MoveSpeed = Animator.StringToHash("MoveSpeed");
+        public static readonly int Eat = Animator.StringToHash("Eat");
+        public static readonly int Fly = Animator.StringToHash("Fly");
+        public static readonly int IsTakeOff = Animator.StringToHash("IsTakeOff");
+        
+        // 触发器哈希值
+        public static readonly int StrokeTrigger = Animator.StringToHash("Stroke");
+        public static readonly int Licking = Animator.StringToHash("Licking");
+        
+        // 动画片段名称哈希值
+        public static readonly int TakeOffAnim = Animator.StringToHash("TakeOff");
+        public static readonly int FlyInAirAnim = Animator.StringToHash("FlyInAir");
+        public static readonly int FlyFromBranchAnim = Animator.StringToHash("FlyFromBranch");
+    }
 
     /// Controls bird behavior including movement, growth stages, and interactions
     public class Brid : ViewControllerBase
@@ -93,6 +117,11 @@ namespace BirdGame
         private bool hasOriginalColor = false;
         private float originalThickness;
         private bool hasOriginalThickness = false;
+        private Material materialNormal;
+    
+        
+        // 静态变量跟踪当前高亮的鸟，避免每次查找所有鸟
+        private static Brid currentHighlightedBird = null;
 
         [ReadOnly]
         public float animScale = 1f;
@@ -146,6 +175,23 @@ namespace BirdGame
             {
                 originalColliderSize = birdCollider.bounds.size;
             }
+
+            materialNormal = sr.material;
+            if(this.GetModel<IBirdModel>().MaterialHighlight == null)
+            {
+                this.GetSystem<IAssetSystem>().LoadAssetAsync<Material>("MaterialHighlight", 
+                v =>
+                {
+                    if(v != null)
+                    {
+                        this.GetModel<IBirdModel>().MaterialHighlight = v;
+                    }
+                    else
+                    {
+                        this.GetModel<IBirdModel>().MaterialHighlight = materialNormal;
+                    }
+            });
+            }
             
             // 保存原始轮廓颜色
             SaveOriginalOutlineColor();
@@ -166,7 +212,7 @@ namespace BirdGame
 
             eatFoodTime = anim.runtimeAnimatorController.animationClips[3].length;
 
-            eatFoodTime = anim.runtimeAnimatorController.animationClips[3].length;
+            // eatFoodTime = anim.runtimeAnimatorController.animationClips[3].length;
 
             // Setup state machine for bird behavior
             _stateMachine = new StateMachine(gameObject);
@@ -181,20 +227,6 @@ namespace BirdGame
             startTimer = Time.time;
 
             transform.localScale = Vector3.one * BabyBirdSize;
-        }
-
-        /// Handles bird interaction when clicked
-        private void OnMouseDown()
-        {
-            // if (!isSmall)
-            // {
-            //     level++;
-            //     GameObject go = Instantiate(heartPre);
-            //     go.transform.SetParent(transform);
-            //     go.transform.position = heartPos.position;
-            //     go.transform.localScale = Vector3.one * BabyBirdSize;
-            //     
-            // }
         }
 
         public void OnMouseEnter()
@@ -229,9 +261,6 @@ namespace BirdGame
         {
             if (!isDesktopBird && maskList.Count == 0)
             {
-                // 检测飞行状态并调整碰撞体
-                CheckFlyingStateAndAdjustCollider();
-                
                 if (isEnter)
                 {
                     if (Input.GetMouseButtonDown(1) || SimpleMouseForwarder.rightClickCount > previousRightClickCount)
@@ -249,20 +278,6 @@ namespace BirdGame
                         // 先恢复所有鸟的材质颜色，然后设置当前鸟为白色轮廓
                         RestoreAllBirdsOutlineColor();
                         SetBirdOutlineToWhite();
-                        // if (isSmall)
-                        // {
-                        //     // UIManager.Instance.ShowInfoPanel(gameObject, smallPrice, title, desc, 0,
-                        //     //     eatFoodCount * 1f / eatCountForBig, currentFavorability * 1f / totalFavorability, false);
-                        //     //this.SendCommand(new ShowBirdInfoCommand(smallPrice, title, desc, 0, eatFoodCount.Value * 1f / eatCountForBig, currentFavorability * 1f / totalFavorability, false));
-                        // }
-                        // else
-                        // {
-                        //     //UIManager.Instance.infoPanel.IntimacyFill.gameObject.SetActive(true);
-                        //     // UIManager.Instance.ShowInfoPanel(gameObject, bigPrice, title, desc, incomeForBig,
-                        //     //     1, currentFavorability * 1f / totalFavorability, true);
-                        //     //this.SendCommand(new ShowBirdInfoCommand(bigPrice, title, desc, incomeForBig,
-                        //         //1, currentFavorability * 1f / totalFavorability, true));
-                        // }
                     }
 
                     if (Input.GetMouseButtonDown(0) || SimpleMouseForwarder.clickCount > previousClickCount)
@@ -315,16 +330,16 @@ namespace BirdGame
                                         currFood = null;
                                     }
 
-                                    anim.SetBool("Eat", false);
-                                    _stateMachine.ChangeState<BirdIdleState>();
-                                }
+                                anim.SetBool(AnimatorHashes.Eat, false);
+                                _stateMachine.ChangeState<BirdIdleState>();
+                            }
 
-                                this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Stroke);
-                                this.GetSystem<IAudioSystem>().PlayBirdEffect(index);
-                                anim.SetTrigger("Stroke");
-                                this.GetSystem<IAudioSystem>().RandomPlayPetting();
-                                this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("Heart",
-                                    obj => { GameObject.Instantiate(obj, heartPos); });
+                            this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Stroke);
+                            this.GetSystem<IAudioSystem>().PlayBirdEffect(index);
+                            anim.SetTrigger(AnimatorHashes.StrokeTrigger);
+                            this.GetSystem<IAudioSystem>().RandomPlayPetting();
+                                // 使用对象池获取心形特效
+                                this.GetSystem<IObjectPoolSystem>().Get("Heart", heartPos, null);
                                 if (petTime > 0.5)
                                 {
                                     this.GetModel<IAccountModel>().Coins.Value += birdConf.clickEarningForFiveTimes;
@@ -338,64 +353,65 @@ namespace BirdGame
             _stateMachine.OnUpdate();
 
             // 检查是否应该跟随鼠标（在任何状态下都可以触发）
-            if (shouldFollowMouse)
-            {
-                Debug.Log("Brid: 检测到跟随鼠标标志，强制切换到RunState");
-                _stateMachine.ChangeState<BirdRunState>();
-            }
+            // if (shouldFollowMouse)
+            // {
+            //     Debug.Log("Brid: 检测到跟随鼠标标志，强制切换到RunState");
+            //     _stateMachine.ChangeState<BirdRunState>();
+            // }
 
-            // 统一处理走路动画 - 只要在移动就播放走路动画
-            if (agent != null && agent.enabled)
+        // 统一处理走路动画 - 只要在移动就播放走路动画
+        if (agent != null && agent.enabled)
+        {
+            // 使用 sqrMagnitude 避免开方运算，提升性能
+            if (agent.velocity.sqrMagnitude > 0.0001f) // 0.01f * 0.01f = 0.0001f
             {
-                if (agent.velocity.magnitude > 0.01f)
-                {
-                    anim.SetFloat("MoveSpeed", 1f);
-                }
-                else
-                {
-                    anim.SetFloat("MoveSpeed", 0f);
-                }
+                anim.SetFloat(AnimatorHashes.MoveSpeed, 1f);
             }
+            else
+            {
+                anim.SetFloat(AnimatorHashes.MoveSpeed, 0f);
+            }
+        }
 
             //检查是否在WalkableArea中并做透视缩放
-            var walkableArea = NavigationManager.Instance.GetWalkableArea(walkArea);
-            if (walkableArea != null && walkArea == 3)
-            {
-                Vector2 currentPos = new Vector2(transform.position.x, transform.position.y);
-                if (walkableArea.IsPointInside(currentPos))
-                {
-                    // 获取WalkableArea的Y轴范围
-                    var bounds = walkableArea.GetComponent<PolygonCollider2D>().bounds;
-                    float minY = bounds.min.y;
-                    float maxY = bounds.max.y;
+            // var walkableArea = NavigationManager.Instance.GetWalkableArea(walkArea);
+            // if (walkableArea != null && walkArea == 3)
+            // {
+            //     Vector2 currentPos = new Vector2(transform.position.x, transform.position.y);
+            //     if (walkableArea.IsPointInside(currentPos))
+            //     {
+            //         // 获取WalkableArea的Y轴范围
+            //         var bounds = walkableArea.GetComponent<PolygonCollider2D>().bounds;
+            //         float minY = bounds.min.y;
+            //         float maxY = bounds.max.y;
 
-                    // 归一化当前Y位置（0=最上，1=最下）
-                    float t = Mathf.InverseLerp(maxY, minY, transform.position.y);
+            //         // 归一化当前Y位置（0=最上，1=最下）
+            //         float t = Mathf.InverseLerp(maxY, minY, transform.position.y);
 
-                    // 计算scale（最上0.8，中间递增，最下1.1）
-                    float scaleFactor = Mathf.Lerp(0.8f, 1.2f, t);
+            //         // 计算scale（最上0.8，中间递增，最下1.1）
+            //         float scaleFactor = Mathf.Lerp(0.8f, 1.2f, t);
 
-                    if (isSmall)
-                    {
-                        transform.localScale = Vector3.one * BabyBirdSize * scaleFactor;
-                    }
-                    else
-                    {
-                        transform.localScale = Vector3.one * AdultBirdSize * scaleFactor * animScale;
-                    }
-                }
-            }
+            //         if (isSmall)
+            //         {
+            //             transform.localScale = Vector3.one * BabyBirdSize * scaleFactor;
+            //         }
+            //         else
+            //         {
+            //             transform.localScale = Vector3.one * AdultBirdSize * scaleFactor * animScale;
+            //         }
+            //     }
+            // }
 
-            if (!isDesktopBird)
-            {
-                // Generate income every minute
-                if (Time.time - startTimer >= 60)
-                {
-                    startTimer = Time.time;
-                    AddCoins();
-                    AutoExp();
-                }
-            }
+            // if (!isDesktopBird)
+            // {
+            //     // Generate income every minute
+            //     if (Time.time - startTimer >= 60)
+            //     {
+            //         startTimer = Time.time;
+            //         AddCoins();
+            //         AutoExp();
+            //     }
+            // }
 
             if (SimpleMouseForwarder.clickCount > previousClickCount)
             {
@@ -446,41 +462,10 @@ namespace BirdGame
         }
 
         /// <summary>
-        /// 检测飞行状态并调整碰撞体大小，让飞行中的鸟更容易被点击
-        /// </summary>
-        private void CheckFlyingStateAndAdjustCollider()
-        {
-            if (birdCollider == null) return;
-            
-            // 检测当前是否在飞行状态
-            bool currentlyFlying = _stateMachine.CurrentState == typeof(BirdFlyState) || 
-                                 _stateMachine.CurrentState == typeof(BirdFlyHorizontalState) || 
-                                 _stateMachine.CurrentState == typeof(BirdFlyDownState) ||
-                                 _stateMachine.CurrentState == typeof(BirdFlyWaitState);
-            
-            // 如果飞行状态发生变化
-            if (currentlyFlying != isFlying)
-            {
-                isFlying = currentlyFlying;
-                
-                if (isFlying)
-                {
-                    // 进入飞行状态，增大碰撞体
-                    AdjustColliderForFlying(true);
-                }
-                else
-                {
-                    // 退出飞行状态，恢复原始碰撞体
-                    AdjustColliderForFlying(false);
-                }
-            }
-        }
-        
-        /// <summary>
         /// 调整碰撞体大小以适应飞行状态
         /// </summary>
         /// <param name="isFlying">是否在飞行</param>
-        private void AdjustColliderForFlying(bool isFlying)
+        public void AdjustColliderForFlying(bool isFlying)
         {
             if (birdCollider == null || !(birdCollider is BoxCollider2D)) return;
             
@@ -509,21 +494,7 @@ namespace BirdGame
         {
             if (sr == null || sr.material == null) return;
             
-            Material currentMaterial = sr.material;
-            
-            // 使用 _SolidOutline 属性（对应 Inspector 中的 "Outline Color Base"）
-            if (currentMaterial.HasProperty("_SolidOutline"))
-            {
-                originalOutlineColor = currentMaterial.GetColor("_SolidOutline");
-                hasOriginalColor = true;
-            }
-            
-            // 保存原始 Width 属性（对应 Inspector 中的 "Width (Max recommended 100)"）
-            if (currentMaterial.HasProperty("_Thickness"))
-            {
-                originalThickness = currentMaterial.GetFloat("_Thickness");
-                hasOriginalThickness = true;
-            }
+            sr.material = materialNormal;
         }
 
         /// <summary>
@@ -537,28 +508,33 @@ namespace BirdGame
                 return;
             }
 
-            Material currentMaterial = sr.material;
-            if (currentMaterial == null)
-            {
-                Debug.LogError("鸟的材质为空！");
-                return;
-            }
+            sr.material = this.GetModel<IBirdModel>().MaterialHighlight;
 
-            // 直接使用 _SolidOutline 属性（对应 Inspector 中的 "Outline Color Base"）
-            if (currentMaterial.HasProperty("_SolidOutline"))
-            {
-                currentMaterial.SetColor("_SolidOutline", Color.white);
-            }
-            else
-            {
-                Debug.LogWarning($"材质 {currentMaterial.name} 没有找到 _SolidOutline 属性！");
-            }
+            // Material currentMaterial = sr.material;
+            // if (currentMaterial == null)
+            // {
+            //     Debug.LogError("鸟的材质为空！");
+            //     return;
+            // }
+
+            // // 直接使用 _SolidOutline 属性（对应 Inspector 中的 "Outline Color Base"）
+            // if (currentMaterial.HasProperty("_SolidOutline"))
+            // {
+            //     currentMaterial.SetColor("_SolidOutline", Color.white);
+            // }
+            // else
+            // {
+            //     Debug.LogWarning($"材质 {currentMaterial.name} 没有找到 _SolidOutline 属性！");
+            // }
             
-            // 设置 Width 属性（对应 Inspector 中的 "Width (Max recommended 100)"）
-            if (currentMaterial.HasProperty("_Thickness"))
-            {
-                currentMaterial.SetFloat("_Thickness", 3.8f);
-            }
+            // // 设置 Width 属性（对应 Inspector 中的 "Width (Max recommended 100)"）
+            // if (currentMaterial.HasProperty("_Thickness"))
+            // {
+            //     currentMaterial.SetFloat("_Thickness", 3.8f);
+            // }
+            
+            // // 更新静态变量，记录当前高亮的鸟
+            // currentHighlightedBird = this;
         }
         
         /// <summary>
@@ -568,37 +544,31 @@ namespace BirdGame
         {
             if (sr == null || sr.material == null) return;
             
-            Material currentMaterial = sr.material;
+            sr.material = materialNormal;
+            // Material currentMaterial = sr.material;
             
-            // 使用 _SolidOutline 属性（对应 Inspector 中的 "Outline Color Base"）
-            if (currentMaterial.HasProperty("_SolidOutline") && hasOriginalColor)
-            {
-                currentMaterial.SetColor("_SolidOutline", originalOutlineColor);
-            }
+            // // 使用 _SolidOutline 属性（对应 Inspector 中的 "Outline Color Base"）
+            // if (currentMaterial.HasProperty("_SolidOutline") && hasOriginalColor)
+            // {
+            //     currentMaterial.SetColor("_SolidOutline", originalOutlineColor);
+            // }
             
-            // 恢复原始 Width 属性（对应 Inspector 中的 "Width (Max recommended 100)"）
-            if (currentMaterial.HasProperty("_Thickness") && hasOriginalThickness)
-            {
-                currentMaterial.SetFloat("_Thickness", originalThickness);
-            }
+            // // 恢复原始 Width 属性（对应 Inspector 中的 "Width (Max recommended 100)"）
+            // if (currentMaterial.HasProperty("_Thickness") && hasOriginalThickness)
+            // {
+            //     currentMaterial.SetFloat("_Thickness", originalThickness);
+            // }
         }
 
         /// <summary>
-        /// 恢复所有鸟的材质颜色
+        /// 恢复所有鸟的材质颜色（优化版：只恢复上一次高亮的鸟）
         /// </summary>
         private void RestoreAllBirdsOutlineColor()
         {
-            GameObject[] birds = GameObject.FindGameObjectsWithTag("Bird");
-            foreach (var bird in birds)
+            // 优化：只恢复上一次高亮的鸟，避免遍历所有鸟
+            if (currentHighlightedBird != null && currentHighlightedBird != this)
             {
-                if (bird != null)
-                {
-                    Brid birdScript = bird.GetComponent<Brid>();
-                    if (birdScript != null)
-                    {
-                        birdScript.RestoreOriginalOutlineColor();
-                    }
-                }
+                currentHighlightedBird.RestoreOriginalOutlineColor();
             }
         }
 
@@ -618,6 +588,15 @@ namespace BirdGame
             if (other.gameObject.CompareTag("Bird"))
             {
                 onNearOtherBird?.Invoke();
+            }
+        }
+        
+        private void OnDestroy()
+        {
+            // 清除静态引用，避免悬空引用
+            if (currentHighlightedBird == this)
+            {
+                currentHighlightedBird = null;
             }
         }
     }

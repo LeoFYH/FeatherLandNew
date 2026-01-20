@@ -1,4 +1,4 @@
-﻿using DG.Tweening;
+using DG.Tweening;
 using QFramework;
 using UnityEngine;
 using UnityEngine.AI;
@@ -126,7 +126,7 @@ namespace BirdGame
             else
             {
                 _brid.sr.flipX = _brid.agent.velocity.x >= 0;
-                _brid.anim.SetFloat("MoveSpeed", 1);
+                _brid.anim.SetFloat(AnimatorHashes.MoveSpeed, 1);
             }
         }
 

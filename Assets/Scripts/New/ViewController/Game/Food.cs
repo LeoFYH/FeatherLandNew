@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using DG.Tweening;
@@ -16,19 +17,29 @@ namespace BirdGame
         private float fadeDuration = 4f; // 总淡出时间
         private float timer = 0f; // 淡出计时器
 
-        void Start()
+        private Coroutine delayCoroutine;
+        private Coroutine autoDestroyCoroutine;
+        private Coroutine delayDestroyCoroutine;
+
+        void Awake()
         {
-            y = transform.position.y;
             spriteRenderer = GetComponent<SpriteRenderer>();
-            StartCoroutine(DelayedStart());
+            
             this.RegisterEvent<ClearFoodEvent>(evt =>
             {
                 this.GetSystem<IGameSystem>().RecycleFood(this);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             // 启动8秒后自动消失的检测
-            StartCoroutine(nameof(AutoDestroyIfUntargeted));
+            
         }
-        
+
+        public void Init()
+        {
+            y = transform.position.y;
+            delayCoroutine = StartCoroutine(DelayedStart());
+            autoDestroyCoroutine = StartCoroutine(nameof(AutoDestroyIfUntargeted));
+        }
+
         /// <summary>
         /// 如果食物没有被 target 超过 8 秒，自动消失
         /// </summary>
@@ -40,7 +51,7 @@ namespace BirdGame
             if (!isTargeted && !isDisabling)
             {
                 // 启动淡出效果
-                StartCoroutine(nameof(DestroyDelay));
+                delayDestroyCoroutine = StartCoroutine(nameof(DestroyDelay));
             }
         }
 
@@ -101,6 +112,25 @@ namespace BirdGame
 
             // 完全透明后销毁
             this.GetSystem<IGameSystem>().RecycleFood(this);
+        }
+
+        private void OnDisable()
+        {
+            if (delayCoroutine != null)
+            {
+                this.GetSystem<IMonoSystem>()?.StopCoroutine(delayCoroutine);
+                delayCoroutine = null;
+            }
+            if (autoDestroyCoroutine != null)
+            {
+                this.GetSystem<IMonoSystem>()?.StopCoroutine(autoDestroyCoroutine);
+                autoDestroyCoroutine = null;
+            }
+            if (delayDestroyCoroutine != null)
+            {
+                this.GetSystem<IMonoSystem>()?.StopCoroutine(delayDestroyCoroutine);
+                delayDestroyCoroutine = null;
+            }
         }
     }
 }

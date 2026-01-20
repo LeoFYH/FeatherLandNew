@@ -1,4 +1,4 @@
-﻿using QFramework;
+using QFramework;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -27,6 +27,7 @@ namespace BirdGame
             
             this.RegisterSystem<IMonoSystem>(new MonoSystem());
             this.RegisterSystem<IAssetSystem>(new AssetSystem());
+            this.RegisterSystem<IObjectPoolSystem>(new ObjectPoolSystem());
             this.RegisterSystem<ISaveSystem>(new SaveSystem());
             this.RegisterSystem<IBirdSystem>(new BirdSystem());
             this.RegisterSystem<IUISystem>(new UISystem());
