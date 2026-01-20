@@ -90,6 +90,14 @@ namespace BirdGame
                 this.GetModel<IAccountModel>().Coins.Value = this.GetModel<IConfigModel>().ShopConfig.startCoins;
                 this.GetModel<ISaveModel>().SettingData.gameLanguage = this.GetSystem<ISteamSystem>().GetUserLanguage();
                 
+                // 应用默认屏幕模式（全屏模式）
+                int defaultScreenMode = this.GetModel<ISaveModel>().SettingData.screenMode;
+                if (defaultScreenMode >= 3)
+                {
+                    defaultScreenMode = 2; // 如果模式无效，使用全屏模式
+                }
+                SwitchScreenMode(defaultScreenMode);
+                
                 // // 清空鸟模型中的数据
                 // var birdModel = this.GetModel<IBirdModel>();
                 // if (birdModel != null)
@@ -413,7 +421,16 @@ namespace BirdGame
             {
                 savedScreenMode = 2;
             }
+            
+            // 设置下拉菜单值（使用标志防止触发onValueChanged）
+            isChangingMode = true;
             screenDropdown.value = savedScreenMode;
+            isChangingMode = false;
+            
+            // 应用屏幕模式（仅在初始化时应用，避免重复应用）
+            // 注意：这里不调用SwitchScreenMode，因为GameEntry会在启动时应用屏幕模式
+            // 但如果SettingPopup在游戏运行中打开，且屏幕模式不匹配，则需要应用
+            // 为了安全，我们只在必要时应用（例如清除存档后）
         }
 
         private void InitializeLanguageDropdown()
