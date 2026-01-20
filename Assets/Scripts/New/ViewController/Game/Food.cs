@@ -24,7 +24,6 @@ namespace BirdGame
         void Awake()
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
-            
             this.RegisterEvent<ClearFoodEvent>(evt =>
             {
                 this.GetSystem<IGameSystem>().RecycleFood(this);
@@ -35,6 +34,8 @@ namespace BirdGame
 
         public void Init()
         {
+            spriteRenderer.color = new Color32(255, 255, 255, 255);
+            isTargeted = false;
             y = transform.position.y;
             delayCoroutine = StartCoroutine(DelayedStart());
             autoDestroyCoroutine = StartCoroutine(nameof(AutoDestroyIfUntargeted));
