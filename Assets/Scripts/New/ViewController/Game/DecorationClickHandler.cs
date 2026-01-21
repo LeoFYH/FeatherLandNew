@@ -33,14 +33,14 @@ namespace BirdGame
                 Destroy(transform.parent.gameObject);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
-            this.RegisterEvent<SwitchWeatherEvent>(evt =>
-            {
-                if (sr == null)
-                    sr = GetComponentInChildren<SpriteRenderer>();
-                var ani = DOTween.Sequence();
-                ani.Append(sr.DOColor(Color.black, 0.5f));
-                ani.Append(sr.DOColor(Color.white, 0.5f));
-            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            // this.RegisterEvent<SwitchWeatherEvent>(evt =>
+            // {
+            //     if (sr == null)
+            //         sr = GetComponentInChildren<SpriteRenderer>();
+            //     var ani = DOTween.Sequence();
+            //     ani.Append(sr.DOColor(Color.black, 0.5f));
+            //     ani.Append(sr.DOColor(Color.white, 0.5f));
+            // }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
             if (effects != null && effects.Length > 0)
             {
