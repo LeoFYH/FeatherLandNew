@@ -47,17 +47,17 @@ namespace BirdGame
             {
                 var accountModel = this.GetModel<IAccountModel>();
                 float addedCoins = accountModel.AddedCoins;
-                if (addedCoins == 0)
-                {
-                    alertText.text = localization.GetString("Time to have a break!");
-                }
-                else
-                {
-                    string value = localization.GetString("Focus succeeded! {0} Bonus Coin Earned!");
-                    value = string.Format(value, addedCoins);;
-                    alertText.text = $"{localization.GetString("Time to have a break!")}\n{value}";
-
-                }
+                // if (addedCoins == 0)
+                // {
+                alertText.text = $"{localization.GetString("Time to have a break!")}";
+                // }
+                // else
+                // {
+                //     string value = localization.GetString("Focus succeeded! {0} Bonus Coin Earned!");
+                //     value = string.Format(value, addedCoins);;
+                //     alertText.text = $"{localization.GetString("Time to have a break!")}\n{value}";
+                //
+                // }
 
                 icon.sprite = sps[0];
                 icon.GetComponent<RectTransform>().sizeDelta = new Vector2(sps[0].rect.size.x, sps[0].rect.size.y) * 0.5f;
@@ -66,16 +66,16 @@ namespace BirdGame
             {
                 var accountModel = this.GetModel<IAccountModel>();
                 float addedCoins = accountModel.AddedCoins;
-                if (addedCoins == 0)
-                {
-                    alertText.text = localization.GetString("Time to work!");
-                }
-                else
-                {
-                    string value = localization.GetString("Focus succeeded! {0} Bonus Coin Earned!");
-                    value = string.Format(value, addedCoins);
-                    alertText.text = $"{localization.GetString("Time to work!")}\n{value}";
-                }
+                // if (addedCoins == 0)
+                // {
+                alertText.text = $"{localization.GetString("Time to work!")}\n{localization.GetString("Try to focus for more than 5 minutes to earn coins.")}";
+                // }
+                // else
+                // {
+                //     string value = localization.GetString("Focus succeeded! {0} Bonus Coin Earned!");
+                //     value = string.Format(value, addedCoins);
+                //     alertText.text = $"{localization.GetString("Time to work!")}\n{value}";
+                // }
                 
                 //alertText.SetKey("Time to work!");
                 icon.sprite = sps[1];
@@ -112,17 +112,17 @@ namespace BirdGame
                 {
                     var accountModel = this.GetModel<IAccountModel>();
                     float addedCoins = accountModel.AddedCoins;
-                    if (addedCoins == 0)
-                    {
-                        alertText.text = localization.GetString("Time to have a break!");
-                    }
-                    else
-                    {
-                        string value = localization.GetString("Focus succeeded! {0} Bonus Coin Earned!");
-                        value = string.Format(value, addedCoins);;
-                        alertText.text = $"{localization.GetString("Time to have a break!")}\n{value}";
-
-                    }
+                    // if (addedCoins == 0)
+                    // {
+                    alertText.text = $"{localization.GetString("Time to have a break!")}";
+                    // }
+                    // else
+                    // {
+                    //     string value = localization.GetString("Focus succeeded! {0} Bonus Coin Earned!");
+                    //     value = string.Format(value, addedCoins);;
+                    //     alertText.text = $"{localization.GetString("Time to have a break!")}\n{value}";
+                    //
+                    // }
 
                     icon.sprite = sps[0];
                     icon.GetComponent<RectTransform>().sizeDelta = new Vector2(sps[0].rect.size.x, sps[0].rect.size.y) * 0.5f;
@@ -131,16 +131,16 @@ namespace BirdGame
                 {
                     var accountModel = this.GetModel<IAccountModel>();
                     float addedCoins = accountModel.AddedCoins;
-                    if (addedCoins == 0)
-                    {
-                        alertText.text = localization.GetString("Time to work!");
-                    }
-                    else
-                    {
-                        string value = localization.GetString("Focus succeeded! {0} Bonus Coin Earned!");
-                        value = string.Format(value, addedCoins);;
-                        alertText.text = $"{localization.GetString("Time to work!")}\n{value}";
-                    }
+                    // if (addedCoins == 0)
+                    // {
+                    alertText.text = $"{localization.GetString("Time to work!")}\n{localization.GetString("Try to focus for more than 5 minutes to earn coins.")}";
+                    // }
+                    // else
+                    // {
+                    //     string value = localization.GetString("Focus succeeded! {0} Bonus Coin Earned!");
+                    //     value = string.Format(value, addedCoins);
+                    //     alertText.text = $"{localization.GetString("Time to work!")}\n{value}";
+                    // }
                 
                     //alertText.SetKey("Time to work!");
                     icon.sprite = sps[1];

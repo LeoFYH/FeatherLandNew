@@ -66,6 +66,8 @@ namespace BirdGame
         public bool IsPause { get; set; }
         public bool IsSkip { get; set; }
         public float CurrentTimer { get; set; }
+        public float AddCoins { get; set; }
+        public float WorkTime { get; set; }
 
         public BindableProperty<TomatoTimerType> TimerType { get; } =
             new BindableProperty<TomatoTimerType>(TomatoTimerType.Session);

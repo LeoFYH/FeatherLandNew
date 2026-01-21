@@ -337,8 +337,22 @@ namespace BirdGame
 
             cancelButton.onClick.AddListener(() =>
             {
-                if(item.TimerCoroutine != null)
+                if (item.TimerCoroutine != null)
+                {
+                    int min = (int)(item.WorkTime / 60);
+                    if(min >= 5)
+                    {
+                        item.AddCoins = (min - 4) * (this.GetModel<IAccountModel>().Coins.Value * 0.05f);
+                    }
+                    this.GetModel<IAccountModel>().Coins.Value += item.AddCoins;
+                    this.GetModel<IAccountModel>().AddedCoins = item.AddCoins;
+
+                    item.WorkTime = 0;
+                    item.AddCoins = 0;
+                    this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForTimer;
+                    this.SendCommand<AlertCommand>();
                     this.GetSystem<IMonoSystem>().StopCoroutine(item.TimerCoroutine);
+                }
                 if(this.GetModel<IClockModel>().TimerItem.TimerCoroutine != null)
                     this.GetSystem<IMonoSystem>().StopCoroutine(this.GetModel<IClockModel>().TimerItem.TimerCoroutine);
                 if(this.GetModel<IClockModel>().StopWatchItem.TimerCoroutine != null)
@@ -766,10 +780,10 @@ namespace BirdGame
         private IEnumerator StartTimer()
         {
             float timer = 0;
-            float workTime = 0;
             int min = 0;
-            float coins = 0;
             var item = this.GetModel<IClockModel>().TomatoItem;
+            item.WorkTime = 0;
+            item.AddCoins = 0;
             item.TotalNumber = item.Number.Value;
             var frame = new WaitForFixedUpdate();
             item.TimerType.Value = TomatoTimerType.Session;
@@ -793,7 +807,6 @@ namespace BirdGame
                 {
                     item.Timer.Value = 0;
                     item.IsSkip = false;
-                    isSkip = true;
                 }
                 else if (!item.IsPause)
                 {
@@ -809,8 +822,7 @@ namespace BirdGame
 
                 if (item.TimerType.Value == TomatoTimerType.Session)
                 {
-                    workTime += Time.fixedDeltaTime;
-                    Debug.Log(workTime);
+                    item.WorkTime += Time.fixedDeltaTime;
                 }
                 // Handle timer transition when timer reaches 0 or is skipped
                 if (item.Timer.Value <= 0)
@@ -825,19 +837,6 @@ namespace BirdGame
                         this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForSession;
                         item.Number.Value--;
                         this.SendCommand<AlertCommand>();
-                        if (!isSkip)
-                        {
-                            coins = 0;
-                            min = (int)(workTime / 60);
-                            if(min >= 5)
-                            {
-                                coins = (min - 4) * (this.GetModel<IAccountModel>().Coins.Value * 0.05f);
-                            }
-
-                            workTime = 0;
-                            this.GetModel<IAccountModel>().Coins.Value += coins;
-                            this.GetModel<IAccountModel>().AddedCoins = coins;
-                        }
                     }
                     else if (item.TimerType.Value == TomatoTimerType.Break)
                     {
@@ -848,6 +847,16 @@ namespace BirdGame
                         
                         if (item.Number.Value <= 0)
                         {
+                            min = (int)(item.WorkTime / 60);
+                            if(min >= 5)
+                            {
+                                item.AddCoins = (min - 4) * (this.GetModel<IAccountModel>().Coins.Value * 0.05f);
+                            }
+                            this.GetModel<IAccountModel>().Coins.Value += item.AddCoins;
+                            this.GetModel<IAccountModel>().AddedCoins = item.AddCoins;
+
+                            item.WorkTime = 0;
+                            item.AddCoins = 0;
                             this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForTimer;
                             this.SendCommand<AlertCommand>();
                             break;
@@ -856,33 +865,11 @@ namespace BirdGame
                         {
                             this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForBreak;
                             this.SendCommand<AlertCommand>();
-
-                            if (isSkip)
-                            {
-                                coins = 0;
-                                min = (int)(workTime / 60);
-                                if(min >= 5)
-                                {
-                                    coins = (min - 4) * (this.GetModel<IAccountModel>().Coins.Value * 0.05f);
-                                }
-
-                                workTime = 0;
-                                this.GetModel<IAccountModel>().Coins.Value += coins;
-                                this.GetModel<IAccountModel>().AddedCoins = coins;
-                            }
                         }
                     }
                 }
             }
             
-            coins = 0;
-            min = (int)(workTime / 60);
-            if(min >= 5)
-            {
-                coins = (min - 4) * (this.GetModel<IAccountModel>().Coins.Value * 0.05f);
-            }
-            this.GetModel<IAccountModel>().Coins.Value += coins;
-            this.GetModel<IAccountModel>().AddedCoins = coins;
             
             this.GetModel<IClockModel>().TomatoItem.TimerCoroutine = null;
             // 恢复 Number 为上一次设定的值（TotalNumber），就像 SessionMinutes 和 BreakMinutes 一样
