@@ -810,6 +810,7 @@ namespace BirdGame
                 if (item.TimerType.Value == TomatoTimerType.Session)
                 {
                     workTime += Time.fixedDeltaTime;
+                    Debug.Log(workTime);
                 }
                 // Handle timer transition when timer reaches 0 or is skipped
                 if (item.Timer.Value <= 0)
@@ -826,14 +827,14 @@ namespace BirdGame
                         this.SendCommand<AlertCommand>();
                         if (!isSkip)
                         {
-                            min = (int)(workTime / 30);
+                            coins = 0;
+                            min = (int)(workTime / 60);
                             if(min >= 5)
                             {
                                 coins = (min - 4) * (this.GetModel<IAccountModel>().Coins.Value * 0.05f);
                             }
 
                             workTime = 0;
-                            coins = 0;
                             this.GetModel<IAccountModel>().Coins.Value += coins;
                             this.GetModel<IAccountModel>().AddedCoins = coins;
                         }
@@ -858,8 +859,8 @@ namespace BirdGame
 
                             if (isSkip)
                             {
-                                min = (int)(workTime / 30);
                                 coins = 0;
+                                min = (int)(workTime / 60);
                                 if(min >= 5)
                                 {
                                     coins = (min - 4) * (this.GetModel<IAccountModel>().Coins.Value * 0.05f);
@@ -874,8 +875,8 @@ namespace BirdGame
                 }
             }
             
-            min = (int)(workTime / 30);
             coins = 0;
+            min = (int)(workTime / 60);
             if(min >= 5)
             {
                 coins = (min - 4) * (this.GetModel<IAccountModel>().Coins.Value * 0.05f);
