@@ -63,8 +63,7 @@ namespace BirdGame
             //     float y = Random.Range(-_brid.radiusY, _brid.radiusY);
             //     newTarget = new Vector2(currentPos.x + x, currentPos.y + y);
             // }
-
-            _brid.agent.ResetPath();
+            
             target = NavigationManager.Instance.GetRandomTarget(_brid.walkArea);
             while (target == Vector3.zero || !NavigationManager.Instance.IsPointInNavMeshArea(_brid.walkArea, target))
             {
@@ -111,8 +110,6 @@ namespace BirdGame
                 return;
             }
             
-            
-
             // 处理跟随鼠标逻辑
             // if (isFollowingMouse)
             // {
