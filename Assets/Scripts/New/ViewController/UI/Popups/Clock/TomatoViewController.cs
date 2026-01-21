@@ -767,6 +767,8 @@ namespace BirdGame
         {
             float timer = 0;
             float workTime = 0;
+            int min = 0;
+            float coins = 0;
             var item = this.GetModel<IClockModel>().TomatoItem;
             item.TotalNumber = item.Number.Value;
             var frame = new WaitForFixedUpdate();
@@ -785,11 +787,13 @@ namespace BirdGame
                     currentCount, item.TotalNumber);
                 yield return frame;
                 
+                bool isSkip = false;
                 // Check for skip first, even when paused
                 if (item.IsSkip)
                 {
                     item.Timer.Value = 0;
                     item.IsSkip = false;
+                    isSkip = true;
                 }
                 else if (!item.IsPause)
                 {
@@ -820,6 +824,19 @@ namespace BirdGame
                         this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForSession;
                         item.Number.Value--;
                         this.SendCommand<AlertCommand>();
+                        if (!isSkip)
+                        {
+                            min = (int)(workTime / 30);
+                            if(min >= 5)
+                            {
+                                coins = (min - 4) * (this.GetModel<IAccountModel>().Coins.Value * 0.05f);
+                            }
+
+                            workTime = 0;
+                            coins = 0;
+                            this.GetModel<IAccountModel>().Coins.Value += coins;
+                            this.GetModel<IAccountModel>().AddedCoins = coins;
+                        }
                     }
                     else if (item.TimerType.Value == TomatoTimerType.Break)
                     {
@@ -838,21 +855,33 @@ namespace BirdGame
                         {
                             this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForBreak;
                             this.SendCommand<AlertCommand>();
-                        }
-                        
-                        int min = (int)(workTime / 300);
-                        float coins = 0;
-                        if(min >= 5)
-                        {
-                            coins = (min - 5) * (this.GetModel<IAccountModel>().Coins.Value * 0.05f) + 1;
-                        }
 
-                        workTime = 0;
-                        this.GetModel<IAccountModel>().Coins.Value += coins;
-                        this.GetModel<IAccountModel>().AddedCoins = coins;
+                            if (isSkip)
+                            {
+                                min = (int)(workTime / 30);
+                                coins = 0;
+                                if(min >= 5)
+                                {
+                                    coins = (min - 4) * (this.GetModel<IAccountModel>().Coins.Value * 0.05f);
+                                }
+
+                                workTime = 0;
+                                this.GetModel<IAccountModel>().Coins.Value += coins;
+                                this.GetModel<IAccountModel>().AddedCoins = coins;
+                            }
+                        }
                     }
                 }
             }
+            
+            min = (int)(workTime / 30);
+            coins = 0;
+            if(min >= 5)
+            {
+                coins = (min - 4) * (this.GetModel<IAccountModel>().Coins.Value * 0.05f);
+            }
+            this.GetModel<IAccountModel>().Coins.Value += coins;
+            this.GetModel<IAccountModel>().AddedCoins = coins;
             
             this.GetModel<IClockModel>().TomatoItem.TimerCoroutine = null;
             // 恢复 Number 为上一次设定的值（TotalNumber），就像 SessionMinutes 和 BreakMinutes 一样

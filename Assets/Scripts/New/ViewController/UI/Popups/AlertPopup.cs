@@ -46,13 +46,46 @@ namespace BirdGame
             }
             else if (type == AlertType.TimeUpForSession)
             {
-                alertText.SetKey("Time to have a break!");
+                var accountModel = this.GetModel<IAccountModel>();
+                float addedCoins = accountModel.AddedCoins;
+                if (addedCoins == 0)
+                {
+                    alertText.SetKey("Time to have a break!");
+                }
+                else
+                {
+                    string value = this.GetSystem<ILocalizationSystem>()
+                        .GetString("Focus succeeded! {0} Bonus Coin Earned!");
+                    value = string.Format(value, addedCoins);;
+                    alertText.ThisText.text =
+                    new StringBuilder(this.GetSystem<LocalizationSystem>().GetString("Time to have a break!"))
+                        .Append('\n').Append(value).ToString();
+
+                }
+
                 icon.sprite = sps[0];
                 icon.GetComponent<RectTransform>().sizeDelta = new Vector2(sps[0].rect.size.x, sps[0].rect.size.y) * 0.5f;
             }
             else
             {
-                alertText.SetKey("Time to work!");
+                var accountModel = this.GetModel<IAccountModel>();
+                float addedCoins = accountModel.AddedCoins;
+                if (addedCoins == 0)
+                {
+                    alertText.SetKey("Time to work!");
+                }
+                else
+                {
+                    string value = this.GetSystem<ILocalizationSystem>()
+                        .GetString("Focus succeeded! {0} Bonus Coin Earned!");
+                    value = string.Format(value, addedCoins);;
+                    alertText.ThisText.text =
+                        new StringBuilder(this.GetSystem<LocalizationSystem>().GetString("Time to work!"))
+                            .Append('\n').Append(value).ToString();
+
+                }
+                
+                //alertText.SetKey("Time to work!");
                 icon.sprite = sps[1];
                 icon.GetComponent<RectTransform>().sizeDelta = new Vector2(sps[0].rect.size.x, sps[0].rect.size.y) * 0.5f;
             }
