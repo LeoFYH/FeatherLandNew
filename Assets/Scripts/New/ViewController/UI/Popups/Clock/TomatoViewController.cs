@@ -342,7 +342,7 @@ namespace BirdGame
                     int min = (int)(item.WorkTime / 60);
                     if(min >= 5)
                     {
-                        item.AddCoins = (min - 4) * (this.GetModel<IAccountModel>().Coins.Value * 0.05f);
+                        item.AddCoins =  (min - 4) * (this.GetModel<IAccountModel>().Coins.Value * 0.05f);
                     }
                     this.GetModel<IAccountModel>().Coins.Value += item.AddCoins;
                     this.GetModel<IAccountModel>().AddedCoins = item.AddCoins;
@@ -847,16 +847,6 @@ namespace BirdGame
                         
                         if (item.Number.Value <= 0)
                         {
-                            min = (int)(item.WorkTime / 60);
-                            if(min >= 5)
-                            {
-                                item.AddCoins = (min - 4) * (this.GetModel<IAccountModel>().Coins.Value * 0.05f);
-                            }
-                            this.GetModel<IAccountModel>().Coins.Value += item.AddCoins;
-                            this.GetModel<IAccountModel>().AddedCoins = item.AddCoins;
-
-                            item.WorkTime = 0;
-                            item.AddCoins = 0;
                             this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForTimer;
                             this.SendCommand<AlertCommand>();
                             break;
@@ -870,7 +860,16 @@ namespace BirdGame
                 }
             }
             
-            
+            min = (int)(item.WorkTime / 60);
+            if(min >= 5)
+            {
+                item.AddCoins = (min - 4) * (this.GetModel<IAccountModel>().Coins.Value * 0.05f);
+            }
+            this.GetModel<IAccountModel>().Coins.Value += item.AddCoins;
+            this.GetModel<IAccountModel>().AddedCoins = item.AddCoins;
+
+            item.WorkTime = 0;
+            item.AddCoins = 0;
             this.GetModel<IClockModel>().TomatoItem.TimerCoroutine = null;
             // 恢复 Number 为上一次设定的值（TotalNumber），就像 SessionMinutes 和 BreakMinutes 一样
             // 这样用户下次使用时，Number 会保持上一次设定的值，而不是变成 0

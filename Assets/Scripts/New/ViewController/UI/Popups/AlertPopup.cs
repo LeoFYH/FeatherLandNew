@@ -65,10 +65,10 @@ namespace BirdGame
             else
             {
                 var accountModel = this.GetModel<IAccountModel>();
-                float addedCoins = accountModel.AddedCoins;
+                //float addedCoins = accountModel.AddedCoins;
                 // if (addedCoins == 0)
                 // {
-                alertText.text = $"{localization.GetString("Time to work!")}\n{localization.GetString("Try to focus for more than 5 minutes to earn coins.")}";
+                alertText.text = $"{localization.GetString("Time to work!")}";
                 // }
                 // else
                 // {
@@ -79,7 +79,7 @@ namespace BirdGame
                 
                 //alertText.SetKey("Time to work!");
                 icon.sprite = sps[1];
-                icon.GetComponent<RectTransform>().sizeDelta = new Vector2(sps[0].rect.size.x, sps[0].rect.size.y) * 0.5f;
+                icon.GetComponent<RectTransform>().sizeDelta = new Vector2(sps[1].rect.size.x, sps[1].rect.size.y) * 0.5f;
             }
 
             this.RegisterEvent<ChangeLanguageEvent>(evt =>
@@ -130,10 +130,9 @@ namespace BirdGame
                 else
                 {
                     var accountModel = this.GetModel<IAccountModel>();
-                    float addedCoins = accountModel.AddedCoins;
                     // if (addedCoins == 0)
                     // {
-                    alertText.text = $"{localization.GetString("Time to work!")}\n{localization.GetString("Try to focus for more than 5 minutes to earn coins.")}";
+                    alertText.text = $"{localization.GetString("Time to work!")}";
                     // }
                     // else
                     // {
@@ -144,7 +143,7 @@ namespace BirdGame
                 
                     //alertText.SetKey("Time to work!");
                     icon.sprite = sps[1];
-                    icon.GetComponent<RectTransform>().sizeDelta = new Vector2(sps[0].rect.size.x, sps[0].rect.size.y) * 0.5f;
+                    icon.GetComponent<RectTransform>().sizeDelta = new Vector2(sps[1].rect.size.x, sps[1].rect.size.y) * 0.5f;
                 }
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             closeButton.onClick.AddListener(OnCloseClick);
