@@ -50,7 +50,7 @@ namespace BirdGame
                 currMachine.ChangeState<BirdIdleState>();
                 return;
             }
-
+            _brid.agent.ResetPath();
             if (_brid.agent.SetDestination(eatPosition))
             {
                 _brid.agent.isStopped = false;
@@ -131,6 +131,7 @@ namespace BirdGame
                     return;
                 }
 
+                _brid.agent.ResetPath();
                 if (!_brid.agent.SetDestination(eatPosition))
                 {
                     currMachine.ChangeState<BirdIdleState>();

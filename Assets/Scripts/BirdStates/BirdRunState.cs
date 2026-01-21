@@ -40,14 +40,14 @@ namespace BirdGame
             }
 
             // 检查是否应该跟随鼠标
-            if (_brid.shouldFollowMouse)
-            {
-                isFollowingMouse = true;
-                followMouseStartTime = Time.time;
-                _brid.shouldFollowMouse = false; // 重置标志
-                Debug.Log("RunState: 开始跟随鼠标！");
-                return; // 不设置随机目标，直接跟随鼠标
-            }
+            // if (_brid.shouldFollowMouse)
+            // {
+            //     isFollowingMouse = true;
+            //     followMouseStartTime = Time.time;
+            //     _brid.shouldFollowMouse = false; // 重置标志
+            //     Debug.Log("RunState: 开始跟随鼠标！");
+            //     return; // 不设置随机目标，直接跟随鼠标
+            // }
 
             //Vector2 currentPos = _brid.transform.position;
             // Vector2 newTarget;
@@ -64,6 +64,7 @@ namespace BirdGame
             //     newTarget = new Vector2(currentPos.x + x, currentPos.y + y);
             // }
 
+            _brid.agent.ResetPath();
             target = NavigationManager.Instance.GetRandomTarget(_brid.walkArea);
             while (target == Vector3.zero || !NavigationManager.Instance.IsPointInNavMeshArea(_brid.walkArea, target))
             {
