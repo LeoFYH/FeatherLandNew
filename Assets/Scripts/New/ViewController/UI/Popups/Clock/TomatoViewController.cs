@@ -342,7 +342,7 @@ namespace BirdGame
                     int min = (int)(item.WorkTime / 60);
                     if(min >= 5)
                     {
-                        item.AddCoins =  (min - 4) * (this.GetModel<IAccountModel>().Coins.Value * 0.05f);
+                        item.AddCoins =  (min - 4) * (this.GetModel<IAccountModel>().Coins.Value * 0.01f);
                     }
                     this.GetModel<IAccountModel>().Coins.Value += item.AddCoins;
                     this.GetModel<IAccountModel>().AddedCoins = item.AddCoins;
