@@ -416,6 +416,10 @@ namespace BirdGame
                 data.bird.currentExp.Register(v =>
                 {
                     progressFill.fillAmount = v * 1f / birdConf.totalExp;
+                    if (progressFill.fillAmount >= 1f)
+                    {
+                        progressIcon.sprite = iconForFavi;
+                    }
                 }).UnRegisterWhenGameObjectDestroyed(gameObject);
                 price = data.individualPriceSmall;
             }
