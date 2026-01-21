@@ -8,7 +8,7 @@ namespace BirdGame
 {
     public class AlertPopup : UIBase
     {
-        public LocalizationText alertText;
+        public TextMeshProUGUI alertText;
         public Image icon;
         public Sprite[] sps;
         public Button closeButton;
@@ -16,28 +16,27 @@ namespace BirdGame
         private void Start()
         {
             var type = this.GetModel<IClockModel>().AlertType;
+            var localization = this.GetSystem<ILocalizationSystem>();
             if (type == AlertType.TimeUpForTimer)
             {
                 var accountModel = this.GetModel<IAccountModel>();
                 float addedCoins = accountModel.AddedCoins;
                 
-                string value = this.GetSystem<ILocalizationSystem>().GetString("Time's Up!");
+                string value = localization.GetString("Time's Up!");
                 string value1;
                 
                 // 如果 focus time 小于 5 分钟（AddedCoins == 0），显示提示信息
                 if (addedCoins == 0)
                 {
-                    value1 = this.GetSystem<ILocalizationSystem>()
-                        .GetString("Try to focus for more than 5 minutes to earn coins.");
+                    value1 = localization.GetString("Try to focus for more than 5 minutes to earn coins.");
                 }
                 else
                 {
-                    value1 = this.GetSystem<ILocalizationSystem>()
-                        .GetString("Focus succeeded! {0} Bonus Coin Earned!");
+                    value1 = localization.GetString("Focus succeeded! {0} Bonus Coin Earned!");
                     value1 = string.Format(value1, addedCoins);
                 }
                 
-                alertText.ThisText.text = new StringBuilder().Append(value)
+                alertText.text = new StringBuilder().Append(value)
                     .Append("\n")
                     .Append(value1)
                     .ToString();
@@ -50,16 +49,13 @@ namespace BirdGame
                 float addedCoins = accountModel.AddedCoins;
                 if (addedCoins == 0)
                 {
-                    alertText.SetKey("Time to have a break!");
+                    alertText.text = localization.GetString("Time to have a break!");
                 }
                 else
                 {
-                    string value = this.GetSystem<ILocalizationSystem>()
-                        .GetString("Focus succeeded! {0} Bonus Coin Earned!");
+                    string value = localization.GetString("Focus succeeded! {0} Bonus Coin Earned!");
                     value = string.Format(value, addedCoins);;
-                    alertText.ThisText.text =
-                    new StringBuilder(this.GetSystem<LocalizationSystem>().GetString("Time to have a break!"))
-                        .Append('\n').Append(value).ToString();
+                    alertText.text = $"{localization.GetString("Time to have a break!")}\n{value}";
 
                 }
 
@@ -72,17 +68,13 @@ namespace BirdGame
                 float addedCoins = accountModel.AddedCoins;
                 if (addedCoins == 0)
                 {
-                    alertText.SetKey("Time to work!");
+                    alertText.text = localization.GetString("Time to work!");
                 }
                 else
                 {
-                    string value = this.GetSystem<ILocalizationSystem>()
-                        .GetString("Focus succeeded! {0} Bonus Coin Earned!");
-                    value = string.Format(value, addedCoins);;
-                    alertText.ThisText.text =
-                        new StringBuilder(this.GetSystem<LocalizationSystem>().GetString("Time to work!"))
-                            .Append('\n').Append(value).ToString();
-
+                    string value = localization.GetString("Focus succeeded! {0} Bonus Coin Earned!");
+                    value = string.Format(value, addedCoins);
+                    alertText.text = $"{localization.GetString("Time to work!")}\n{value}";
                 }
                 
                 //alertText.SetKey("Time to work!");
@@ -97,34 +89,62 @@ namespace BirdGame
                     var accountModel = this.GetModel<IAccountModel>();
                     float addedCoins = accountModel.AddedCoins;
 
-                    string value = this.GetSystem<ILocalizationSystem>().GetString("Time's Up!");
+                    string value = localization.GetString("Time's Up!");
                     string value1;
 
                     // 如果 focus time 小于 5 分钟（AddedCoins == 0），显示提示信息
                     if (addedCoins == 0)
                     {
-                        value1 = this.GetSystem<ILocalizationSystem>()
-                            .GetString("Try to focus for more than 5 minutes to earn coins.");
+                        value1 = localization.GetString("Try to focus for more than 5 minutes to earn coins.");
                     }
                     else
                     {
-                        value1 = this.GetSystem<ILocalizationSystem>()
-                            .GetString("Focus succeeded! {0} Bonus Coin Earned!");
+                        value1 = localization.GetString("Focus succeeded! {0} Bonus Coin Earned!");
                         value1 = string.Format(value1, addedCoins);
                     }
 
-                    alertText.ThisText.text = new StringBuilder().Append(value)
+                    alertText.text = new StringBuilder().Append(value)
                         .Append("\n")
                         .Append(value1)
                         .ToString();
                 }
                 else if (type == AlertType.TimeUpForSession)
                 {
-                    alertText.SetKey("Time to have a break!");
+                    var accountModel = this.GetModel<IAccountModel>();
+                    float addedCoins = accountModel.AddedCoins;
+                    if (addedCoins == 0)
+                    {
+                        alertText.text = localization.GetString("Time to have a break!");
+                    }
+                    else
+                    {
+                        string value = localization.GetString("Focus succeeded! {0} Bonus Coin Earned!");
+                        value = string.Format(value, addedCoins);;
+                        alertText.text = $"{localization.GetString("Time to have a break!")}\n{value}";
+
+                    }
+
+                    icon.sprite = sps[0];
+                    icon.GetComponent<RectTransform>().sizeDelta = new Vector2(sps[0].rect.size.x, sps[0].rect.size.y) * 0.5f;
                 }
                 else
                 {
-                    alertText.SetKey("Time to work!");
+                    var accountModel = this.GetModel<IAccountModel>();
+                    float addedCoins = accountModel.AddedCoins;
+                    if (addedCoins == 0)
+                    {
+                        alertText.text = localization.GetString("Time to work!");
+                    }
+                    else
+                    {
+                        string value = localization.GetString("Focus succeeded! {0} Bonus Coin Earned!");
+                        value = string.Format(value, addedCoins);;
+                        alertText.text = $"{localization.GetString("Time to work!")}\n{value}";
+                    }
+                
+                    //alertText.SetKey("Time to work!");
+                    icon.sprite = sps[1];
+                    icon.GetComponent<RectTransform>().sizeDelta = new Vector2(sps[0].rect.size.x, sps[0].rect.size.y) * 0.5f;
                 }
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             closeButton.onClick.AddListener(OnCloseClick);
