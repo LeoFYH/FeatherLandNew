@@ -20,7 +20,6 @@ namespace BirdGame
 
         public override void OnEnter()
         {
-            _brid.agent.ResetPath();
             float time = Random.Range(6f, 10f);
             random = Random.Range(1, 10);
             float lickingTime = Random.Range(1f, 4f);

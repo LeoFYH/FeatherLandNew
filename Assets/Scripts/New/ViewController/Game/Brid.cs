@@ -143,6 +143,7 @@ namespace BirdGame
             // Initialize walkable area and basic components
             transform.localRotation = Quaternion.identity;
             agent = GetComponent<NavMeshAgent>();
+            agent.autoRepath = true;
             agent.speed = moveSpeed;
             agent.updateUpAxis = false;
             agent.updateRotation = false;
