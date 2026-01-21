@@ -203,7 +203,7 @@ namespace BirdGame
 
             foreach (var temp in birdModel.Foods)
             {
-                if (!temp.isTargeted && !temp.isDisabling)
+                if (!temp.isTargeted && !temp.isDisabling && temp.gameObject.activeSelf)
                 {
                     float distance = Vector3.Distance(position, temp.transform.position);
                     if (distance < closestDistance)
