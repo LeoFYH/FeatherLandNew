@@ -839,18 +839,21 @@ namespace BirdGame
                             this.GetModel<IClockModel>().AlertType = AlertType.TimeUpForBreak;
                             this.SendCommand<AlertCommand>();
                         }
+                        
+                        int min = (int)(workTime / 300);
+                        float coins = 0;
+                        if(min >= 5)
+                        {
+                            coins = (min - 5) * (this.GetModel<IAccountModel>().Coins.Value * 0.05f) + 1;
+                        }
+
+                        workTime = 0;
+                        this.GetModel<IAccountModel>().Coins.Value += coins;
+                        this.GetModel<IAccountModel>().AddedCoins = coins;
                     }
                 }
             }
-            int min = (int)(workTime / 300);
-            float coins = 0;
-            if(min > 5)
-            {
-                coins = (min - 5) * (this.GetModel<IAccountModel>().Coins.Value * 0.05f) + 1;
-            }
-
-            this.GetModel<IAccountModel>().Coins.Value += coins;
-            this.GetModel<IAccountModel>().AddedCoins = coins;
+            
             this.GetModel<IClockModel>().TomatoItem.TimerCoroutine = null;
             // 恢复 Number 为上一次设定的值（TotalNumber），就像 SessionMinutes 和 BreakMinutes 一样
             // 这样用户下次使用时，Number 会保持上一次设定的值，而不是变成 0
