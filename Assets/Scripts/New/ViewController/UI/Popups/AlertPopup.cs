@@ -19,7 +19,7 @@ namespace BirdGame
             if (type == AlertType.TimeUpForTimer)
             {
                 var accountModel = this.GetModel<IAccountModel>();
-                int addedCoins = accountModel.AddedCoins;
+                float addedCoins = accountModel.AddedCoins;
                 
                 string value = this.GetSystem<ILocalizationSystem>().GetString("Time's Up!");
                 string value1;
@@ -62,7 +62,7 @@ namespace BirdGame
                 if (type == AlertType.TimeUpForTimer)
                 {
                     var accountModel = this.GetModel<IAccountModel>();
-                    int addedCoins = accountModel.AddedCoins;
+                    float addedCoins = accountModel.AddedCoins;
 
                     string value = this.GetSystem<ILocalizationSystem>().GetString("Time's Up!");
                     string value1;

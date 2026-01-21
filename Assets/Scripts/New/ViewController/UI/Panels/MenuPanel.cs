@@ -376,10 +376,10 @@ namespace BirdGame
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
             //weatherIcon.sprite = weatherSps[this.GetModel<IGameModel>().WeatherIndex.Value];
-            this.GetModel<IGameModel>().WeatherIndex.Register(v =>
-            {
-                //weatherIcon.sprite = weatherSps[v];
-            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            // this.GetModel<IGameModel>().WeatherIndex.Register(v =>
+            // {
+            //     //weatherIcon.sprite = weatherSps[v];
+            // }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
             if (!PlayerPrefs.HasKey("ShowedTutorial"))
             {
@@ -422,6 +422,28 @@ namespace BirdGame
                     itemRect.DOAnchorPosX(36.5f, 0.3f);
                 }
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            if (this.GetModel<IClockModel>().TimerType != TimerType.None)
+            {
+                timeAnim = timeItem.DOAnchorPosY(0f, 0.2f).SetEase(Ease.InSine);
+                shopButton.GetComponent<RectTransform>().DOAnchorPosX(shopPosX - 300, 0.3f);
+                illustratedButton.GetComponent<RectTransform>().DOAnchorPosX(illustratedPosX - 300, 0.3f);
+                weatherButton.GetComponent<RectTransform>().DOAnchorPosX(weatherPosX + 300, 0.3f);
+                mapButton.GetComponent<RectTransform>().DOAnchorPosX(mapPosX + 300, 0.3f);
+                itemRect.DOAnchorPosX(336.5f, 0.3f);
+                if (this.GetModel<IClockModel>().TimerType == TimerType.Tomato)
+                {
+                    timeText.text = this.GetModel<IClockModel>().TomatoItem.TimeString.Value;
+                }
+                else if (this.GetModel<IClockModel>().TimerType == TimerType.Timer)
+                {
+                    timeText.text = this.GetModel<IClockModel>().TimerItem.TimeString.Value;
+                }
+                else if (this.GetModel<IClockModel>().TimerType == TimerType.StopWatch)
+                {
+                    timeText.text = this.GetModel<IClockModel>().StopWatchItem.TimerString.Value;
+                }
+            }
+
             this.GetModel<IClockModel>().TomatoItem.TimeString.Register(v =>
             {
                 if (this.GetModel<IClockModel>().TimerType == TimerType.Tomato)

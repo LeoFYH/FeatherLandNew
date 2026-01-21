@@ -9,7 +9,7 @@ namespace BirdGame
         /// </summary>
         BindableProperty<float> Coins { get; }
 
-        int AddedCoins { get; set; }
+        float AddedCoins { get; set; }
     }
 
     public class AccountModel : AbstractModel, IAccountModel
@@ -19,6 +19,6 @@ namespace BirdGame
         }
 
         public BindableProperty<float> Coins { get; } = new BindableProperty<float>(600f);
-        public int AddedCoins { get; set; }
+        public float AddedCoins { get; set; }
     }
 }

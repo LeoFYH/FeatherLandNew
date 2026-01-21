@@ -843,14 +843,10 @@ namespace BirdGame
                 }
             }
             int min = (int)(workTime / 300);
-            int coins = 0;
+            float coins = 0;
             if(min > 5)
             {
-                coins = (min - 5) * 3 + 5;
-            }
-            else
-            {
-                coins = min;
+                coins = (min - 5) * (this.GetModel<IAccountModel>().Coins.Value * 0.05f) + 1;
             }
 
             this.GetModel<IAccountModel>().Coins.Value += coins;
