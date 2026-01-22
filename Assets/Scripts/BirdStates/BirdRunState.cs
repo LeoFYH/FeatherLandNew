@@ -8,7 +8,7 @@ namespace BirdGame
 
     public class BirdRunState : StateBase
     {
-        private const float SpeedOffsetRange = 0.4f;
+        private const float SpeedOffsetRange = 0.15f;
 
         private Brid _brid;
         private Vector3 target;
