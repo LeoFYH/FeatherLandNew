@@ -73,20 +73,20 @@ namespace BirdGame
             {
                 case 0:
                     this.GetUtility<IFullScreenUtility>().WindowedMode();
-                    Application.targetFrameRate = 60;
-                    UnityEngine.Rendering.OnDemandRendering.renderFrameInterval = 1;
+                    // Application.targetFrameRate = 60;
+                    // UnityEngine.Rendering.OnDemandRendering.renderFrameInterval = 1;
                     Debug.Log("设置为窗口模式");
                     break;
                 case 1:
                     this.GetUtility<IFullScreenUtility>().WallpaperMode();
-                    Application.targetFrameRate = 120;
-                    UnityEngine.Rendering.OnDemandRendering.renderFrameInterval = 2;
+                    // Application.targetFrameRate = 120;
+                    // UnityEngine.Rendering.OnDemandRendering.renderFrameInterval = 2;
                     Debug.Log("设置为壁纸模式");
                     break;
                 default:
                     this.GetUtility<IFullScreenUtility>().FullscreenMode();
-                    Application.targetFrameRate = 60;
-                    UnityEngine.Rendering.OnDemandRendering.renderFrameInterval = 1;
+                    // Application.targetFrameRate = 60;
+                    // UnityEngine.Rendering.OnDemandRendering.renderFrameInterval = 1;
                     Debug.Log("设置为全屏模式");
                     break;
             }
