@@ -241,50 +241,13 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
         {
             TMP_LineInfo lineInfo = textComponent.textInfo.lineInfo[i];
             
-            // Get the actual Y bounds from characters in this line
-            float lineTop = float.MinValue;
-            float lineBottom = float.MaxValue;
-            bool foundVisibleChar = false;
-            
-            // Check all characters in this line to find actual bounds
-            for (int charIdx = lineInfo.firstCharacterIndex; charIdx <= lineInfo.lastCharacterIndex; charIdx++)
-            {
-                if (charIdx >= textComponent.textInfo.characterCount) break;
-                
-                TMP_CharacterInfo charInfo = textComponent.textInfo.characterInfo[charIdx];
-                if (!charInfo.isVisible) continue;
-                
-                foundVisibleChar = true;
-                float charTop = Mathf.Max(charInfo.topLeft.y, charInfo.topRight.y);
-                float charBottom = Mathf.Min(charInfo.bottomLeft.y, charInfo.bottomRight.y);
-                
-                if (charTop > lineTop) lineTop = charTop;
-                if (charBottom < lineBottom) lineBottom = charBottom;
-            }
-            
-            // If no visible characters, use lineInfo values as fallback
-            if (!foundVisibleChar)
-            {
-                // Use baseline with ascender/descender
-                float lineBaseline = lineInfo.baseline;
-                lineTop = lineBaseline + lineInfo.ascender;
-                lineBottom = lineBaseline + lineInfo.descender;
-                
-                // Ensure lineTop > lineBottom (Y increases upward in UI)
-                if (lineTop < lineBottom)
-                {
-                    float temp = lineTop;
-                    lineTop = lineBottom;
-                    lineBottom = temp;
-                }
-            }
-            
-            float lineHeight = lineInfo.lineHeight;
-            float tolerance = lineHeight * 0.5f; // 50% of line height as tolerance
+            // Use line extents for Y bounds
+            float lineTop = lineInfo.lineExtents.max.y;
+            float lineBottom = lineInfo.lineExtents.min.y;
             
             // Check if click is within this line's vertical range
             // lineTop is higher Y value, lineBottom is lower Y value
-            if (localPosition.y <= (lineTop + tolerance) && localPosition.y >= (lineBottom - tolerance))
+            if (localPosition.y <= lineTop && localPosition.y >= lineBottom)
             {
                 clickedLine = i;
                 break;
@@ -317,7 +280,11 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
         // Handle clicking after the line
         if (localX > lineInfo.lineExtents.max.x)
         {
-            return GetPositionAfterLastCharacter(lineInfo);
+            if (lineInfo.lastCharacterIndex >= 0 && lineInfo.lastCharacterIndex < inputField.text.Length)
+            {
+                return lineInfo.lastCharacterIndex;
+            }
+            return inputField.text.Length;
         }
         
         // Find the closest character in this line
@@ -331,7 +298,7 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
             TMP_CharacterInfo charInfo = textComponent.textInfo.characterInfo[i];
             
             // Skip characters that don't have proper geometry
-            if (!charInfo.isVisible || charInfo.topRight.x <= charInfo.bottomLeft.x)
+            if (charInfo.topRight.x <= charInfo.bottomLeft.x)
                 continue;
             
             float charCenter = (charInfo.bottomLeft.x + charInfo.topRight.x) / 2f;
@@ -356,18 +323,6 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
         return Mathf.Clamp(closestCharIndex, 0, inputField.text.Length);
     }
 
-    private int GetPositionAfterLastCharacter(TMP_LineInfo lineInfo)
-    {
-        // For the last line, return the end of text
-        // For other lines, return the position before the newline
-        if (lineInfo.lastCharacterIndex >= 0 && lineInfo.lastCharacterIndex < inputField.text.Length)
-        {
-            return lineInfo.lastCharacterIndex + 1;
-        }
-        
-        return inputField.text.Length;
-    }
-
     private int FindClosestLineByCenter(TMP_Text textComponent, float localY)
     {
         int closestLine = 0;
@@ -377,40 +332,9 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
         {
             TMP_LineInfo lineInfo = textComponent.textInfo.lineInfo[i];
             
-            // Get actual Y bounds from characters in this line
-            float lineTop = float.MinValue;
-            float lineBottom = float.MaxValue;
-            bool foundVisibleChar = false;
-            
-            for (int charIdx = lineInfo.firstCharacterIndex; charIdx <= lineInfo.lastCharacterIndex; charIdx++)
-            {
-                if (charIdx >= textComponent.textInfo.characterCount) break;
-                
-                TMP_CharacterInfo charInfo = textComponent.textInfo.characterInfo[charIdx];
-                if (!charInfo.isVisible) continue;
-                
-                foundVisibleChar = true;
-                float charTop = Mathf.Max(charInfo.topLeft.y, charInfo.topRight.y);
-                float charBottom = Mathf.Min(charInfo.bottomLeft.y, charInfo.bottomRight.y);
-                
-                if (charTop > lineTop) lineTop = charTop;
-                if (charBottom < lineBottom) lineBottom = charBottom;
-            }
-            
-            // Fallback to lineInfo if no visible characters
-            if (!foundVisibleChar)
-            {
-                float lineBaseline = lineInfo.baseline;
-                lineTop = lineBaseline + lineInfo.ascender;
-                lineBottom = lineBaseline + lineInfo.descender;
-                
-                if (lineTop < lineBottom)
-                {
-                    float temp = lineTop;
-                    lineTop = lineBottom;
-                    lineBottom = temp;
-                }
-            }
+            // Use line extents for Y bounds
+            float lineTop = lineInfo.lineExtents.max.y;
+            float lineBottom = lineInfo.lineExtents.min.y;
             
             float lineCenter = (lineTop + lineBottom) / 2f;
             float distance = Mathf.Abs(localY - lineCenter);
@@ -431,8 +355,6 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
         for (int i = 0; i < textComponent.textInfo.characterCount; i++)
         {
             TMP_CharacterInfo charInfo = textComponent.textInfo.characterInfo[i];
-            
-            if (!charInfo.isVisible) continue;
             
             // Get character bounds in local coordinates
             Vector3 bottomLeft = charInfo.bottomLeft;
