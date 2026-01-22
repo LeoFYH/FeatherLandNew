@@ -219,22 +219,7 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
 
     private int GetCaretPositionFromMousePosition(TMP_Text textComponent, Vector2 localPosition)
     {
-        // Try the alternative method first
-        int position = GetCaretPositionFromMousePositionAlternative(textComponent, localPosition);
-        
-        if (position >= 0 && position <= inputField.text.Length)
-        {
-            return position;
-        }
-        
-        // Fallback to the original method
-        return GetCaretPositionByLine(textComponent, localPosition);
-    }
-
-    private int GetCaretPositionByLine(TMP_Text textComponent, Vector2 localPosition)
-    {
-        // Find which line was clicked based on Y position
-        // Use actual character positions for accurate line detection
+        // First determine which line was clicked based on Y position
         int clickedLine = -1;
         
         for (int i = 0; i < textComponent.textInfo.lineCount; i++)
@@ -265,12 +250,10 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
             // If no visible characters, use lineInfo values as fallback
             if (!foundVisibleChar)
             {
-                // Use baseline with ascender/descender
                 float lineBaseline = lineInfo.baseline;
                 lineTop = lineBaseline + lineInfo.ascender;
                 lineBottom = lineBaseline + lineInfo.descender;
                 
-                // Ensure lineTop > lineBottom (Y increases upward in UI)
                 if (lineTop < lineBottom)
                 {
                     float temp = lineTop;
@@ -280,10 +263,8 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
             }
             
             float lineHeight = lineInfo.lineHeight;
-            float tolerance = lineHeight * 0.5f; // 50% of line height as tolerance
+            float tolerance = lineHeight * 0.5f;
             
-            // Check if click is within this line's vertical range
-            // lineTop is higher Y value, lineBottom is lower Y value
             if (localPosition.y <= (lineTop + tolerance) && localPosition.y >= (lineBottom - tolerance))
             {
                 clickedLine = i;
@@ -297,9 +278,18 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
             clickedLine = FindClosestLineByCenter(textComponent, localPosition.y);
         }
         
-        // Now find the horizontal position within the line
+        // Now try the alternative method, but restricted to the clicked line
+        int position = GetCaretPositionFromMousePositionAlternative(textComponent, localPosition, clickedLine);
+        
+        if (position >= 0 && position <= inputField.text.Length)
+        {
+            return position;
+        }
+        
+        // Fallback to the original method
         return GetCaretPositionInLine(textComponent, clickedLine, localPosition.x);
     }
+
 
     private int GetCaretPositionInLine(TMP_Text textComponent, int lineIndex, float localX)
     {
@@ -314,10 +304,43 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
             return lineInfo.firstCharacterIndex;
         }
         
-        // Handle clicking after the line
+        // Handle clicking after the line - return position at end of current line
         if (localX > lineInfo.lineExtents.max.x)
         {
-            return GetPositionAfterLastCharacter(lineInfo);
+            // Return the position at the end of the current line's visible text
+            // This ensures we stay on the current line, not move to the next
+            int lastVisibleCharIndex = -1;
+            for (int i = lineInfo.lastCharacterIndex; i >= lineInfo.firstCharacterIndex; i--)
+            {
+                if (i >= textComponent.textInfo.characterCount) continue;
+                TMP_CharacterInfo charInfo = textComponent.textInfo.characterInfo[i];
+                if (charInfo.isVisible)
+                {
+                    lastVisibleCharIndex = i;
+                    break;
+                }
+            }
+            
+            // If we found a visible character, return position after it (but still on this line)
+            if (lastVisibleCharIndex >= 0)
+            {
+                // Check if the next position would be on the next line
+                int nextPos = lastVisibleCharIndex + 1;
+                if (nextPos < inputField.text.Length)
+                {
+                    // Check if next position belongs to a different line
+                    int nextLine = GetLineAtPosition(nextPos);
+                    if (nextLine == lineIndex)
+                    {
+                        return nextPos;
+                    }
+                }
+                // If next position would be on next line, return position at end of current line
+                return lastVisibleCharIndex + 1;
+            }
+            
+            // Fallback: return position after last character index of this line
+            return GetPositionAfterLastCharacter(lineInfo, lineIndex);
         }
         
         // Find the closest character in this line
@@ -353,13 +376,74 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
             }
         }
         
-        return Mathf.Clamp(closestCharIndex, 0, inputField.text.Length);
+        // Ensure the position is still on the current line
+        int result = Mathf.Clamp(closestCharIndex, lineInfo.firstCharacterIndex, inputField.text.Length);
+        
+        // Double-check that the result is on the correct line
+        int resultLine = GetLineAtPosition(result);
+        if (resultLine != lineIndex && resultLine >= 0)
+        {
+            // If we ended up on a different line, return the end of the current line instead
+            int lastVisibleCharIndex = -1;
+            for (int i = lineInfo.lastCharacterIndex; i >= lineInfo.firstCharacterIndex; i--)
+            {
+                if (i >= textComponent.textInfo.characterCount) continue;
+                TMP_CharacterInfo charInfo = textComponent.textInfo.characterInfo[i];
+                if (charInfo.isVisible)
+                {
+                    lastVisibleCharIndex = i;
+                    break;
+                }
+            }
+            if (lastVisibleCharIndex >= 0)
+            {
+                return lastVisibleCharIndex + 1;
+            }
+            return GetPositionAfterLastCharacter(lineInfo, lineIndex);
+        }
+        
+        return result;
     }
 
-    private int GetPositionAfterLastCharacter(TMP_LineInfo lineInfo)
+    private int GetPositionAfterLastCharacter(TMP_LineInfo lineInfo, int lineIndex)
     {
         // For the last line, return the end of text
-        // For other lines, return the position before the newline
+        if (lineIndex == inputField.textComponent.textInfo.lineCount - 1)
+        {
+            return inputField.text.Length;
+        }
+        
+        // For other lines, return the position at the end of the current line
+        // Find the last visible character in this line
+        int lastVisibleCharIndex = -1;
+        for (int i = lineInfo.lastCharacterIndex; i >= lineInfo.firstCharacterIndex; i--)
+        {
+            if (i >= inputField.textComponent.textInfo.characterCount) continue;
+            TMP_CharacterInfo charInfo = inputField.textComponent.textInfo.characterInfo[i];
+            if (charInfo.isVisible)
+            {
+                lastVisibleCharIndex = i;
+                break;
+            }
+        }
+        
+        if (lastVisibleCharIndex >= 0)
+        {
+            int nextPos = lastVisibleCharIndex + 1;
+            // Check if next position is still on this line (before newline)
+            if (nextPos < inputField.text.Length)
+            {
+                int nextLine = GetLineAtPosition(nextPos);
+                if (nextLine == lineIndex)
+                {
+                    return nextPos;
+                }
+            }
+            // If next position would be on next line, return position at end of current line
+            return lastVisibleCharIndex + 1;
+        }
+        
+        // Fallback
         if (lineInfo.lastCharacterIndex >= 0 && lineInfo.lastCharacterIndex < inputField.text.Length)
         {
             return lineInfo.lastCharacterIndex + 1;
@@ -425,11 +509,18 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
         return closestLine;
     }
 
-    private int GetCaretPositionFromMousePositionAlternative(TMP_Text textComponent, Vector2 localPosition)
+    private int GetCaretPositionFromMousePositionAlternative(TMP_Text textComponent, Vector2 localPosition, int clickedLine)
     {
-        // Alternative approach: check each character's screen position
-        for (int i = 0; i < textComponent.textInfo.characterCount; i++)
+        if (clickedLine < 0 || clickedLine >= textComponent.textInfo.lineCount)
+            return -1;
+        
+        TMP_LineInfo lineInfo = textComponent.textInfo.lineInfo[clickedLine];
+        
+        // Alternative approach: check each character's screen position, but only in the clicked line
+        for (int i = lineInfo.firstCharacterIndex; i <= lineInfo.lastCharacterIndex; i++)
         {
+            if (i >= textComponent.textInfo.characterCount) break;
+            
             TMP_CharacterInfo charInfo = textComponent.textInfo.characterInfo[i];
             
             if (!charInfo.isVisible) continue;
@@ -451,19 +542,47 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
                 // Determine if we should place caret before or after this character
                 float charMidpoint = (bottomLeft.x + topRight.x) / 2f;
                 
+                int result;
                 if (localPosition.x > charMidpoint)
                 {
-                    return i + 1;
+                    result = i + 1;
                 }
                 else
                 {
-                    return i;
+                    result = i;
+                }
+                
+                // Ensure the result is still on the clicked line
+                int resultLine = GetLineAtPosition(result);
+                if (resultLine == clickedLine)
+                {
+                    return result;
+                }
+                // If result would be on next line, return position at end of current line
+                if (resultLine > clickedLine)
+                {
+                    // Return position at end of current line
+                    int lastVisibleCharIndex = -1;
+                    for (int j = lineInfo.lastCharacterIndex; j >= lineInfo.firstCharacterIndex; j--)
+                    {
+                        if (j >= textComponent.textInfo.characterCount) continue;
+                        TMP_CharacterInfo lastCharInfo = textComponent.textInfo.characterInfo[j];
+                        if (lastCharInfo.isVisible)
+                        {
+                            lastVisibleCharIndex = j;
+                            break;
+                        }
+                    }
+                    if (lastVisibleCharIndex >= 0)
+                    {
+                        return lastVisibleCharIndex + 1;
+                    }
                 }
             }
         }
         
-        // If no character found, use line-based approach as fallback
-        return GetCaretPositionByLine(textComponent, localPosition);
+        // If no character found in this line, return -1 to use fallback
+        return -1;
     }
 
     private int GetLineEndPosition(TMP_Text textComponent, int lineIndex)
