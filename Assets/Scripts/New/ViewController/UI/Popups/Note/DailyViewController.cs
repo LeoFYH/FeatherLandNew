@@ -17,6 +17,9 @@ namespace BirdGame
         private int currentNoteIndex;
         private List<NoteItem> items = new List<NoteItem>();
         private const int MAX_DIARY_COUNT = 10; // 最多可创建10本日记
+        private float lastSubmitTime = -1f; // Prevent multiple onSubmit calls within a short time
+        private const float SUBMIT_COOLDOWN = 0.1f; // 100ms cooldown between submits
+        private bool enterKeyPressedThisFrame = false; // Track if Enter was pressed in current frame
         
         private void Start()
         {
@@ -78,6 +81,15 @@ namespace BirdGame
                     data.bookList[currentNoteIndex].noteText = text;
                 }
             });
+            
+            // Intercept onSubmit to handle Enter key for line changes
+            // This prevents the default submit behavior and allows us to insert newlines
+            noteInput.onSubmit.AddListener(OnInputSubmit);
+            
+            // Ensure the input field is configured for multi-line input
+            // Use MultiLineNewline for wallpaper mode compatibility with HookTMPInputHandler
+            // HookTMPInputHandler.HandleEnter() checks for MultiLineNewline to insert newlines
+            noteInput.lineType = TMP_InputField.LineType.MultiLineNewline;
 
             int count = data.bookList.Count;
             if (count == 0)
@@ -106,6 +118,105 @@ namespace BirdGame
             
             // 初始化时更新按钮状态
             UpdateAddButtonState();
+        }
+
+        private void Update()
+        {
+            // Track Enter key press for this frame
+            enterKeyPressedThisFrame = (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter));
+            
+            // Handle Enter key for line changes in fullscreen mode
+            // In wallpaper mode, SimpleMouseForwarder routes input through HookTMPInputHandler
+            if (!this.GetUtility<IFullScreenUtility>().EnableWallpaperMode && 
+                noteInput != null && noteInput.isFocused)
+            {
+                if (enterKeyPressedThisFrame)
+                {
+                    //InsertNewline();
+                }
+            }
+        }
+        
+        private void LateUpdate()
+        {
+            // Reset the flag at end of frame to prevent it from persisting
+            enterKeyPressedThisFrame = false;
+        }
+        
+        /// <summary>
+        /// Called when Enter is pressed in the input field (onSubmit event)
+        /// This handles Enter key to insert newlines instead of submitting
+        /// Note: In wallpaper mode, HookTMPInputHandler handles Enter key directly,
+        /// so this method should not interfere with that handling
+        /// </summary>
+        private void OnInputSubmit(string text)
+        {
+            // In wallpaper mode, HookTMPInputHandler handles Enter key through ReceiveKeyboardInput
+            // The onSubmit event may still fire, but we should let HookTMPInputHandler handle it
+            // to avoid conflicts and duplicate newline insertion
+            if (this.GetUtility<IFullScreenUtility>().EnableWallpaperMode)
+            {
+                // Let HookTMPInputHandler handle Enter key in wallpaper mode
+                // It will check lineType == MultiLineNewline and insert newline accordingly
+                return;
+            }
+            
+            // Prevent multiple calls within a short time window (prevents duplicate newlines)
+            float currentTime = Time.time;
+            if (currentTime - lastSubmitTime < SUBMIT_COOLDOWN)
+            {
+                return;
+            }
+            lastSubmitTime = currentTime;
+            
+            // Prevent default submit behavior and insert newline instead (only in non-wallpaper mode)
+            InsertNewline();
+            // Keep the field focused after inserting newline
+            // Use coroutine to ensure it happens after Unity's default submit handling
+            StartCoroutine(ReactivateInputField());
+        }
+        
+        /// <summary>
+        /// Coroutine to reactivate the input field after a frame delay
+        /// This ensures the field stays focused and the caret is visible
+        /// </summary>
+        private System.Collections.IEnumerator ReactivateInputField()
+        {
+            // Wait for end of frame to ensure Unity's default submit handling is done
+            yield return null;
+            
+            if (noteInput != null)
+            {
+                noteInput.ActivateInputField();
+                noteInput.Select();
+                // Ensure caret is visible
+                noteInput.ForceLabelUpdate();
+            }
+        }
+
+        /// <summary>
+        /// Insert a newline character at the current caret position
+        /// </summary>
+        private void InsertNewline()
+        {
+            if (noteInput == null) return;
+
+            int caretPosition = noteInput.caretPosition;
+            string currentText = noteInput.text;
+
+            // Insert newline at caret position
+            string newText = currentText.Insert(caretPosition, "\n");
+            noteInput.text = newText;
+
+            // Move caret to position after the inserted newline
+            noteInput.caretPosition = caretPosition + 1;
+
+            // Clear selection
+            noteInput.selectionAnchorPosition = noteInput.caretPosition;
+            noteInput.selectionFocusPosition = noteInput.caretPosition;
+
+            // Force update to show the change
+            noteInput.ForceLabelUpdate();
         }
 
         private void RefreshItemPos()
