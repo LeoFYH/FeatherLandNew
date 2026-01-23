@@ -158,10 +158,36 @@ namespace BirdGame
         private const float HOOK_HOVER_CHECK_DISTANCE_THRESHOLD = 3f; // Higher threshold for hook callback (more aggressive throttling)
         private static float lastHookHoverCheckTime = 0f;
         private const float HOOK_HOVER_CHECK_MIN_INTERVAL = 0.02f; // Minimum 20ms between hook hover checks (50 checks/second max)
+        
+        // Performance optimization: Cache frequently accessed values
+        private static EventSystem cachedEventSystem = null;
+        private static int cachedScreenHeight = 0;
+        private static bool cachedEnableForwarding = true;
+        
+        // Performance optimization: Reusable objects to reduce GC allocations
+        private static List<RaycastResult> reusableRaycastResults = null;
+        private static PointerEventData reusablePointerData = null;
+        
+        // Performance optimization: Cache foreground window title check
+        private static string cachedForegroundWindowTitle = string.Empty;
+        private static int lastForegroundWindowCheckFrame = -1;
 
         private void OnEnable()
         {
             instance = this;
+            cachedEnableForwarding = enableForwarding;
+            cachedScreenHeight = Screen.height;
+            cachedEventSystem = EventSystem.current;
+            
+            // Initialize reusable objects
+            if (reusableRaycastResults == null)
+            {
+                reusableRaycastResults = new List<RaycastResult>();
+            }
+            if (reusablePointerData == null && cachedEventSystem != null)
+            {
+                reusablePointerData = new PointerEventData(cachedEventSystem);
+            }
 
             // Install mouse hook
             _hookID = SetHook(_proc);
@@ -179,6 +205,15 @@ namespace BirdGame
                 Debug.Log("[SimpleMouseForwarder] 鼠标和键盘钩子安装成功");
             }
         }
+        
+        private void OnValidate()
+        {
+            // Update cached enableForwarding when changed in inspector
+            if (Application.isPlaying)
+            {
+                cachedEnableForwarding = enableForwarding;
+            }
+        }
 
         private static IntPtr SetHook(LowLevelMouseProc proc)
         {
@@ -193,7 +228,8 @@ namespace BirdGame
         [MonoPInvokeCallback(typeof(LowLevelKeyboardProc))]
         private static IntPtr KeyboardHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            if (nCode >= 0 && instance != null && instance.enableForwarding && isOnDesktop)
+            // Performance optimization: Use cached enableForwarding to avoid instance access
+            if (nCode >= 0 && instance != null && cachedEnableForwarding && isOnDesktop)
             {
                 int message = wParam.ToInt32();
                 KBDLLHOOKSTRUCT hookStruct = Marshal.PtrToStructure<KBDLLHOOKSTRUCT>(lParam);
@@ -486,11 +522,18 @@ namespace BirdGame
         [MonoPInvokeCallback(typeof(LowLevelMouseProc))]
         private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            if (nCode >= 0 && instance != null && instance.enableForwarding && isOnDesktop)
+            // Performance optimization: Early exit with cached values
+            if (nCode < 0 || !cachedEnableForwarding)
+            {
+                return CallNextHookEx(_hookID, nCode, wParam, lParam);
+            }
+            
+            if (instance != null && isOnDesktop)
             {
                 int message = wParam.ToInt32();
                 MSLLHOOKSTRUCT hookStruct = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
-                currentMousePosition = new Vector2(hookStruct.pt.x, Screen.height - hookStruct.pt.y);
+                // Performance optimization: Use cached Screen.height
+                currentMousePosition = new Vector2(hookStruct.pt.x, cachedScreenHeight - hookStruct.pt.y);
 
                 if (message == WM_LBUTTONDOWN)
                 {
@@ -926,8 +969,12 @@ namespace BirdGame
                             // Get real-time position to ensure accuracy
                             Vector2 actualMousePos = GetCurrentMousePositionRealtime();
                             
-                            // Check if EventSystem is available before using Unity APIs
-                            if (EventSystem.current != null)
+                            // Performance optimization: Use cached EventSystem
+                            if (cachedEventSystem == null)
+                            {
+                                cachedEventSystem = EventSystem.current;
+                            }
+                            if (cachedEventSystem != null)
                             {
                                 HashSet<GameObject> currentUIElements = FindAllUIElementsUnderMouse(actualMousePos);
                                 
@@ -959,7 +1006,7 @@ namespace BirdGame
                 else if (message == WM_RBUTTONDOWN)
                 {
                     rightButtonDown = true;
-                    mousePosition = new Vector2(hookStruct.pt.x, Screen.height - hookStruct.pt.y);
+                    mousePosition = new Vector2(hookStruct.pt.x, cachedScreenHeight - hookStruct.pt.y);
 
                     if (instance.showDebugLog)
                     {
@@ -971,7 +1018,7 @@ namespace BirdGame
                     short wheelDeltaRaw = (short)((hookStruct.mouseData >> 16) & 0xFFFF);
                     wheelDelta = wheelDeltaRaw / 120f; // Normalize to standard wheel units
                     isHorizontalWheel = (message == WM_MOUSEHWHEEL);
-                    wheelMousePosition = new Vector2(hookStruct.pt.x, Screen.height - hookStruct.pt.y);
+                    wheelMousePosition = new Vector2(hookStruct.pt.x, cachedScreenHeight - hookStruct.pt.y);
 
                     if (instance.showDebugLog)
                     {
@@ -992,18 +1039,27 @@ namespace BirdGame
 
         private static GameObject FindDragTarget(Vector2 screenPosition)
         {
-            if (EventSystem.current == null) return null;
-
-            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            // Performance optimization: Use cached EventSystem
+            if (cachedEventSystem == null)
             {
-                position = screenPosition,
-                button = PointerEventData.InputButton.Left
-            };
+                cachedEventSystem = EventSystem.current;
+                if (cachedEventSystem == null) return null;
+            }
 
-            var raycastResults = new System.Collections.Generic.List<RaycastResult>();
-            EventSystem.current.RaycastAll(pointerData, raycastResults);
+            // Performance optimization: Reuse PointerEventData
+            if (reusablePointerData == null)
+            {
+                reusablePointerData = new PointerEventData(cachedEventSystem);
+            }
+            reusablePointerData.position = screenPosition;
+            reusablePointerData.button = PointerEventData.InputButton.Left;
+            reusablePointerData.Reset();
 
-            foreach (var result in raycastResults)
+            // Performance optimization: Reuse List instead of creating new one
+            reusableRaycastResults.Clear();
+            cachedEventSystem.RaycastAll(reusablePointerData, reusableRaycastResults);
+
+            foreach (var result in reusableRaycastResults)
             {
                 // Look for DragAspect handlers first (for resize operations)
                 BirdGame.DragAspect dragAspect = result.gameObject.GetComponent<BirdGame.DragAspect>();
@@ -1044,18 +1100,27 @@ namespace BirdGame
 
         private static GameObject FindScrollRectTarget(Vector2 screenPosition)
         {
-            if (EventSystem.current == null) return null;
-
-            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            // Performance optimization: Use cached EventSystem
+            if (cachedEventSystem == null)
             {
-                position = screenPosition,
-                button = PointerEventData.InputButton.Left
-            };
+                cachedEventSystem = EventSystem.current;
+                if (cachedEventSystem == null) return null;
+            }
 
-            var raycastResults = new System.Collections.Generic.List<RaycastResult>();
-            EventSystem.current.RaycastAll(pointerData, raycastResults);
+            // Performance optimization: Reuse PointerEventData
+            if (reusablePointerData == null)
+            {
+                reusablePointerData = new PointerEventData(cachedEventSystem);
+            }
+            reusablePointerData.position = screenPosition;
+            reusablePointerData.button = PointerEventData.InputButton.Left;
+            reusablePointerData.Reset();
 
-            foreach (var result in raycastResults)
+            // Performance optimization: Reuse List instead of creating new one
+            reusableRaycastResults.Clear();
+            cachedEventSystem.RaycastAll(reusablePointerData, reusableRaycastResults);
+
+            foreach (var result in reusableRaycastResults)
             {
                 // Look for scroll rect mouse wheel handlers
                 ScrollRectMouseWheelHandler scrollHandler =
@@ -1071,18 +1136,27 @@ namespace BirdGame
 
         private static GameObject FindPointerEventTarget(Vector2 screenPosition)
         {
-            if (EventSystem.current == null) return null;
-
-            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            // Performance optimization: Use cached EventSystem
+            if (cachedEventSystem == null)
             {
-                position = screenPosition,
-                button = PointerEventData.InputButton.Left
-            };
+                cachedEventSystem = EventSystem.current;
+                if (cachedEventSystem == null) return null;
+            }
 
-            var raycastResults = new System.Collections.Generic.List<RaycastResult>();
-            EventSystem.current.RaycastAll(pointerData, raycastResults);
+            // Performance optimization: Reuse PointerEventData
+            if (reusablePointerData == null)
+            {
+                reusablePointerData = new PointerEventData(cachedEventSystem);
+            }
+            reusablePointerData.position = screenPosition;
+            reusablePointerData.button = PointerEventData.InputButton.Left;
+            reusablePointerData.Reset();
 
-            foreach (var result in raycastResults)
+            // Performance optimization: Reuse List instead of creating new one
+            reusableRaycastResults.Clear();
+            cachedEventSystem.RaycastAll(reusablePointerData, reusableRaycastResults);
+
+            foreach (var result in reusableRaycastResults)
             {
                 // Look for PointerEvent handlers on the hit object or any of its parents
                 Transform current = result.gameObject.transform;
@@ -1102,18 +1176,27 @@ namespace BirdGame
 
         private static GameObject FindButtonUnderMouse(Vector2 screenPosition)
         {
-            if (EventSystem.current == null) return null;
-
-            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            // Performance optimization: Use cached EventSystem
+            if (cachedEventSystem == null)
             {
-                position = screenPosition,
-                button = PointerEventData.InputButton.Left
-            };
+                cachedEventSystem = EventSystem.current;
+                if (cachedEventSystem == null) return null;
+            }
 
-            var raycastResults = new System.Collections.Generic.List<RaycastResult>();
-            EventSystem.current.RaycastAll(pointerData, raycastResults);
+            // Performance optimization: Reuse PointerEventData
+            if (reusablePointerData == null)
+            {
+                reusablePointerData = new PointerEventData(cachedEventSystem);
+            }
+            reusablePointerData.position = screenPosition;
+            reusablePointerData.button = PointerEventData.InputButton.Left;
+            reusablePointerData.Reset();
 
-            foreach (var result in raycastResults)
+            // Performance optimization: Reuse List instead of creating new one
+            reusableRaycastResults.Clear();
+            cachedEventSystem.RaycastAll(reusablePointerData, reusableRaycastResults);
+
+            foreach (var result in reusableRaycastResults)
             {
                 // Look for Button components on the hit object or any of its parents
                 Transform current = result.gameObject.transform;
@@ -1232,18 +1315,27 @@ namespace BirdGame
         {
             HashSet<GameObject> uiElements = new HashSet<GameObject>();
             
-            if (EventSystem.current == null) return uiElements;
-
-            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            // Performance optimization: Use cached EventSystem
+            if (cachedEventSystem == null)
             {
-                position = screenPosition,
-                button = PointerEventData.InputButton.Left
-            };
+                cachedEventSystem = EventSystem.current;
+                if (cachedEventSystem == null) return uiElements;
+            }
 
-            var raycastResults = new List<RaycastResult>();
-            EventSystem.current.RaycastAll(pointerData, raycastResults);
+            // Performance optimization: Reuse PointerEventData
+            if (reusablePointerData == null)
+            {
+                reusablePointerData = new PointerEventData(cachedEventSystem);
+            }
+            reusablePointerData.position = screenPosition;
+            reusablePointerData.button = PointerEventData.InputButton.Left;
+            reusablePointerData.Reset();
 
-            foreach (var result in raycastResults)
+            // Performance optimization: Reuse List instead of creating new one
+            reusableRaycastResults.Clear();
+            cachedEventSystem.RaycastAll(reusablePointerData, reusableRaycastResults);
+
+            foreach (var result in reusableRaycastResults)
             {
                 // Add all UI elements that can receive pointer events
                 // This includes Buttons, Toggles, and any other Selectable components
@@ -1441,17 +1533,26 @@ namespace BirdGame
 
         private static void ForwardWheelToUI(Vector2 screenPosition, float delta, bool isHorizontal)
         {
-            if (EventSystem.current == null) return;
-
-            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            // Performance optimization: Use cached EventSystem
+            if (cachedEventSystem == null)
             {
-                position = screenPosition
-            };
+                cachedEventSystem = EventSystem.current;
+                if (cachedEventSystem == null) return;
+            }
 
-            var raycastResults = new System.Collections.Generic.List<RaycastResult>();
-            EventSystem.current.RaycastAll(pointerData, raycastResults);
+            // Performance optimization: Reuse PointerEventData
+            if (reusablePointerData == null)
+            {
+                reusablePointerData = new PointerEventData(cachedEventSystem);
+            }
+            reusablePointerData.position = screenPosition;
+            reusablePointerData.Reset();
 
-            foreach (var result in raycastResults)
+            // Performance optimization: Reuse List instead of creating new one
+            reusableRaycastResults.Clear();
+            cachedEventSystem.RaycastAll(reusablePointerData, reusableRaycastResults);
+
+            foreach (var result in reusableRaycastResults)
             {
                 // Look for our mouse wheel handlers
                 ScrollRectMouseWheelHandler handler = result.gameObject.GetComponent<ScrollRectMouseWheelHandler>();
@@ -1573,7 +1674,27 @@ namespace BirdGame
 
         private void Update()
         {
-            isOnDesktop = GetForegroundWindowTitle() == "Program Manager" || GetForegroundWindowTitle() == string.Empty;
+            // Performance optimization: Cache GetForegroundWindowTitle() result per frame
+            // This expensive Windows API call was being called twice every frame!
+            if (Time.frameCount != lastForegroundWindowCheckFrame)
+            {
+                cachedForegroundWindowTitle = GetForegroundWindowTitle();
+                lastForegroundWindowCheckFrame = Time.frameCount;
+            }
+            isOnDesktop = cachedForegroundWindowTitle == "Program Manager" || cachedForegroundWindowTitle == string.Empty;
+            
+            // Performance optimization: Update cached values periodically
+            if (Time.frameCount % 60 == 0) // Update every 60 frames (~1 second at 60fps)
+            {
+                if (cachedEventSystem == null)
+                {
+                    cachedEventSystem = EventSystem.current;
+                }
+                if (cachedScreenHeight != Screen.height)
+                {
+                    cachedScreenHeight = Screen.height;
+                }
+            }
             
             // Get the current foreground window handle
             if (isOnDesktop)
@@ -1787,31 +1908,40 @@ namespace BirdGame
 
         private void SimulateMouseClick(Vector2 screenPosition)
         {
-            if (EventSystem.current == null)
+            // Performance optimization: Use cached EventSystem
+            if (cachedEventSystem == null)
             {
-                Debug.LogWarning("[SimpleMouseForwarder] 场景中没有 EventSystem！");
-                return;
+                cachedEventSystem = EventSystem.current;
+                if (cachedEventSystem == null)
+                {
+                    Debug.LogWarning("[SimpleMouseForwarder] 场景中没有 EventSystem！");
+                    return;
+                }
             }
 
             _focusedTMPInputField = null;
 
-            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            // Performance optimization: Reuse PointerEventData
+            if (reusablePointerData == null)
             {
-                position = screenPosition,
-                button = PointerEventData.InputButton.Left
-            };
+                reusablePointerData = new PointerEventData(cachedEventSystem);
+            }
+            reusablePointerData.position = screenPosition;
+            reusablePointerData.button = PointerEventData.InputButton.Left;
+            reusablePointerData.Reset();
 
-            var raycastResults = new System.Collections.Generic.List<RaycastResult>();
-            EventSystem.current.RaycastAll(pointerData, raycastResults);
+            // Performance optimization: Reuse List instead of creating new one
+            reusableRaycastResults.Clear();
+            cachedEventSystem.RaycastAll(reusablePointerData, reusableRaycastResults);
 
-            if (raycastResults.Count > 0)
+            if (reusableRaycastResults.Count > 0)
             {
                 bool foundInputField = false;
                 bool foundSlider = false;
                 
                 // First, check all raycast results for special handlers (input fields, sliders)
                 // These need to be found regardless of their depth in the hierarchy
-                foreach (var result in raycastResults)
+                foreach (var result in reusableRaycastResults)
                 {
                     GameObject hitObject = result.gameObject;
                     
@@ -1840,7 +1970,7 @@ namespace BirdGame
                     SliderBarClickHandler sliderHandler = hitObject.GetComponent<SliderBarClickHandler>();
                     if (sliderHandler != null && !foundSlider)
                     {
-                        ExecuteEvents.Execute(hitObject, pointerData, ExecuteEvents.pointerClickHandler);
+                        ExecuteEvents.Execute(hitObject, reusablePointerData, ExecuteEvents.pointerClickHandler);
                         if (showDebugLog)
                         {
                             Debug.Log($"[SimpleMouseForwarder] 滑块点击: {hitObject.name}");
@@ -1855,15 +1985,15 @@ namespace BirdGame
                 // If a parent has a Selectable component (Button, Toggle, etc.), click that instead
                 if (!foundInputField && !foundSlider)
                 {
-                    GameObject targetObject = FindInteractableParent(raycastResults);
+                    GameObject targetObject = FindInteractableParent(reusableRaycastResults);
                     
                     // If no interactable parent found, use the topmost object as fallback
                     if (targetObject == null)
                     {
-                        targetObject = raycastResults[0].gameObject;
+                        targetObject = reusableRaycastResults[0].gameObject;
                     }
                     
-                    ExecuteEvents.Execute(targetObject, pointerData, ExecuteEvents.pointerClickHandler);
+                    ExecuteEvents.Execute(targetObject, reusablePointerData, ExecuteEvents.pointerClickHandler);
                     
                     if (showDebugLog)
                     {
@@ -1965,7 +2095,11 @@ namespace BirdGame
                 _currentHoveredPointerEvent = null;
             }
 
+            // Performance optimization: Clear cached values
             instance = null;
+            cachedEventSystem = null;
+            cachedScreenHeight = 0;
+            cachedEnableForwarding = true;
         }
     }
 }
