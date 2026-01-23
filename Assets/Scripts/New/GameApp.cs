@@ -9,8 +9,9 @@ namespace BirdGame
         protected override void Init()
         {
             // Performance optimization: FPS will be set per mode in GameEntry.SetScreenMode()
-            // Default to 30 FPS for initial load (will be adjusted when mode is set)
-            Application.targetFrameRate = 30;
+            // Default to 60 FPS for initial load (will be adjusted when mode is set)
+            // Wallpaper mode needs 60 FPS for smooth cursor, other modes can be lower
+            Application.targetFrameRate = 60;
             OnDemandRendering.renderFrameInterval = 1;
             QualitySettings.vSyncCount = 0;
             

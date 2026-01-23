@@ -36,6 +36,13 @@ namespace BirdGame
         private PointerEventData reusablePointerEventData;
         private List<RaycastResult> reusableRaycastResults = new List<RaycastResult>();
         
+        // Performance optimization: Throttle cursor checking to reduce CPU
+        private CursorState lastCursorState = CursorState.Default;
+        private Vector2 lastCursorCheckMousePos = Vector2.zero;
+        private const float CURSOR_CHECK_DISTANCE_THRESHOLD = 5f; // Only check when mouse moves at least 5 pixels
+        private int cursorCheckFrameSkip = 0;
+        private const int CURSOR_CHECK_FRAME_INTERVAL = 2; // Check every 2 frames (30 checks/sec at 60 FPS)
+        
         private void Start()
         {
             // 延迟一帧来确保所有系统都已初始化
@@ -105,24 +112,25 @@ namespace BirdGame
             {
                 case 0:
                     this.GetUtility<IFullScreenUtility>().WindowedMode();
-                    // Performance optimization: 45 FPS for windowed mode (active use, smooth but efficient)
-                    Application.targetFrameRate = 45;
+                    // Performance optimization: 30 FPS for windowed mode (active use, efficient)
+                    Application.targetFrameRate = 30;
                     OnDemandRendering.renderFrameInterval = 1;
-                    Debug.Log("设置为窗口模式 (45 FPS)");
+                    Debug.Log("设置为窗口模式 (30 FPS)");
                     break;
                 case 1:
                     this.GetUtility<IFullScreenUtility>().WallpaperMode();
-                    // Performance optimization: 30 FPS for wallpaper mode (background, saves CPU/battery)
-                    Application.targetFrameRate = 30;
+                    // Performance optimization: 60 FPS for wallpaper mode (needed for smooth cursor movement)
+                    // Lower FPS causes cursor lag, so we keep it higher here
+                    Application.targetFrameRate = 60;
                     OnDemandRendering.renderFrameInterval = 1;
-                    Debug.Log("设置为壁纸模式 (30 FPS)");
+                    Debug.Log("设置为壁纸模式 (60 FPS - 流畅光标)");
                     break;
                 default:
                     this.GetUtility<IFullScreenUtility>().FullscreenMode();
-                    // Performance optimization: 45 FPS for fullscreen mode (active use, smooth but efficient)
-                    Application.targetFrameRate = 45;
+                    // Performance optimization: 30 FPS for fullscreen mode (active use, efficient)
+                    Application.targetFrameRate = 30;
                     OnDemandRendering.renderFrameInterval = 1;
-                    Debug.Log("设置为全屏模式 (45 FPS)");
+                    Debug.Log("设置为全屏模式 (30 FPS)");
                     break;
             }
             
@@ -365,34 +373,53 @@ namespace BirdGame
             // Performance optimization: Use cached system reference
             if(cachedCursorSystem.IsPlayingAnim())
                 return;
+            
+            // Performance optimization: Throttle cursor checking
+            // Only check when mouse has moved significantly or every N frames
+            Vector2 currentMousePos = Input.mousePosition;
+            float mouseMoveDistance = Vector2.Distance(currentMousePos, lastCursorCheckMousePos);
+            cursorCheckFrameSkip++;
+            
+            // Skip expensive checks if mouse hasn't moved much and we checked recently
+            if (mouseMoveDistance < CURSOR_CHECK_DISTANCE_THRESHOLD && cursorCheckFrameSkip < CURSOR_CHECK_FRAME_INTERVAL)
+            {
+                return; // Skip this frame's check
+            }
+            
+            // Reset throttling counters
+            lastCursorCheckMousePos = currentMousePos;
+            cursorCheckFrameSkip = 0;
                 
             // Performance optimization: Use cached system reference
             bool isCoverUI = cachedGameSystem.IsCoverUI();
             bool isCoverBird = cachedGameSystem.IsCoverBird();
             bool isCoverGround = cachedGameSystem.IsCoverGround();
             
-            // 调试信息
-            if (isCoverBird)
-            {
-                //Debug.Log("检测到鸟，设置cursor为Click状态");
-            }
-            
-            // Performance optimization: Use cached system reference
+            // Determine new cursor state
+            CursorState newState;
             if (isCoverUI)
             {
-                cachedCursorSystem.SetCursorState(CursorState.Click);
+                newState = CursorState.Click;
             }
             else if (isCoverBird)
             {
-                cachedCursorSystem.SetCursorState(CursorState.Click);
+                newState = CursorState.Click;
             }
             else if (isCoverGround)
             {
-                cachedCursorSystem.SetCursorState(CursorState.Feed1);
+                newState = CursorState.Feed1;
             }
             else
             {
-                cachedCursorSystem.SetCursorState(CursorState.Default);
+                newState = CursorState.Default;
+            }
+            
+            // Performance optimization: Only update cursor if state changed
+            // SetCursorState() already has this check, but we can avoid the function call entirely
+            if (newState != lastCursorState)
+            {
+                cachedCursorSystem.SetCursorState(newState);
+                lastCursorState = newState;
             }
         }
         
