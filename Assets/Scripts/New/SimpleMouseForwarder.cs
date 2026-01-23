@@ -69,7 +69,6 @@ namespace BirdGame
 
         private static LowLevelKeyboardProc _keyboardProc = KeyboardHookCallback;
         private static GameObject _focusedTMPInputField = null;
-        private static GameObject _focusedLegacyInputField = null;
         private static GameObject _currentHoveredPointerEvent = null;
         private static HashSet<GameObject> _currentHoveredUIElements = new HashSet<GameObject>();
 
@@ -202,7 +201,7 @@ namespace BirdGame
                 if (message == WM_KEYDOWN)
                 {
                     // Handle input field keyboard events
-                    if (_focusedTMPInputField != null || _focusedLegacyInputField != null)
+                    if (_focusedTMPInputField != null)
                     {
                         HandleKeyDown(hookStruct);
                     }
@@ -320,12 +319,6 @@ namespace BirdGame
             if (_focusedTMPInputField != null)
             {
                 SendKeyEventToTMPInputField(keyData);
-            }
-            
-            // Send to Legacy InputField if focused
-            if (_focusedLegacyInputField != null)
-            {
-                SendKeyEventToLegacyInputField(keyData);
             }
 
             if (instance.showDebugLog)
@@ -487,25 +480,6 @@ namespace BirdGame
             if (handler != null)
             {
                 handler.ReceiveKeyboardInput(keyData);
-            }
-        }
-
-        private static void SendKeyEventToLegacyInputField(HookTMPInputHandler.KeyEventData keyData)
-        {
-            if (_focusedLegacyInputField == null) return;
-
-            HookLegacyInputHandler handler = _focusedLegacyInputField.GetComponent<HookLegacyInputHandler>();
-            if (handler != null)
-            {
-                HookLegacyInputHandler.KeyEventData legacyKeyData = new HookLegacyInputHandler.KeyEventData
-                {
-                    keyType = keyData.keyType,
-                    keyChar = keyData.keyChar,
-                    shiftPressed = keyData.shiftPressed,
-                    ctrlPressed = keyData.ctrlPressed,
-                    altPressed = keyData.altPressed
-                };
-                handler.ReceiveKeyboardInput(legacyKeyData);
             }
         }
 
@@ -1820,7 +1794,6 @@ namespace BirdGame
             }
 
             _focusedTMPInputField = null;
-            _focusedLegacyInputField = null;
 
             PointerEventData pointerData = new PointerEventData(EventSystem.current)
             {
@@ -1856,19 +1829,6 @@ namespace BirdGame
                         }
 
                         Debug.Log($"[SimpleMouseForwarder] TMP输入框激活: {hitObject.name}");
-                        foundInputField = true;
-                        // Input fields consume the click, stop processing
-                        return;
-                    }
-
-                    // Check for legacy InputField handler
-                    HookLegacyInputHandler legacyHandler = hitObject.GetComponent<HookLegacyInputHandler>();
-                    if (legacyHandler != null && !foundInputField)
-                    {
-                        legacyHandler.ActivateInputField();
-                        _focusedLegacyInputField = hitObject;
-
-                        Debug.Log($"[SimpleMouseForwarder] Legacy输入框激活: {hitObject.name}");
                         foundInputField = true;
                         // Input fields consume the click, stop processing
                         return;
