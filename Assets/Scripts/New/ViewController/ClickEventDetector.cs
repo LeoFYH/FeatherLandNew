@@ -56,6 +56,10 @@ namespace BirdGame
         /// （通过Windows钩子更新，解决壁纸模式下Unity输入失效问题）
         /// </summary>
         private bool isMouseDown = false;
+        
+        // Performance optimization: Static instance reference for hook callback
+        // Avoids expensive FindObjectOfType call in hook callback
+        private static ClickEventDetector instance;
 
         #region Windows API 鼠标钩子（用于捕获全局鼠标事件）
 
@@ -103,9 +107,27 @@ namespace BirdGame
         /// </summary>
         private void Awake()
         {
+            // Performance optimization: Set static instance for hook callback
+            instance = this;
+            
             InitializeCamera();
             InitializeUIRaycasters();
             _hookID = SetHook(_proc);
+        }
+        
+        private void OnEnable()
+        {
+            // Performance optimization: Set static instance when enabled
+            instance = this;
+        }
+        
+        private void OnDisable()
+        {
+            // Performance optimization: Clear static instance when disabled
+            if (instance == this)
+            {
+                instance = null;
+            }
         }
 
         /// <summary>
@@ -172,12 +194,13 @@ namespace BirdGame
 
         /// <summary>
         /// 鼠标钩子回调函数
+        /// Performance optimization: Use static instance instead of FindObjectOfType
         /// </summary>
         private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
             if (nCode >= 0 && wParam == (IntPtr)WM_LBUTTONDOWN)
             {
-                var instance = FindObjectOfType<ClickEventDetector>();
+                // Performance optimization: Use cached static instance instead of FindObjectOfType
                 if (instance != null)
                 {
                     instance.isMouseDown = true;
@@ -382,6 +405,12 @@ namespace BirdGame
         /// </summary>
         private void OnDestroy()
         {
+            // Performance optimization: Clear static instance reference
+            if (instance == this)
+            {
+                instance = null;
+            }
+            
             if (_hookID != IntPtr.Zero)
             {
                 UnhookWindowsHookEx(_hookID);

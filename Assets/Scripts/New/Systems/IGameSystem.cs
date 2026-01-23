@@ -256,8 +256,10 @@ namespace BirdGame
                 else
                 {
                     // 如果没有碰撞器，使用简单的距离检测
-                    float distance = Vector2.Distance(worldPosition, bird.transform.position);
-                    if (distance < 0.5f) // 使用0.5f作为检测范围
+                    // Performance optimization: Use sqrMagnitude instead of Distance
+                    Vector2 diff = worldPosition - bird.transform.position;
+                    float sqrDistance = diff.sqrMagnitude;
+                    if (sqrDistance < 0.25f) // 0.5f * 0.5f = 0.25f
                     {
                         return false;
                     }
@@ -289,15 +291,15 @@ namespace BirdGame
             
             // 将鼠标位置转换为世界坐标
             Vector3 worldPosition = mainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, -mainCamera.transform.position.z));
+            Vector2 worldPosition2D = new Vector2(worldPosition.x, worldPosition.y);
             
-            // 查找所有带有"Bird"或"Egg"标签的GameObject
-            GameObject[] birds = GameObject.FindGameObjectsWithTag("Bird");
-            GameObject[] eggs = GameObject.FindGameObjectsWithTag("Egg");
-            
-            // 检查鸟
-            foreach (var bird in birds)
+            // Performance optimization: Use IBirdModel.BirdList instead of FindGameObjectsWithTag
+            // This avoids expensive scene traversal every frame
+            foreach (var birdData in birdModel.BirdList)
             {
-                if (bird == null) continue;
+                if (birdData?.bird == null || birdData.bird.gameObject == null) continue;
+                
+                GameObject bird = birdData.bird.gameObject;
                 
                 // 获取鸟的Collider2D
                 Collider2D collider2D = bird.GetComponent<Collider2D>();
@@ -305,7 +307,7 @@ namespace BirdGame
                 if (collider2D != null)
                 {
                     // 使用OverlapPoint检测鼠标是否在碰撞器内（适用于触发器）
-                    if (collider2D.OverlapPoint(worldPosition))
+                    if (collider2D.OverlapPoint(worldPosition2D))
                     {
                         //Debug.Log($"检测到鸟: {bird.name}");
                         return true;
@@ -313,17 +315,20 @@ namespace BirdGame
                 }
                 else
                 {
-                    // 如果没有碰撞器，使用简单的距离检测
-                    float distance = Vector2.Distance(worldPosition, bird.transform.position);
-                    if (distance < 0.5f) // 使用0.5f作为检测范围
+                    // Performance optimization: Use sqrMagnitude instead of Distance to avoid sqrt calculation
+                    Vector2 diff = worldPosition2D - (Vector2)bird.transform.position;
+                    float sqrDistance = diff.sqrMagnitude;
+                    if (sqrDistance < 0.25f) // 0.5f * 0.5f = 0.25f
                     {
-                        Debug.Log($"通过距离检测到鸟: {bird.name}, 距离: {distance}");
+                        Debug.Log($"通过距离检测到鸟: {bird.name}, 距离: {Mathf.Sqrt(sqrDistance)}");
                         return true;
                     }
                 }
             }
             
-            // 检查蛋
+            // 检查蛋 - Note: Eggs might not be in BirdModel, so we still need FindGameObjectsWithTag
+            // TODO: Consider adding eggs to a model/system for better performance
+            GameObject[] eggs = GameObject.FindGameObjectsWithTag("Egg");
             foreach (var egg in eggs)
             {
                 if (egg == null) continue;
@@ -334,7 +339,7 @@ namespace BirdGame
                 if (collider2D != null)
                 {
                     // 使用OverlapPoint检测鼠标是否在碰撞器内（适用于触发器）
-                    if (collider2D.OverlapPoint(worldPosition))
+                    if (collider2D.OverlapPoint(worldPosition2D))
                     {
                         Debug.Log($"检测到蛋: {egg.name}");
                         return true;
@@ -342,11 +347,12 @@ namespace BirdGame
                 }
                 else
                 {
-                    // 如果没有碰撞器，使用简单的距离检测
-                    float distance = Vector2.Distance(worldPosition, egg.transform.position);
-                    if (distance < 0.5f) // 使用0.5f作为检测范围
+                    // Performance optimization: Use sqrMagnitude instead of Distance
+                    Vector2 diff = worldPosition2D - (Vector2)egg.transform.position;
+                    float sqrDistance = diff.sqrMagnitude;
+                    if (sqrDistance < 0.25f) // 0.5f * 0.5f = 0.25f
                     {
-                        Debug.Log($"通过距离检测到蛋: {egg.name}, 距离: {distance}");
+                        Debug.Log($"通过距离检测到蛋: {egg.name}, 距离: {Mathf.Sqrt(sqrDistance)}");
                         return true;
                     }
                 }

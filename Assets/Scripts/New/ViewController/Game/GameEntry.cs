@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using QFramework;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -19,11 +20,41 @@ namespace BirdGame
         private int previousClickCount = 0;
         private int previousRightClickCount = 0;
         
+        // Performance optimization: Cache input fields instead of FindObjectsOfType every frame
+        private List<TMP_InputField> cachedTMPInputFields = new List<TMP_InputField>();
+        private List<InputField> cachedInputFields = new List<InputField>();
+        private bool inputFieldsCacheDirty = true;
+        
+        // Performance optimization: Cache system references
+        private IGameSystem cachedGameSystem;
+        private ICursorSystem cachedCursorSystem;
+        private IAudioSystem cachedAudioSystem;
+        private Camera cachedMainCamera;
+        
+        // Performance optimization: Reuse RaycastAll objects
+        private PointerEventData reusablePointerEventData;
+        private List<RaycastResult> reusableRaycastResults = new List<RaycastResult>();
+        
         private void Start()
         {
             // 延迟一帧来确保所有系统都已初始化
             StartCoroutine(InitializeAfterSystems());
             this.SendCommand<LoadGameCommand>();
+            
+            // Performance optimization: Cache system references
+            cachedGameSystem = this.GetSystem<IGameSystem>();
+            cachedCursorSystem = this.GetSystem<ICursorSystem>();
+            cachedAudioSystem = this.GetSystem<IAudioSystem>();
+            cachedMainCamera = Camera.main;
+            
+            // Performance optimization: Initialize reusable objects
+            if (EventSystem.current != null)
+            {
+                reusablePointerEventData = new PointerEventData(EventSystem.current);
+            }
+            
+            // Refresh input fields cache
+            RefreshInputFieldsCache();
         }
 
         private System.Collections.IEnumerator InitializeAfterSystems()
@@ -141,30 +172,38 @@ namespace BirdGame
                 if (clickFromForwarder && this.GetUtility<IFullScreenUtility>().EnableWallpaperMode)
                 {
                     // 壁纸模式下使用RaycastAll进行检测
-                    PointerEventData eventData = new PointerEventData(EventSystem.current)
+                    // Performance optimization: Reuse objects instead of creating new ones
+                    if (reusablePointerEventData == null && EventSystem.current != null)
                     {
-                        position = Input.mousePosition
-                    };
-                    var results = new System.Collections.Generic.List<RaycastResult>();
-                    EventSystem.current.RaycastAll(eventData, results);
-                    isPointerOverUI = results.Count > 0;
+                        reusablePointerEventData = new PointerEventData(EventSystem.current);
+                    }
+                    if (reusablePointerEventData != null)
+                    {
+                        reusablePointerEventData.position = Input.mousePosition;
+                        reusablePointerEventData.Reset();
+                        
+                        reusableRaycastResults.Clear();
+                        EventSystem.current.RaycastAll(reusablePointerEventData, reusableRaycastResults);
+                        isPointerOverUI = reusableRaycastResults.Count > 0;
                     
-                    // Check if the clicked object or any parent has "Click" tag
-                    if (isPointerOverUI && results.Count > 0)
-                    {
-                        GameObject clickedObject = results[0].gameObject;
-                        if (clickedObject != null)
+                        // Check if the clicked object or any parent has "Click" tag
+                        if (isPointerOverUI && reusableRaycastResults.Count > 0)
                         {
-                            // Traverse up the hierarchy to find "Click" tag
-                            Transform current = clickedObject.transform;
-                            while (current != null)
+                            GameObject clickedObject = reusableRaycastResults[0].gameObject;
+                            if (clickedObject != null)
                             {
-                                if (current.CompareTag("Click"))
+                                // Traverse up the hierarchy to find "Click" tag
+                                Transform current = clickedObject.transform;
+                                while (current != null)
                                 {
-                                    this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Click);
-                                    break;
+                                    if (current.CompareTag("Click"))
+                                    {
+                                        // Performance optimization: Use cached system reference
+                                        cachedAudioSystem.PlayEffect(EffectType.Click);
+                                        break;
+                                    }
+                                    current = current.parent;
                                 }
-                                current = current.parent;
                             }
                         }
                     }
@@ -176,7 +215,8 @@ namespace BirdGame
                     if (isPointerOverUI && EventSystem.current.currentSelectedGameObject != null &&
                         EventSystem.current.currentSelectedGameObject.CompareTag("Click"))
                     {
-                        this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Click);
+                        // Performance optimization: Use cached system reference
+                        cachedAudioSystem.PlayEffect(EffectType.Click);
                     }
                 }
                 
@@ -188,22 +228,27 @@ namespace BirdGame
                 // 检查是否点击到可点击的物体（如鸟、蛋等）
                 Vector2 mousePosition = Input.mousePosition;
                 
-                // 获取主摄像机
-                Camera mainCamera = Camera.main;
+                // Performance optimization: Use cached camera reference
+                if (cachedMainCamera == null)
+                {
+                    cachedMainCamera = Camera.main;
+                }
+                
                 bool clickedOnInteractiveObject = false;
                 bool clickedOnBird = false;  // 新增：检测是否点击到鸟
                 
-                if (mainCamera != null)
+                if (cachedMainCamera != null)
                 {
                     // 将鼠标位置转换为世界坐标
-                    Vector3 worldPosition = mainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, -mainCamera.transform.position.z));
+                    Vector3 worldPosition = cachedMainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, -cachedMainCamera.transform.position.z));
                     
-                    // 检查鸟
-                    GameObject[] birds = GameObject.FindGameObjectsWithTag("Bird");
-                    foreach (var bird in birds)
+                    // Performance optimization: Use IBirdModel.BirdList instead of FindGameObjectsWithTag
+                    var birdModel = this.GetModel<IBirdModel>();
+                    foreach (var birdData in birdModel.BirdList)
                     {
-                        if (bird == null) continue;
+                        if (birdData?.bird == null || birdData.bird.gameObject == null) continue;
                         
+                        GameObject bird = birdData.bird.gameObject;
                         Collider2D collider2D = bird.GetComponent<Collider2D>();
                         
                         if (collider2D != null)
@@ -217,8 +262,10 @@ namespace BirdGame
                         }
                         else
                         {
-                            float distance = Vector2.Distance(worldPosition, bird.transform.position);
-                            if (distance < 0.5f)
+                            // Performance optimization: Use sqrMagnitude instead of Distance
+                            Vector2 diff = worldPosition - bird.transform.position;
+                            float sqrDistance = diff.sqrMagnitude;
+                            if (sqrDistance < 0.25f) // 0.5f * 0.5f = 0.25f
                             {
                                 clickedOnInteractiveObject = true;
                                 clickedOnBird = true;
@@ -227,7 +274,8 @@ namespace BirdGame
                         }
                     }
                     
-                    // 检查蛋
+                    // 检查蛋 - Note: Eggs might not be in BirdModel, so we still need FindGameObjectsWithTag
+                    // But we can optimize by caching or using a system to track eggs
                     if (!clickedOnBird)
                     {
                         GameObject[] eggs = GameObject.FindGameObjectsWithTag("Egg");
@@ -247,8 +295,10 @@ namespace BirdGame
                             }
                             else
                             {
-                                float distance = Vector2.Distance(worldPosition, egg.transform.position);
-                                if (distance < 0.5f)
+                                // Performance optimization: Use sqrMagnitude instead of Distance
+                                Vector2 diff = worldPosition - egg.transform.position;
+                                float sqrDistance = diff.sqrMagnitude;
+                                if (sqrDistance < 0.25f) // 0.5f * 0.5f = 0.25f
                                 {
                                     clickedOnInteractiveObject = true;
                                     break;
@@ -257,15 +307,15 @@ namespace BirdGame
                         }
                     }
                     
-                    // 检查食物和其他物体
+                    // 检查食物 - Use IBirdModel.Foods instead of FindGameObjectsWithTag
                     if (!clickedOnBird)
                     {
                         try
                         {
-                            GameObject[] foods = GameObject.FindGameObjectsWithTag("Food");
+                            var foods = birdModel.Foods;
                             foreach (var food in foods)
                             {
-                                if (food == null) continue;
+                                if (food == null || food.gameObject == null) continue;
 
                                 Collider2D collider2D = food.GetComponent<Collider2D>();
 
@@ -279,8 +329,10 @@ namespace BirdGame
                                 }
                                 else
                                 {
-                                    float distance = Vector2.Distance(worldPosition, food.transform.position);
-                                    if (distance < 0.5f)
+                                    // Performance optimization: Use sqrMagnitude instead of Distance
+                                    Vector2 diff = worldPosition - food.transform.position;
+                                    float sqrDistance = diff.sqrMagnitude;
+                                    if (sqrDistance < 0.25f) // 0.5f * 0.5f = 0.25f
                                     {
                                         clickedOnInteractiveObject = true;
                                         break;
@@ -298,19 +350,22 @@ namespace BirdGame
                 // 只有在点击到UI或可交互物体时才播放音效，但鸟除外
                 if (clickedOnInteractiveObject && !clickedOnBird)
                 {
-                    this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Click);
+                    // Performance optimization: Use cached system reference
+                    cachedAudioSystem.PlayEffect(EffectType.Click);
                 }
             }
         }
 
         private void CheckCursor()
         {
-            if(this.GetSystem<ICursorSystem>().IsPlayingAnim())
+            // Performance optimization: Use cached system reference
+            if(cachedCursorSystem.IsPlayingAnim())
                 return;
                 
-            bool isCoverUI = this.GetSystem<IGameSystem>().IsCoverUI();
-            bool isCoverBird = this.GetSystem<IGameSystem>().IsCoverBird();
-            bool isCoverGround = this.GetSystem<IGameSystem>().IsCoverGround();
+            // Performance optimization: Use cached system reference
+            bool isCoverUI = cachedGameSystem.IsCoverUI();
+            bool isCoverBird = cachedGameSystem.IsCoverBird();
+            bool isCoverGround = cachedGameSystem.IsCoverGround();
             
             // 调试信息
             if (isCoverBird)
@@ -318,21 +373,22 @@ namespace BirdGame
                 //Debug.Log("检测到鸟，设置cursor为Click状态");
             }
             
+            // Performance optimization: Use cached system reference
             if (isCoverUI)
             {
-                this.GetSystem<ICursorSystem>().SetCursorState(CursorState.Click);
+                cachedCursorSystem.SetCursorState(CursorState.Click);
             }
             else if (isCoverBird)
             {
-                this.GetSystem<ICursorSystem>().SetCursorState(CursorState.Click);
+                cachedCursorSystem.SetCursorState(CursorState.Click);
             }
             else if (isCoverGround)
             {
-                this.GetSystem<ICursorSystem>().SetCursorState(CursorState.Feed1);
+                cachedCursorSystem.SetCursorState(CursorState.Feed1);
             }
             else
             {
-                this.GetSystem<ICursorSystem>().SetCursorState(CursorState.Default);
+                cachedCursorSystem.SetCursorState(CursorState.Default);
             }
         }
         
@@ -534,37 +590,37 @@ namespace BirdGame
 
         /// <summary>
         /// 检查是否有输入框处于焦点状态
+        /// Performance optimization: Uses cached input fields instead of FindObjectsOfType every frame
         /// </summary>
         private bool IsInputFieldFocused()
         {
-            // 检查 EventSystem 当前选中的对象
+            // Refresh cache if dirty (e.g., when new input fields are created)
+            if (inputFieldsCacheDirty)
+            {
+                RefreshInputFieldsCache();
+            }
+            
+            // 检查 EventSystem 当前选中的对象 (fast path)
             GameObject selectedObject = EventSystem.current?.currentSelectedGameObject;
             if (selectedObject != null)
             {
                 // 检查是否是 TMP_InputField
-                if (selectedObject.GetComponent<TMP_InputField>() != null)
+                TMP_InputField tmpInput = selectedObject.GetComponent<TMP_InputField>();
+                if (tmpInput != null && tmpInput.isFocused)
                 {
-                    TMP_InputField tmpInput = selectedObject.GetComponent<TMP_InputField>();
-                    if (tmpInput != null && tmpInput.isFocused)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
 
                 // 检查是否是 InputField
-                if (selectedObject.GetComponent<InputField>() != null)
+                InputField input = selectedObject.GetComponent<InputField>();
+                if (input != null && input.isFocused)
                 {
-                    InputField input = selectedObject.GetComponent<InputField>();
-                    if (input != null && input.isFocused)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
 
-            // 检查所有 TMP_InputField
-            TMP_InputField[] tmpInputFields = FindObjectsOfType<TMP_InputField>();
-            foreach (var inputField in tmpInputFields)
+            // Performance optimization: Check cached list instead of FindObjectsOfType
+            foreach (var inputField in cachedTMPInputFields)
             {
                 if (inputField != null && inputField.isFocused)
                 {
@@ -572,9 +628,7 @@ namespace BirdGame
                 }
             }
 
-            // 检查所有 InputField
-            InputField[] inputFields = FindObjectsOfType<InputField>();
-            foreach (var inputField in inputFields)
+            foreach (var inputField in cachedInputFields)
             {
                 if (inputField != null && inputField.isFocused)
                 {
@@ -583,6 +637,29 @@ namespace BirdGame
             }
 
             return false;
+        }
+        
+        /// <summary>
+        /// Refresh the cached input fields list
+        /// Call this when new input fields are created/destroyed
+        /// </summary>
+        private void RefreshInputFieldsCache()
+        {
+            cachedTMPInputFields.Clear();
+            cachedInputFields.Clear();
+            
+            cachedTMPInputFields.AddRange(FindObjectsOfType<TMP_InputField>());
+            cachedInputFields.AddRange(FindObjectsOfType<InputField>());
+            
+            inputFieldsCacheDirty = false;
+        }
+        
+        /// <summary>
+        /// Mark input fields cache as dirty (call when input fields are created/destroyed)
+        /// </summary>
+        public void MarkInputFieldsCacheDirty()
+        {
+            inputFieldsCacheDirty = true;
         }
         
         void OnApplicationQuit()

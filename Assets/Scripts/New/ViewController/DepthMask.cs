@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using QFramework;
 using UnityEngine;
@@ -13,6 +13,8 @@ namespace BirdGame
 
         // 用于缓存所有需要参与遮挡的角色
         private List<Brid> characterList = new List<Brid>();
+        // Performance optimization: Track if we need to refresh the character list
+        private int lastBirdListCount = -1;
 
         void Awake()
         {
@@ -25,7 +27,15 @@ namespace BirdGame
 
         void Update()
         {
-            RefreshCharacters();
+            // Performance optimization: Only refresh when bird list count changes
+            // This avoids expensive refresh every frame
+            var birdModel = this.GetModel<IBirdModel>();
+            int currentBirdListCount = birdModel.BirdList.Count;
+            if (currentBirdListCount != lastBirdListCount)
+            {
+                RefreshCharacters();
+                lastBirdListCount = currentBirdListCount;
+            }
 
             foreach (var playerRenderer in characterList)
             {
