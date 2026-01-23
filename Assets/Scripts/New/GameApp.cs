@@ -8,10 +8,9 @@ namespace BirdGame
     {
         protected override void Init()
         {
-            // Performance optimization: FPS will be set per mode in GameEntry.SetScreenMode()
-            // Default to 30 FPS for initial load (will be adjusted when mode is set)
-            Application.targetFrameRate = 30;
-            OnDemandRendering.renderFrameInterval = 1;
+            // 设置目标帧率为45FPS
+            //UnityEngine.Application.targetFrameRate = 60;
+            OnDemandRendering.renderFrameInterval = 2;
             QualitySettings.vSyncCount = 0;
             
             this.RegisterUtility<IFullScreenUtility>(new FullScreenUtility());

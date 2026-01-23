@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using QFramework;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Rendering;
 using TMPro;
 using UnityEngine.UI;
 
@@ -105,24 +104,21 @@ namespace BirdGame
             {
                 case 0:
                     this.GetUtility<IFullScreenUtility>().WindowedMode();
-                    // Performance optimization: 45 FPS for windowed mode (active use, smooth but efficient)
-                    Application.targetFrameRate = 45;
-                    OnDemandRendering.renderFrameInterval = 1;
-                    Debug.Log("设置为窗口模式 (45 FPS)");
+                    // Application.targetFrameRate = 60;
+                    // UnityEngine.Rendering.OnDemandRendering.renderFrameInterval = 1;
+                    Debug.Log("设置为窗口模式");
                     break;
                 case 1:
                     this.GetUtility<IFullScreenUtility>().WallpaperMode();
-                    // Performance optimization: 30 FPS for wallpaper mode (background, saves CPU/battery)
-                    Application.targetFrameRate = 30;
-                    OnDemandRendering.renderFrameInterval = 1;
-                    Debug.Log("设置为壁纸模式 (30 FPS)");
+                    // Application.targetFrameRate = 120;
+                    // UnityEngine.Rendering.OnDemandRendering.renderFrameInterval = 2;
+                    Debug.Log("设置为壁纸模式");
                     break;
                 default:
                     this.GetUtility<IFullScreenUtility>().FullscreenMode();
-                    // Performance optimization: 45 FPS for fullscreen mode (active use, smooth but efficient)
-                    Application.targetFrameRate = 45;
-                    OnDemandRendering.renderFrameInterval = 1;
-                    Debug.Log("设置为全屏模式 (45 FPS)");
+                    // Application.targetFrameRate = 60;
+                    // UnityEngine.Rendering.OnDemandRendering.renderFrameInterval = 1;
+                    Debug.Log("设置为全屏模式");
                     break;
             }
             
