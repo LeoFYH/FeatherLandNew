@@ -15,11 +15,16 @@ namespace BirdGame
         private List<Brid> characterList = new List<Brid>();
         // Performance optimization: Track if we need to refresh the character list
         private int lastBirdListCount = -1;
+        // Performance optimization: Cache bird model reference
+        private IBirdModel cachedBirdModel;
 
         void Awake()
         {
             poly = GetComponent<PolygonCollider2D>();
             tentRenderer = GetComponent<SpriteRenderer>();
+            
+            // Performance optimization: Cache bird model reference
+            cachedBirdModel = this.GetModel<IBirdModel>();
 
             // 初始化角色列表（可以指定Tag或自动搜索）
             RefreshCharacters();
@@ -29,8 +34,7 @@ namespace BirdGame
         {
             // Performance optimization: Only refresh when bird list count changes
             // This avoids expensive refresh every frame
-            var birdModel = this.GetModel<IBirdModel>();
-            int currentBirdListCount = birdModel.BirdList.Count;
+            int currentBirdListCount = cachedBirdModel.BirdList.Count;
             if (currentBirdListCount != lastBirdListCount)
             {
                 RefreshCharacters();
@@ -84,7 +88,8 @@ namespace BirdGame
         {
             characterList.Clear();
 
-            foreach (var bird in this.GetModel<IBirdModel>().BirdList)
+            // Performance optimization: Use cached bird model reference
+            foreach (var bird in cachedBirdModel.BirdList)
             {
                 characterList.Add(bird.bird);
             }

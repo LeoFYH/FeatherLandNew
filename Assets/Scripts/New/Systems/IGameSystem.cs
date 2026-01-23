@@ -39,6 +39,9 @@ namespace BirdGame
         private int currentPlacingDecorationId; // 当前正在放置的装饰品ID
         private int currentIndex;
         
+        // Performance optimization: Cache Camera.main to avoid FindObjectOfType calls
+        private Camera cachedMainCamera;
+        
         [Header("食物位置偏移")]
         [Tooltip("食物落下位置相对于鼠标的偏移量")]
         private Vector3 foodDropOffset = new Vector3(0f, 0, 0f); // 基础偏移量（X轴改为0，让食物在左右两侧均匀随机）
@@ -54,6 +57,9 @@ namespace BirdGame
         protected override void OnInit()
         {
             birdModel = this.GetModel<IBirdModel>();
+            // Performance optimization: Cache Camera.main at initialization
+            cachedMainCamera = Camera.main;
+            
             // this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("Food", obj =>
             // {
             //     foodPrefab = obj;
@@ -139,7 +145,12 @@ namespace BirdGame
                         }
                     }
 
-                    Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    // Performance optimization: Use cached camera
+                    if (cachedMainCamera == null)
+                    {
+                        cachedMainCamera = Camera.main;
+                    }
+                    Vector3 mouseWorldPos = cachedMainCamera.ScreenToWorldPoint(Input.mousePosition);
                     mouseWorldPos.z = 0; // 确保Z轴位置正确
 
                     // 生成有间距的随机位置
@@ -201,14 +212,18 @@ namespace BirdGame
             food = null;
             float closestDistance = float.MaxValue;
 
+            // Performance optimization: Use sqrMagnitude instead of Distance
+            float closestSqrDistance = closestDistance * closestDistance;
             foreach (var temp in birdModel.Foods)
             {
                 if (!temp.isTargeted && !temp.isDisabling && temp.gameObject.activeSelf)
                 {
-                    float distance = Vector3.Distance(position, temp.transform.position);
-                    if (distance < closestDistance)
+                    Vector3 diff = position - temp.transform.position;
+                    float sqrDistance = diff.sqrMagnitude;
+                    if (sqrDistance < closestSqrDistance)
                     {
-                        closestDistance = distance;
+                        closestSqrDistance = sqrDistance;
+                        closestDistance = Mathf.Sqrt(sqrDistance);
                         food = temp;
                     }
                 }
@@ -225,30 +240,34 @@ namespace BirdGame
             // 获取鼠标位置
             Vector2 mousePosition = Input.mousePosition;
             
-            // 获取主摄像机
-            Camera mainCamera = Camera.main;
-            if (mainCamera == null)
+            // Performance optimization: Use cached camera instead of Camera.main
+            if (cachedMainCamera == null)
+            {
+                cachedMainCamera = Camera.main;
+            }
+            if (cachedMainCamera == null)
             {
                 return false;
             }
             
             // 将鼠标位置转换为世界坐标
-            Vector3 worldPosition = mainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, -mainCamera.transform.position.z));
+            Vector3 worldPosition = cachedMainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, -cachedMainCamera.transform.position.z));
+            Vector2 worldPosition2D = new Vector2(worldPosition.x, worldPosition.y);
             
+            // Performance optimization: Use IBirdModel.BirdList instead of FindGameObjectsWithTag
             // 检查是否点击到鸟，如果点击到鸟，则不生成食物
-            GameObject[] birds = GameObject.FindGameObjectsWithTag("Bird");
-            
-            foreach (var bird in birds)
+            foreach (var birdData in birdModel.BirdList)
             {
-                if (bird == null) continue;
+                if (birdData?.bird == null || birdData.bird.gameObject == null) continue;
                 
+                GameObject bird = birdData.bird.gameObject;
                 // 获取鸟的Collider2D
                 Collider2D collider2D = bird.GetComponent<Collider2D>();
                 
                 if (collider2D != null)
                 {
                     // 使用OverlapPoint检测鼠标是否在碰撞器内（适用于触发器）
-                    if (collider2D.OverlapPoint(worldPosition))
+                    if (collider2D.OverlapPoint(worldPosition2D))
                     {
                         return false;
                     }
@@ -257,7 +276,7 @@ namespace BirdGame
                 {
                     // 如果没有碰撞器，使用简单的距离检测
                     // Performance optimization: Use sqrMagnitude instead of Distance
-                    Vector2 diff = worldPosition - bird.transform.position;
+                    Vector2 diff = worldPosition2D - (Vector2)bird.transform.position;
                     float sqrDistance = diff.sqrMagnitude;
                     if (sqrDistance < 0.25f) // 0.5f * 0.5f = 0.25f
                     {
@@ -282,15 +301,18 @@ namespace BirdGame
             // 获取鼠标位置
             Vector2 mousePosition = Input.mousePosition;
             
-            // 获取主摄像机
-            Camera mainCamera = Camera.main;
-            if (mainCamera == null)
+            // Performance optimization: Use cached camera instead of Camera.main
+            if (cachedMainCamera == null)
+            {
+                cachedMainCamera = Camera.main;
+            }
+            if (cachedMainCamera == null)
             {
                 return false;
             }
             
             // 将鼠标位置转换为世界坐标
-            Vector3 worldPosition = mainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, -mainCamera.transform.position.z));
+            Vector3 worldPosition = cachedMainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, -cachedMainCamera.transform.position.z));
             Vector2 worldPosition2D = new Vector2(worldPosition.x, worldPosition.y);
             
             // Performance optimization: Use IBirdModel.BirdList instead of FindGameObjectsWithTag
@@ -398,13 +420,17 @@ namespace BirdGame
                 finalPosition = basePosition + randomOffset;
 
                 // 严格检查是否与现有食物有足够间距
+                // Performance optimization: Use sqrMagnitude instead of Distance
                 bool isValidPosition = true;
+                float sqrMinFoodDistance = minFoodDistance * minFoodDistance;
                 foreach (var existingFood in birdModel.Foods)
                 {
                     if (existingFood != null && existingFood.gameObject != null)
                     {
-                        float distance = Vector3.Distance(finalPosition, existingFood.transform.position);
-                        if (distance < minFoodDistance)
+                        Vector3 diff = finalPosition - existingFood.transform.position;
+                        float sqrDistance = diff.sqrMagnitude;
+                        // Performance optimization: Compare squared distance directly
+                        if (sqrDistance < sqrMinFoodDistance)
                         {
                             isValidPosition = false;
                             break;
@@ -591,12 +617,15 @@ namespace BirdGame
             const float positionTolerance = 0.1f; // 位置匹配的容差
             
             // 查找最接近的位置索引
+            // Performance optimization: Use sqrMagnitude instead of Distance
+            float sqrTolerance = positionTolerance * positionTolerance;
             for (int i = 0; i < positionList.Count; i++)
             {
-                float distance = Vector3.Distance(decorationPos, positionList[i]);
-                if (distance < positionTolerance && distance < minDistance)
+                Vector3 diff = decorationPos - positionList[i];
+                float sqrDistance = diff.sqrMagnitude;
+                if (sqrDistance < sqrTolerance && sqrDistance < minDistance)
                 {
-                    minDistance = distance;
+                    minDistance = sqrDistance;
                     actualIndex = i;
                 }
             }
@@ -631,14 +660,17 @@ namespace BirdGame
             const float fixedPositionTolerance = 0.1f;
             
             // 在 fixedPositions 中查找匹配的位置索引
+            // Performance optimization: Use sqrMagnitude instead of Distance
             if (decorationItem.fixedPositions != null && decorationItem.fixedPositions.Length > 0)
             {
+                float sqrFixedTolerance = fixedPositionTolerance * fixedPositionTolerance;
                 for (int i = 0; i < decorationItem.fixedPositions.Length; i++)
                 {
-                    float distance = Vector3.Distance(deletedPosition, decorationItem.fixedPositions[i]);
-                    if (distance < fixedPositionTolerance && distance < minFixedDistance)
+                    Vector3 diff = deletedPosition - decorationItem.fixedPositions[i];
+                    float sqrDistance = diff.sqrMagnitude;
+                    if (sqrDistance < sqrFixedTolerance && sqrDistance < minFixedDistance)
                     {
-                        minFixedDistance = distance;
+                        minFixedDistance = sqrDistance;
                         fixedPositionIndex = i;
                     }
                 }
@@ -751,12 +783,15 @@ namespace BirdGame
                         float minDistance = float.MaxValue;
                         const float positionTolerance = 0.1f;
                         
+                        // Performance optimization: Use sqrMagnitude instead of Distance
+                        float sqrPositionTolerance = positionTolerance * positionTolerance;
                         for (int k = 0; k < decorationItem.fixedPositions.Length; k++)
                         {
-                            float distance = Vector3.Distance(pos, decorationItem.fixedPositions[k]);
-                            if (distance < positionTolerance && distance < minDistance)
+                            Vector3 diff = pos - decorationItem.fixedPositions[k];
+                            float sqrDistance = diff.sqrMagnitude;
+                            if (sqrDistance < sqrPositionTolerance && sqrDistance < minDistance)
                             {
-                                minDistance = distance;
+                                minDistance = sqrDistance;
                                 matchedIndex = k;
                             }
                         }
