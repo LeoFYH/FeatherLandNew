@@ -224,8 +224,9 @@ namespace BirdGame
                     });
                     this.GetSystem<IAudioSystem>().PlayEffect(EffectType.GrowUp);
                     //_brid.transform.DOScale(_brid.AdultBirdSize, 0.2f);
-                    //this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
                     _brid.isSmall = false;
+                    // 立即同步状态到存档数据，确保 SaleBirdViewController 显示正确的状态
+                    this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
                 }
 
                 if (_brid.currFood != null)

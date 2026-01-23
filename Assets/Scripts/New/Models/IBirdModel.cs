@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using QFramework;
 using UnityEngine;
 
@@ -56,7 +56,7 @@ namespace BirdGame
                 individualEarningBig = birdConfig.eraningForBig * multiplier,
                 individualPriceSmall = birdConfig.priceForSmall * multiplier,
                 individualPriceBig = birdConfig.priceForBig * multiplier,
-                islocked = true
+                islocked = false
             };
             
             bird.birdIndex = BirdList.Count;

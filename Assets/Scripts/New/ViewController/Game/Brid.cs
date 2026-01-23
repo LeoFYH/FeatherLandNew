@@ -405,13 +405,13 @@ namespace BirdGame
 
             // if (!isDesktopBird)
             // {
-            //     // Generate income every minute
-            //     if (Time.time - startTimer >= 60)
-            //     {
-            //         startTimer = Time.time;
-            //         AddCoins();
-            //         AutoExp();
-            //     }
+                // Generate income every minute
+                if (Time.time - startTimer >= 60)
+                {
+                    startTimer = Time.time;
+                    AddCoins();
+                    AutoExp();
+                }
             // }
 
             if (SimpleMouseForwarder.clickCount > previousClickCount)
@@ -440,6 +440,8 @@ namespace BirdGame
                 {
                     transform.DOScale(AdultBirdSize, 0.2f);
                     isSmall = false;
+                    // 立即同步状态到存档数据，确保 SaleBirdViewController 显示正确的状态
+                    this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
                 }
             }
         }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using QFramework;
 using UnityEngine;
@@ -146,7 +146,7 @@ namespace BirdGame
         public float petTime;
         public Vector3 position;
         public int walkArea;
-        public bool isLocked = true;
+        public bool isLocked = false;
         
         // 个体化数值（必须保存以保持一致性）
         public float individualEarningSmall;
