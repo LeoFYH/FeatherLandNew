@@ -6,9 +6,10 @@ namespace BirdGame
     public class Heart : ViewControllerBase
     {
         public float lifetime = 0.5f; // 心形特效存活时间
+        public Animator anim;
         private float timer = 0f;
         private bool isRecycling = false;
-        private SpriteRenderer[] heartSr;
+        public SpriteRenderer[] heartSr;
         private SpriteRenderer birdSr;
 
         private void OnEnable()
@@ -16,27 +17,9 @@ namespace BirdGame
             // 每次从对象池中取出时重置
             timer = 0f;
             isRecycling = false;
-            
-            // 获取心形特效的SpriteRenderer
-            if (heartSr == null)
-            {
-                heartSr = GetComponentsInChildren<SpriteRenderer>();
-            }
             transform.localRotation = Quaternion.identity;
-            // 获取鸟的SpriteRenderer（从父物体或父物体的父物体）
-            if (birdSr == null)
-            {
-                if (transform.parent != null)
-                {
-                    // 先尝试从父物体的父物体（鸟）获取
-                    birdSr = transform.parent.GetComponentInParent<SpriteRenderer>();
-                    if (birdSr == null)
-                    {
-                        // 如果找不到，从父物体获取
-                        birdSr = transform.parent.GetComponentInChildren<SpriteRenderer>();
-                    }
-                }
-            }
+            birdSr = transform.parent.parent.GetComponentInChildren<SpriteRenderer>();
+            anim.Play("Heart");
         }
 
         private void Update()

@@ -346,10 +346,8 @@ namespace BirdGame
                                     this.GetSystem<IObjectPoolSystem>().Recycle("Heart", heart);
                                     heart = null;
                                 }
-                                this.GetSystem<IObjectPoolSystem>().Get("Heart", heartPos, obj =>
-                                {
-                                    heart = obj;
-                                });
+
+                                this.GetSystem<IObjectPoolSystem>().Get("Heart", heartPos, obj => { heart = obj; });
                                 if (petTime > 0.5)
                                 {
                                     this.GetModel<IAccountModel>().Coins.Value += birdConf.clickEarningForFiveTimes;
@@ -369,19 +367,19 @@ namespace BirdGame
             //     _stateMachine.ChangeState<BirdRunState>();
             // }
 
-        // 统一处理走路动画 - 只要在移动就播放走路动画
-        if (agent != null && agent.enabled)
-        {
-            // 使用 sqrMagnitude 避免开方运算，提升性能
-            if (agent.velocity.sqrMagnitude > 0.0001f) // 0.01f * 0.01f = 0.0001f
+            // 统一处理走路动画 - 只要在移动就播放走路动画
+            if (agent != null && agent.enabled)
             {
-                anim.SetFloat(AnimatorHashes.MoveSpeed, 1f);
+                // 使用 sqrMagnitude 避免开方运算，提升性能
+                if (agent.velocity.sqrMagnitude > 0.0001f) // 0.01f * 0.01f = 0.0001f
+                {
+                    anim.SetFloat(AnimatorHashes.MoveSpeed, 1f);
+                }
+                else
+                {
+                    anim.SetFloat(AnimatorHashes.MoveSpeed, 0f);
+                }
             }
-            else
-            {
-                anim.SetFloat(AnimatorHashes.MoveSpeed, 0f);
-            }
-        }
 
             //检查是否在WalkableArea中并做透视缩放
             // var walkableArea = NavigationManager.Instance.GetWalkableArea(walkArea);
@@ -414,13 +412,13 @@ namespace BirdGame
 
             // if (!isDesktopBird)
             // {
-                // Generate income every minute
-                if (Time.time - startTimer >= 60)
-                {
-                    startTimer = Time.time;
-                    AddCoins();
-                    AutoExp();
-                }
+            // Generate income every minute
+            if (Time.time - startTimer >= 60)
+            {
+                startTimer = Time.time;
+                AddCoins();
+                AutoExp();
+            }
             // }
 
             if (SimpleMouseForwarder.clickCount > previousClickCount)
