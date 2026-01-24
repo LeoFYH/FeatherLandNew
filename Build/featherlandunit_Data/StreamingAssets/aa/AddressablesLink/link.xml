@@ -9,13 +9,16 @@
     <type fullname="BirdGame.Brid" preserve="all" />
     <type fullname="BirdGame.ButtonAnim" preserve="all" />
     <type fullname="BirdGame.ButtonAnimSp" preserve="all" />
+    <type fullname="BirdGame.ButtonHighlight" preserve="all" />
     <type fullname="BirdGame.BuyConfirmPopup" preserve="all" />
     <type fullname="BirdGame.BuyFailPopup" preserve="all" />
     <type fullname="BirdGame.ClockPopup" preserve="all" />
+    <type fullname="BirdGame.ConfirmPopup" preserve="all" />
     <type fullname="BirdGame.ConservativeLanguageLimitInputField" preserve="all" />
     <type fullname="BirdGame.CursorConfig" preserve="all" />
     <type fullname="BirdGame.DailyViewController" preserve="all" />
     <type fullname="BirdGame.DecorationClickHandler" preserve="all" />
+    <type fullname="BirdGame.DecorationColorExchange" preserve="all" />
     <type fullname="BirdGame.DecorationContentViewController" preserve="all" />
     <type fullname="BirdGame.DecorationInfoPopup" preserve="all" />
     <type fullname="BirdGame.DragAspect" preserve="all" />
@@ -31,6 +34,8 @@
     <type fullname="BirdGame.GameManager" preserve="all" />
     <type fullname="BirdGame.HatchingBirdPopup" preserve="all" />
     <type fullname="BirdGame.Heart" preserve="all" />
+    <type fullname="BirdGame.HoverButton" preserve="all" />
+    <type fullname="BirdGame.HoverControl" preserve="all" />
     <type fullname="BirdGame.HoverScaleControl" preserve="all" />
     <type fullname="BirdGame.IllustratedItem" preserve="all" />
     <type fullname="BirdGame.IllustratedPopup" preserve="all" />
@@ -56,6 +61,7 @@
     <type fullname="BirdGame.PromptPopup" preserve="all" />
     <type fullname="BirdGame.RadioConfig" preserve="all" />
     <type fullname="BirdGame.RadioPopup" preserve="all" />
+    <type fullname="BirdGame.ResetSpriteController" preserve="all" />
     <type fullname="BirdGame.SaleBirdItem" preserve="all" />
     <type fullname="BirdGame.SaleBirdViewController" preserve="all" />
     <type fullname="BirdGame.ScheduleItem" preserve="all" />
@@ -75,12 +81,12 @@
     <type fullname="BirdGame.TomatoViewController" preserve="all" />
     <type fullname="BirdGame.ToolsContentViewController" preserve="all" />
     <type fullname="BirdGame.TutorialPopup" preserve="all" />
+    <type fullname="BirdGame.UIElementHover" preserve="all" />
     <type fullname="BirdGame.WeatherItem" preserve="all" />
     <type fullname="BirdGame.WeatherManager" preserve="all" />
     <type fullname="CameraManager" preserve="all" />
     <type fullname="Feather" preserve="all" />
     <type fullname="FullscreenTest" preserve="all" />
-    <type fullname="HookLegacyInputHandler" preserve="all" />
     <type fullname="HookTMPInputHandler" preserve="all" />
     <type fullname="NavigationManager" preserve="all" />
     <type fullname="NumPanel" preserve="all" />
@@ -108,6 +114,10 @@
     <type fullname="BirdGame.Weather/WeatherEvent" preserve="nothing" serialized="true" />
     <type fullname="UIButtonHoverScale/OnClickAction" preserve="nothing" serialized="true" />
     <type fullname="UIButtonHoverScale/OnMouseEnterAction" preserve="nothing" serialized="true" />
+  </assembly>
+  <assembly fullname="Coffee.UIEffect, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="Coffee.UIEffects.UIEffect" preserve="all" />
+    <type fullname="Coffee.UIEffectInternal.MinMax01" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="NavMeshPlus, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="NavMeshPlus.Components.NavMeshModifier" preserve="all" />
@@ -155,6 +165,7 @@
   <assembly fullname="UnityEngine.AIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.AI.NavMeshAgent" preserve="all" />
     <type fullname="UnityEngine.AI.NavMeshData" preserve="all" />
+    <type fullname="UnityEngine.AI.NavMeshObstacle" preserve="all" />
   </assembly>
   <assembly fullname="UnityEngine.AnimationModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.AnimationClip" preserve="all" />
@@ -204,7 +215,6 @@
     <type fullname="UnityEngine.UI.GraphicRaycaster" preserve="all" />
     <type fullname="UnityEngine.UI.GridLayoutGroup" preserve="all" />
     <type fullname="UnityEngine.UI.Image" preserve="all" />
-    <type fullname="UnityEngine.UI.InputField" preserve="all" />
     <type fullname="UnityEngine.UI.LayoutElement" preserve="all" />
     <type fullname="UnityEngine.UI.Mask" preserve="all" />
     <type fullname="UnityEngine.UI.Outline" preserve="all" />
@@ -220,9 +230,6 @@
     <type fullname="UnityEngine.UI.Button/ButtonClickedEvent" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.ColorBlock" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.FontData" preserve="nothing" serialized="true" />
-    <type fullname="UnityEngine.UI.InputField/EndEditEvent" preserve="nothing" serialized="true" />
-    <type fullname="UnityEngine.UI.InputField/OnChangeEvent" preserve="nothing" serialized="true" />
-    <type fullname="UnityEngine.UI.InputField/SubmitEvent" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.MaskableGraphic/CullStateChangedEvent" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.Navigation" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.ScrollRect/ScrollRectEvent" preserve="nothing" serialized="true" />
