@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -8,6 +8,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.Rendering;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -360,20 +361,29 @@ namespace BirdGame
             // Clear keyboard state before mode change to prevent lingering key states
             SimpleMouseForwarder.ClearKeyboardState();
             
-            if (mode == 0)
+            switch (mode)
             {
-                this.GetUtility<IFullScreenUtility>().WindowedMode();
-                Debug.Log("WindowedMode");
-            }
-            else if (mode == 1)
-            {
-                this.GetUtility<IFullScreenUtility>().WallpaperMode();
-                Debug.Log("WallpaperMode");
-            }
-            else if (mode == 2)
-            {
-                this.GetUtility<IFullScreenUtility>().FullscreenMode();
-                Debug.Log("FullscreenMode");
+                case 0:
+                    this.GetUtility<IFullScreenUtility>().WindowedMode();
+                    // Performance optimization: 30 FPS for windowed mode (active use, efficient)
+                    Application.targetFrameRate = 30;
+                    OnDemandRendering.renderFrameInterval = 1;
+                    Debug.Log("WindowedMode (30 FPS)");
+                    break;
+                case 1:
+                    this.GetUtility<IFullScreenUtility>().WallpaperMode();
+                    // Performance optimization: 60 FPS for wallpaper mode (needed for smooth cursor movement)
+                    Application.targetFrameRate = 60;
+                    OnDemandRendering.renderFrameInterval = 1;
+                    Debug.Log("WallpaperMode (60 FPS - 流畅光标)");
+                    break;
+                case 2:
+                    this.GetUtility<IFullScreenUtility>().FullscreenMode();
+                    // Performance optimization: 30 FPS for fullscreen mode (active use, efficient)
+                    Application.targetFrameRate = 30;
+                    OnDemandRendering.renderFrameInterval = 1;
+                    Debug.Log("FullscreenMode (30 FPS)");
+                    break;
             }
             
             // Clear keyboard state after mode change as well
