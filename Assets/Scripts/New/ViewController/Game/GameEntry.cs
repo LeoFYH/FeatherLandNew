@@ -112,10 +112,10 @@ namespace BirdGame
             {
                 case 0:
                     this.GetUtility<IFullScreenUtility>().WindowedMode();
-                    // Performance optimization: 30 FPS for windowed mode (active use, efficient)
-                    Application.targetFrameRate = 30;
+                    // Performance optimization: 60 FPS for windowed mode
+                    Application.targetFrameRate = 60;
                     OnDemandRendering.renderFrameInterval = 1;
-                    Debug.Log("设置为窗口模式 (30 FPS)");
+                    Debug.Log("设置为窗口模式 (60 FPS)");
                     break;
                 case 1:
                     this.GetUtility<IFullScreenUtility>().WallpaperMode();
@@ -127,10 +127,10 @@ namespace BirdGame
                     break;
                 default:
                     this.GetUtility<IFullScreenUtility>().FullscreenMode();
-                    // Performance optimization: 30 FPS for fullscreen mode (active use, efficient)
-                    Application.targetFrameRate = 30;
+                    // Performance optimization: 60 FPS for fullscreen mode
+                    Application.targetFrameRate = 60;
                     OnDemandRendering.renderFrameInterval = 1;
-                    Debug.Log("设置为全屏模式 (30 FPS)");
+                    Debug.Log("设置为全屏模式 (60 FPS)");
                     break;
             }
             

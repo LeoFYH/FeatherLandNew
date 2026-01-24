@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using QFramework;
 using TMPro;
 using UnityEngine.UI;
@@ -17,7 +17,7 @@ namespace BirdGame
                 this.GetSystem<IUISystem>().HidePopup(UIPopup.AddCoinPopup);
             });
 
-            infoText.text = $"Focus succeed! {this.GetModel<IAccountModel>().AddedCoins} Bonus Coin Earned!";
+            infoText.text = $"Focus succeed! {this.GetModel<IAccountModel>().AddedCoins:F1} Bonus Coin Earned!";
         }
     }
 }

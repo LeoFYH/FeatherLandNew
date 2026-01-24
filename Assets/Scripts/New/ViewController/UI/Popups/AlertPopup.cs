@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -33,7 +33,7 @@ namespace BirdGame
                 else
                 {
                     value1 = localization.GetString("Focus succeeded! {0} Bonus Coin Earned!");
-                    value1 = string.Format(value1, addedCoins);
+                    value1 = string.Format(value1, addedCoins.ToString("F1"));
                 }
                 
                 alertText.text = new StringBuilder().Append(value)
@@ -100,7 +100,7 @@ namespace BirdGame
                     else
                     {
                         value1 = localization.GetString("Focus succeeded! {0} Bonus Coin Earned!");
-                        value1 = string.Format(value1, addedCoins);
+                        value1 = string.Format(value1, addedCoins.ToString("F1"));
                     }
 
                     alertText.text = new StringBuilder().Append(value)
