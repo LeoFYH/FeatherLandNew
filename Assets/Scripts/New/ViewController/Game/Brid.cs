@@ -100,7 +100,7 @@ namespace BirdGame
         public float eatWaitDuration = 0; // 进食后等待时间（随机0-3秒）
         public float idleLockDuration = 1f; // 抚摸后锁定idle状态的时间（秒）
         private float continuousPetStartTime = 0; // 连续抚摸开始时间
-        public bool shouldFollowMouse = false; // 是否应该跟随鼠标
+        //public bool shouldFollowMouse = false; // 是否应该跟随鼠标
         public NavMeshAgent agent;
         public Action onNearOtherBird;
 
@@ -127,6 +127,7 @@ namespace BirdGame
         public float animScale = 1f;
         
         public bool isDesktopBird;
+        private GameObject heart;
 
         void Start()
         {
@@ -246,7 +247,7 @@ namespace BirdGame
                 if (continuousPetDuration >= 1f)
                 {
                     // 设置跟随鼠标标志
-                    shouldFollowMouse = true;
+                    //shouldFollowMouse = true;
                     Debug.Log("连续抚摸超过1秒，准备跟随鼠标！");
                 }
                 
@@ -331,16 +332,24 @@ namespace BirdGame
                                         currFood = null;
                                     }
 
-                                anim.SetBool(AnimatorHashes.Eat, false);
-                                _stateMachine.ChangeState<BirdIdleState>();
-                            }
+                                    anim.SetBool(AnimatorHashes.Eat, false);
+                                    _stateMachine.ChangeState<BirdIdleState>();
+                                }
 
-                            this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Stroke);
-                            this.GetSystem<IAudioSystem>().PlayBirdEffect(index);
-                            anim.SetTrigger(AnimatorHashes.StrokeTrigger);
-                            this.GetSystem<IAudioSystem>().RandomPlayPetting();
+                                this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Stroke);
+                                this.GetSystem<IAudioSystem>().PlayBirdEffect(index);
+                                anim.SetTrigger(AnimatorHashes.StrokeTrigger);
+                                this.GetSystem<IAudioSystem>().RandomPlayPetting();
                                 // 使用对象池获取心形特效
-                                this.GetSystem<IObjectPoolSystem>().Get("Heart", heartPos, null);
+                                if (heart != null && heart.activeSelf)
+                                {
+                                    this.GetSystem<IObjectPoolSystem>().Recycle("Heart", heart);
+                                    heart = null;
+                                }
+                                this.GetSystem<IObjectPoolSystem>().Get("Heart", heartPos, obj =>
+                                {
+                                    heart = obj;
+                                });
                                 if (petTime > 0.5)
                                 {
                                     this.GetModel<IAccountModel>().Coins.Value += birdConf.clickEarningForFiveTimes;

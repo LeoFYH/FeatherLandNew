@@ -39,7 +39,7 @@ namespace BirdGame
                 _brid.currFood = null;
             }
 
-            // 检查是否应该跟随鼠标
+            //检查是否应该跟随鼠标
             // if (_brid.shouldFollowMouse)
             // {
             //     isFollowingMouse = true;
