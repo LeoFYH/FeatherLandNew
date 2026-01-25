@@ -373,8 +373,8 @@ namespace BirdGame
                 case 1:
                     this.GetUtility<IFullScreenUtility>().WallpaperMode();
                     // Performance optimization: 60 FPS for wallpaper mode (needed for smooth cursor movement)
-                    Application.targetFrameRate = 60;
-                    OnDemandRendering.renderFrameInterval = 1;
+                    //Application.targetFrameRate = 60;
+                    //OnDemandRendering.renderFrameInterval = 1;
                     Debug.Log("WallpaperMode (60 FPS - 流畅光标)");
                     break;
                 case 2:
