@@ -150,14 +150,15 @@ namespace BirdGame
         
         // Cache for hover state checking - only update when mouse moves
         private static Vector2 lastHoverCheckPosition = Vector2.zero;
-        private const float HOVER_CHECK_DISTANCE_THRESHOLD = 2f; // Only check hover when mouse moves at least 2 pixels
+        private const float HOVER_CHECK_DISTANCE_THRESHOLD = 1.5f; // Reduced from 2f for better responsiveness, especially when FPS is limited
         
         // Performance optimization: Throttle hover checks in hook callback
         // Hook callback is called VERY frequently (potentially hundreds per second), so we need to throttle expensive operations
+        // However, we need to balance this with responsiveness, especially when FPS is limited
         private static Vector2 lastHookHoverCheckPosition = Vector2.zero;
-        private const float HOOK_HOVER_CHECK_DISTANCE_THRESHOLD = 3f; // Higher threshold for hook callback (more aggressive throttling)
+        private const float HOOK_HOVER_CHECK_DISTANCE_THRESHOLD = 2f; // Reduced from 3f for better responsiveness
         private static float lastHookHoverCheckTime = 0f;
-        private const float HOOK_HOVER_CHECK_MIN_INTERVAL = 0.02f; // Minimum 20ms between hook hover checks (50 checks/second max)
+        private const float HOOK_HOVER_CHECK_MIN_INTERVAL = 0.01f; // Reduced from 0.02f to 10ms (100 checks/second max) for smoother mouse movement
         
         // Performance optimization: Cache frequently accessed values
         private static EventSystem cachedEventSystem = null;
@@ -731,6 +732,10 @@ namespace BirdGame
                         }
                     }
 
+                    // Always update lastMousePosition immediately to ensure smooth mouse tracking
+                    // This is critical for drag operations and responsive mouse movement, especially when FPS is limited
+                    lastMousePosition = currentMousePosition;
+                    
                     // Check if we should update hover states
                     // Always update hover states so buttons and other UI elements can receive hover events even during dragging
                     // However, we need to exclude the drag target itself from exit events during dragging
@@ -744,18 +749,25 @@ namespace BirdGame
                     if (shouldUpdateHoverStates)
                     {
                         // Performance optimization: Throttle expensive hover checks in hook callback
-                        // Hook callback runs on every mouse movement (hundreds per second), so we need aggressive throttling
+                        // Hook callback runs on every mouse movement (hundreds per second), so we need throttling
+                        // However, we reduce throttling when dragging to ensure smooth interaction
                         float currentTime = Time.time;
                         float mouseMovementDistance = Vector2.Distance(currentMousePosition, lastHookHoverCheckPosition);
                         float timeSinceLastCheck = currentTime - lastHookHoverCheckTime;
                         
+                        // When dragging, be more responsive - reduce throttling for better feedback
+                        // When not dragging, use normal throttling to save CPU
+                        float effectiveDistanceThreshold = isLeftMouseDragging ? 1f : HOOK_HOVER_CHECK_DISTANCE_THRESHOLD;
+                        float effectiveTimeInterval = isLeftMouseDragging ? 0.005f : HOOK_HOVER_CHECK_MIN_INTERVAL; // 5ms when dragging (200 checks/sec), 10ms otherwise
+                        
                         // Only do expensive hover checks if:
-                        // 1. Mouse moved significantly (>= 3 pixels)
-                        // 2. Enough time has passed since last check (>= 20ms, i.e., max 50 checks/second)
-                        if (mouseMovementDistance < HOOK_HOVER_CHECK_DISTANCE_THRESHOLD || timeSinceLastCheck < HOOK_HOVER_CHECK_MIN_INTERVAL)
+                        // 1. Mouse moved significantly (threshold varies based on drag state)
+                        // 2. Enough time has passed since last check (interval varies based on drag state)
+                        if (mouseMovementDistance < effectiveDistanceThreshold || timeSinceLastCheck < effectiveTimeInterval)
                         {
                             // Skip expensive hover checks - they'll be handled by Update() method with better throttling
-                            // Just update position for next check
+                            // However, we still update the tracking position to ensure smooth movement detection
+                            // This ensures that when the mouse moves enough, we'll catch it on the next check
                         }
                         else
                         {
@@ -833,8 +845,6 @@ namespace BirdGame
                             }
                         }
                     }
-
-                    lastMousePosition = currentMousePosition;
                 }
                 else if (message == WM_LBUTTONUP)
                 {
@@ -1741,8 +1751,10 @@ namespace BirdGame
                     
                     // Performance optimization: Only check hover states when mouse actually moves
                     // This prevents expensive raycasts every frame when mouse is stationary
+                    // When dragging, use a lower threshold for better responsiveness
+                    float effectiveDistanceThreshold = isLeftMouseDragging ? 1f : HOVER_CHECK_DISTANCE_THRESHOLD;
                     float mouseMovementDistance = Vector2.Distance(realtimeMousePos, lastHoverCheckPosition);
-                    if (mouseMovementDistance < HOVER_CHECK_DISTANCE_THRESHOLD)
+                    if (mouseMovementDistance < effectiveDistanceThreshold)
                     {
                         // Mouse hasn't moved enough, skip expensive hover checks
                         // We still need to validate destroyed objects, but less frequently
