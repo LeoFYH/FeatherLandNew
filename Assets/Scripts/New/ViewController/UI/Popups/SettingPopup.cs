@@ -366,8 +366,8 @@ namespace BirdGame
                 case 0:
                     this.GetUtility<IFullScreenUtility>().WindowedMode();
                     // Performance optimization: 45 FPS for windowed mode
-                    // Application.targetFrameRate = 45;
-                    // OnDemandRendering.renderFrameInterval = 1;
+                    Application.targetFrameRate = 45;
+                    OnDemandRendering.renderFrameInterval = 1;
                     Debug.Log("WindowedMode (45 FPS)");
                     break;
                 case 1:
@@ -380,8 +380,8 @@ namespace BirdGame
                 case 2:
                     this.GetUtility<IFullScreenUtility>().FullscreenMode();
                     // Performance optimization: 45 FPS for fullscreen mode
-                    // Application.targetFrameRate = 45;
-                    // OnDemandRendering.renderFrameInterval = 1;
+                    Application.targetFrameRate = 45;
+                    OnDemandRendering.renderFrameInterval = 1;
                     Debug.Log("FullscreenMode (45 FPS)");
                     break;
             }
