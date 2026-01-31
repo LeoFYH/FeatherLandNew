@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: UI_Essential
+  m_EditorClassIdentifier: 
+  m_GroupName: UI_Essential
+  m_GUID: 4efc5c4e3e3b32d4cb0f9270593374b0
+  m_SerializeEntries:
+  - m_GUID: 101a309229cab07409a8aa1bd34d334d
+    m_Address: BirdMaterial
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6133a2b43e0f65a43b23ff117f8e8aed
+    m_Address: MenuPanel
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Panel
+    - prefab
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fb536b53f8f0501409635be9d70fcbd5
+    m_Address: LoadingPanel
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Panel
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 5a7a9994457a81944973db6c6dc3ffb7, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: bf3ee6353dc577b4cb6e43b57916818d, type: 2}
+    - {fileID: 11400000, guid: 133ee57fb70c95f4daf1ca2de052b02e, type: 2}

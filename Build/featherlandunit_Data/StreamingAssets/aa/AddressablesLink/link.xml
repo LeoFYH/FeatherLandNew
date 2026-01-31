@@ -20,12 +20,10 @@
     <type fullname="BirdGame.DecorationClickHandler" preserve="all" />
     <type fullname="BirdGame.DecorationColorExchange" preserve="all" />
     <type fullname="BirdGame.DecorationContentViewController" preserve="all" />
-    <type fullname="BirdGame.DecorationInfoPopup" preserve="all" />
     <type fullname="BirdGame.DragAspect" preserve="all" />
     <type fullname="BirdGame.DragMove" preserve="all" />
     <type fullname="BirdGame.Egg" preserve="all" />
     <type fullname="BirdGame.EggContentViewController" preserve="all" />
-    <type fullname="BirdGame.EggInfo" preserve="all" />
     <type fullname="BirdGame.EggMouseChecker" preserve="all" />
     <type fullname="BirdGame.EnvironmentViewController" preserve="all" />
     <type fullname="BirdGame.ExitConfirmPopup" preserve="all" />
@@ -102,18 +100,18 @@
     <type fullname="BirdGame.EggBirdItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.EggItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.MapItemConfig" preserve="nothing" serialized="true" />
-    <type fullname="BirdGame.OtherItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.SceneBird" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.SceneDecoration" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.SceneEgg" preserve="nothing" serialized="true" />
-    <type fullname="BirdGame.SpriteItem" preserve="nothing" serialized="true" />
-    <type fullname="BirdGame.ToggleItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.ToolItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.ToolSelection" preserve="nothing" serialized="true" />
-    <type fullname="BirdGame.Weather" preserve="nothing" serialized="true" />
-    <type fullname="BirdGame.Weather/WeatherEvent" preserve="nothing" serialized="true" />
     <type fullname="UIButtonHoverScale/OnClickAction" preserve="nothing" serialized="true" />
     <type fullname="UIButtonHoverScale/OnMouseEnterAction" preserve="nothing" serialized="true" />
+    <type fullname="BirdGame.OtherItem" preserve="nothing" serialized="true" />
+    <type fullname="BirdGame.SpriteItem" preserve="nothing" serialized="true" />
+    <type fullname="BirdGame.Weather" preserve="nothing" serialized="true" />
+    <type fullname="BirdGame.Weather/WeatherEvent" preserve="nothing" serialized="true" />
+    <type fullname="BirdGame.ToggleItem" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="Coffee.UIEffect, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="Coffee.UIEffects.UIEffect" preserve="all" />
@@ -134,6 +132,7 @@
   </assembly>
   <assembly fullname="Unity.ResourceManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
     <type fullname="UnityEngine.ResourceManagement.ResourceProviders.AssetBundleProvider" preserve="all" />
+    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.AtlasSpriteProvider" preserve="all" />
     <type fullname="UnityEngine.ResourceManagement.ResourceProviders.BundledAssetProvider" preserve="all" />
     <type fullname="UnityEngine.ResourceManagement.ResourceProviders.InstanceProvider" preserve="all" />
     <type fullname="UnityEngine.ResourceManagement.ResourceProviders.SceneProvider" preserve="all" />
@@ -145,19 +144,21 @@
     <type fullname="TMPro.TMP_InputField" preserve="all" />
     <type fullname="TMPro.FaceInfo_Legacy" preserve="nothing" serialized="true" />
     <type fullname="TMPro.FontAssetCreationSettings" preserve="nothing" serialized="true" />
+    <type fullname="TMPro.GlyphAnchorPoint" preserve="nothing" serialized="true" />
     <type fullname="TMPro.KerningTable" preserve="nothing" serialized="true" />
-    <type fullname="TMPro.LigatureSubstitutionRecord" preserve="nothing" serialized="true" />
+    <type fullname="TMPro.MarkPositionAdjustment" preserve="nothing" serialized="true" />
+    <type fullname="TMPro.MarkToBaseAdjustmentRecord" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_Character" preserve="nothing" serialized="true" />
-    <type fullname="TMPro.TMP_Dropdown/DropdownEvent" preserve="nothing" serialized="true" />
-    <type fullname="TMPro.TMP_Dropdown/OptionDataList" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_FontFeatureTable" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_FontWeightPair" preserve="nothing" serialized="true" />
+    <type fullname="TMPro.VertexGradient" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_InputField/OnChangeEvent" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_InputField/SelectionEvent" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_InputField/SubmitEvent" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_InputField/TextSelectionEvent" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_InputField/TouchScreenKeyboardEvent" preserve="nothing" serialized="true" />
-    <type fullname="TMPro.VertexGradient" preserve="nothing" serialized="true" />
+    <type fullname="TMPro.TMP_Dropdown/DropdownEvent" preserve="nothing" serialized="true" />
+    <type fullname="TMPro.TMP_Dropdown/OptionDataList" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="UnityEditor.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEditor.Audio.AudioMixerSnapshotController" preserve="all" />
@@ -229,14 +230,14 @@
     <type fullname="UnityEngine.UI.AnimationTriggers" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.Button/ButtonClickedEvent" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.ColorBlock" preserve="nothing" serialized="true" />
-    <type fullname="UnityEngine.UI.FontData" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.MaskableGraphic/CullStateChangedEvent" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.Navigation" preserve="nothing" serialized="true" />
-    <type fullname="UnityEngine.UI.ScrollRect/ScrollRectEvent" preserve="nothing" serialized="true" />
-    <type fullname="UnityEngine.UI.Scrollbar/ScrollEvent" preserve="nothing" serialized="true" />
-    <type fullname="UnityEngine.UI.Slider/SliderEvent" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.SpriteState" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.Toggle/ToggleEvent" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UI.FontData" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UI.ScrollRect/ScrollRectEvent" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UI.Slider/SliderEvent" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UI.Scrollbar/ScrollEvent" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="UnityEngine.UIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.Canvas" preserve="all" />

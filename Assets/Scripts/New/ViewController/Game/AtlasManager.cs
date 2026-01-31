@@ -1,21 +1,16 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.U2D;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using System;
 
 namespace BirdGame
 {
-
-
     public class AtlasManager : MonoBehaviour
     {
-        // 指定用于加载图集的Label
-        public string atlasLabel = "Atlas";
-
-        private Dictionary<string, SpriteAtlas> _loadedAtlases = new Dictionary<string, SpriteAtlas>();
-        private List<AsyncOperationHandle<SpriteAtlas>> _atlasHandles = new List<AsyncOperationHandle<SpriteAtlas>>();
+        private IAssetSystem _assetSystem;
 
         private static AtlasManager _instance;
         public static AtlasManager Instance => _instance;
@@ -30,76 +25,39 @@ namespace BirdGame
 
             _instance = this;
             DontDestroyOnLoad(gameObject);
+            
+            // 初始化AssetSystem
+            _assetSystem = GameApp.Interface.GetSystem<IAssetSystem>();
         }
 
-        private void OnEnable()
+        /// <summary>
+        /// 异步加载图集中的精灵，自动管理图集的加载和释放
+        /// </summary>
+        /// <param name="spriteAddress">精灵地址</param>
+        /// <param name="atlasAddress">图集地址</param>
+        /// <param name="onCompleted">加载完成回调</param>
+        /// <param name="onProgress">加载进度回调</param>
+        public void LoadSpriteFromAtlasAsync(string spriteAddress, string atlasAddress, Action<UnityEngine.Sprite> onCompleted, Action<float> onProgress = null)
         {
-            // 注册图集请求事件
-            SpriteAtlasManager.atlasRequested += OnAtlasRequested;
+            _assetSystem.LoadSpriteFromAtlasAsync(spriteAddress, atlasAddress, onCompleted, onProgress);
         }
 
-        private void OnDisable()
+        /// <summary>
+        /// 释放图集中的精灵，当图集不再被引用时自动释放图集
+        /// </summary>
+        /// <param name="spriteAddress">精灵地址</param>
+        /// <param name="atlasAddress">图集地址</param>
+        public void ReleaseSpriteFromAtlas(string spriteAddress, string atlasAddress)
         {
-            SpriteAtlasManager.atlasRequested -= OnAtlasRequested;
+            _assetSystem.ReleaseSpriteFromAtlas(spriteAddress, atlasAddress);
         }
 
-        private void OnAtlasRequested(string atlasName, System.Action<SpriteAtlas> callback)
-        {
-            // 检查图集是否已经预加载
-            if (_loadedAtlases.ContainsKey(atlasName))
-            {
-                callback(_loadedAtlases[atlasName]);
-            }
-            else
-            {
-                // 如果没有预加载，则通过Addressables按名称加载
-                Debug.LogWarning($"Atlas {atlasName} was not preloaded, loading on demand.");
-                StartCoroutine(LoadAtlasOnDemand(atlasName, callback));
-            }
-        }
-
-        private IEnumerator LoadAtlasOnDemand(string atlasName, System.Action<SpriteAtlas> callback)
-        {
-            var handle = Addressables.LoadAssetAsync<SpriteAtlas>(atlasName);
-            yield return handle;
-
-            if (handle.Status == AsyncOperationStatus.Succeeded)
-            {
-                _loadedAtlases[atlasName] = handle.Result;
-                callback(handle.Result);
-                _atlasHandles.Add(handle);
-            }
-            else
-            {
-                Debug.LogError($"Failed to load atlas on demand: {atlasName}");
-                callback(null);
-            }
-        }
-
-        // 提供方法手动获取图集（如果已经加载）
+        // 保留原有的手动获取图集方法，以备不时之需
         public SpriteAtlas GetAtlas(string atlasName)
         {
-            if (_loadedAtlases.ContainsKey(atlasName))
-            {
-                return _loadedAtlases[atlasName];
-            }
-
+            // 如果需要手动获取已加载的图集，可以调用AssetSystem的相关方法
+            // 由于当前AssetSystem内部没有提供直接获取图集的方法，这里留作扩展
             return null;
-        }
-
-        private void OnDestroy()
-        {
-            // 释放所有Addressables加载的图集
-            foreach (var handle in _atlasHandles)
-            {
-                if (handle.IsValid())
-                {
-                    Addressables.Release(handle);
-                }
-            }
-
-            _atlasHandles.Clear();
-            _loadedAtlases.Clear();
         }
     }
 }

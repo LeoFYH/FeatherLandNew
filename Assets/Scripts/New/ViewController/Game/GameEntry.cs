@@ -46,7 +46,7 @@ namespace BirdGame
         private void Start()
         {
             // 延迟一帧来确保所有系统都已初始化
-            StartCoroutine(InitializeAfterSystems());
+            this.GetSystem<IMonoSystem>().StartCoroutine(InitializeAfterSystems());
             this.SendCommand<LoadGameCommand>();
             
             // Performance optimization: Cache system references

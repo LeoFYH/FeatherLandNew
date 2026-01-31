@@ -63,6 +63,7 @@
     <Compile Include="Assets\Scripts\AnimationTest\AnimationTest.cs" />
     <Compile Include="Assets\Scripts\New\Events\DisableButtonEvent.cs" />
     <Compile Include="Assets\Scripts\New\Models\IGameModel.cs" />
+    <Compile Include="Assets\Scripts\New\Utility\AtlasManager.cs" />
     <Compile Include="Assets\Scripts\BirdStates\BirdFlyDownState.cs" />
     <Compile Include="Assets\Scripts\New\Models\ILoadingModel.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\MediaContent.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="Assets\Scripts\New\Events\RefreshNoteIndexEvent.cs" />
     <Compile Include="Assets\Scripts\New\Events\ChangeScreenModeEvent.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Debug\EggBirdEditor.cs" />
+    <Compile Include="Assets\Scripts\New\Systems\OptimizedAudioSystem.cs" />
     <Compile Include="Assets\Scripts\Notebook\NotebookUI.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\DecorationColorExchange.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\HoverScaleControl.cs" />
@@ -89,6 +91,7 @@
     <Compile Include="Assets\Scripts\New\Models\IDesktopBirdModel.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\ButtonAnimSp.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\EggMask.cs" />
+    <Compile Include="Assets\Scripts\New\Utility\SmartAtlasManager.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\SettingPopup.cs" />
     <Compile Include="Assets\Scripts\New\Events\DestroyEggEvent.cs" />
     <Compile Include="Assets\Scripts\Steamworks.NET\SteamManager.cs" />
@@ -139,8 +142,10 @@
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Shop\SaleBirdViewController.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\WeatherItem.cs" />
     <Compile Include="Assets\Scripts\New\Events\HideEggEvent.cs" />
+    <Compile Include="Assets\Scripts\New\Systems\PeriodicCleanupSystem.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\NotwalkableController.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Note\ScheduleViewController.cs" />
+    <Compile Include="Assets\Scripts\New\Systems\MemoryOptimizationSystem.cs" />
     <Compile Include="Assets\Scripts\WalkableArea.cs" />
     <Compile Include="Assets\Scripts\New\Events\HideWeatherContentEvent.cs" />
     <Compile Include="Assets\Scripts\Managers\UIManager.cs" />
@@ -229,6 +234,7 @@
     <Compile Include="Assets\Scripts\New\Systems\IDesktopSystem.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\Brid.cs" />
     <Compile Include="Assets\Scripts\New\Systems\IAssetSystem.cs" />
+    <Compile Include="Assets\Scripts\New\Systems\TextureOptimizationSystem.cs" />
     <Compile Include="Assets\Scripts\FSM\StateMachine.cs" />
     <Compile Include="Assets\Scripts\New\Events\ChangeTimeViewEvent.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\GameEntry.cs" />
