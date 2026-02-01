@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 31_Cardinal 1
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -23,7 +23,12 @@ MonoBehaviour:
     SerializationNodes: []
   preview: {fileID: -2442135517998485000, guid: 8648821ccd9e36649b5cbf3d390f2b1b, type: 3}
   id: 31
-  prefab: {fileID: 1885250170276666100, guid: 564994a6d92ea0e4aa40ab3f0a1d4f30, type: 3}
+  prefab:
+    m_AssetGUID: 564994a6d92ea0e4aa40ab3f0a1d4f30
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
   canFly: 1
   canFlyWait: 0
   canFlyHorizontal: 1

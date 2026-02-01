@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 25_Namaqua Dove 0
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -23,7 +23,12 @@ MonoBehaviour:
     SerializationNodes: []
   preview: {fileID: -8868803461578586678, guid: 84d62c9acebf163429bad0c071293688, type: 3}
   id: 25
-  prefab: {fileID: 1885250170276666100, guid: 8f0ce1563c66a8143948ebeae21083d8, type: 3}
+  prefab:
+    m_AssetGUID: 8f0ce1563c66a8143948ebeae21083d8
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
   canFly: 1
   canFlyWait: 1
   canFlyHorizontal: 0

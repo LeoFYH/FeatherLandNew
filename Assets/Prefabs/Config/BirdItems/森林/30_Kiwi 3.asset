@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 30_Kiwi 3
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -23,7 +23,12 @@ MonoBehaviour:
     SerializationNodes: []
   preview: {fileID: -8467211242572415453, guid: 9eb0a7a7aaa7071459afd5289656560e, type: 3}
   id: 30
-  prefab: {fileID: 1885250170276666100, guid: 5baac17e57393b5438ed312698772530, type: 3}
+  prefab:
+    m_AssetGUID: 5baac17e57393b5438ed312698772530
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
   canFly: 0
   canFlyWait: 0
   canFlyHorizontal: 0

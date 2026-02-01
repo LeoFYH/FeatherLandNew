@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 72_Budgerigar 2
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -23,7 +23,12 @@ MonoBehaviour:
     SerializationNodes: []
   preview: {fileID: 3035805467350716357, guid: 396337d593bcdc845926738d887b7d72, type: 3}
   id: 72
-  prefab: {fileID: 1885250170276666100, guid: c29c26262dd478f4a9931808faf7f8b1, type: 3}
+  prefab:
+    m_AssetGUID: c29c26262dd478f4a9931808faf7f8b1
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
   canFly: 1
   canFlyWait: 1
   canFlyHorizontal: 1

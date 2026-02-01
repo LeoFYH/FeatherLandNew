@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 98_African ostrich 1
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -23,7 +23,12 @@ MonoBehaviour:
     SerializationNodes: []
   preview: {fileID: -8868803461578586678, guid: bd5bfeac6d8bc5a4697001031c619759, type: 3}
   id: 98
-  prefab: {fileID: 1885250170276666100, guid: 0d6e76076d816c842a1e0c00dbc8bcb9, type: 3}
+  prefab:
+    m_AssetGUID: 0d6e76076d816c842a1e0c00dbc8bcb9
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
   canFly: 0
   canFlyWait: 0
   canFlyHorizontal: 0

@@ -106,28 +106,33 @@ namespace BirdGame
         {
             var config = this.GetModel<IConfigModel>().BirdConfig;
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
-            GameObject go = GameObject.Instantiate(config.GetBird(birdIndex, mapIndex).prefab);
-            this.GetModel<IBirdModel>().AddBird(birdIndex, go.GetComponent<Brid>());
-            this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
-            if (this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].eggList.Count > 0)
-                this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].eggList.RemoveAt(0);
-            var agent = go.GetComponent<NavMeshAgent>();
-            agent.enabled = false;
+            var asset = config.GetBird(birdIndex, mapIndex).prefab;
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>(asset.AssetGUID, obj =>
+            {
+                GameObject go = GameObject.Instantiate(obj);
+                this.GetModel<IBirdModel>().AddBird(birdIndex, go.GetComponent<Brid>());
+                this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
+                if (this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].eggList.Count > 0)
+                    this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].eggList.RemoveAt(0);
+                var agent = go.GetComponent<NavMeshAgent>();
+                agent.enabled = false;
 
-            var point = NavigationManager.Instance.GetRandomTarget(3);
-            while (!IsPointInScreen2D(point))
-            {
-                point = NavigationManager.Instance.GetRandomTarget(3);
-            }
-            go.transform.position = new Vector3(point.x, point.y, 0);
-            // 更新 GameManager 的未开启蛋数量
-            this.GetModel<IBirdModel>().UnopenEggs--;
-            agent.enabled = true;
-            if (this.GetModel<IBirdModel>().UnopenEggs <= 0)
-            {
-                this.GetSystem<IUISystem>().HideMask();
-                this.SendEvent<EnableButtonEvent>();
-            }
+                var point = NavigationManager.Instance.GetRandomTarget(3);
+                while (!IsPointInScreen2D(point))
+                {
+                    point = NavigationManager.Instance.GetRandomTarget(3);
+                }
+                go.transform.position = new Vector3(point.x, point.y, 0);
+                // 更新 GameManager 的未开启蛋数量
+                this.GetModel<IBirdModel>().UnopenEggs--;
+                agent.enabled = true;
+                if (this.GetModel<IBirdModel>().UnopenEggs <= 0)
+                {
+                    this.GetSystem<IUISystem>().HideMask();
+                    this.SendEvent<EnableButtonEvent>();
+                }
+            });
+            
         }
         
         private bool IsPointInScreen2D(Vector3 worldPoint)

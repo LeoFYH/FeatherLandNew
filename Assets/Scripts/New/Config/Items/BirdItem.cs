@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -15,7 +16,7 @@ namespace BirdGame
         [HorizontalGroup("content"), VerticalGroup("content/Info"), LabelText("id")]
         public int id;
         [VerticalGroup("content/Info"), LabelText("鸟的预制体")]
-        public GameObject prefab;
+        public AssetReferenceGameObject prefab;
         [VerticalGroup("content/Info"), LabelText("是否能飞行")]
         public bool canFly = true;
         [VerticalGroup("content/Info"), LabelText("是否能飞行等待")]

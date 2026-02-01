@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 13_Cockatiel 2
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -23,7 +23,12 @@ MonoBehaviour:
     SerializationNodes: []
   preview: {fileID: 7963901245745060430, guid: 750590916c9f5ed4b81972313fe85aeb, type: 3}
   id: 13
-  prefab: {fileID: 1885250170276666100, guid: c29c26262dd478f4a9931808faf7f8b1, type: 3}
+  prefab:
+    m_AssetGUID: c29c26262dd478f4a9931808faf7f8b1
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
   canFly: 1
   canFlyWait: 1
   canFlyHorizontal: 1

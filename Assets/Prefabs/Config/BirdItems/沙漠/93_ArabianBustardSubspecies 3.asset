@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 93_ArabianBustardSubspecies 3
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -23,7 +23,12 @@ MonoBehaviour:
     SerializationNodes: []
   preview: {fileID: -8868803461578586678, guid: b01778f169e591546ba61c7305648386, type: 3}
   id: 93
-  prefab: {fileID: 1885250170276666100, guid: 837fd23dfe8d22c4484cc0782efb099f, type: 3}
+  prefab:
+    m_AssetGUID: 837fd23dfe8d22c4484cc0782efb099f
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
   canFly: 0
   canFlyWait: 0
   canFlyHorizontal: 0

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 12_Kakapo 0
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -23,7 +23,12 @@ MonoBehaviour:
     SerializationNodes: []
   preview: {fileID: -855298285791758126, guid: 6cc1a274476f0e44eb221cd3a1d56d2b, type: 3}
   id: 12
-  prefab: {fileID: 1885250170276666100, guid: 50359b7ab0718bc4fb5ec48f94baaeb4, type: 3}
+  prefab:
+    m_AssetGUID: 50359b7ab0718bc4fb5ec48f94baaeb4
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
   canFly: 0
   canFlyWait: 0
   canFlyHorizontal: 0

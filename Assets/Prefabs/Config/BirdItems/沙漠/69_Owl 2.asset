@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 69_Owl 2
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -23,7 +23,12 @@ MonoBehaviour:
     SerializationNodes: []
   preview: {fileID: 5905681027756182028, guid: 44335251009b1904187308e914baa848, type: 3}
   id: 69
-  prefab: {fileID: 1885250170276666100, guid: 949a0549d74dfe74b8267bf3523f933a, type: 3}
+  prefab:
+    m_AssetGUID: 949a0549d74dfe74b8267bf3523f933a
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
   canFly: 1
   canFlyWait: 1
   canFlyHorizontal: 0

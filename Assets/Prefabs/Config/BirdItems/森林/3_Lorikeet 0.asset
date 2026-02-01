@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 3_Lorikeet 0
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -23,7 +23,12 @@ MonoBehaviour:
     SerializationNodes: []
   preview: {fileID: -6240287372484197522, guid: c2443b42ec4e92543a6e32ab73c571e7, type: 3}
   id: 3
-  prefab: {fileID: 4594323129400064310, guid: c6c7d9c576c41344fadd6519160df9b5, type: 3}
+  prefab:
+    m_AssetGUID: c6c7d9c576c41344fadd6519160df9b5
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
   canFly: 1
   canFlyWait: 1
   canFlyHorizontal: 1

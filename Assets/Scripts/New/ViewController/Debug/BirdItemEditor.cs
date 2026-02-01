@@ -194,17 +194,22 @@ namespace BirdGame.DebugMode
         {
             var config = this.GetModel<IConfigModel>().BirdConfig;
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
-            GameObject go = GameObject.Instantiate(config.GetBird(birdIndex, mapIndex).prefab);
-            this.GetModel<IBirdModel>().AddBird(birdIndex, go.GetComponent<Brid>());
-            this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
-            if (this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].eggList.Count > 0)
-                this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].eggList.RemoveAt(0);
-            var agent = go.GetComponent<NavMeshAgent>();
-            agent.enabled = false;
+            var asset = config.GetBird(birdIndex, mapIndex).prefab;
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>(asset.AssetGUID, obj =>
+            {
+                GameObject go = GameObject.Instantiate(obj);
+                this.GetModel<IBirdModel>().AddBird(birdIndex, go.GetComponent<Brid>());
+                this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
+                if (this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].eggList.Count > 0)
+                    this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].eggList.RemoveAt(0);
+                var agent = go.GetComponent<NavMeshAgent>();
+                agent.enabled = false;
 
-            var point = NavigationManager.Instance.GetRandomTarget(3);
-            go.transform.position = new Vector3(point.x, point.y, 0);
-            agent.enabled = true;
+                var point = NavigationManager.Instance.GetRandomTarget(3);
+                go.transform.position = new Vector3(point.x, point.y, 0);
+                agent.enabled = true;
+            });
+            
         }
     }
 }

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 23_Parakeet 3
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -23,7 +23,12 @@ MonoBehaviour:
     SerializationNodes: []
   preview: {fileID: -3503711706764805523, guid: 6a9a5e6072914224197f9d394eb35c67, type: 3}
   id: 23
-  prefab: {fileID: 900128412874830559, guid: 461dcf37c85aa2147bf004903bac2233, type: 3}
+  prefab:
+    m_AssetGUID: 461dcf37c85aa2147bf004903bac2233
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
   canFly: 1
   canFlyWait: 1
   canFlyHorizontal: 1

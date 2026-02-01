@@ -196,20 +196,24 @@ namespace BirdGame
         {
             var config = this.GetModel<IConfigModel>().BirdConfig;
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
-            GameObject go = GameObject.Instantiate(config.GetBird(birdIndex, mapIndex).prefab);
-            this.GetModel<IBirdModel>().AddBird(birdIndex, go.GetComponent<Brid>());
-            var agent = go.GetComponent<NavMeshAgent>();
-            agent.enabled = false;
-            var point = NavigationManager.Instance.GetRandomTarget(3);
-            go.transform.position = new Vector3(point.x, point.y, 0);
-            // 更新 GameManager 的未开启蛋数量
-            this.GetModel<IBirdModel>().UnopenEggs--;
-            agent.enabled = true;
-            if (this.GetModel<IBirdModel>().UnopenEggs <= 0)
+            var asset = config.GetBird(birdIndex, mapIndex).prefab;
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>(asset.AssetGUID, obj =>
             {
-                this.GetSystem<IUISystem>().HideMask();
-                this.SendEvent<EnableButtonEvent>();
-            }
+                GameObject go = GameObject.Instantiate(obj);
+                this.GetModel<IBirdModel>().AddBird(birdIndex, go.GetComponent<Brid>());
+                var agent = go.GetComponent<NavMeshAgent>();
+                agent.enabled = false;
+                var point = NavigationManager.Instance.GetRandomTarget(3);
+                go.transform.position = new Vector3(point.x, point.y, 0);
+                // 更新 GameManager 的未开启蛋数量
+                this.GetModel<IBirdModel>().UnopenEggs--;
+                agent.enabled = true;
+                if (this.GetModel<IBirdModel>().UnopenEggs <= 0)
+                {
+                    this.GetSystem<IUISystem>().HideMask();
+                    this.SendEvent<EnableButtonEvent>();
+                }
+            });
         }
         
         private int RandomGetBirdIndex(int eggIndex)
@@ -273,66 +277,69 @@ namespace BirdGame
                 return;
             }
 
-            // 实例化鸟预制体
-            GameObject birdObject = GameObject.Instantiate(birdItem.prefab);
-            Brid bird = birdObject.GetComponent<Brid>();
-            var agent = birdObject.GetComponent<NavMeshAgent>();
-            agent.enabled = false;
-            
-            var point = NavigationManager.Instance.GetRandomTarget(3);
-            birdObject.transform.position = new Vector3(point.x, point.y, 0);
-            
-            if (bird == null)
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>(birdItem.prefab.AssetGUID, obj =>
             {
-                Debug.LogError($"预制体上没有Brid组件: {birdItem.prefab.name}");
-                GameObject.Destroy(birdObject);
-                return;
-            }
+                // 实例化鸟预制体
+                GameObject birdObject = GameObject.Instantiate(obj);
 
-            // 设置鸟的数据
-            bird.isSmall = savedBirdData.isSmall;
-            bird.currentExp.Value = savedBirdData.currentExp;
-            bird.currentFavorability.Value = savedBirdData.currentFavorability;
-            bird.totalFavorability = savedBirdData.totalFavorability;
-            // petTime是私有字段，无法直接设置
+                Brid bird = birdObject.GetComponent<Brid>();
+                var agent = birdObject.GetComponent<NavMeshAgent>();
+                agent.enabled = false;
 
-            // 根据isSmall设置鸟的大小
-            if (savedBirdData.currentExp <= birdItem.totalExp)
-            {
-                birdObject.transform.localScale = Vector3.one * bird.BabyBirdSize;
-                savedBirdData.isSmall = true;
-                bird.isSmall = true;
-            }
-            else
-            {
-                savedBirdData.isSmall = false;
-                bird.isSmall = false;
-                // 成鸟：保持原始大小
-                birdObject.transform.localScale = Vector3.one * bird.AdultBirdSize;
-            }
+                var point = NavigationManager.Instance.GetRandomTarget(3);
+                birdObject.transform.position = new Vector3(point.x, point.y, 0);
 
-            // 添加到BirdModel
-            birdModel.AddBird(savedBirdData.birdType, bird);
+                if (bird == null)
+                {
+                    GameObject.Destroy(birdObject);
+                    return;
+                }
 
-            // 设置自定义名称和个体化数值（从存档恢复）
-            var birdData = birdModel.BirdList[^1];
-            birdData.customName = savedBirdData.customName;
-            
-            // 恢复保存的个体化数值（如果存档没有这些值，使用刚生成的随机值）
-            if (savedBirdData.individualEarningBig > 0)
-            {
-                birdData.individualEarningSmall = savedBirdData.individualEarningSmall;
-                birdData.individualEarningBig = savedBirdData.individualEarningBig;
-                birdData.individualPriceSmall = savedBirdData.individualPriceSmall;
-                birdData.individualPriceBig = savedBirdData.individualPriceBig;
-                Debug.Log($"从存档恢复个体化数值 - 成鸟收入:{birdData.individualEarningBig:F2}");
-            }
-            else
-            {
-                Debug.Log($"旧存档无个体化数值，使用新生成的随机值");
-            }
-            
-            agent.enabled = true;
+                // 设置鸟的数据
+                bird.isSmall = savedBirdData.isSmall;
+                bird.currentExp.Value = savedBirdData.currentExp;
+                bird.currentFavorability.Value = savedBirdData.currentFavorability;
+                bird.totalFavorability = savedBirdData.totalFavorability;
+                // petTime是私有字段，无法直接设置
+
+                // 根据isSmall设置鸟的大小
+                if (savedBirdData.currentExp <= birdItem.totalExp)
+                {
+                    birdObject.transform.localScale = Vector3.one * bird.BabyBirdSize;
+                    savedBirdData.isSmall = true;
+                    bird.isSmall = true;
+                }
+                else
+                {
+                    savedBirdData.isSmall = false;
+                    bird.isSmall = false;
+                    // 成鸟：保持原始大小
+                    birdObject.transform.localScale = Vector3.one * bird.AdultBirdSize;
+                }
+
+                // 添加到BirdModel
+                birdModel.AddBird(savedBirdData.birdType, bird);
+
+                // 设置自定义名称和个体化数值（从存档恢复）
+                var birdData = birdModel.BirdList[^1];
+                birdData.customName = savedBirdData.customName;
+
+                // 恢复保存的个体化数值（如果存档没有这些值，使用刚生成的随机值）
+                if (savedBirdData.individualEarningBig > 0)
+                {
+                    birdData.individualEarningSmall = savedBirdData.individualEarningSmall;
+                    birdData.individualEarningBig = savedBirdData.individualEarningBig;
+                    birdData.individualPriceSmall = savedBirdData.individualPriceSmall;
+                    birdData.individualPriceBig = savedBirdData.individualPriceBig;
+                    Debug.Log($"从存档恢复个体化数值 - 成鸟收入:{birdData.individualEarningBig:F2}");
+                }
+                else
+                {
+                    Debug.Log($"旧存档无个体化数值，使用新生成的随机值");
+                }
+
+                agent.enabled = true;
+            });
         }
 
         /// <summary>

@@ -2,6 +2,7 @@
   <assembly fullname="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="BirdGame.AddCoinPopup" preserve="all" />
     <type fullname="BirdGame.AlertPopup" preserve="all" />
+    <type fullname="BirdGame.AssetReferenceAtlasManager" preserve="all" />
     <type fullname="BirdGame.BagChecker" preserve="all" />
     <type fullname="BirdGame.BirdConfig" preserve="all" />
     <type fullname="BirdGame.BirdItem" preserve="all" />
@@ -92,10 +93,11 @@
     <type fullname="SliderBarClickHandler" preserve="all" />
     <type fullname="UIButtonHoverScale" preserve="all" />
     <type fullname="WalkableArea" preserve="all" />
+    <type fullname="UIButtonHoverScale/OnClickAction" preserve="nothing" serialized="true" />
+    <type fullname="UIButtonHoverScale/OnMouseEnterAction" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.AudioItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.BirdClassItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.CursorItem" preserve="nothing" serialized="true" />
-    <type fullname="BirdGame.DecorationEffect" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.DecorationItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.EggBirdItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.EggItem" preserve="nothing" serialized="true" />
@@ -105,8 +107,8 @@
     <type fullname="BirdGame.SceneEgg" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.ToolItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.ToolSelection" preserve="nothing" serialized="true" />
-    <type fullname="UIButtonHoverScale/OnClickAction" preserve="nothing" serialized="true" />
-    <type fullname="UIButtonHoverScale/OnMouseEnterAction" preserve="nothing" serialized="true" />
+    <type fullname="BirdGame.AssetReferenceSpriteAtlas" preserve="nothing" serialized="true" />
+    <type fullname="BirdGame.DecorationEffect" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.OtherItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.SpriteItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.Weather" preserve="nothing" serialized="true" />
@@ -124,6 +126,8 @@
   </assembly>
   <assembly fullname="Unity.Addressables, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
     <type fullname="UnityEngine.AddressableAssets.Addressables" preserve="all" />
+    <type fullname="UnityEngine.AddressableAssets.AssetReference" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.AddressableAssets.AssetReferenceGameObject" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="Unity.RenderPipelines.Universal.2D.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.Rendering.Universal.ShadowCaster2D" preserve="all" />
@@ -132,7 +136,6 @@
   </assembly>
   <assembly fullname="Unity.ResourceManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
     <type fullname="UnityEngine.ResourceManagement.ResourceProviders.AssetBundleProvider" preserve="all" />
-    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.AtlasSpriteProvider" preserve="all" />
     <type fullname="UnityEngine.ResourceManagement.ResourceProviders.BundledAssetProvider" preserve="all" />
     <type fullname="UnityEngine.ResourceManagement.ResourceProviders.InstanceProvider" preserve="all" />
     <type fullname="UnityEngine.ResourceManagement.ResourceProviders.SceneProvider" preserve="all" />

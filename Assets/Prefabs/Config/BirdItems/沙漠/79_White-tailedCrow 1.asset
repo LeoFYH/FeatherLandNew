@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 79_White-tailedCrow 1
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -23,7 +23,12 @@ MonoBehaviour:
     SerializationNodes: []
   preview: {fileID: 5905681027756182028, guid: 4616646f6b74df4458636c5360986bdc, type: 3}
   id: 79
-  prefab: {fileID: 1885250170276666100, guid: 61737b8c8efd4504fb7d8cc2fe67b536, type: 3}
+  prefab:
+    m_AssetGUID: 61737b8c8efd4504fb7d8cc2fe67b536
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
   canFly: 1
   canFlyWait: 0
   canFlyHorizontal: 1
