@@ -298,6 +298,7 @@ GameObject:
   - component: {fileID: 717899788341037878}
   - component: {fileID: 2731090543953233699}
   - component: {fileID: 287896128461215666}
+  - component: {fileID: 3494389500320541636}
   m_Layer: 5
   m_Name: LoadingPanel
   m_TagString: Untagged
@@ -380,6 +381,25 @@ MonoBehaviour:
   fill: {fileID: 6810754352667668270}
   iconRect: {fileID: 7243214451646166478}
   loadingText: {fileID: 9098102831314091411}
+--- !u!114 &3494389500320541636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8101676367457897207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58acc4af3d26b1f42b9503a88c1b6b32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  atlasReference:
+    m_AssetGUID: 4df21e8f92189e3439d202d2d514d056
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
+  spriteName: Loading
 --- !u!1 &8507984379820524681
 GameObject:
   m_ObjectHideFlags: 0
@@ -522,7 +542,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 7592789109391998813, guid: 3c141c2d23e060f41b92eadc9e3ac039, type: 3}
+  m_Sprite: {fileID: 6253131834200531197, guid: 799d77e86ef6b734e87e9152af4c74a2, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

@@ -1,18 +1,21 @@
 using System;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.U2D;
 using UnityEngine.UI;
 using QFramework;
 
 namespace BirdGame
 {
     /// <summary>
-    /// 图集管理器，用于展示如何使用AssetSystem的图集智能加载功能
+    /// 图集管理器，使用AssetReference方式加载图集
     /// </summary>
     public class UtilityAtlasManager : ViewControllerBase
     {
-        // 通过Inspector设置图集地址和精灵地址
-        [SerializeField] private string atlasAddress = "CharacterAtlas"; // 示例图集地址
-        [SerializeField] private string spriteAddress = "PlayerSprite";  // 示例精灵地址
+        // 通过Inspector设置图集和精灵引用
+        [SerializeField] private AssetReferenceSpriteAtlas atlasReference = null; // AssetReference方式引用图集
+        [SerializeField] private string spriteName = "";  // 精灵名称
         
         private IAssetSystem assetSystem;
         private Image imageComponent; // UI Image组件，用于显示加载的精灵
@@ -23,20 +26,79 @@ namespace BirdGame
             // 获取AssetSystem实例
             assetSystem = this.GetSystem<IAssetSystem>();
             imageComponent = GetComponent<Image>();
+            
+            // 如果未设置AssetReference，尝试使用默认路径
+            if (atlasReference == null)
+            {
+                Debug.LogWarning("Atlas Reference未设置，请在Inspector中设置图集引用");
+            }
         }
 
         /// <summary>
         /// 加载精灵（会自动加载其所在的图集）
         /// </summary>
-        public void LoadSprite()
+        public async void LoadSprite()
         {
-            // 使用AssetSystem的图集加载功能
-            assetSystem.LoadSpriteFromAtlasAsync(
-                spriteAddress,           // 精灵地址
-                atlasAddress,            // 图集地址
-                OnSpriteLoaded,          // 加载完成回调
-                OnLoadingProgress        // 加载进度回调
-            );
+            if (atlasReference == null || string.IsNullOrEmpty(spriteName))
+            {
+                Debug.LogError("图集引用或精灵名称不能为空");
+                return;
+            }
+
+            // 使用AssetReference加载图集
+            AsyncOperationHandle<SpriteAtlas> atlasHandle = atlasReference.LoadAssetAsync<SpriteAtlas>();
+            
+            while (!atlasHandle.IsDone)
+            {
+                Debug.Log($"图集加载进度: {(atlasHandle.PercentComplete * 100):F1}%");
+                await System.Threading.Tasks.Task.Yield();
+            }
+
+            if (atlasHandle.Status == AsyncOperationStatus.Succeeded)
+            {
+                SpriteAtlas atlas = atlasHandle.Result;
+                
+                // 从图集中获取精灵
+                UnityEngine.Sprite sprite = atlas.GetSprite(spriteName);
+                
+                if (sprite != null)
+                {
+                    loadedSprite = sprite;
+                    
+                    // 将加载的精灵赋给Image组件
+                    if (imageComponent != null)
+                    {
+                        imageComponent.sprite = sprite;
+                    }
+                    
+                    Debug.Log($"成功加载精灵: {sprite.name} 来自图集: {atlasReference.AssetGUID}");
+                }
+                else
+                {
+                    Debug.LogError($"在图集 {atlasReference.AssetGUID} 中找不到精灵: {spriteName}");
+                    
+                    // 如果无法按名称获取精灵，尝试获取第一个可用精灵作为备用方案
+                    var sprites = new UnityEngine.Sprite[atlas.spriteCount];
+                    atlas.GetSprites(sprites);
+                    
+                    if (sprites.Length > 0 && sprites[0] != null)
+                    {
+                        sprite = sprites[0];
+                        loadedSprite = sprite;
+                        
+                        if (imageComponent != null)
+                        {
+                            imageComponent.sprite = sprite;
+                        }
+                        
+                        Debug.LogWarning($"使用备用方案: 加载图集中的第一个精灵: {sprite.name}");
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogError($"图集加载失败: {atlasReference.AssetGUID}");
+            }
         }
 
         /// <summary>
@@ -54,11 +116,11 @@ namespace BirdGame
                     imageComponent.sprite = sprite;
                 }
                 
-                Debug.Log($"成功加载精灵: {sprite.name} 来自图集: {atlasAddress}");
+                Debug.Log($"成功加载精灵: {sprite.name} 来自图集: {atlasReference.AssetGUID}");
             }
             else
             {
-                Debug.LogError($"加载精灵失败: {spriteAddress}");
+                Debug.LogError($"加载精灵失败");
             }
         }
 
@@ -78,9 +140,6 @@ namespace BirdGame
         {
             if (loadedSprite != null)
             {
-                // 释放精灵，如果图集不再被其他精灵引用，图集也会被自动释放
-                assetSystem.ReleaseSpriteFromAtlas(spriteAddress, atlasAddress);
-                
                 // 从Image组件移除精灵
                 if (imageComponent != null)
                 {
@@ -88,7 +147,13 @@ namespace BirdGame
                 }
                 
                 loadedSprite = null;
-                Debug.Log($"已释放精灵: {spriteAddress} 来自图集: {atlasAddress}");
+            }
+
+            if (atlasReference != null)
+            {
+                // 释放图集资源
+                Addressables.Release(atlasReference);
+                Debug.Log($"已释放图集: {atlasReference.AssetGUID}");
             }
         }
 

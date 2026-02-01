@@ -43,6 +43,18 @@ namespace BirdGame
         }
 
         /// <summary>
+        /// 使用AssetReference异步加载图集中的精灵，自动管理图集的加载和释放
+        /// </summary>
+        /// <param name="spriteName">精灵名称</param>
+        /// <param name="atlasReference">图集AssetReference</param>
+        /// <param name="onCompleted">加载完成回调</param>
+        /// <param name="onProgress">加载进度回调</param>
+        public void LoadSpriteFromAtlasAsync(string spriteName, AssetReferenceSpriteAtlas atlasReference, Action<UnityEngine.Sprite> onCompleted, Action<float> onProgress = null)
+        {
+            _assetSystem.LoadSpriteFromAtlasAsync(spriteName, atlasReference, onCompleted, onProgress);
+        }
+
+        /// <summary>
         /// 释放图集中的精灵，当图集不再被引用时自动释放图集
         /// </summary>
         /// <param name="spriteAddress">精灵地址</param>

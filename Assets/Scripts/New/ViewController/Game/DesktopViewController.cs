@@ -29,20 +29,25 @@ namespace BirdGame
         {
             var config = this.GetModel<IConfigModel>().BirdConfig;
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
-            GameObject go = GameObject.Instantiate(config.GetBird(birdIndex, mapIndex).prefab);
-            var agent = go.GetComponent<NavMeshAgent>();
-            agent.enabled = false;
-
-            var point = NavigationManager.Instance.GetRandomTarget(3);
-            go.transform.position = new Vector3(point.x, point.y, 0);
-            agent.enabled = true;
-            go.GetComponent<Brid>().isDesktopBird = true;
-            if (isGrowUp)
+            var asset = config.GetBird(birdIndex, mapIndex).prefab;
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>(asset.AssetGUID, obj =>
             {
-                go.GetComponent<Brid>().isSmall = false;
-                // 成鸟：保持原始大小
-                go.transform.localScale = Vector3.one * go.GetComponent<Brid>().AdultBirdSize;
-            }
+                GameObject go = GameObject.Instantiate(obj);
+                var agent = go.GetComponent<NavMeshAgent>();
+                agent.enabled = false;
+
+                var point = NavigationManager.Instance.GetRandomTarget(3);
+                go.transform.position = new Vector3(point.x, point.y, 0);
+                agent.enabled = true;
+                go.GetComponent<Brid>().isDesktopBird = true;
+                if (isGrowUp)
+                {
+                    go.GetComponent<Brid>().isSmall = false;
+                    // 成鸟：保持原始大小
+                    go.transform.localScale = Vector3.one * go.GetComponent<Brid>().AdultBirdSize;
+                }
+            });
+            
         }
 
         public void OnExitClick()

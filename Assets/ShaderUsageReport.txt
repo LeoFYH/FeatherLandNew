@@ -1,0 +1,288 @@
+Shader 使用情况分析报告
+2026-02-01 20:46:55
+
+总Shader数量: 143
+已使用Shader数量: 36
+未使用Shader数量: 109
+
+--- 未使用的Shader ---
+未使用: Assets/Outline/Runtime/Shaders/Main.shader
+未使用: Assets/Plugins/Sirenix/Odin Inspector/Assets/Editor/Hidden/ExtractSpriteShader.shader
+未使用: Assets/Plugins/Sirenix/Odin Inspector/Assets/Editor/Hidden/GUIUtilShader.shader
+未使用: Assets/Plugins/Sirenix/Odin Inspector/Assets/Editor/Hidden/LazyEditorIconShader.shader
+未使用: Assets/Plugins/Sirenix/Odin Inspector/Assets/Editor/Hidden/SdfIconShader.shader
+未使用: Assets/TextMesh Pro/Shaders/TMP_Bitmap-Custom-Atlas.shader
+未使用: Assets/TextMesh Pro/Shaders/TMP_Bitmap-Mobile.shader
+未使用: Assets/TextMesh Pro/Shaders/TMP_Bitmap.shader
+未使用: Assets/TextMesh Pro/Shaders/TMP_SDF Overlay.shader
+未使用: Assets/TextMesh Pro/Shaders/TMP_SDF SSD.shader
+未使用: Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile Masking.shader
+未使用: Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile Overlay.shader
+未使用: Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile SSD.shader
+未使用: Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile-2-Pass.shader
+未使用: Assets/TextMesh Pro/Shaders/TMP_SDF-Surface-Mobile.shader
+未使用: Assets/TextMesh Pro/Shaders/TMP_SDF-Surface.shader
+未使用: Assets/TextMesh Pro/Shaders/TMP_Sprite.shader
+未使用: Assets/ToonShader/Shader/ToonShader.shader
+未使用: Packages/com.unity.2d.animation/Editor/Assets/SkinningModule/SkinningModule-GUITextureClip.shader
+未使用: Packages/com.unity.2d.animation/Editor/Assets/SkinningModule/SpriteBitmask.shader
+未使用: Packages/com.unity.2d.animation/Editor/Assets/SkinningModule/SpriteEdgeOutline.shader
+未使用: Packages/com.unity.2d.animation/Editor/Assets/SkinningModule/SpriteOutline.shader
+未使用: Packages/com.unity.2d.spriteshape/Editor/Handles/Shaders/Sprites-Inspector.shader
+未使用: Packages/com.unity.test-framework.performance/Editor/TestReportGraph/TestReportShader.shader
+未使用: Packages/com.unity.render-pipelines.core/Editor/Gizmo/UnlitGizmo.shader
+未使用: Packages/com.unity.render-pipelines.core/Editor/Lighting/ProbeVolume/VoxelizeScene.shader
+未使用: Packages/com.unity.render-pipelines.core/Editor/LookDev/Compositor.shader
+未使用: Packages/com.unity.render-pipelines.core/Editor/LookDev/CubeToLatlong.shader
+未使用: Packages/com.unity.render-pipelines.core/Editor/PostProcessing/LensFlareResource/LensFlareDataDriven.shader
+未使用: Packages/com.unity.render-pipelines.core/Editor/PostProcessing/LensFlareResource/LensFlareDataDrivenPreview.shader
+未使用: Packages/com.unity.render-pipelines.core/Runtime/Debug/ProbeVolumeDebug.shader
+未使用: Packages/com.unity.render-pipelines.core/Runtime/Debug/ProbeVolumeFragmentationDebug.shader
+未使用: Packages/com.unity.render-pipelines.core/Runtime/Debug/ProbeVolumeOffsetDebug.shader
+未使用: Packages/com.unity.render-pipelines.core/Runtime/Debug/ProbeVolumeSamplingDebug.shader
+未使用: Packages/com.unity.render-pipelines.core/Runtime/RenderPipelineResources/FallbackShader.shader
+未使用: Packages/com.unity.render-pipelines.core/Runtime/RenderPipelineResources/GPUDriven/DebugOccluder.shader
+未使用: Packages/com.unity.render-pipelines.core/Runtime/RenderPipelineResources/GPUDriven/DebugOcclusionTest.shader
+未使用: Packages/com.unity.render-pipelines.core/Shaders/CoreCopy.shader
+未使用: Packages/com.unity.render-pipelines.core/Tests/Editor/ShaderStripping/DummyPipelineShader.shader
+未使用: Packages/com.unity.render-pipelines.core/Tests/Editor/SimpleDots.shader
+未使用: Packages/com.unity.render-pipelines.core/Tests/Editor/SimpleSpeedTreeDots.shader
+未使用: Packages/com.unity.shadergraph/Editor/Resources/Shaders/BlitNoAlpha.shader
+未使用: Packages/com.unity.shadergraph/Editor/Resources/Shaders/Checkerboard.shader
+未使用: Packages/com.unity.shadergraph/Editor/Resources/Shaders/FallbackError.shader
+未使用: Packages/com.coffee.ui-effect/Shaders/UIEffect.shader
+未使用: Packages/com.unity.rendering.light-transport/Runtime/UnifiedRayTracing/Hardware/HWRayTracingMaterial.shader
+未使用: Packages/com.unity.ugui/Editor Resources/Shaders/TMP_SDF Internal Editor.shader
+未使用: Packages/com.unity.render-pipelines.universal/Editor/Overrides/Shaders/CurveBackground.shader
+未使用: Packages/com.unity.render-pipelines.universal/Editor/Overrides/Shaders/ShadowsMidtonesHighlightsCurves.shader
+未使用: Packages/com.unity.render-pipelines.universal/Editor/Overrides/Shaders/TrackballEditor.shader
+未使用: Packages/com.unity.render-pipelines.universal/Runtime/Decal/DBuffer/DBufferClear.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/2D/Light2D.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/2D/Shadow2D-Projected.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/2D/Shadow2D-Shadow-Geometry.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/2D/Shadow2D-Shadow-Sprite.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/2D/Shadow2D-Unshadow-Geometry.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/2D/Shadow2D-Unshadow-Sprite.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/BakedLit.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/BRGPicking.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/CameraMotionVectors.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/ComplexLit.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Debug/DebugReplacement.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Debug/HDRDebugView.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Nature/SpeedTree7.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Nature/SpeedTree7Billboard.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Nature/SpeedTree8.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/ObjectMotionVectorFallback.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesLit.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesSimpleLit.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/Bloom.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/BokehDepthOfField.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/CameraMotionBlur.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/EdgeAdaptiveSpatialUpsampling.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/FinalPost.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/GaussianDepthOfField.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/LensFlareDataDriven.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/LensFlareScreenSpace.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/LutBuilderHdr.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/LutBuilderLdr.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/PaniniProjection.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/ScalingSetup.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/StopNaN.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/SubpixelMorphologicalAntialiasing.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/TemporalAA.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/UberPost.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Terrain/TerrainDetailLit.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Terrain/TerrainLitAdd.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Terrain/TerrainLitBase.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Terrain/TerrainLitBasemapGen.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Terrain/WavingGrass.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Terrain/WavingGrassBillboard.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Unlit.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Utils/Blit.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Utils/BlitHDROverlay.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Utils/CopyDepth.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Utils/CoreBlit.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Utils/CoreBlitColorAndDepth.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Utils/FallbackError.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Utils/FallbackLoading.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Utils/MaterialError.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Utils/Sampling.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Utils/ScreenSpaceAmbientOcclusion.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Utils/ScreenSpaceShadows.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/Utils/StencilDeferred.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/XR/XRMirrorView.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/XR/XRMotionVector.shader
+未使用: Packages/com.unity.render-pipelines.universal/Shaders/XR/XROcclusionMesh.shader
+未使用: Packages/com.unity.render-pipelines.universal/Tests/Editor/PostProcessDataTests/1.shader
+未使用: Packages/com.unity.render-pipelines.universal/Tests/Editor/PostProcessDataTests/2.shader
+
+--- 已使用Shader及其引用来源 ---
+Assets/Materials/SpriteOutlineByAlpha.shader 被以下资源使用:
+  - Assets/Materials/Custom_SpriteOutlineByAlpha.mat
+
+Assets/Materials/URP Sprite Outline.shader 被以下资源使用:
+  - Assets/Materials/BirdSkin.mat
+
+Assets/Outline/OutlineShader.shader 被以下资源使用:
+  - Assets/Outline/BirdMaterial.mat
+
+Assets/SpriteOutline/Shaders/SpriteOutline.shader 被以下资源使用:
+  - Assets/SpriteOutline/Demo/Materials/Gradient/Gradient_contour_inside.mat
+  - Assets/SpriteOutline/Demo/Materials/Gradient/Gradient_contour_outside.mat
+  - Assets/SpriteOutline/Demo/Materials/Gradient/Gradient_frame_inside_over.mat
+  - Assets/SpriteOutline/Demo/Materials/Gradient/Gradient_frame_inside_under.mat
+  - Assets/SpriteOutline/Demo/Materials/Gradient/Gradient_frame_outside.mat
+  - Assets/SpriteOutline/Demo/Materials/Image/birdContour.mat
+  - Assets/SpriteOutline/Demo/Materials/Image/Image_contour_inside.mat
+  - Assets/SpriteOutline/Demo/Materials/Image/Image_frame_inside_over.mat
+  - Assets/SpriteOutline/Demo/Materials/Image/Image_frame_inside_under_tile.mat
+  - Assets/SpriteOutline/Demo/Materials/Image/Image_frame_outside.mat
+  ... 还有 144 个引用
+
+Assets/TextMesh Pro/Shaders/TMP_SDF.shader 被以下资源使用:
+  - Assets/Fonts/Chinese/Chinese SDF.asset
+  - Assets/Fonts/Chinese/NotoSansSC SDF.asset
+  - Assets/Fonts/Chinese/NotoSansSC-Regular SDF.asset
+  - Assets/Fonts/ChineseTra/ChineseTraditional.asset
+  - Assets/Fonts/English/ARIALI SDF.asset
+  - Assets/Fonts/English/Pencilant Script SDF.asset
+  - Assets/Fonts/French/French.asset
+  - Assets/Fonts/Japanese/Japanese.asset
+  - Assets/Fonts/Korean/Korean.asset
+  - Assets/Fonts/Russian/Russian.asset
+  ... 还有 2 个引用
+
+Assets/TextMesh Pro/Shaders/TMP_SDF-HDRP LIT.shadergraph 被以下资源使用:
+  - Assets/TextMesh Pro/Shaders/TMP_SDF-HDRP LIT.shadergraph
+
+Assets/TextMesh Pro/Shaders/TMP_SDF-HDRP UNLIT.shadergraph 被以下资源使用:
+  - Assets/TextMesh Pro/Shaders/TMP_SDF-HDRP UNLIT.shadergraph
+
+Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile.shader 被以下资源使用:
+  - Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Drop Shadow.mat
+  - Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset
+  - Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Outline.mat
+  - Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset
+
+Assets/TextMesh Pro/Shaders/TMP_SDF-URP Lit.shadergraph 被以下资源使用:
+  - Assets/TextMesh Pro/Shaders/TMP_SDF-URP Lit.shadergraph
+
+Assets/TextMesh Pro/Shaders/TMP_SDF-URP Unlit.shadergraph 被以下资源使用:
+  - Assets/TextMesh Pro/Shaders/TMP_SDF-URP Unlit.shadergraph
+
+Assets/ToonShader/Shader/AdvancedToon.shader 被以下资源使用:
+  - Assets/ToonShader/Material/Material.mat
+  - Assets/ToonShader/Material/ToonShader.mat
+
+Library/unity default resources 被以下资源使用:
+  - Assets/Fonts/Chinese/DENG 1.TTF
+  - Assets/Fonts/Chinese/DENG 2.TTF
+  - Assets/Fonts/Chinese/DENG.TTF
+  - Assets/Fonts/Chinese/MSYH.TTC
+  - Assets/Fonts/Chinese/MSYHBD.TTC
+  - Assets/Fonts/Chinese/MSYHL.TTC
+  - Assets/Fonts/Chinese/NaikaiFont-Regular.ttf
+  - Assets/Fonts/Chinese/NotoSansSC-Regular.otf
+  - Assets/Fonts/ChineseTra/FangZhengKaiTiFanTi-1.ttf
+  - Assets/Fonts/ChineseTra/MSJH.TTC
+  ... 还有 44 个引用
+
+Packages/com.coffee.ui-effect/UIEffectPresets/Textures/CustomRenderTexture-UIEffect-Multiply (Alpha).shader 被以下资源使用:
+  - Packages/com.coffee.ui-effect/UIEffectPresets/Textures/CustomRenderTexture-UIEffect-Blaze.mat
+
+Packages/com.unity.render-pipelines.universal/Runtime/Materials/ArnoldStandardSurface/ArnoldStandardSurface.shadergraph 被以下资源使用:
+  - Packages/com.unity.render-pipelines.universal/Runtime/Materials/ArnoldStandardSurface/ArnoldStandardSurface.shadergraph
+
+Packages/com.unity.render-pipelines.universal/Runtime/Materials/ArnoldStandardSurface/ArnoldStandardSurfaceTransparent.shadergraph 被以下资源使用:
+  - Packages/com.unity.render-pipelines.universal/Runtime/Materials/ArnoldStandardSurface/ArnoldStandardSurfaceTransparent.shadergraph
+
+Packages/com.unity.render-pipelines.universal/Runtime/Materials/PhysicalMaterial3DsMax/PhysicalMaterial3DsMax.shadergraph 被以下资源使用:
+  - Packages/com.unity.render-pipelines.universal/Runtime/Materials/PhysicalMaterial3DsMax/PhysicalMaterial3DsMax.shadergraph
+
+Packages/com.unity.render-pipelines.universal/Runtime/Materials/PhysicalMaterial3DsMax/PhysicalMaterial3DsMaxTransparent.shadergraph 被以下资源使用:
+  - Packages/com.unity.render-pipelines.universal/Runtime/Materials/PhysicalMaterial3DsMax/PhysicalMaterial3DsMaxTransparent.shadergraph
+
+Packages/com.unity.render-pipelines.universal/Shaders/2D/Sprite-Lit-Default.shader 被以下资源使用:
+  - Assets/Settings/New Material.mat
+  - Assets/SpriteOutline/Demo/Materials/Image/birdCountor2.mat
+  - Packages/com.unity.render-pipelines.universal/Runtime/Materials/Sprite-Lit-Default.mat
+  - Assets/Prefabs/Decorations/Scene1/Decoration 0.prefab
+  - Assets/Prefabs/Decorations/Scene1/Decoration 1.prefab
+  - Assets/Prefabs/Decorations/Scene1/Decoration 2.prefab
+  - Assets/Prefabs/Decorations/Scene1/Decoration 3.prefab
+  - Assets/Prefabs/Decorations/Scene1/Decoration 4.prefab
+  - Assets/Prefabs/Decorations/Scene2/Decoration 0.prefab
+  - Assets/Prefabs/Decorations/Scene2/Decoration 1.prefab
+  ... 还有 10 个引用
+
+Packages/com.unity.render-pipelines.universal/Shaders/2D/Sprite-Mask.shader 被以下资源使用:
+  - Packages/com.unity.render-pipelines.universal/Runtime/Materials/SpriteMask-Default.mat
+
+Packages/com.unity.render-pipelines.universal/Shaders/2D/Sprite-Unlit-Default.shader 被以下资源使用:
+  - Packages/com.unity.render-pipelines.universal/Runtime/Materials/Sprite-Unlit-Default.mat
+
+Packages/com.unity.render-pipelines.universal/Shaders/2D/VFXSpriteLit.shadergraph 被以下资源使用:
+  - Packages/com.unity.render-pipelines.universal/Shaders/2D/VFXSpriteLit.shadergraph
+
+Packages/com.unity.render-pipelines.universal/Shaders/2D/VFXSpriteUnlit.shadergraph 被以下资源使用:
+  - Packages/com.unity.render-pipelines.universal/Shaders/2D/VFXSpriteUnlit.shadergraph
+
+Packages/com.unity.render-pipelines.universal/Shaders/AutodeskInteractive/AutodeskInteractive.shadergraph 被以下资源使用:
+  - Packages/com.unity.render-pipelines.universal/Shaders/AutodeskInteractive/AutodeskInteractive.shadergraph
+
+Packages/com.unity.render-pipelines.universal/Shaders/AutodeskInteractive/AutodeskInteractiveMasked.shadergraph 被以下资源使用:
+  - Packages/com.unity.render-pipelines.universal/Shaders/AutodeskInteractive/AutodeskInteractiveMasked.shadergraph
+
+Packages/com.unity.render-pipelines.universal/Shaders/AutodeskInteractive/AutodeskInteractiveTransparent.shadergraph 被以下资源使用:
+  - Packages/com.unity.render-pipelines.universal/Shaders/AutodeskInteractive/AutodeskInteractiveTransparent.shadergraph
+
+Packages/com.unity.render-pipelines.universal/Shaders/Decal.shadergraph 被以下资源使用:
+  - Packages/com.unity.render-pipelines.universal/Runtime/Materials/Decal.mat
+  - Packages/com.unity.render-pipelines.universal/Shaders/Decal.shadergraph
+
+Packages/com.unity.render-pipelines.universal/Shaders/FullscreenInvertColors.shadergraph 被以下资源使用:
+  - Packages/com.unity.render-pipelines.universal/Runtime/Materials/FullscreenInvertColors.mat
+  - Packages/com.unity.render-pipelines.universal/Shaders/FullscreenInvertColors.shadergraph
+
+Packages/com.unity.render-pipelines.universal/Shaders/Lit.shader 被以下资源使用:
+  - Assets/ToonShader/Objects/Obj.OBJ
+  - Packages/com.unity.render-pipelines.universal/Editor/SceneTemplates/Standard/Materials/Black.mat
+  - Packages/com.unity.render-pipelines.universal/Editor/SceneTemplates/Standard/Materials/Gold.mat
+  - Packages/com.unity.render-pipelines.universal/Editor/SceneTemplates/Standard/Materials/Ground.mat
+  - Packages/com.unity.render-pipelines.universal/Editor/SceneTemplates/Standard/Materials/White.mat
+  - Packages/com.unity.render-pipelines.universal/Runtime/Materials/Lit.mat
+
+Packages/com.unity.render-pipelines.universal/Shaders/Nature/SpeedTree8_PBRLit.shadergraph 被以下资源使用:
+  - Packages/com.unity.render-pipelines.universal/Shaders/Nature/SpeedTree8_PBRLit.shadergraph
+
+Packages/com.unity.render-pipelines.universal/Shaders/Nature/SpeedTree9_URP.shadergraph 被以下资源使用:
+  - Packages/com.unity.render-pipelines.universal/Shaders/Nature/SpeedTree9_URP.shadergraph
+
+Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesUnlit.shader 被以下资源使用:
+  - Packages/com.unity.render-pipelines.universal/Runtime/Materials/ParticlesUnlit.mat
+
+Packages/com.unity.render-pipelines.universal/Shaders/SimpleLit.shader 被以下资源使用:
+  - Packages/com.unity.render-pipelines.universal/Runtime/Materials/SimpleLit.mat
+
+Packages/com.unity.render-pipelines.universal/Shaders/SpatialMappingOcclusion.shader 被以下资源使用:
+  - Packages/com.unity.render-pipelines.universal/Runtime/Materials/SpatialMappingOcclusion.mat
+
+Packages/com.unity.render-pipelines.universal/Shaders/SpatialMappingWireframe.shader 被以下资源使用:
+  - Packages/com.unity.render-pipelines.universal/Runtime/Materials/SpatialMappingWireframe.mat
+
+Packages/com.unity.render-pipelines.universal/Shaders/Terrain/TerrainLit.shader 被以下资源使用:
+  - Packages/com.unity.render-pipelines.universal/Runtime/Materials/TerrainLit.mat
+
+Resources/unity_builtin_extra 被以下资源使用:
+  - Assets/Materials/Bird.mat
+  - Assets/Materials/Glow.mat
+  - Assets/Materials/Light1.mat
+  - Assets/Materials/Light2.mat
+  - Assets/ToonShader/Material/Material 1.mat
+  - Packages/com.unity.2d.psdimporter/Editor/Assets/root-blue.mat
+  - Packages/com.unity.2d.psdimporter/Editor/Assets/root-green.mat
+  - Packages/com.unity.2d.psdimporter/Editor/Assets/root-red.mat
+  - Assets/AnimationTest/Bird_Yellow.prefab
+  - Assets/AnimationTest/Lory.prefab
+  ... 还有 160 个引用
+

@@ -47,17 +47,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\SpritePivotEditor\Editor\SpriteAlignmentEditor.cs" />
+    <Compile Include="Assets\Editor\TextureAnalysisTool.cs" />
     <Compile Include="Assets\Scripts\New\Editor\QuickTextureExport.cs" />
     <Compile Include="Assets\Scripts\New\Editor\LocalizationGlobalConfig.cs" />
+    <Compile Include="Assets\Editor\TextureAnalysisMenu.cs" />
     <Compile Include="Assets\Scripts\New\Editor\EditorCoroutineUtility.cs" />
     <Compile Include="Assets\Scripts\New\Editor\SpriteRendererMaterialReplacer.cs" />
     <Compile Include="Assets\Scripts\New\Editor\TextureExportTool.cs" />
     <Compile Include="Assets\Scripts\New\Editor\GameConfigWindow.cs" />
     <Compile Include="Assets\Scripts\New\Editor\CursorConfigEditor.cs" />
     <Compile Include="Assets\SpritePivotEditor\Editor\SpritePivotEditor.cs" />
+    <Compile Include="Assets\Editor\SafeShaderCleaner.cs" />
+    <Compile Include="Assets\Editor\UnusedShaderFinder.cs" />
     <Compile Include="Assets\Editor\AddressableGroupConfigurator.cs" />
     <Compile Include="Assets\Scripts\New\Editor\SetPivotBottomCenter.cs" />
     <Compile Include="Assets\Scripts\New\Editor\GameSetting.cs" />
+    <Compile Include="Assets\Editor\TextureReportGenerator.cs" />
+    <Compile Include="Assets\Editor\AdvancedShaderUsageAnalyzer.cs" />
+    <Compile Include="Assets\Editor\TextureOptimizationAdvisor.cs" />
     <Reference Include="UnityEngine">
       <HintPath>E:\WorkSoftwares\Unity\6000.0.58f2\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>
@@ -1129,10 +1136,6 @@
     <ProjectReference Include="Assembly-CSharp.csproj">
       <Project>{5d547ebc-b890-caab-510d-640e22dc442b}</Project>
       <Name>Assembly-CSharp</Name>
-    </ProjectReference>
-    <ProjectReference Include="Assembly-CSharp-Editor-firstpass.csproj">
-      <Project>{beb9e657-c796-fbc1-54ed-b795c12ad57a}</Project>
-      <Name>Assembly-CSharp-Editor-firstpass</Name>
     </ProjectReference>
     <ProjectReference Include="UniTask.Linq.csproj">
       <Project>{41a4e458-3cbb-d21b-d356-953591dd7b23}</Project>

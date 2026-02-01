@@ -42,7 +42,7 @@ namespace BirdGame
         /// <summary>
         /// 单个对象池
         /// </summary>
-        private class Pool
+        public class Pool
         {
             public GameObject prefab;
             public Stack<GameObject> inactive = new Stack<GameObject>();

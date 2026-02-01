@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using QFramework;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Audio;
 using Random = UnityEngine.Random;
 
@@ -115,13 +116,16 @@ namespace BirdGame
         {
             var item = this.GetModel<IConfigModel>().RadioConfig.musicItems[radioModel.SongIndex];
             radioModel.CurrentTime.Value = 0;
-            radioModel.TotalTime.Value = item.songFile.length;
-            radioModel.SongProgress.Value = 0;
-            radioAudio.clip = item.songFile;
-            radioAudio.outputAudioMixerGroup = item.group;
-            radioModel.SongName.Value =
-                this.GetModel<IConfigModel>().RadioConfig.musicItems[radioModel.SongIndex].songName;
-            radioAudio.Play();
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(item.songFile.AssetGUID, clip =>
+            {
+                radioModel.TotalTime.Value = clip.length;
+                radioModel.SongProgress.Value = 0;
+                radioAudio.clip = clip;
+                radioAudio.outputAudioMixerGroup = item.group;
+                radioModel.SongName.Value =
+                    this.GetModel<IConfigModel>().RadioConfig.musicItems[radioModel.SongIndex].songName;
+                radioAudio.Play();
+            });
 
             radioModel.PlayingSong.Value = true;
 
@@ -243,11 +247,11 @@ namespace BirdGame
 
         public void PlayEffect(EffectType type)
         {
-            AudioClip clip = null;
+            AssetReference clip = null;
             AudioMixerGroup group = null;
             switch (type)
             {
-                case EffectType.Click: 
+                case EffectType.Click:
                     clip = this.GetModel<IConfigModel>().RadioConfig.effects[0].songFile;
                     group = this.GetModel<IConfigModel>().RadioConfig.effects[0].group;
                     break;
@@ -277,29 +281,35 @@ namespace BirdGame
                     break;
             }
 
-            var effectAudio = GetEffectAudio();
-            effectAudio.clip = clip;
-            effectAudio.outputAudioMixerGroup = group;
-            //撒食物音效调整
-            effectAudio.volume = 0.22f; //降低音量0.22
-            
-            // 为撒食物音效设置特殊参数
-            if (type == EffectType.DropFood)
+            if (clip != null)
             {
-                // 设置播放时间为原音频的一半
-                effectAudio.pitch = 2.0f; // 2倍速播放，时间缩短一半
-                effectAudio.reverbZoneMix = 0f; // 去除混响效果
-                effectAudio.spatialBlend = 0f; // 设置为2D音效，避免空间回声
+                this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(clip.AssetGUID, audioClip =>
+                {
+                    var effectAudio = GetEffectAudio();
+                    effectAudio.clip = audioClip;
+                    effectAudio.outputAudioMixerGroup = group;
+                    //撒食物音效调整
+                    effectAudio.volume = 0.22f; //降低音量0.22
+
+                    // 为撒食物音效设置特殊参数
+                    if (type == EffectType.DropFood)
+                    {
+                        // 设置播放时间为原音频的一半
+                        effectAudio.pitch = 2.0f; // 2倍速播放，时间缩短一半
+                        effectAudio.reverbZoneMix = 0f; // 去除混响效果
+                        effectAudio.spatialBlend = 0f; // 设置为2D音效，避免空间回声
+                    }
+                    else
+                    {
+                        // 其他音效保持默认设置
+                        effectAudio.pitch = 1.0f;
+                        effectAudio.reverbZoneMix = 1f;
+                        effectAudio.spatialBlend = 0f;
+                    }
+
+                    effectAudio.Play();
+                });
             }
-            else
-            {
-                // 其他音效保持默认设置
-                effectAudio.pitch = 1.0f;
-                effectAudio.reverbZoneMix = 1f;
-                effectAudio.spatialBlend = 0f;
-            }
-            
-            effectAudio.Play();
         }
 
         private AudioSource GetEffectAudio()
@@ -352,18 +362,30 @@ namespace BirdGame
             var clockModel = this.GetModel<IClockModel>();
             if (clockModel.AlertType == AlertType.TimeUpForTimer)
             {
-                alertAudio.clip = this.GetModel<IConfigModel>().RadioConfig
-                    .alertClips[clockModel.TimerItem.AudioSelected.Value].songFile;
-                alertAudio.volume = clockModel.TimerItem.AudioVolume.Value;
+                var asset = this.GetModel<IConfigModel>().RadioConfig.alertClips[clockModel.TimerItem.AudioSelected.Value].songFile;
+                if (asset != null)
+                {
+                    this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(asset.AssetGUID, clip =>
+                    {
+                        alertAudio.clip = clip;
+                        alertAudio.volume = clockModel.TimerItem.AudioVolume.Value;
+                        alertAudio.Play();
+                    });
+                }
             }
             else
             {
-                alertAudio.clip = this.GetModel<IConfigModel>().RadioConfig
-                    .alertClips[clockModel.TomatoItem.AudioSelected.Value].songFile;
-                alertAudio.volume = clockModel.TomatoItem.AudioVolume.Value;
+                var asset = this.GetModel<IConfigModel>().RadioConfig.alertClips[clockModel.TomatoItem.AudioSelected.Value].songFile;
+                if (asset != null)
+                {
+                    this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(asset.AssetGUID, clip =>
+                    {
+                        alertAudio.clip = clip;
+                        alertAudio.volume = clockModel.TomatoItem.AudioVolume.Value;
+                        alertAudio.Play();
+                    });
+                }
             }
-            if(alertAudio.clip != null)
-                alertAudio.Play();
         }
 
         public void StopAlert()
@@ -396,6 +418,7 @@ namespace BirdGame
             {
                 saveModel.environmentVolumes = new List<float>();
             }
+
             for (int i = 0; i < config.environments.Length; i++)
             {
                 var audio = obj.AddComponent<AudioSource>();
@@ -404,34 +427,38 @@ namespace BirdGame
                 {
                     saveModel.environmentVolumes.Add(0);
                 }
+
                 radioModel.EnvironmentVolumes.Add(new BindableProperty<float>());
                 radioModel.EnvironmentMutes.Add(new BindableProperty<bool>());
                 audio.loop = true;
-                
+
                 // 根据环境音效名称设置默认音量
                 float defaultVolume = 0f; // 默认音量为0
                 if (config.environments[i].songName.ToLower() == "bird")
                 {
                     defaultVolume = 1.0f; // Bird环境音设为100%
-                   // Debug.Log($"🐦 设置Bird环境音效音量为: {defaultVolume * 100}%");
+                    // Debug.Log($"🐦 设置Bird环境音效音量为: {defaultVolume * 100}%");
                 }
                 else if (config.environments[i].songName.ToLower() == "wind")
                 {
                     defaultVolume = 1.0f; // Wind环境音设为100%
                     //Debug.Log($"🌪️ 设置Wind环境音效音量为: {defaultVolume * 100}%");
                 }
-                
+
                 audio.outputAudioMixerGroup = config.environments[i].group;
                 // 如果用户没有设置过这个环境音效的音量，使用默认值
                 if (saveModel.environmentVolumes[i] == 0f)
                 {
                     saveModel.environmentVolumes[i] = defaultVolume;
                 }
-                
+
                 audio.volume = saveModel.environmentVolumes[i] * radioModel.Volume.Value;
-                audio.clip = config.environments[i].songFile;
-                if(audio.clip != null)
-                    audio.Play();
+                this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(config.environments[i].songFile.AssetGUID,
+                    clip =>
+                    {
+                        audio.clip = clip;
+                        audio.Play();
+                    });
                 radioModel.EnvironmentVolumes[i].Value = saveModel.environmentVolumes[i];
                 int index = i;
                 radioModel.EnvironmentVolumes[index].Register(v =>
@@ -604,8 +631,11 @@ namespace BirdGame
         {
             var config = this.GetModel<IConfigModel>().RadioConfig;
             int index = Random.Range(0, config.pettingClips.Length);
-            pettingAudio.clip = config.pettingClips[index];
-            pettingAudio.Play();
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(config.pettingClips[index].AssetGUID, clip =>
+            {
+                pettingAudio.clip = clip;
+                pettingAudio.Play();
+            });
         }
 
         /// <summary>

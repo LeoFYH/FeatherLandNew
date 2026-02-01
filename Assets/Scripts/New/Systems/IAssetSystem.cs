@@ -8,6 +8,8 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.U2D;
+using UnityEngine.AddressableAssets.ResourceLocators;
+using UnityEngine.ResourceManagement.ResourceProviders;
 
 namespace BirdGame
 {
@@ -48,6 +50,19 @@ namespace BirdGame
         /// <param name="spriteAddress">精灵地址</param>
         /// <param name="atlasAddress">图集地址</param>
         void ReleaseSpriteFromAtlas(string spriteAddress, string atlasAddress);
+        
+        /// <summary>
+        /// 使用AssetReference加载图集中的精灵
+        /// </summary>
+        /// <param name="spriteName">精灵名称</param>
+        /// <param name="atlasReference">图集AssetReference</param>
+        /// <param name="onCompleted">加载完成回调</param>
+        /// <param name="onProgress">加载进度回调</param>
+        void LoadSpriteFromAtlasAsync(string spriteName, AssetReferenceSpriteAtlas atlasReference, Action<UnityEngine.Sprite> onCompleted, Action<float> onProgress = null);
+
+        public void AddAtlasReference(string atlasGuid);
+
+        void RemoveAtlasReference(string atlasGuid);
     }
 
     public class AssetSystem : AbstractSystem, IAssetSystem
@@ -66,10 +81,16 @@ namespace BirdGame
         
         // 存储图集精灵的句柄
         private Dictionary<string, AsyncOperationHandle> SpriteHandles { get; } = new Dictionary<string, AsyncOperationHandle>();
+        
+        // 存储AssetReference图集的引用计数
+        private Dictionary<string, int> AssetRefAtlasReferenceCounts { get; } = new Dictionary<string, int>();
+        
+        // 存储AssetReference图集的句柄
+        private Dictionary<string, AsyncOperationHandle> AssetRefAtlasHandles { get; } = new Dictionary<string, AsyncOperationHandle>();
 
         protected override void OnInit()
         {
-            LoadAssetAsync<GameObject>("OpenEggAnim", null);
+            //LoadAssetAsync<GameObject>("OpenEggAnim", null);
         }
 
         public async void LoadAssetAsync<T>(string assetName, Action<T> onCompleted, Action<float> onProgress = null)
@@ -83,66 +104,23 @@ namespace BirdGame
             var handle = Addressables.LoadAssetAsync<T>(assetName);
             HandleDic.Add(assetName, handle);
             
-            // 检查是否是精灵资源，如果是则需要处理图集
-            if (typeof(T) == typeof(Sprite))
+            // 普通资源加载流程
+            while (!handle.IsDone)
             {
-                // 为精灵资源自动处理图集加载
-                await LoadAtlasForSpriteIfNeeded(assetName, handle, onCompleted, onProgress);
+                onProgress?.Invoke(handle.PercentComplete);
+                await Task.Yield();
             }
-            // 检查是否是GameObject类型的资源（如Prefab），需要检查其中是否包含图集精灵
-            else if (typeof(T) == typeof(GameObject))
-            {
-                // 普通资源加载流程
-                while (!handle.IsDone)
-                {
-                    onProgress?.Invoke(handle.PercentComplete * 0.7f); // Prefab加载占70%的进度
-                    await Task.Yield();
-                }
 
-                if (handle.Status == AsyncOperationStatus.Succeeded)
-                {
-                    var prefab = handle.Result as GameObject;
-                    if (prefab != null)
-                    {
-                        // 加载完成后，检查Prefab中是否有使用图集的精灵渲染器
-                        await ProcessPrefabAtlases(prefab, assetName, onProgress);
-                        
-                        onProgress?.Invoke(1f);
-                        onCompleted?.Invoke(handle.Result);
-                    }
-                    else
-                    {
-                        onProgress?.Invoke(1f);
-                        onCompleted?.Invoke(handle.Result);
-                    }
-                }
-                else
-                {
-                    Debug.LogError($"资源加载失败: {assetName}");
-                    onProgress?.Invoke(1f);
-                    onCompleted?.Invoke(default(T)); // 传递默认值，让UI层处理
-                }
+            if (handle.Status == AsyncOperationStatus.Succeeded)
+            {
+                onProgress?.Invoke(1f);
+                onCompleted?.Invoke(handle.Result);
             }
             else
             {
-                // 普通资源加载流程
-                while (!handle.IsDone)
-                {
-                    onProgress?.Invoke(handle.PercentComplete);
-                    await Task.Yield();
-                }
-
-                if (handle.Status == AsyncOperationStatus.Succeeded)
-                {
-                    onProgress?.Invoke(1f);
-                    onCompleted?.Invoke(handle.Result);
-                }
-                else
-                {
-                    Debug.LogError($"资源加载失败: {assetName}");
-                    onProgress?.Invoke(1f);
-                    onCompleted?.Invoke(default(T)); // 传递默认值，让UI层处理
-                }
+                Debug.LogError($"资源加载失败: {assetName}");
+                onProgress?.Invoke(1f);
+                onCompleted?.Invoke(default(T)); // 传递默认值，让UI层处理
             }
         }
 
@@ -202,7 +180,7 @@ namespace BirdGame
                     var atlasAddress = FindAtlasForSprite(assetName);
                     if (!string.IsNullOrEmpty(atlasAddress))
                     {
-                        ReleaseAtlasByAddress(atlasAddress, assetName);
+                        ReleaseAtlasByAddress(atlasAddress);
                     }
                 }
                 // 如果是GameObject(Prefab)资源，检查其中是否有图集精灵
@@ -233,7 +211,7 @@ namespace BirdGame
         }
 
         // 释放图集
-        private void ReleaseAtlasByAddress(string atlasAddress, string spriteAddress)
+        private void ReleaseAtlasByAddress(string atlasAddress)
         {
             // 检查精灵是否存在映射关系
             if (AtlasReferenceCounts.ContainsKey(atlasAddress))
@@ -282,8 +260,6 @@ namespace BirdGame
                 if (atlasHandle.Status == AsyncOperationStatus.Succeeded)
                 {
                     Debug.Log($"图集加载成功: {atlasAddress}");
-                    // 注册图集到Unity的图集管理系统 - 使用正确的方法替代已废弃或不存在的方法
-                    
                     // 图集加载完成后，加载精灵
                     LoadSpriteInternal(spriteAddress, onCompleted, onProgress);
                 }
@@ -695,6 +671,144 @@ namespace BirdGame
                 }
             }
             #endif
+        }
+
+        // 实现新的AssetReference图集加载方法
+        public async void LoadSpriteFromAtlasAsync(string spriteName, AssetReferenceSpriteAtlas atlasReference, Action<UnityEngine.Sprite> onCompleted, Action<float> onProgress = null)
+        {
+            if (atlasReference == null || string.IsNullOrEmpty(spriteName))
+            {
+                Debug.LogError("图集引用或精灵名称不能为空");
+                onCompleted?.Invoke(null);
+                return;
+            }
+
+            string atlasGuid = atlasReference.AssetGUID;
+            
+            // 增加图集引用计数
+            if (!AssetRefAtlasReferenceCounts.ContainsKey(atlasGuid))
+            {
+                AssetRefAtlasReferenceCounts[atlasGuid] = 0;
+            }
+            AssetRefAtlasReferenceCounts[atlasGuid]++;
+
+            // 如果图集尚未加载，则先加载图集
+            if (!AssetRefAtlasHandles.ContainsKey(atlasGuid))
+            {
+                Debug.Log($"开始加载图集(AssetReference): {atlasGuid}");
+                
+                var atlasHandle = atlasReference.LoadAssetAsync<SpriteAtlas>();
+                AssetRefAtlasHandles[atlasGuid] = atlasHandle;
+                
+                // 监听图集加载进度
+                while (!atlasHandle.IsDone)
+                {
+                    onProgress?.Invoke(atlasHandle.PercentComplete * 0.5f); // 图集加载占总进度的50%
+                    await Task.Yield();
+                }
+
+                if (atlasHandle.Status == AsyncOperationStatus.Succeeded)
+                {
+                    Debug.Log($"图集(AssetReference)加载成功: {atlasGuid}");
+                    // 图集加载完成后，从图集中获取精灵
+                    LoadSpriteFromAtlasInternal(spriteName, atlasHandle.Result, onCompleted, onProgress);
+                }
+                else
+                {
+                    Debug.LogError($"图集(AssetReference)加载失败: {atlasGuid}");
+                    AssetRefAtlasReferenceCounts[atlasGuid]--;
+                    if (AssetRefAtlasReferenceCounts[atlasGuid] <= 0)
+                    {
+                        AssetRefAtlasHandles.Remove(atlasGuid);
+                    }
+                    onCompleted?.Invoke(null);
+                }
+            }
+            else
+            {
+                // 图集已加载，直接从已加载的图集中获取精灵
+                var existingAtlasHandle = AssetRefAtlasHandles[atlasGuid];
+                if (existingAtlasHandle.Result is SpriteAtlas existingAtlas)
+                {
+                    LoadSpriteFromAtlasInternal(spriteName, existingAtlas, onCompleted, onProgress);
+                }
+                else
+                {
+                    onCompleted?.Invoke(null);
+                }
+            }
+        }
+
+        private void LoadSpriteFromAtlasInternal(string spriteName, SpriteAtlas atlas, Action<UnityEngine.Sprite> onCompleted, Action<float> onProgress = null)
+        {
+            // 从图集中获取精灵
+            UnityEngine.Sprite sprite = atlas.GetSprite(spriteName);
+            
+            if (sprite != null)
+            {
+                Debug.Log($"从图集中获取精灵成功: {spriteName}");
+                onProgress?.Invoke(1f);
+                onCompleted?.Invoke(sprite);
+            }
+            else
+            {
+                Debug.LogError($"在图集中找不到精灵: {spriteName}");
+                
+                // 尝试获取第一个可用精灵作为备用方案
+                var sprites = new UnityEngine.Sprite[atlas.spriteCount];
+                atlas.GetSprites(sprites);
+                
+                if (sprites.Length > 0 && sprites[0] != null)
+                {
+                    sprite = sprites[0];
+                    Debug.LogWarning($"使用备用方案: 加载图集中的第一个精灵: {sprite.name}");
+                    onProgress?.Invoke(1f);
+                    onCompleted?.Invoke(sprite);
+                }
+                else
+                {
+                    onProgress?.Invoke(1f);
+                    onCompleted?.Invoke(null);
+                }
+            }
+        }
+
+        // 释放AssetReference图集
+        private void ReleaseAssetRefAtlasInternal(string atlasGuid)
+        {
+            if (AssetRefAtlasHandles.Remove(atlasGuid, out var atlasHandle))
+            {
+                Addressables.Release(atlasHandle);
+                AssetRefAtlasReferenceCounts.Remove(atlasGuid);
+                Debug.Log($"已释放图集(AssetReference): {atlasGuid}");
+            }
+        }
+        
+        public void AddAtlasReference(string atlasGuid)
+        {
+            if (!AssetRefAtlasReferenceCounts.ContainsKey(atlasGuid))
+            {
+                AssetRefAtlasReferenceCounts[atlasGuid] = 0;
+            }
+            AssetRefAtlasReferenceCounts[atlasGuid]++;
+            
+            Debug.Log($"增加图集引用: {atlasGuid}, 当前引用数: {AssetRefAtlasReferenceCounts[atlasGuid]}");
+        }
+        
+        public void RemoveAtlasReference(string atlasGuid)
+        {
+            if (AssetRefAtlasReferenceCounts.ContainsKey(atlasGuid))
+            {
+                AssetRefAtlasReferenceCounts[atlasGuid]--;
+                
+                Debug.Log($"减少图集引用: {atlasGuid}, 当前引用数: {AssetRefAtlasReferenceCounts[atlasGuid]}");
+                
+                // 如果引用计数为0，释放图集
+                if (AssetRefAtlasReferenceCounts[atlasGuid] <= 0)
+                {
+                    ReleaseAssetRefAtlasInternal(atlasGuid);
+                }
+            }
         }
     }
 }

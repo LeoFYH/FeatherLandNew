@@ -113,7 +113,7 @@ namespace BirdGame.Editor
                 { "鸟的配置", birdConfig, SdfIconType.Egg },
                 { "鼠标配置", cursorConfig, SdfIconType.Mouse },
                 { "本地化配置", LocalizationGlobalConfig.Instance, SdfIconType.Globe },
-                { "地图配置", mapConfig, SdfIconType.Map }
+                { "地图配置", mapConfig, SdfIconType.Map },
             };
             
             return tree;

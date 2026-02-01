@@ -542,16 +542,20 @@ namespace BirdGame
         {
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             var decorationItem = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[mapIndex].decorations[decorationId];
-            var decoration = GameObject.Instantiate(decorationItem.prefab);
-            if (index < decorationItem.fixedPositions.Length)
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>(decorationItem.prefab.AssetGUID, obj =>
             {
-                Debug.LogWarning("设置位置");
-                decoration.transform.localPosition = decorationItem.fixedPositions[index];
-                decoration.GetComponentsInChildren<Transform>()[1].localPosition = Vector3.zero;
-            }
-            currentIndex = index;
-            DecorationClickHandler clickHandler = decoration.GetComponentInChildren<DecorationClickHandler>();
-            clickHandler.Initialize(decorationId, currentIndex);
+                var decoration = GameObject.Instantiate(obj);
+                if (index < decorationItem.fixedPositions.Length)
+                {
+                    Debug.LogWarning("设置位置");
+                    decoration.transform.localPosition = decorationItem.fixedPositions[index];
+                    decoration.GetComponentsInChildren<Transform>()[1].localPosition = Vector3.zero;
+                }
+
+                currentIndex = index;
+                DecorationClickHandler clickHandler = decoration.GetComponentInChildren<DecorationClickHandler>();
+                clickHandler.Initialize(decorationId, currentIndex);
+            });
             // // 优先使用场景Sprite，如果没有则使用icon
             // Sprite spriteToUse = decorationItem.sceneSprite != null ? decorationItem.sceneSprite : decorationItem.icon;
             //
@@ -830,16 +834,20 @@ namespace BirdGame
                     // // 添加点击检测组件
                     // DecorationClickHandler clickHandler = decoration.AddComponent<DecorationClickHandler>();
                     // clickHandler.Initialize(i, j);
-                    
-                    var decoration = GameObject.Instantiate(decorationItem.prefab);
-                    DecorationClickHandler clickHandler = decoration.GetComponentInChildren<DecorationClickHandler>();
-                    clickHandler.Initialize(i, j);
-                    if (decorationInfo.position.Count <= j)
-                    {
-                        decorationInfo.position.Add(Vector3.zero);
-                    }
+                    this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>(decorationItem.prefab.AssetGUID,
+                        obj =>
+                        {
+                            var decoration = GameObject.Instantiate(obj);
+                            DecorationClickHandler clickHandler =
+                                decoration.GetComponentInChildren<DecorationClickHandler>();
+                            clickHandler.Initialize(i, j);
+                            if (decorationInfo.position.Count <= j)
+                            {
+                                decorationInfo.position.Add(Vector3.zero);
+                            }
 
-                    decoration.transform.position = decorationInfo.position[j];
+                            decoration.transform.position = decorationInfo.position[j];
+                        });
                 }
             }
         }

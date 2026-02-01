@@ -16,7 +16,7 @@ MonoBehaviour:
   coinsLimit: 500000
   sceneEggs:
   - eggs:
-    - eggSp: {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
+    - eggSp: {fileID: 4465636764377432600, guid: 4b35a17a28a48d0408c858c2d19a3046, type: 3}
       price: 2
       birdCount: 3
       description: 
@@ -39,7 +39,7 @@ MonoBehaviour:
         probability: 0.1
       - birdType: 4
         probability: 0.097
-    - eggSp: {fileID: 710238443548197888, guid: 1170092e8fa8e1142a7e347132e8ea45, type: 3}
+    - eggSp: {fileID: 710238443548197888, guid: 3f2483724ef909a44bad8a593c9d7b90, type: 3}
       price: 30
       birdCount: 3
       description: 
@@ -64,7 +64,7 @@ MonoBehaviour:
         probability: 0.164
       - birdType: 13
         probability: 0.5
-    - eggSp: {fileID: 2219571566158466069, guid: 066d2d923c5b99944aa6d9ca568d816f, type: 3}
+    - eggSp: {fileID: 2219571566158466069, guid: 677e053880e9a73469db1ce97b3f3f50, type: 3}
       price: 100
       birdCount: 3
       description: 
@@ -95,7 +95,7 @@ MonoBehaviour:
         probability: 0.177
       - birdType: 23
         probability: 0.5
-    - eggSp: {fileID: -8002347335681798773, guid: 3983a1dbff14cd040915f5a365b4942e, type: 3}
+    - eggSp: {fileID: -8002347335681798773, guid: d93b287acabe7c14a97b2d5b6eb6fe35, type: 3}
       price: 200
       birdCount: 3
       description: 
@@ -121,7 +121,7 @@ MonoBehaviour:
       - birdType: 32
         probability: 0.407
   - eggs:
-    - eggSp: {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
+    - eggSp: {fileID: 4465636764377432600, guid: 4b35a17a28a48d0408c858c2d19a3046, type: 3}
       price: 100
       birdCount: 3
       description: 
@@ -148,7 +148,7 @@ MonoBehaviour:
         probability: 0.116
       - birdType: 88
         probability: 0.169
-    - eggSp: {fileID: 710238443548197888, guid: 1170092e8fa8e1142a7e347132e8ea45, type: 3}
+    - eggSp: {fileID: 710238443548197888, guid: 3f2483724ef909a44bad8a593c9d7b90, type: 3}
       price: 700
       birdCount: 3
       description: 
@@ -173,7 +173,7 @@ MonoBehaviour:
         probability: 0.5
       - birdType: 62
         probability: 0.5
-    - eggSp: {fileID: 2219571566158466069, guid: 066d2d923c5b99944aa6d9ca568d816f, type: 3}
+    - eggSp: {fileID: 2219571566158466069, guid: 677e053880e9a73469db1ce97b3f3f50, type: 3}
       price: 3000
       birdCount: 3
       description: 
@@ -197,7 +197,7 @@ MonoBehaviour:
       - birdType: 57
         probability: 0.223
   - eggs:
-    - eggSp: {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
+    - eggSp: {fileID: 4465636764377432600, guid: 4b35a17a28a48d0408c858c2d19a3046, type: 3}
       price: 2000
       birdCount: 3
       description: 
@@ -212,7 +212,7 @@ MonoBehaviour:
         probability: 0.5
       - birdType: 37
         probability: 0.5
-    - eggSp: {fileID: 710238443548197888, guid: 1170092e8fa8e1142a7e347132e8ea45, type: 3}
+    - eggSp: {fileID: 710238443548197888, guid: 3f2483724ef909a44bad8a593c9d7b90, type: 3}
       price: 10000
       birdCount: 3
       description: 
@@ -227,7 +227,7 @@ MonoBehaviour:
         probability: 0.5
       - birdType: 53
         probability: 0.5
-    - eggSp: {fileID: 2219571566158466069, guid: 066d2d923c5b99944aa6d9ca568d816f, type: 3}
+    - eggSp: {fileID: 2219571566158466069, guid: 677e053880e9a73469db1ce97b3f3f50, type: 3}
       price: 15000
       birdCount: 3
       description: 
@@ -242,7 +242,7 @@ MonoBehaviour:
         probability: 0.5
       - birdType: 53
         probability: 0.5
-    - eggSp: {fileID: -8002347335681798773, guid: 3983a1dbff14cd040915f5a365b4942e, type: 3}
+    - eggSp: {fileID: -8002347335681798773, guid: d93b287acabe7c14a97b2d5b6eb6fe35, type: 3}
       price: 25000
       birdCount: 3
       description: 
@@ -262,7 +262,12 @@ MonoBehaviour:
   - decorations:
     - icon: {fileID: 21300000, guid: e9d52e55e18fd6d41bd00d03f25be2aa, type: 3}
       name: Plushie Bear
-      prefab: {fileID: 1044825183646240256, guid: f1b435be5ef71dd478baa788369922b4, type: 3}
+      prefab:
+        m_AssetGUID: f1b435be5ef71dd478baa788369922b4
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 1
       description: Plushie BearDescription
       price: 2000
       scale: 0.3
@@ -276,7 +281,12 @@ MonoBehaviour:
       preview: {fileID: 2252215622904973494, guid: e8d6224ed5ee28e43a5a9a9d32903735, type: 3}
     - icon: {fileID: 21300000, guid: c93ed47603d0bd3408834d2122774f2b, type: 3}
       name: Plushie Shark
-      prefab: {fileID: 1166340943317647624, guid: 6a22db7c7df822a418b7b3357b6a26cc, type: 3}
+      prefab:
+        m_AssetGUID: 6a22db7c7df822a418b7b3357b6a26cc
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 1
       description: Plushie SharkDescription
       price: 1000
       scale: 0.5
@@ -290,7 +300,12 @@ MonoBehaviour:
       preview: {fileID: 4211650801804232175, guid: a59790bee586e3e4e87a9af00ff998c8, type: 3}
     - icon: {fileID: 7320429712980989233, guid: b8a1d1a9fa425334095d0c24f48a0f75, type: 3}
       name: Lamp
-      prefab: {fileID: 2284361441789399348, guid: 5017403402a3ea34994e3c16a98e07b6, type: 3}
+      prefab:
+        m_AssetGUID: 5017403402a3ea34994e3c16a98e07b6
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 1
       description: LampDescription
       price: 600
       scale: 0.2
@@ -305,7 +320,12 @@ MonoBehaviour:
       preview: {fileID: 8562949734922071416, guid: cc73f1987084237499be19bfc5c9e79e, type: 3}
     - icon: {fileID: 2689972777894202174, guid: f5ea4031c8816f642ab6937adba2b5f2, type: 3}
       name: TingTing Guitar
-      prefab: {fileID: 2929794707948516033, guid: a1a17510931365b42b909558051e2577, type: 3}
+      prefab:
+        m_AssetGUID: a1a17510931365b42b909558051e2577
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 1
       description: TingTing GuitarDescription
       price: 200
       scale: 0.5
@@ -319,7 +339,12 @@ MonoBehaviour:
       preview: {fileID: 2249036447366657726, guid: 10fc14826a0ea1043838ec63412928db, type: 3}
     - icon: {fileID: 5640074446529624515, guid: 9efacdbf502db7d469774f28435ecd67, type: 3}
       name: Bonefire
-      prefab: {fileID: 7232351721812198875, guid: 7fc13f646e4448644a7830d5a0d78b17, type: 3}
+      prefab:
+        m_AssetGUID: 
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0
       description: 
       price: 400
       scale: 0.5
@@ -334,7 +359,12 @@ MonoBehaviour:
   - decorations:
     - icon: {fileID: 21300000, guid: 6ecc79e55459078409f056c5379c6643, type: 3}
       name: Cozy Tent
-      prefab: {fileID: 3012990827443070192, guid: 2acff718fbd44f440ad6059637e71e93, type: 3}
+      prefab:
+        m_AssetGUID: 2acff718fbd44f440ad6059637e71e93
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 1
       description: Cozy TentDescription
       price: 20000
       scale: 0.5
@@ -348,7 +378,12 @@ MonoBehaviour:
       preview: {fileID: -7410131866019014177, guid: 263a4c1617cbdc542b4dc9351fe5e909, type: 3}
     - icon: {fileID: 21300000, guid: f7f4e60f33d752d4f9f4af14cce23c35, type: 3}
       name: Tiny Tree
-      prefab: {fileID: 4463724722352328304, guid: 5c023014a7ef5b24395ca124b75a5de7, type: 3}
+      prefab:
+        m_AssetGUID: 5c023014a7ef5b24395ca124b75a5de7
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 1
       description: Tiny TreeDescription
       price: 10000
       scale: 0.5
@@ -362,7 +397,12 @@ MonoBehaviour:
       preview: {fileID: -7410131866019014177, guid: 263a4c1617cbdc542b4dc9351fe5e909, type: 3}
     - icon: {fileID: 21300000, guid: 73b6246cb4c7f9447a67ce1553764fbc, type: 3}
       name: Carpet
-      prefab: {fileID: 7099460407733767612, guid: 994ac90f93e30fc4cbacf3de4525c2e0, type: 3}
+      prefab:
+        m_AssetGUID: 994ac90f93e30fc4cbacf3de4525c2e0
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 1
       description: CarpetDescription
       price: 2000
       scale: 0.5
@@ -376,7 +416,12 @@ MonoBehaviour:
       preview: {fileID: -7410131866019014177, guid: 263a4c1617cbdc542b4dc9351fe5e909, type: 3}
     - icon: {fileID: 21300000, guid: f586a57a0ab00f94293fecf4dec37f16, type: 3}
       name: Breezy Kite
-      prefab: {fileID: 5691537437215484801, guid: 48cc5268621191d409dd57d51d881f6d, type: 3}
+      prefab:
+        m_AssetGUID: 48cc5268621191d409dd57d51d881f6d
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 1
       description: Breezy KiteDescription
       price: 5000
       scale: 0.5

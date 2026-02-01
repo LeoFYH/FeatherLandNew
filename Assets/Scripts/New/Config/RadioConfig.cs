@@ -1,6 +1,7 @@
 ﻿using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Audio;
 
 namespace BirdGame
@@ -18,7 +19,7 @@ namespace BirdGame
         [Title("Clock提示音乐库"), Space(10), TableList(ShowIndexLabels = true, AlwaysExpanded = true)] 
         public AudioItem[] alertClips;
 
-        public AudioClip[] pettingClips;
+        public AssetReference[] pettingClips;
     }
 
     [Serializable]
@@ -27,7 +28,7 @@ namespace BirdGame
         [LabelText("音乐名称")]
         public string songName;
         [LabelText("音乐文件")]
-        public AudioClip songFile;
+        public AssetReference songFile;
         public string key;
         public AudioMixerGroup group;
     }

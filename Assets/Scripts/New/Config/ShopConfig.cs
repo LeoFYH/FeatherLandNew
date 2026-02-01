@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -207,7 +208,7 @@ namespace BirdGame
         [LabelText("名称"), HorizontalGroup("Icon"), VerticalGroup("Icon/Info")]
         public string name;
         [VerticalGroup("Icon/Info")]
-        public GameObject prefab;
+        public AssetReferenceGameObject prefab;
         [LabelText("描述"), VerticalGroup("Icon/Info")]
         public string description;
         [LabelText("价格"), VerticalGroup("Icon/Info")]

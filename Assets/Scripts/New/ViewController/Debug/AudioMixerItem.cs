@@ -18,7 +18,11 @@ namespace BirdGame.DebugMode
         public void Init(AudioItem item)
         {
             audioSource.outputAudioMixerGroup = item.group;
-            audioSource.clip = item.songFile;
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(item.songFile.AssetGUID, clip =>
+            {
+                audioSource.clip = clip;
+                
+            });
             nameText.text = item.songName;
             Debug.Log(item.songName);
             
