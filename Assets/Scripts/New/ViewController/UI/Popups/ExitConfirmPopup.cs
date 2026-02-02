@@ -119,7 +119,8 @@ namespace BirdGame
 
         private void ExitGame()
         {
-            // 同步数据
+            // 通过 SetScreenMode 统一逻辑：切到窗口模式、清键盘状态、保存设置（退出前恢复窗口）
+            this.GetSystem<IMonoSystem>().SendEvent(new RequestSetScreenModeEvent { mode = 0, forceChange = true });
             this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
             this.GetSystem<ISteamSystem>().FirstPlayTime();
             
