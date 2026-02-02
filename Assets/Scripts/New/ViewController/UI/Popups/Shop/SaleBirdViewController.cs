@@ -106,6 +106,7 @@ namespace BirdGame
             {
                 bool isRelease = false;
                 int count = birdItems.Count;
+                // 从后往前删除，避免索引变化导致的问题
                 for (int i = count - 1; i >= 0; i--)
                 {
                     if (birdItems[i].lockToggle.isOn)
@@ -114,25 +115,47 @@ namespace BirdGame
                     }
 
                     isRelease = true;
-                    var data = this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList[i];
-                    if (data.isSmall)
+                    
+                    // 先从IBirdModel中移除鸟
+                    if (mapIndex == this.GetModel<ISaveModel>().BirdInfoData.currentMap && i < this.GetModel<IBirdModel>().BirdList.Count)
                     {
-                        this.GetModel<IAccountModel>().Coins.Value += data.individualPriceSmall;
+                        var birdData = this.GetModel<IBirdModel>().BirdList[i];
+                        if (birdData.bird.isSmall)
+                        {
+                            this.GetModel<IAccountModel>().Coins.Value += birdData.individualPriceSmall;
+                        }
+                        else
+                        {
+                            this.GetModel<IAccountModel>().Coins.Value += birdData.individualPriceBig;
+                        }
+                        this.GetModel<IBirdModel>().RemoveBird(i);
                     }
                     else
                     {
-                        this.GetModel<IAccountModel>().Coins.Value += data.individualPriceBig;
+                        // 如果不在当前地图或IBirdModel中没有数据，则从存档中获取数据
+                        if (i < this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.Count)
+                        {
+                            var data = this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList[i];
+                            if (data.isSmall)
+                            {
+                                this.GetModel<IAccountModel>().Coins.Value += data.individualPriceSmall;
+                            }
+                            else
+                            {
+                                this.GetModel<IAccountModel>().Coins.Value += data.individualPriceBig;
+                            }
+                        }
                     }
-
-                    if (mapIndex == this.GetModel<ISaveModel>().BirdInfoData.currentMap)
-                    {
-                        this.GetModel<IBirdModel>().RemoveBird(i);
-                    }
-                    this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.RemoveAt(i);
+                    
+                    // 再从存档中移除鸟数据
+                    if (i < this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.Count)
+                        this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.RemoveAt(i);
                 }
 
                 if (isRelease)
                 {
+                    // 同步数据到存档
+                    this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
                     RefreshBirdList();
                     RefreshName(); // 刷新容量显示
                     this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
@@ -314,29 +337,48 @@ namespace BirdGame
 
         private void OnSaleBird(int birdIndex)
         {
-            //var birditem = birdItems[birdIndex];
-            var data = this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList[birdIndex];
-            // 使用实例化时计算的个体化售价
-            if (data.isSmall)
+            // 从IBirdModel中获取数据，确保数据一致性
+            if (birdIndex < this.GetModel<IBirdModel>().BirdList.Count)
             {
-                this.GetModel<IAccountModel>().Coins.Value += data.individualPriceSmall;
+                var birdData = this.GetModel<IBirdModel>().BirdList[birdIndex];
+                // 使用实例化时计算的个体化售价
+                if (birdData.bird.isSmall)
+                {
+                    this.GetModel<IAccountModel>().Coins.Value += birdData.individualPriceSmall;
+                }
+                else
+                {
+                    this.GetModel<IAccountModel>().Coins.Value += birdData.individualPriceBig;
+                }
             }
             else
             {
-                this.GetModel<IAccountModel>().Coins.Value += data.individualPriceBig;
+                // 如果IBirdModel中没有数据，则尝试从存档中获取
+                var data = this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList[birdIndex];
+                if (data.isSmall)
+                {
+                    this.GetModel<IAccountModel>().Coins.Value += data.individualPriceSmall;
+                }
+                else
+                {
+                    this.GetModel<IAccountModel>().Coins.Value += data.individualPriceBig;
+                }
             }
 
-            this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.RemoveAt(birdIndex);
-
+            // 先从IBirdModel中移除鸟
             if (mapIndex == this.GetModel<ISaveModel>().BirdInfoData.currentMap)
                 this.GetModel<IBirdModel>().RemoveBird(birdIndex);
             
+            // 再从存档中移除鸟数据
+            if (birdIndex < this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.Count)
+                this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.RemoveAt(birdIndex);
+            
+            // 同步数据到存档
+            this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
+            
             RefreshBirdList();
             RefreshName();  // 刷新容量显示
-            // DOTween.Sequence().AppendCallback(() =>
-            // {
             this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
-            // }).SetDelay(0.5f);
         }
     }
 }

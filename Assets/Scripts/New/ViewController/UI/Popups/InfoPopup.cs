@@ -459,8 +459,17 @@ namespace BirdGame
             saleButton.onClick.AddListener(() =>
             {
                 this.GetModel<IAccountModel>().Coins.Value += price;
+                
+                // 先从IBirdModel中移除鸟
                 this.GetModel<IBirdModel>().RemoveBird(index);
-                this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.RemoveAt(index);
+                
+                // 再从存档中移除鸟数据
+                if (index < this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.Count)
+                    this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.RemoveAt(index);
+                
+                // 同步数据到存档
+                this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
+                
                 this.GetSystem<IUISystem>().HidePopup(UIPopup.InfoPopup);
                 this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
                 this.GetSystem<IGameSystem>().SendEvent<RefreshSaleBirdEvent>();

@@ -76,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: -202900907
   m_SortingLayer: 1
   m_SortingOrder: 16
-  m_Sprite: {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
+  m_Sprite: {fileID: 994801347882456744, guid: c32d5254da1dcdd4299e91ff9c11c549, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -140,10 +140,10 @@ MonoBehaviour:
   effect1: {fileID: 406376635277754614}
   effect2: {fileID: 7113994344422696998}
   eggSps:
-  - {fileID: 4465636764377432600, guid: e4ff337a7f83e844e83fe5113d6b219b, type: 3}
-  - {fileID: 710238443548197888, guid: 1170092e8fa8e1142a7e347132e8ea45, type: 3}
-  - {fileID: 2219571566158466069, guid: 066d2d923c5b99944aa6d9ca568d816f, type: 3}
-  - {fileID: -8002347335681798773, guid: 3983a1dbff14cd040915f5a365b4942e, type: 3}
+  - {fileID: 4465636764377432600, guid: 4b35a17a28a48d0408c858c2d19a3046, type: 3}
+  - {fileID: 710238443548197888, guid: 3f2483724ef909a44bad8a593c9d7b90, type: 3}
+  - {fileID: 2219571566158466069, guid: 677e053880e9a73469db1ce97b3f3f50, type: 3}
+  - {fileID: -8002347335681798773, guid: d93b287acabe7c14a97b2d5b6eb6fe35, type: 3}
 --- !u!61 &993549381428427568
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -242,6 +242,8 @@ MonoBehaviour:
   showBackground: 0
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
+  cornerRadius: 10
+  isHovering: 0
 --- !u!1001 &4960675437693293372
 PrefabInstance:
   m_ObjectHideFlags: 0

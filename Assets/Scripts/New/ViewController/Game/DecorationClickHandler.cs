@@ -24,6 +24,36 @@ namespace BirdGame
             decorationId = id;
             decorationIndex = index;
             controller?.SetSp(index);
+            
+            // 安全访问配置数据，避免索引越界
+            var configModel = this.GetModel<IConfigModel>();
+            if (configModel?.ShopConfig?.sceneDecorations != null && 
+                sceneId >= 0 && sceneId < configModel.ShopConfig.sceneDecorations.Count)
+            {
+                var sceneDecoration = configModel.ShopConfig.sceneDecorations[sceneId];
+                if (sceneDecoration?.decorations != null && 
+                    decorationId >= 0 && decorationId < sceneDecoration.decorations.Length)
+                {
+                    var decoration = sceneDecoration.decorations[decorationId];
+                    if (decoration?.fixedPositions != null && 
+                        decorationIndex >= 0 && decorationIndex < decoration.fixedPositions.Length)
+                    {
+                        transform.parent.position = decoration.fixedPositions[decorationIndex];
+                    }
+                    else
+                    {
+                        Debug.LogError($"装饰物固定位置索引越界: decorationIndex={decorationIndex}, fixedPositions长度={decoration?.fixedPositions?.Length ?? 0}");
+                    }
+                }
+                else
+                {
+                    Debug.LogError($"装饰物索引越界: decorationId={decorationId}, decorations长度={sceneDecoration?.decorations?.Length ?? 0}");
+                }
+            }
+            else
+            {
+                Debug.LogError($"场景装饰索引越界: sceneId={sceneId}, sceneDecorations长度={configModel?.ShopConfig?.sceneDecorations?.Count ?? 0}");
+            }
         }
 
         private void Start()
@@ -56,10 +86,7 @@ namespace BirdGame
                 }
             }
 
-            // int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
-            transform.parent.position = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[sceneId]
-                .decorations[decorationId]
-                .fixedPositions[decorationIndex];
+           
         }
 
         // private void OnMouseOver()

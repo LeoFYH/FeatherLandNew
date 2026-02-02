@@ -188,7 +188,9 @@ namespace BirdGame
             // 同步图鉴数据 - 确保所有已拥有的鸟都在图鉴中
             SyncIllustratedDataFromBirds();
             
-           this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
+            // 注意：这里不应该再次同步数据，因为刚从存档加载完数据
+            // SyncBirdDataToSave() 会清空当前内存中的鸟数据并用存档数据覆盖
+            // 现在数据已经在内存中，只需要确保图鉴等其他数据同步即可
             
         }
         

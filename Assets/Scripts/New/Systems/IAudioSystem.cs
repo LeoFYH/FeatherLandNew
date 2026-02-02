@@ -125,13 +125,13 @@ namespace BirdGame
                 radioModel.SongName.Value =
                     this.GetModel<IConfigModel>().RadioConfig.musicItems[radioModel.SongIndex].songName;
                 radioAudio.Play();
+                if (musicPlayingCoroutine != null)
+                    this.GetSystem<IMonoSystem>().StopCoroutine(musicPlayingCoroutine);
+                musicPlayingCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(CheckForSongEnd());
             });
 
             radioModel.PlayingSong.Value = true;
 
-            if (musicPlayingCoroutine != null)
-                this.GetSystem<IMonoSystem>().StopCoroutine(musicPlayingCoroutine);
-            musicPlayingCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(CheckForSongEnd());
         }
 
         public void PauseSong()

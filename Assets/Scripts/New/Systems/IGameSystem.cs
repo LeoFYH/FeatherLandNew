@@ -834,19 +834,21 @@ namespace BirdGame
                     // // 添加点击检测组件
                     // DecorationClickHandler clickHandler = decoration.AddComponent<DecorationClickHandler>();
                     // clickHandler.Initialize(i, j);
+                    int id = i;
+                    int index = j;
                     this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>(decorationItem.prefab.AssetGUID,
                         obj =>
                         {
                             var decoration = GameObject.Instantiate(obj);
                             DecorationClickHandler clickHandler =
                                 decoration.GetComponentInChildren<DecorationClickHandler>();
-                            clickHandler.Initialize(i, j);
-                            if (decorationInfo.position.Count <= j)
+                            clickHandler.Initialize(id, index);
+                            if (decorationInfo.position.Count <= index)
                             {
                                 decorationInfo.position.Add(Vector3.zero);
                             }
 
-                            decoration.transform.position = decorationInfo.position[j];
+                            decoration.transform.position = decorationInfo.position[index];
                         });
                 }
             }
