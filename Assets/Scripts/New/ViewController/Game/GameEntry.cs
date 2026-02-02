@@ -45,6 +45,8 @@ namespace BirdGame
         
         private void Start()
         {
+            // 监听请求切换屏幕模式（供 ExitConfirmPopup 等调用，走统一 SetScreenMode 逻辑）
+            this.RegisterEvent<RequestSetScreenModeEvent>(e => SetScreenMode(e.mode, e.forceChange));
             // 延迟一帧来确保所有系统都已初始化
             this.GetSystem<IMonoSystem>().StartCoroutine(InitializeAfterSystems());
             this.SendCommand<LoadGameCommand>();
