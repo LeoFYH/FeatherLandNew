@@ -18,7 +18,7 @@ namespace BirdGame
         GrowUp,
         Buy,
         Hatch,
-        Hover
+        //Hover
     }
 
     public interface IAudioSystem : ISystem
@@ -275,10 +275,10 @@ namespace BirdGame
                     clip = this.GetModel<IConfigModel>().RadioConfig.effects[5].songFile;
                     group = this.GetModel<IConfigModel>().RadioConfig.effects[5].group;
                     break;
-                case EffectType.Hover:
-                    clip = this.GetModel<IConfigModel>().RadioConfig.effects[6].songFile;
-                    group = this.GetModel<IConfigModel>().RadioConfig.effects[6].group;
-                    break;
+                // case EffectType.Hover:
+                //     clip = this.GetModel<IConfigModel>().RadioConfig.effects[6].songFile;
+                //     group = this.GetModel<IConfigModel>().RadioConfig.effects[6].group;
+                //     break;
             }
 
             if (clip != null)
