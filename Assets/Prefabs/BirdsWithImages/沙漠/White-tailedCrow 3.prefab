@@ -200,7 +200,6 @@ MonoBehaviour:
   lastEatTime: 0
   eatWaitDuration: 0
   idleLockDuration: 1
-  shouldFollowMouse: 0
   agent: {fileID: 0}
   originalScale: {x: 0, y: 0, z: 0}
   lastPerspectiveScale: 1
@@ -471,6 +470,7 @@ MonoBehaviour:
   showBackground: 0
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
   backgroundPadding: {x: 10, y: 5}
+  cornerRadius: 10
   isHovering: 0
 --- !u!1 &7077765267814181376
 GameObject:
