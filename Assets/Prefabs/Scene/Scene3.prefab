@@ -57,7 +57,7 @@ Transform:
   m_GameObject: {fileID: 277849025451588430}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalPosition: {x: -0, y: -7.22, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -655,7 +655,7 @@ Transform:
   m_GameObject: {fileID: 3660548062220355691}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -4.44, z: 0}
+  m_LocalPosition: {x: 0, y: -7.2, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -952,7 +952,7 @@ MonoBehaviour:
   ground: {fileID: 8314280563471891656}
   groundCover1: {fileID: 2667518622007916963}
   groundCover2: {fileID: 3900149790839404592}
-  foregroundGrass: {fileID: 0}
+  foregroundGrass: {fileID: 8665284266660803308}
   weathers:
   - weatherName: "\u767D\u5929"
     background:
@@ -1018,7 +1018,7 @@ MonoBehaviour:
       sprite: {fileID: 8246963813015879828, guid: 0236d6beecd315042bc07263129bb0c8, type: 3}
       scale: 0.5
     foregroundGrass:
-      sprite: {fileID: -659121900440001057, guid: e42ab6796740ab24ab9880fe1c3ea9af, type: 3}
+      sprite: {fileID: 21300000, guid: e42ab6796740ab24ab9880fe1c3ea9af, type: 3}
       scale: 0.5
     others: []
     birdColor:
@@ -1104,7 +1104,7 @@ MonoBehaviour:
       sprite: {fileID: 5104515694026466761, guid: 2121c809ba3dfb342ae6b4785109a2d6, type: 3}
       scale: 0.5
     foregroundGrass:
-      sprite: {fileID: 7459000850835837136, guid: a4556efe224e6114499b2841a9b98d22, type: 3}
+      sprite: {fileID: 21300000, guid: a4556efe224e6114499b2841a9b98d22, type: 3}
       scale: 0.5
     others: []
     birdColor:
@@ -1142,7 +1142,7 @@ MonoBehaviour:
       sprite: {fileID: -6992458215546723957, guid: 2ffccaf18032c1947a896e2ae697aa4e, type: 3}
       scale: 0.5
     foregroundGrass:
-      sprite: {fileID: 5584125653903832380, guid: 1a42c67fff067e843a0d386d0606aaf0, type: 3}
+      sprite: {fileID: 21300000, guid: 1a42c67fff067e843a0d386d0606aaf0, type: 3}
       scale: 0.5
     others: []
     birdColor:
@@ -1159,7 +1159,7 @@ MonoBehaviour:
       sprite: {fileID: 6521085415003174620, guid: 05a1ca00145b3664692439959e0324da, type: 3}
       scale: 0.5
     backgroundTree:
-      sprite: {fileID: 0}
+      sprite: {fileID: 5414427508501516385, guid: 34b0077a8ab7e2744a6c24381489fdc3, type: 3}
       scale: 0.5
     backgroundGrass:
       sprite: {fileID: -5037017724980300816, guid: 68f802df712bf5a42a0355841f297b43, type: 3}
@@ -1174,13 +1174,13 @@ MonoBehaviour:
       sprite: {fileID: 8817139780241705831, guid: 4c036ee0d1cb9644b94614d2aed2d01e, type: 3}
       scale: 0.5
     foreCover1:
-      sprite: {fileID: 0}
+      sprite: {fileID: -4366859970924868962, guid: 34b0077a8ab7e2744a6c24381489fdc3, type: 3}
       scale: 0.5
     foreCover2:
-      sprite: {fileID: 0}
+      sprite: {fileID: 7376492137467876040, guid: 34b0077a8ab7e2744a6c24381489fdc3, type: 3}
       scale: 0.5
     foregroundGrass:
-      sprite: {fileID: 3989774422004794236, guid: 0171532431900cb47aea3bb5b51e6ccc, type: 3}
+      sprite: {fileID: 21300000, guid: 0171532431900cb47aea3bb5b51e6ccc, type: 3}
       scale: 0.5
     others: []
     birdColor:
