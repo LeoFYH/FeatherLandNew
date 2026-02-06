@@ -65,16 +65,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\SpritePivotEditor\Editor\SpriteAlignmentEditor.cs" />
+    <Compile Include="Assets\Editor\TextureAnalysisTool.cs" />
     <Compile Include="Assets\Scripts\New\Editor\QuickTextureExport.cs" />
+    <Compile Include="Assets\Editor\LargeTextureFinder.cs" />
     <Compile Include="Assets\Scripts\New\Editor\LocalizationGlobalConfig.cs" />
+    <Compile Include="Assets\Editor\TextureAnalysisMenu.cs" />
     <Compile Include="Assets\Scripts\New\Editor\EditorCoroutineUtility.cs" />
     <Compile Include="Assets\Scripts\New\Editor\SpriteRendererMaterialReplacer.cs" />
     <Compile Include="Assets\Scripts\New\Editor\TextureExportTool.cs" />
     <Compile Include="Assets\Scripts\New\Editor\GameConfigWindow.cs" />
     <Compile Include="Assets\Scripts\New\Editor\CursorConfigEditor.cs" />
     <Compile Include="Assets\SpritePivotEditor\Editor\SpritePivotEditor.cs" />
+    <Compile Include="Assets\Editor\SafeShaderCleaner.cs" />
+    <Compile Include="Assets\Editor\SpritePivotChecker.cs" />
+    <Compile Include="Assets\Editor\UnusedShaderFinder.cs" />
+    <Compile Include="Assets\Editor\AddressableGroupConfigurator.cs" />
     <Compile Include="Assets\Scripts\New\Editor\SetPivotBottomCenter.cs" />
     <Compile Include="Assets\Scripts\New\Editor\GameSetting.cs" />
+    <Compile Include="Assets\Editor\TextureReportGenerator.cs" />
+    <Compile Include="Assets\Editor\AdvancedShaderUsageAnalyzer.cs" />
+    <Compile Include="Assets\Editor\TextureOptimizationAdvisor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Library\PackageCache\com.unity.collab-proxy@ab839cc7d2ad\Lib\Editor\Localization\commontypes.ko.txt" />
@@ -1264,7 +1274,6 @@
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp-firstpass.csproj" />
     <ProjectReference Include="Assembly-CSharp.csproj" />
-    <ProjectReference Include="Assembly-CSharp-Editor-firstpass.csproj" />
     <ProjectReference Include="UnityEngine.TestRunner.csproj" />
     <ProjectReference Include="UnityEditor.TestRunner.csproj" />
     <ProjectReference Include="Unity.RenderPipelines.Universal.2D.Runtime.csproj" />
