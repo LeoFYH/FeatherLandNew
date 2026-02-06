@@ -12,7 +12,7 @@ namespace BirdGame
 
         private Image thisImage;
         
-        private void Start()
+        private void Awake()
         {
             thisImage = GetComponent<Image>();
             OnNormal();

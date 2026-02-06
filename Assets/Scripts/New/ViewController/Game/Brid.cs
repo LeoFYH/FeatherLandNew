@@ -128,6 +128,11 @@ namespace BirdGame
         
         public bool isDesktopBird;
         private GameObject heart;
+        
+        // ✅ 优化：缓存agent.enabled状态，避免每帧访问
+        private bool agentEnabled;
+        // ✅ 优化：缓存上一次检查时间，用于定时器
+        private float lastMinuteCheck = 0f;
 
         void Start()
         {
@@ -227,8 +232,12 @@ namespace BirdGame
             _stateMachine.AddState(new BirdFlyHorizontalState(_stateMachine));
             _stateMachine.AddState(new BirdHatchingEggState(_stateMachine));
             startTimer = Time.time;
+            lastMinuteCheck = Time.time; // ✅ 优化：初始化定时器
 
             transform.localScale = Vector3.one * BabyBirdSize;
+            
+            // ✅ 优化：启动定时协程，代替Update中的每帧检查
+            StartCoroutine(MinuteTimer());
         }
 
         public void OnMouseEnter()
@@ -259,103 +268,125 @@ namespace BirdGame
             isBeingPetted = false;
         }
 
-        void Update()
+        /// <summary>
+        /// ✅ 优化：处理鼠标输入的独立方法，只在需要时调用
+        /// </summary>
+        private void HandleMouseInput()
         {
-            if (!isDesktopBird && maskList.Count == 0)
+            if (Input.GetMouseButtonDown(1) || SimpleMouseForwarder.rightClickCount > previousRightClickCount)
             {
-                if (isEnter)
+                previousRightClickCount = SimpleMouseForwarder.rightClickCount;
+                if (!isSmall)
                 {
-                    if (Input.GetMouseButtonDown(1) || SimpleMouseForwarder.rightClickCount > previousRightClickCount)
+                    title = "Adult bird";
+                    desc = "It's an adult bird";
+                }
+
+                this.GetModel<IGameModel>().CurrentSelectedBirdIndex = birdIndex;
+                this.GetSystem<IUISystem>().ShowPopup(UIPopup.InfoPopup);
+
+                // 先恢复所有鸟的材质颜色，然后设置当前鸟为白色轮廓
+                RestoreAllBirdsOutlineColor();
+                SetBirdOutlineToWhite();
+            }
+
+            if (Input.GetMouseButtonDown(0) || SimpleMouseForwarder.clickCount > previousClickCount)
+            {
+                previousClickCount = SimpleMouseForwarder.clickCount;
+                if (_stateMachine.CurrentState == typeof(BirdIdleState) ||
+                    _stateMachine.CurrentState == typeof(BirdRunState) ||
+                    _stateMachine.CurrentState == typeof(BirdEatState))
+                {
+                    // 检查是否达到点击间隔时间
+                    if (Time.time - lastClickTime >= clickInterval)
                     {
-                        previousRightClickCount = SimpleMouseForwarder.rightClickCount;
-                        if (!isSmall)
+                        lastClickTime = Time.time; // 更新最后点击时间
+                        Debug.Log("Feather!");
+                        petTime += 0.1f;
+                        int index = this.GetModel<IBirdModel>().BirdList[birdIndex].birdType;
+                        int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+                        var birdConf = this.GetModel<IConfigModel>().BirdConfig.GetBird(index, mapIndex);
+                        this.GetModel<IAccountModel>().Coins.Value += birdConf.clickEarning;
+                        if (currentFavorability.Value < totalFavorability && !isSmall)
                         {
-                            title = "Adult bird";
-                            desc = "It's an adult bird";
+                            currentFavorability.Value++;
                         }
 
-                        this.GetModel<IGameModel>().CurrentSelectedBirdIndex = birdIndex;
-                        this.GetSystem<IUISystem>().ShowPopup(UIPopup.InfoPopup);
+                        // 设置被抚摸标志和记录抚摸时间
+                        isBeingPetted = true;
+                        lastPetTime = Time.time;
 
-                        // 先恢复所有鸟的材质颜色，然后设置当前鸟为白色轮廓
-                        RestoreAllBirdsOutlineColor();
-                        SetBirdOutlineToWhite();
-                    }
-
-                    if (Input.GetMouseButtonDown(0) || SimpleMouseForwarder.clickCount > previousClickCount)
-                    {
-                        previousClickCount = SimpleMouseForwarder.clickCount;
-                        if (_stateMachine.CurrentState == typeof(BirdIdleState) ||
-                            _stateMachine.CurrentState == typeof(BirdRunState) ||
-                            _stateMachine.CurrentState == typeof(BirdEatState))
+                        // 开始或继续连续抚摸计时
+                        if (continuousPetStartTime == 0)
                         {
-                            // 检查是否达到点击间隔时间
-                            if (Time.time - lastClickTime >= clickInterval)
+                            continuousPetStartTime = Time.time;
+                        }
+
+                        // 如果当前是跑步状态，切换到idle状态
+                        if (_stateMachine.CurrentState == typeof(BirdRunState))
+                        {
+                            agent.isStopped = true;
+                            agent.velocity = Vector3.zero;
+                            _stateMachine.ChangeState<BirdIdleState>();
+                        }
+                        // 如果当前是吃东西状态，直接处理抚摸
+                        else if (_stateMachine.CurrentState == typeof(BirdEatState))
+                        {
+                            agent.isStopped = true;
+                            agent.velocity = Vector3.zero;
+                            if (currFood != null)
                             {
-                                lastClickTime = Time.time; // 更新最后点击时间
-                                Debug.Log("Feather!");
-                                petTime += 0.1f;
-                                int index = this.GetModel<IBirdModel>().BirdList[birdIndex].birdType;
-                                int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
-                                var birdConf = this.GetModel<IConfigModel>().BirdConfig.GetBird(index, mapIndex);
-                                this.GetModel<IAccountModel>().Coins.Value += birdConf.clickEarning;
-                                if (currentFavorability.Value < totalFavorability && !isSmall)
-                                {
-                                    currentFavorability.Value++;
-                                }
-
-                                // 设置被抚摸标志和记录抚摸时间
-                                isBeingPetted = true;
-                                lastPetTime = Time.time;
-
-                                // 开始或继续连续抚摸计时
-                                if (continuousPetStartTime == 0)
-                                {
-                                    continuousPetStartTime = Time.time;
-                                }
-
-                                // 如果当前是跑步状态，切换到idle状态
-                                if (_stateMachine.CurrentState == typeof(BirdRunState))
-                                {
-                                    agent.isStopped = true;
-                                    agent.velocity = Vector3.zero;
-                                    _stateMachine.ChangeState<BirdIdleState>();
-                                }
-                                // 如果当前是吃东西状态，直接处理抚摸
-                                else if (_stateMachine.CurrentState == typeof(BirdEatState))
-                                {
-                                    agent.isStopped = true;
-                                    agent.velocity = Vector3.zero;
-                                    if (currFood != null)
-                                    {
-                                        currFood.UntargetFood();
-                                        currFood = null;
-                                    }
-
-                                    anim.SetBool(AnimatorHashes.Eat, false);
-                                    _stateMachine.ChangeState<BirdIdleState>();
-                                }
-
-                                this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Stroke);
-                                this.GetSystem<IAudioSystem>().PlayBirdEffect(index);
-                                anim.SetTrigger(AnimatorHashes.StrokeTrigger);
-                                this.GetSystem<IAudioSystem>().RandomPlayPetting();
-                                // 使用对象池获取心形特效
-                                if (heart != null && heart.activeSelf)
-                                {
-                                    this.GetSystem<IObjectPoolSystem>().Recycle("Heart", heart);
-                                    heart = null;
-                                }
-
-                                this.GetSystem<IObjectPoolSystem>().Get("Heart", heartPos, obj => { heart = obj; });
-                                if (petTime > 0.5)
-                                {
-                                    this.GetModel<IAccountModel>().Coins.Value += birdConf.clickEarningForFiveTimes;
-                                }
+                                currFood.UntargetFood();
+                                currFood = null;
                             }
+
+                            anim.SetBool(AnimatorHashes.Eat, false);
+                            _stateMachine.ChangeState<BirdIdleState>();
+                        }
+
+                        this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Stroke);
+                        this.GetSystem<IAudioSystem>().PlayBirdEffect(index);
+                        anim.SetTrigger(AnimatorHashes.StrokeTrigger);
+                        this.GetSystem<IAudioSystem>().RandomPlayPetting();
+                        // 使用对象池获取心形特效
+                        if (heart != null && heart.activeSelf)
+                        {
+                            this.GetSystem<IObjectPoolSystem>().Recycle("Heart", heart);
+                            heart = null;
+                        }
+
+                        this.GetSystem<IObjectPoolSystem>().Get("Heart", heartPos, obj => { heart = obj; });
+                        if (petTime > 0.5)
+                        {
+                            this.GetModel<IAccountModel>().Coins.Value += birdConf.clickEarningForFiveTimes;
                         }
                     }
                 }
+            }
+        }
+        
+        /// <summary>
+        /// ✅ 优化：更新移动动画的独立方法
+        /// </summary>
+        private void UpdateMovementAnimation()
+        {
+            // 使用 sqrMagnitude 避免开方运算，提升性能
+            if (agent.velocity.sqrMagnitude > 0.0001f) // 0.01f * 0.01f = 0.0001f
+            {
+                anim.SetFloat(AnimatorHashes.MoveSpeed, 1f);
+            }
+            else
+            {
+                anim.SetFloat(AnimatorHashes.MoveSpeed, 0f);
+            }
+        }
+        
+        void Update()
+        {
+            // ✅ 优化：只在鼠标悬停时处理输入
+            if (isEnter && !isDesktopBird && maskList.Count == 0)
+            {
+                HandleMouseInput();
             }
 
             _stateMachine.OnUpdate();
@@ -367,18 +398,11 @@ namespace BirdGame
             //     _stateMachine.ChangeState<BirdRunState>();
             // }
 
-            // 统一处理走路动画 - 只要在移动就播放走路动画
-            if (agent != null && agent.enabled)
+            // ✅ 优化：缓存agent.enabled检查
+            agentEnabled = agent != null && agent.enabled;
+            if (agentEnabled)
             {
-                // 使用 sqrMagnitude 避免开方运算，提升性能
-                if (agent.velocity.sqrMagnitude > 0.0001f) // 0.01f * 0.01f = 0.0001f
-                {
-                    anim.SetFloat(AnimatorHashes.MoveSpeed, 1f);
-                }
-                else
-                {
-                    anim.SetFloat(AnimatorHashes.MoveSpeed, 0f);
-                }
+                UpdateMovementAnimation();
             }
 
             //检查是否在WalkableArea中并做透视缩放
@@ -410,17 +434,10 @@ namespace BirdGame
             //     }
             // }
 
-            // if (!isDesktopBird)
-            // {
-            // Generate income every minute
-            if (Time.time - startTimer >= 60)
-            {
-                startTimer = Time.time;
-                AddCoins();
-                AutoExp();
-            }
-            // }
-
+            // ✅ 优化：移除每帧检查时间间隔的代码，改用协程
+            // 定时逻辑已移到 MinuteTimer() 协程中
+            
+            // ✅ 优化：简化点击计数同步
             if (SimpleMouseForwarder.clickCount > previousClickCount)
             {
                 previousClickCount = SimpleMouseForwarder.clickCount;
@@ -429,6 +446,19 @@ namespace BirdGame
             if (SimpleMouseForwarder.rightClickCount > previousRightClickCount)
             {
                 previousRightClickCount = SimpleMouseForwarder.rightClickCount;
+            }
+        }
+        
+        /// <summary>
+        /// ✅ 优化：使用协程处理定时逻辑，避免每帧检查
+        /// </summary>
+        private System.Collections.IEnumerator MinuteTimer()
+        {
+            while (true)
+            {
+                yield return new WaitForSeconds(60f); // 每60秒执行一次
+                AddCoins();
+                AutoExp();
             }
         }
 

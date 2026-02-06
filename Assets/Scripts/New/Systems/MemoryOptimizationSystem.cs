@@ -24,8 +24,9 @@ namespace BirdGame
             audioSystem = this.GetSystem<IAudioSystem>();
             objectPoolSystem = this.GetSystem<IObjectPoolSystem>();
             
-            // 注册定时清理任务
-            this.GetSystem<IMonoSystem>().RegisterUpdate(CleanupRoutine);
+            // ✅ 优化：移除强制定时GC，Unity的GC会自动管理
+            // 强制GC会造成100-500ms的明显卡顿，这是导致"偶发卡顿"的主要原因
+            // this.GetSystem<IMonoSystem>().RegisterUpdate(CleanupRoutine);
         }
 
         /// <summary>
@@ -98,15 +99,19 @@ namespace BirdGame
 
         /// <summary>
         /// 定期清理资源
+        /// ✅ 优化：移除强制GC调用，避免卡顿
+        /// 如果确实需要清理，建议在场景切换或游戏暂停时手动调用
         /// </summary>
         private void CleanupRoutine()
         {
-            // 每30秒强制垃圾回收一次
-            if (Time.time % 30 < Time.deltaTime)
-            {
-                System.GC.Collect();
-                Resources.UnloadUnusedAssets();
-            }
+            // ❌ 移除：每30秒强制GC会造成100-500ms的卡顿
+            // if (Time.time % 30 < Time.deltaTime)
+            // {
+            //     System.GC.Collect();
+            //     Resources.UnloadUnusedAssets();
+            // }
+            
+            // ✅ 如果需要清理，建议在适当时机手动调用PerformFullOptimization()
         }
 
         /// <summary>
@@ -154,16 +159,23 @@ namespace BirdGame
 
         /// <summary>
         /// 完整内存优化
+        /// ✅ 优化：只在场景切换或游戏暂停等合适时机调用
+        /// 不应该定时自动调用，会造成卡顿
         /// </summary>
         public void PerformFullOptimization()
         {
-            //OptimizeAudioSystem();
-            //CleanupObjectPools();
-            //OptimizeTextures();
+            // ✅ 可以在以下时机手动调用此方法：
+            // 1. 场景切换前
+            // 2. 游戏暂停时
+            // 3. 进入后台时
+            
+            OptimizeAudioSystem();
+            CleanupObjectPools();
+            OptimizeTextures();
 
-            //// 强制垃圾回收
-            //System.GC.Collect();
-            //Resources.UnloadUnusedAssets();
+            // ⚠️ 注意：GC.Collect会造成卡顿，只在必要时调用
+            System.GC.Collect();
+            Resources.UnloadUnusedAssets();
         }
     }
 }

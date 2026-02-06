@@ -89,6 +89,9 @@ namespace BirdGame
         private Dictionary<int, Coroutine> environmentFadeCoroutines = new Dictionary<int, Coroutine>();
         private const float FADE_DURATION = 1.0f; // 淡入淡出持续时间（秒）
         
+        // ✅ 优化：添加音频缓存，避免重复加载
+        private Dictionary<string, AudioClip> audioClipCache = new Dictionary<string, AudioClip>();
+        
         protected override void OnInit()
         {
             obj = new GameObject("AudioManager");
@@ -112,26 +115,51 @@ namespace BirdGame
             GameObject.DontDestroyOnLoad(obj);
         }
 
+        /// <summary>
+        /// ✅ 优化：使用缓存避免重复加载音频
+        /// </summary>
         public void PlaySong()
         {
             var item = this.GetModel<IConfigModel>().RadioConfig.musicItems[radioModel.SongIndex];
             radioModel.CurrentTime.Value = 0;
-            this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(item.songFile.AssetGUID, clip =>
+            
+            // ✅ 优化：先检查缓存
+            if (audioClipCache.TryGetValue(item.songFile.AssetGUID, out AudioClip cachedClip))
             {
-                radioModel.TotalTime.Value = clip.length;
-                radioModel.SongProgress.Value = 0;
-                radioAudio.clip = clip;
-                radioAudio.outputAudioMixerGroup = item.group;
-                radioModel.SongName.Value =
-                    this.GetModel<IConfigModel>().RadioConfig.musicItems[radioModel.SongIndex].songName;
-                radioAudio.Play();
-                if (musicPlayingCoroutine != null)
-                    this.GetSystem<IMonoSystem>().StopCoroutine(musicPlayingCoroutine);
-                musicPlayingCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(CheckForSongEnd());
-            });
+                // 使用缓存的音频
+                PlayCachedSong(cachedClip, item);
+            }
+            else
+            {
+                // 加载并缓存音频
+                this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(item.songFile.AssetGUID, clip =>
+                {
+                    if (clip != null)
+                    {
+                        audioClipCache[item.songFile.AssetGUID] = clip; // 缓存音频
+                        PlayCachedSong(clip, item);
+                    }
+                });
+            }
 
             radioModel.PlayingSong.Value = true;
-
+        }
+        
+        /// <summary>
+        /// ✅ 优化：播放已缓存的音频
+        /// </summary>
+        private void PlayCachedSong(AudioClip clip, AudioItem item)
+        {
+            radioModel.TotalTime.Value = clip.length;
+            radioModel.SongProgress.Value = 0;
+            radioAudio.clip = clip;
+            radioAudio.outputAudioMixerGroup = item.group;
+            radioModel.SongName.Value =
+                this.GetModel<IConfigModel>().RadioConfig.musicItems[radioModel.SongIndex].songName;
+            radioAudio.Play();
+            if (musicPlayingCoroutine != null)
+                this.GetSystem<IMonoSystem>().StopCoroutine(musicPlayingCoroutine);
+            musicPlayingCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(CheckForSongEnd());
         }
 
         public void PauseSong()

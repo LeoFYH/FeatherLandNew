@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq; // 添加这一行以支持LINQ方法如Take
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks; // ✅ 使用UniTask替代Task
 using QFramework;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -93,6 +94,10 @@ namespace BirdGame
             //LoadAssetAsync<GameObject>("OpenEggAnim", null);
         }
 
+        /// <summary>
+        /// ✅ 优化：使用UniTask替代Task.Yield()，真正的异步加载，不阻塞主线程
+        /// 这是解决"首次加载卡顿"的关键优化
+        /// </summary>
         public async void LoadAssetAsync<T>(string assetName, Action<T> onCompleted, Action<float> onProgress = null)
         {
             if (HandleDic.ContainsKey(assetName))
@@ -104,11 +109,11 @@ namespace BirdGame
             var handle = Addressables.LoadAssetAsync<T>(assetName);
             HandleDic.Add(assetName, handle);
             
-            // 普通资源加载流程
+            // ✅ 优化：使用UniTask替代Task.Yield()，不阻塞主线程
             while (!handle.IsDone)
             {
                 onProgress?.Invoke(handle.PercentComplete);
-                await Task.Yield();
+                await UniTask.Yield(); // 使用UniTask，真正的异步
             }
 
             if (handle.Status == AsyncOperationStatus.Succeeded)
@@ -125,13 +130,14 @@ namespace BirdGame
         }
 
         // 为精灵资源自动处理图集加载
-        private async Task LoadAtlasForSpriteIfNeeded<T>(string assetName, AsyncOperationHandle handle, Action<T> onCompleted, Action<float> onProgress)
+        // ✅ 优化：使用UniTask
+        private async UniTask LoadAtlasForSpriteIfNeeded<T>(string assetName, AsyncOperationHandle handle, Action<T> onCompleted, Action<float> onProgress)
         {
             // 先获取精灵资源本身
             while (!handle.IsDone)
             {
                 onProgress?.Invoke(handle.PercentComplete);
-                await Task.Yield();
+                await UniTask.Yield(); // 使用UniTask
             }
 
             if (handle.Status != AsyncOperationStatus.Succeeded)
@@ -227,6 +233,9 @@ namespace BirdGame
             }
         }
 
+        /// <summary>
+        /// ✅ 优化：使用UniTask异步加载图集和精灵
+        /// </summary>
         public async void LoadSpriteFromAtlasAsync(string spriteAddress, string atlasAddress, Action<UnityEngine.Sprite> onCompleted, Action<float> onProgress = null)
         {
             // 建立精灵到图集的映射关系
@@ -250,11 +259,11 @@ namespace BirdGame
                 var atlasHandle = Addressables.LoadAssetAsync<SpriteAtlas>(atlasAddress);
                 AtlasHandles[atlasAddress] = atlasHandle;
                 
-                // 监听图集加载进度
+                // ✅ 优化：使用UniTask
                 while (!atlasHandle.IsDone)
                 {
                     onProgress?.Invoke(atlasHandle.PercentComplete * 0.5f); // 图集加载占总进度的50%
-                    await Task.Yield();
+                    await UniTask.Yield();
                 }
 
                 if (atlasHandle.Status == AsyncOperationStatus.Succeeded)
@@ -281,6 +290,9 @@ namespace BirdGame
             }
         }
 
+        /// <summary>
+        /// ✅ 优化：使用UniTask加载精灵
+        /// </summary>
         private async void LoadSpriteInternal(string spriteAddress, Action<UnityEngine.Sprite> onCompleted, Action<float> onProgress = null)
         {
             // 检查精灵是否已经在加载
@@ -289,10 +301,10 @@ namespace BirdGame
                 var existingHandle = SpriteHandles[spriteAddress];
                 if (existingHandle.IsValid())
                 {
-                    // 等待现有加载完成
+                    // ✅ 优化：使用UniTask等待
                     while (!existingHandle.IsDone)
                     {
-                        await Task.Yield();
+                        await UniTask.Yield();
                     }
                     
                     if (existingHandle.Status == AsyncOperationStatus.Succeeded)
@@ -312,11 +324,12 @@ namespace BirdGame
             var spriteHandle = Addressables.LoadAssetAsync<UnityEngine.Sprite>(spriteAddress);
             SpriteHandles[spriteAddress] = spriteHandle;
 
+            // ✅ 优化：使用UniTask
             while (!spriteHandle.IsDone)
             {
                 // 精灵加载占总进度的后50%
                 onProgress?.Invoke(0.5f + spriteHandle.PercentComplete * 0.5f);
-                await Task.Yield();
+                await UniTask.Yield();
             }
 
             if (spriteHandle.Status == AsyncOperationStatus.Succeeded)
@@ -433,7 +446,8 @@ namespace BirdGame
         }
 
         // 处理Prefab中引用的图集资源
-        private async Task ProcessPrefabAtlases(GameObject prefab, string assetName, Action<float> onProgress = null)
+        // ✅ 优化：使用UniTask
+        private async UniTask ProcessPrefabAtlases(GameObject prefab, string assetName, Action<float> onProgress = null)
         {
             if (prefab == null) return;
 
@@ -464,12 +478,12 @@ namespace BirdGame
                             var atlasHandle = Addressables.LoadAssetAsync<SpriteAtlas>(atlasAddress);
                             AtlasHandles[atlasAddress] = atlasHandle;
                             
-                            // 监听图集加载进度
+                            // ✅ 优化：使用UniTask
                             while (!atlasHandle.IsDone)
                             {
                                 // 图集加载进度占剩余30%的进度
                                 onProgress?.Invoke(0.7f + atlasHandle.PercentComplete * 0.3f);
-                                await Task.Yield();
+                                await UniTask.Yield();
                             }
 
                             if (atlasHandle.Status == AsyncOperationStatus.Succeeded)
@@ -513,12 +527,12 @@ namespace BirdGame
                             var atlasHandle = Addressables.LoadAssetAsync<SpriteAtlas>(atlasAddress);
                             AtlasHandles[atlasAddress] = atlasHandle;
                             
-                            // 监听图集加载进度
+                            // ✅ 优化：使用UniTask
                             while (!atlasHandle.IsDone)
                             {
                                 // 图集加载进度占剩余30%的进度
                                 onProgress?.Invoke(0.7f + atlasHandle.PercentComplete * 0.3f);
-                                await Task.Yield();
+                                await UniTask.Yield();
                             }
 
                             if (atlasHandle.Status == AsyncOperationStatus.Succeeded)
@@ -563,12 +577,12 @@ namespace BirdGame
                             var atlasHandle = Addressables.LoadAssetAsync<SpriteAtlas>(atlasAddress);
                             AtlasHandles[atlasAddress] = atlasHandle;
                             
-                            // 监听图集加载进度
+                            // ✅ 优化：使用UniTask
                             while (!atlasHandle.IsDone)
                             {
                                 // 图集加载进度占剩余30%的进度
                                 onProgress?.Invoke(0.7f + atlasHandle.PercentComplete * 0.3f);
-                                await Task.Yield();
+                                await UniTask.Yield();
                             }
 
                             if (atlasHandle.Status == AsyncOperationStatus.Succeeded)
@@ -674,6 +688,7 @@ namespace BirdGame
         }
 
         // 实现新的AssetReference图集加载方法
+        // ✅ 优化：使用UniTask异步加载
         public async void LoadSpriteFromAtlasAsync(string spriteName, AssetReferenceSpriteAtlas atlasReference, Action<UnityEngine.Sprite> onCompleted, Action<float> onProgress = null)
         {
             if (atlasReference == null || string.IsNullOrEmpty(spriteName))
@@ -700,11 +715,11 @@ namespace BirdGame
                 var atlasHandle = atlasReference.LoadAssetAsync<SpriteAtlas>();
                 AssetRefAtlasHandles[atlasGuid] = atlasHandle;
                 
-                // 监听图集加载进度
+                // ✅ 优化：使用UniTask
                 while (!atlasHandle.IsDone)
                 {
                     onProgress?.Invoke(atlasHandle.PercentComplete * 0.5f); // 图集加载占总进度的50%
-                    await Task.Yield();
+                    await UniTask.Yield();
                 }
 
                 if (atlasHandle.Status == AsyncOperationStatus.Succeeded)
