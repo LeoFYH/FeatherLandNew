@@ -386,6 +386,9 @@ namespace BirdGame
         public IEnumerator PreloadEssentialAssets(Action<float> onProgress, Action onComplete)
         {
             onProgress?.Invoke(0);
+            var handl = Addressables.InitializeAsync();
+            yield return handl;
+
             var handles = new List<AsyncOperationHandle>();
             // 获取所有需要预加载的资源
             var locationsHandle = Addressables.LoadResourceLocationsAsync("preload");

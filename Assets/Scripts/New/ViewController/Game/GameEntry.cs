@@ -45,6 +45,7 @@ namespace BirdGame
         
         private void Start()
         {
+            Application.targetFrameRate = 100;
             // 监听请求切换屏幕模式（供 ExitConfirmPopup 等调用，走统一 SetScreenMode 逻辑）
             this.RegisterEvent<RequestSetScreenModeEvent>(e => SetScreenMode(e.mode, e.forceChange));
             // 延迟一帧来确保所有系统都已初始化
@@ -700,5 +701,14 @@ namespace BirdGame
             this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
             this.GetSystem<ISteamSystem>().ShutDown();
         }
+    }
+
+    /// <summary>
+    /// 请求切换屏幕模式事件（由 GameEntry 监听并执行 SetScreenMode）
+    /// </summary>
+    public struct RequestSetScreenModeEvent
+    {
+        public int mode;        // 0=窗口模式, 1=壁纸模式, 2=全屏模式
+        public bool forceChange; // 是否强制切换（忽略冷却，用于退出等场景）
     }
 }

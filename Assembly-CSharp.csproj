@@ -150,7 +150,6 @@
     <Compile Include="Assets\Scripts\New\Systems\PeriodicCleanupSystem.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\NotwalkableController.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Note\ScheduleViewController.cs" />
-    <Compile Include="Assets\Scripts\New\Events\RequestSetScreenModeEvent.cs" />
     <Compile Include="Assets\Scripts\New\Systems\MemoryOptimizationSystem.cs" />
     <Compile Include="Assets\Scripts\WalkableArea.cs" />
     <Compile Include="Assets\Scripts\New\Events\HideWeatherContentEvent.cs" />
@@ -296,6 +295,7 @@
     <None Include="Assets\Fonts\Japanese\jp.txt" />
     <None Include="Assets\com.rlabrecque.steamworks.net\Plugins\steam_api.dll" />
     <None Include="Assets\SpriteOutline\Shaders\SpriteOutline.shader" />
+    <None Include="Assets\Arts\海边天气-切图\SpriteVideo.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Mobile.cginc" />
     <None Include="Assets\ShaderUsageReport.txt" />
     <None Include="Assets\Materials\URP Sprite Outline.shader" />
