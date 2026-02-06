@@ -157,13 +157,13 @@ namespace BirdGame
         /// </summary>
         public void PerformFullOptimization()
         {
-            OptimizeAudioSystem();
-            CleanupObjectPools();
-            OptimizeTextures();
-            
-            // 强制垃圾回收
-            System.GC.Collect();
-            Resources.UnloadUnusedAssets();
+            //OptimizeAudioSystem();
+            //CleanupObjectPools();
+            //OptimizeTextures();
+
+            //// 强制垃圾回收
+            //System.GC.Collect();
+            //Resources.UnloadUnusedAssets();
         }
     }
 }

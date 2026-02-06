@@ -64,5 +64,7 @@ namespace BirdGame
                 this.GetSystem<IGameSystem>().SendEvent<EnableHoverScaleEvent>();
             }).SetDelay(0.2f);
         }
+        
+     
     }
 }
