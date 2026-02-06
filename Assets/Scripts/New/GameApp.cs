@@ -24,6 +24,7 @@ namespace BirdGame
             
             this.RegisterSystem<IMonoSystem>(new MonoSystem());
             this.RegisterSystem<IAssetSystem>(new AssetSystem());
+            this.RegisterSystem<IAssetPreloadSystem>(new AssetPreloadSystem()); // ✅ 优化：资源预加载系统
             this.RegisterSystem<IObjectPoolSystem>(new ObjectPoolSystem());
             this.RegisterSystem<ISaveSystem>(new SaveSystem());
             this.RegisterSystem<IBirdSystem>(new BirdSystem());

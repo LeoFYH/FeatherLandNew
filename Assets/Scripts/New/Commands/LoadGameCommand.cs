@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.U2D;
+using Cysharp.Threading.Tasks; // ✅ 添加UniTask支持
 
 namespace BirdGame
 {
@@ -147,6 +148,9 @@ namespace BirdGame
             
             this.SendCommand<FixLanguageCommand>();
             
+            // ✅ 优化：预加载常用资源，避免运行时首次加载卡顿
+            PreloadCommonAssetsAsync();
+            
             // 根据存档生成鸟
             this.GetSystem<IBirdSystem>().GenerateBirdsFromSave();
                 
@@ -255,6 +259,23 @@ namespace BirdGame
             catch (System.Exception e)
             {
                 Debug.LogError($"环境音效初始化失败: {e.Message}");
+            }
+        }
+        
+        /// <summary>
+        /// ✅ 优化：异步预加载常用资源
+        /// </summary>
+        private async void PreloadCommonAssetsAsync()
+        {
+            try
+            {
+                var preloadSystem = this.GetSystem<IAssetPreloadSystem>();
+                await preloadSystem.PreloadCommonAssets();
+                Debug.Log("✅ 常用资源预加载完成");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"资源预加载失败: {e.Message}");
             }
         }
     }
