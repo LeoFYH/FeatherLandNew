@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -178,6 +178,16 @@ namespace BirdGame
         [DllImport("user32.dll")]
         private static extern bool EnumWindows(EnumWindowsProc enumProc, IntPtr lParam);
 
+        // 多显示器：枚举所有显示器
+        [DllImport("user32.dll")]
+        private static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, EnumMonitorsDelegate lpfnEnum, IntPtr dwData);
+
+        // 多显示器：获取指定显示器的信息（含工作区）
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
+
+        private delegate bool EnumMonitorsDelegate(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData);
+
         // 设置进程DPI感知
         [DllImport("shcore.dll")]
         private static extern int SetProcessDpiAwareness(PROCESS_DPI_AWARENESS awareness);
@@ -206,7 +216,7 @@ namespace BirdGame
             public int Bottom; // 下边界
         }
 
-        // 显示器信息结构体
+        // 显示器信息结构体（cbSize 必须为 40 = 4+16+16+4）
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         private struct MONITORINFO
         {
@@ -215,6 +225,10 @@ namespace BirdGame
             public RECT rcWork; // 显示器工作区域（不含任务栏）
             public uint dwFlags; // 显示器标志
         }
+
+        // 用于 EnumDisplayMonitors 收集显示器句柄
+        private static IntPtr[] s_monitorHandles = new IntPtr[0];
+        private static int s_monitorCount;
 
         [Tooltip("目标显示设备索引（多显示器时使用）")] public int targetDisplay = 0;
 
@@ -339,11 +353,19 @@ namespace BirdGame
                 // 将Unity窗口设置为WorkerW的子窗口（嵌入桌面）
                 SetParent(windowHandle, workerW);
 
-                // 获取目标显示器工作区并调整窗口大小
-                var workingArea = GetScreenWorkingArea(targetDisplay);
+                // 获取目标显示器工作区并调整窗口大小（多显示器下按 targetDisplay 取对应显示器）
+                Rect workingArea = GetScreenWorkingArea(targetDisplay);
+                int w = (int)workingArea.width;
+                int h = (int)workingArea.height;
+                if (w <= 0 || h <= 0)
+                {
+                    Debug.LogError($"[WallpaperMode] 无效工作区尺寸 {w}x{h}，中止");
+                    SetParent(windowHandle, IntPtr.Zero);
+                    return;
+                }
                 SetWindowPos(windowHandle, HWND_BOTTOM,
                     (int)workingArea.x, (int)workingArea.y,
-                    (int)workingArea.width, (int)workingArea.height,
+                    w, h,
                     SWP_FRAMECHANGED | SWP_SHOWWINDOW);
 
                 // 更新状态标记
@@ -377,25 +399,54 @@ namespace BirdGame
         }
 
         /// <summary>
-        /// 获取指定显示器的工作区（排除任务栏）
+        /// EnumDisplayMonitors 回调：收集显示器句柄（IL2CPP 兼容需静态）
+        /// </summary>
+        [MonoPInvokeCallback(typeof(EnumMonitorsDelegate))]
+        private static bool EnumMonitorsCallback(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData)
+        {
+            if (s_monitorCount >= s_monitorHandles.Length)
+                return true;
+            s_monitorHandles[s_monitorCount++] = hMonitor;
+            return true;
+        }
+
+        /// <summary>
+        /// 获取指定显示器的工作区（排除任务栏）。多显示器下使用 Win32 按显示器索引取对应工作区。
         /// </summary>
         private Rect GetScreenWorkingArea(int displayIndex)
         {
-            // 校验显示器索引
-            if (displayIndex < 0 || displayIndex >= Display.displays.Length)
-                displayIndex = 0;
+            // 枚举所有显示器
+            s_monitorHandles = new IntPtr[16];
+            s_monitorCount = 0;
+            if (!EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, EnumMonitorsCallback, IntPtr.Zero) || s_monitorCount == 0)
+            {
+                // 回退：使用主屏工作区
+                SystemParametersInfo(SPI_GETWORKAREA, 0, out RECT workArea, 0);
+                int w = workArea.Right - workArea.Left;
+                int h = workArea.Bottom - workArea.Top;
+                return new Rect(workArea.Left, workArea.Top, Mathf.Max(1, w), Mathf.Max(1, h));
+            }
 
-            // 获取目标显示器
-            Display targetDisplay = Display.displays[displayIndex];
+            // 限定到有效索引（多显示器时 primary 多为 0）
+            int index = displayIndex < 0 ? 0 : (displayIndex >= s_monitorCount ? s_monitorCount - 1 : displayIndex);
+            IntPtr hMon = s_monitorHandles[index];
 
-            // 获取工作区（排除任务栏）
-            SystemParametersInfo(SPI_GETWORKAREA, 0, out RECT workArea, 0);
+            var mi = new MONITORINFO { cbSize = Marshal.SizeOf(typeof(MONITORINFO)) };
+            if (!GetMonitorInfo(hMon, ref mi))
+            {
+                SystemParametersInfo(SPI_GETWORKAREA, 0, out RECT workArea, 0);
+                int w = workArea.Right - workArea.Left;
+                int h = workArea.Bottom - workArea.Top;
+                return new Rect(workArea.Left, workArea.Top, Mathf.Max(1, w), Mathf.Max(1, h));
+            }
 
-            // 计算工作区宽高
-            int width = workArea.Right - workArea.Left;
-            int height = workArea.Bottom - workArea.Top;
-
-            return new Rect(workArea.Left, workArea.Top, width, height);
+            RECT r = mi.rcWork;
+            int width = r.Right - r.Left;
+            int height = r.Bottom - r.Top;
+            // 防止无效尺寸导致崩溃
+            width = Mathf.Max(1, width);
+            height = Mathf.Max(1, height);
+            return new Rect(r.Left, r.Top, width, height);
         }
 
         /// <summary>
