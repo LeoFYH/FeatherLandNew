@@ -25,13 +25,13 @@ namespace BirdGame
             _brid.anim.Play(AnimatorHashes.FlyFromBranchAnim);
 
             // 获取降落点
-            int area = Random.Range(3, 8);
+            int area = Random.Range(3, 9);
             _brid.walkArea = area;
             //Vector2 landingPoint = //GetLandingPoint();
             var target = NavigationManager.Instance.GetRandomTarget(area);
             while (target == Vector3.zero)
             {
-                area = Random.Range(3, 8);
+                area = Random.Range(3, 9);
                 _brid.walkArea = area;
                 //Vector2 landingPoint = //GetLandingPoint();
                 target = NavigationManager.Instance.GetRandomTarget(area);
