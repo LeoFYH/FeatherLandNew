@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
@@ -144,14 +144,14 @@ namespace BirdGame
                 try
                 {
                     int number = int.Parse(v);
-                    // 最大 session 数量限制为 4
-                    if (number is >= 0 and <= 4)
+                    // 最大 session 数量限制为 6
+                    if (number is >= 0 and <= 6)
                     {
                         item.Number.Value = number;
                     }
                     else
                     {
-                        // 如果输入大于 4，恢复为当前值（无效输入）
+                        // 如果输入大于 6，恢复为当前值（无效输入）
                         numberText.text = string.Format("{0:0}", item.Number.Value);
                         var rect = numberText.textComponent.GetComponent<RectTransform>();
                         rect.sizeDelta = Vector2.zero;
@@ -209,7 +209,7 @@ namespace BirdGame
                 {
                     item.BreakMinutes.Value = breaks;
                 }
-                if (int.TryParse(numberText.text, out int number) && number >= 0 && number <= 4)
+                if (int.TryParse(numberText.text, out int number) && number >= 0 && number <= 6)
                 {
                     item.Number.Value = number;
                 }
@@ -633,8 +633,8 @@ namespace BirdGame
             }
             else if (index == 2)
             {
-                // session 数量：超过 4 时，再次点击变成 0（循环效果）
-                if (item.Number.Value < 4)
+                // session 数量：超过 6 时，再次点击变成 0（循环效果）
+                if (item.Number.Value < 6)
                 {
                     item.Number.Value++;
                 }
@@ -674,14 +674,14 @@ namespace BirdGame
             }
             else if (index == 2)
             {
-                // 如果为 0，按减号会变成 4（循环效果，因为最大值为 4）
+                // 如果为 0，按减号会变成 6（循环效果，因为最大值为 6）
                 if (item.Number.Value > 0)
                 {
                     item.Number.Value--;
                 }
                 else
                 {
-                    item.Number.Value = 4;
+                    item.Number.Value = 6;
                 }
             }
         }

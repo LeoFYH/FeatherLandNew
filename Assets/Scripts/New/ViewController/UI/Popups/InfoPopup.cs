@@ -390,6 +390,7 @@ namespace BirdGame
             // 添加输入框事件监听
             if (cutomName != null)
             {
+                cutomName.characterLimit = 10;
                 cutomName.onEndEdit.AddListener(OnNameEditComplete);
                 
                 // 确保Text Component和Placeholder的Raycast Target正确
