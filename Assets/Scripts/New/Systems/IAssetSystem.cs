@@ -389,62 +389,55 @@ namespace BirdGame
             var handl = Addressables.InitializeAsync();
             yield return handl;
 
-            var handles = new List<AsyncOperationHandle>();
-            // 获取所有需要预加载的资源
+            // 获取所有带 "preload" 标签的资源
             var locationsHandle = Addressables.LoadResourceLocationsAsync("preload");
             yield return locationsHandle;
-        
+
             if (locationsHandle.Status != AsyncOperationStatus.Succeeded)
             {
                 Debug.LogError("预加载资源位置获取失败");
                 yield break;
             }
 
-            List<object> keys = new List<object>();
-            foreach (var location in locationsHandle.Result)
-            {
+            var locations = locationsHandle.Result;
+            var keys = new List<object>();
+            foreach (var location in locations)
                 keys.Add(location.PrimaryKey);
-            }
 
             int count = keys.Count;
             int current = 0;
-            // 分帧加载所有资源
-            foreach (var key in keys)
+
+            for (int i = 0; i < keys.Count; i++)
             {
-                float startTime = Time.realtimeSinceStartup;
-            
+                var key = keys[i];
+                string keyStr = key.ToString();
+                if (HandleDic.ContainsKey(keyStr))
+                {
+                    current++;
+                    onProgress?.Invoke(current * 1f / count);
+                    continue;
+                }
+
                 var handle = Addressables.LoadAssetAsync<object>(key);
-                handles.Add(handle);
-            
-                // 等待加载完成或超过帧时间限制
                 while (!handle.IsDone)
                 {
-                    if (Time.realtimeSinceStartup - startTime > 0.01f)
-                    {
-                        yield return null; // 让出一帧
-                        startTime = Time.realtimeSinceStartup;
-                    }
-                    else
-                    {
-                        // 小等待避免过度消耗
-                        System.Threading.Thread.Sleep(1);
-                    }
+                    onProgress?.Invoke((current + handle.PercentComplete) * 1f / count);
+                    yield return null;
                 }
 
                 current++;
                 onProgress?.Invoke(current * 1f / count);
-            
-                if (handle.Status != AsyncOperationStatus.Succeeded)
+
+                if (handle.Status == AsyncOperationStatus.Succeeded)
+                    HandleDic[keyStr] = handle;
+                else
                 {
-                    Debug.LogError($"资源加载失败: {key}");
+                    Debug.LogError($"预加载资源失败: {key}");
+                    Addressables.Release(handle);
                 }
             }
-            
-            foreach (var handle in handles)
-            {
-                Addressables.Release(handle);
-            }
-            
+
+            Addressables.Release(locationsHandle);
             onComplete?.Invoke();
         }
 
