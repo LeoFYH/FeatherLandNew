@@ -7,6 +7,8 @@ using UnityEngine.Rendering.Universal;
 
 namespace BirdGame
 {
+#if UNITY_STANDALONE_WIN
+
     /// <summary>
     /// 桌面模式
     /// </summary>
@@ -357,4 +359,6 @@ namespace BirdGame
             return isEnabled;
         }
     }
+    
+#endif
 }

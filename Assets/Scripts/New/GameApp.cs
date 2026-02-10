@@ -38,7 +38,11 @@ namespace BirdGame
             this.RegisterSystem<ICursorSystem>(new CursorSystem());
             this.RegisterSystem<ILocalizationSystem>(new LocalizationSystem());
             this.RegisterSystem<ISteamSystem>(new SteamSystem());
+#if UNITY_STANDALONE_WIN
+
             this.RegisterSystem<IDesktopSystem>(new DesktopSystem());
+            
+#endif
 
             // 启动定期清理系统
             this.GetSystem<IPeriodicCleanupSystem>().StartCleanupCycle();

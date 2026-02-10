@@ -374,6 +374,7 @@ namespace BirdGame
         private void CheckCursor()
         {
             // Performance optimization: Use cached system reference
+            
             if(cachedCursorSystem.IsPlayingAnim())
                 return;
             

@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using BirdGame;
 using DG.Tweening;
 using QFramework;
 using Sirenix.OdinInspector;
-using Unity.Burst.Intrinsics;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -128,11 +126,15 @@ namespace BirdGame
         
         public bool isDesktopBird;
         private GameObject heart;
+        private int weatherIndex = 0;
 
         void Start()
         {
             this.RegisterEvent<SwitchWeatherEvent>(evt =>
             {
+                if(weatherIndex == evt.index)
+                    return;
+                weatherIndex = evt.index;
                 var ani = DOTween.Sequence();
                 ani.Append(sr.DOColor(Color.black, 0.5f));
                 ani.Append(sr.DOColor(Color.white, 0.5f));

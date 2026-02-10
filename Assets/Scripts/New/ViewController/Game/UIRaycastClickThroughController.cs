@@ -22,6 +22,8 @@ namespace BirdGame
             while (true)
             {
                 yield return new WaitForSeconds(0.1f); // 每0.1秒检测一次
+#if UNITY_STANDALONE_WIN
+                
 
                 if (this.GetSystem<IDesktopSystem>().IsClickThroughEnabled())
                 {
@@ -37,6 +39,7 @@ namespace BirdGame
                         this.GetSystem<IDesktopSystem>().SetClickThrough(true);
                     }
                 }
+#endif
             }
         }
 

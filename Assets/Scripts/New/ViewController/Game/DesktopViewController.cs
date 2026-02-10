@@ -55,7 +55,10 @@ namespace BirdGame
             exitPop.SetActive(!exitPop.activeSelf);
             if(exitPop.activeSelf)
                 exitPop.GetComponent<UIBase>().OnShowPanel();
+#if UNITY_STANDALONE_WIN
             this.GetSystem<IDesktopSystem>().SetClickThrough(!exitPop.activeSelf);
+#endif
+            
         }
     }
 }

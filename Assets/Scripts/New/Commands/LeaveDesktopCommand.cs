@@ -13,7 +13,11 @@ namespace BirdGame
         protected override void OnExecute()
         {
             SceneManager.LoadScene(0, LoadSceneMode.Single);
+#if UNITY_STANDALONE_WIN
+
             this.GetSystem<IDesktopSystem>().DisableDesktopMode();
+            
+#endif
             
             // Clear keyboard state before mode change
             SimpleMouseForwarder.ClearKeyboardState();
