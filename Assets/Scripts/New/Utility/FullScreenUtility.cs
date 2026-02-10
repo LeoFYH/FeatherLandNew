@@ -89,6 +89,9 @@ namespace BirdGame
         [DllImport("user32.dll", SetLastError = true)]
         private static extern IntPtr SetFocus(IntPtr hWnd);
 
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool ScreenToClient(IntPtr hWnd, ref POINT lpPoint);
+
         // ---------------- constants ----------------
         private const uint WS_OVERLAPPEDWINDOW = 0x00000000 | 0x00C00000 | 0x00080000 | 0x00040000 | 0x00020000 | 0x00010000;
         private const uint WS_POPUP = 0x80000000;
@@ -214,6 +217,13 @@ namespace BirdGame
             public int Top; // 上边界
             public int Right; // 右边界
             public int Bottom; // 下边界
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct POINT
+        {
+            public int X;
+            public int Y;
         }
 
         // 显示器信息结构体（cbSize 必须为 40 = 4+16+16+4）
@@ -363,10 +373,18 @@ namespace BirdGame
                     SetParent(windowHandle, IntPtr.Zero);
                     return;
                 }
-                SetWindowPos(windowHandle, HWND_BOTTOM,
-                    (int)workingArea.x, (int)workingArea.y,
-                    w, h,
-                    SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+                // 子窗口的 SetWindowPos 使用父窗口(WorkerW)的客户区坐标，不是屏幕坐标；需转换
+                var pt = new POINT { X = (int)workingArea.x, Y = (int)workingArea.y };
+                if (ScreenToClient(workerW, ref pt))
+                {
+                    SetWindowPos(windowHandle, HWND_BOTTOM, pt.X, pt.Y, w, h, SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+                }
+                else
+                {
+                    // 回退：部分环境下 WorkerW 客户区与虚拟屏一致，仍用屏幕坐标
+                    SetWindowPos(windowHandle, HWND_BOTTOM,
+                        (int)workingArea.x, (int)workingArea.y, w, h, SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+                }
 
                 // 更新状态标记
                 isWallpaperMode = true;

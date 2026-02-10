@@ -23,7 +23,7 @@ namespace BirdGame
         
         private void Start()
         {
-            ((TMP_Text)noteInput.placeholder).text = this.GetSystem<ILocalizationSystem>().GetString("EnterText");
+            ((TMP_Text)noteInput.placeholder).text = this.GetSystem<ILocalizationSystem>().GetString("diaryEnterKey");
             var data = this.GetModel<ISaveModel>().NoteData;
             var group = content.GetComponent<ToggleGroup>();
             this.RegisterEvent<RefreshNoteIndexEvent>(evt =>
@@ -33,7 +33,7 @@ namespace BirdGame
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             this.RegisterEvent<ChangeLanguageEvent>(evt =>
             {
-                ((TMP_Text)noteInput.placeholder).text = this.GetSystem<ILocalizationSystem>().GetString("EnterText");
+                ((TMP_Text)noteInput.placeholder).text = this.GetSystem<ILocalizationSystem>().GetString("diaryEnterKey");
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             float x = content.padding.left + content.cellSize.x * 0.5f;
             addButton.onClick.AddListener(() =>
