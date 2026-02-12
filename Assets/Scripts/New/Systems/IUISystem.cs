@@ -234,21 +234,15 @@ namespace BirdGame
                 this.SendEvent<InfoPopupClosedEvent>(new InfoPopupClosedEvent { popupType = popup });
             }
 
-            // 关闭动画结束后释放 Asset，避免弹窗关闭后内存不回落
-            obj.OnHidePanel(() =>
-            {
-                this.GetSystem<IAssetSystem>().ReleaseAsset(popup.ToString());
-            });
+            // 仅播放关闭动画并销毁实例，不释放 Asset，便于再次打开时从缓存加载
+            obj.OnHidePanel(null);
         }
 
         public void HideAllPopups()
         {
             foreach (var pop in popupDic)
             {
-                pop.Value.OnHidePanel(() =>
-                {
-                    this.GetSystem<IAssetSystem>().ReleaseAsset(pop.Key.ToString());
-                });
+                pop.Value.OnHidePanel(null);
             }
             popupDic.Clear();
         }

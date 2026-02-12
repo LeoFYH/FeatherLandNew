@@ -30,6 +30,8 @@ namespace BirdGame
         [Header("功能设置")]
         public bool enableClickOutsideToClose = true;  // 是否启用点击外部关闭功能
 
+        private const int BirdNameMaxLength = 9;
+
         private float price;
         private int previousClickCount = 0;
         
@@ -377,20 +379,25 @@ namespace BirdGame
             // 初始化鸟名称文本和字体
             UpdateBirdNameText();
             
-            // 显示自定义名称，如果没有则显示默认名称
+            // 显示自定义名称，如果没有则显示默认名称；长度超过限制的按限制截断并回写
             if (string.IsNullOrEmpty(data.customName))
             {
                 cutomName.text = this.GetSystem<ILocalizationSystem>().GetString("customName");
             }
             else
             {
+                if (data.customName.Length > BirdNameMaxLength)
+                {
+                    data.customName = data.customName.Substring(0, BirdNameMaxLength);
+                }
                 cutomName.text = data.customName;
             }
             
-            // 添加输入框事件监听
+            // 添加输入框事件监听，硬性限制 9 字符（禁止超过 9 个字符）
             if (cutomName != null)
             {
-                cutomName.characterLimit = 10;
+                cutomName.characterLimit = BirdNameMaxLength;
+                cutomName.onValueChanged.AddListener(ClampNameLength);
                 cutomName.onEndEdit.AddListener(OnNameEditComplete);
                 
                 // 确保Text Component和Placeholder的Raycast Target正确
@@ -481,18 +488,35 @@ namespace BirdGame
             });
         }
         
+        private void ClampNameLength(string value)
+        {
+            if (cutomName == null) return;
+            if (value != null && value.Length > BirdNameMaxLength)
+            {
+                cutomName.text = value.Substring(0, BirdNameMaxLength);
+                cutomName.caretPosition = BirdNameMaxLength;
+            }
+        }
+        
         private void OnNameEditComplete(string newName)
         {
             int index = this.GetModel<IGameModel>().CurrentSelectedBirdIndex;
             var data = this.GetModel<IBirdModel>().BirdList[index];
             
-            // 保存新名称
-            data.customName = string.IsNullOrEmpty(newName) ? null : newName;
+            // 保存新名称，限制为 BirdNameMaxLength 字符
+            string trimmed = string.IsNullOrEmpty(newName) ? null : newName.Trim();
+            if (trimmed != null && trimmed.Length > BirdNameMaxLength)
+                trimmed = trimmed.Substring(0, BirdNameMaxLength);
+            data.customName = trimmed;
             
-            // 如果输入为空，显示默认名称
+            // 如果输入为空，显示默认名称；否则显示保存后的名称（可能被截断）
             if (string.IsNullOrEmpty(data.customName))
             {
                 cutomName.text = this.GetSystem<ILocalizationSystem>().GetString("customName");
+            }
+            else
+            {
+                cutomName.text = data.customName;
             }
         } 
         
