@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using QFramework;
 using UnityEngine;
@@ -227,13 +227,18 @@ namespace BirdGame
 
             var obj = popupDic[popup];
             popupDic.Remove(popup);
-            obj.OnHidePanel();
-            
+
             // 如果是InfoPopup关闭，发送事件通知鸟恢复材质
             if (popup == UIPopup.InfoPopup)
             {
                 this.SendEvent<InfoPopupClosedEvent>(new InfoPopupClosedEvent { popupType = popup });
             }
+
+            // 关闭动画结束后释放 Asset，避免弹窗关闭后内存不回落
+            obj.OnHidePanel(() =>
+            {
+                this.GetSystem<IAssetSystem>().ReleaseAsset(popup.ToString());
+            });
         }
 
         public void HideAllPopups()
