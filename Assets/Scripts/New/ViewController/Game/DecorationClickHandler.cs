@@ -89,34 +89,35 @@ namespace BirdGame
            
         }
 
-        // private void OnMouseOver()
-        // {
-        //     // 检查是否点击到UI元素
-        //     if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
-        //     {
-        //         return;
-        //     }
-        //
-        //     // 右键直接销毁装饰品
-        //     // 检查标准Unity输入或SimpleMouseForwarder的钩子输入
-        //     bool rightClickDetected = Input.GetMouseButtonDown(1) || SimpleMouseForwarder.rightButtonDown;
-        //     
-        //     if (rightClickDetected)
-        //     {
-        //         // 重置钩子的右键状态（如果使用了钩子）
-        //         if (SimpleMouseForwarder.rightButtonDown)
-        //         {
-        //             SimpleMouseForwarder.rightButtonDown = false;
-        //         }
-        //         
-        //         DestroyDecoration();
-        //     }
-        // }
+        private void OnMouseOver()
+        {
+            // 检查是否点击到UI元素
+            if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+            {
+                return;
+            }
+        
+            // 右键直接销毁装饰品
+            // 检查标准Unity输入或SimpleMouseForwarder的钩子输入
+            bool rightClickDetected = Input.GetMouseButtonDown(1) || SimpleMouseForwarder.rightButtonDown;
+            
+            if (rightClickDetected)
+            {
+                // 重置钩子的右键状态（如果使用了钩子）
+                if (SimpleMouseForwarder.rightButtonDown)
+                {
+                    SimpleMouseForwarder.rightButtonDown = false;
+                }
+                
+                //DestroyDecoration();
+                this.GetSystem<IUISystem>().ShowMouseMenu(decorationId, decorationIndex, this.transform.parent.gameObject);
+            }
+        }
 
         private void DestroyDecoration()
         {
             // 调用游戏系统的销毁方法
-            //this.GetSystem<IGameSystem>().DestroyDecoration(decorationId, gameObject);
+            this.GetSystem<IGameSystem>().DestroyDecoration(decorationId, decorationIndex, gameObject);
             this.GetSystem<IUISystem>().ShowMouseMenu(decorationId, decorationIndex, transform.parent.gameObject);
         }
 
