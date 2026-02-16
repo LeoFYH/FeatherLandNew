@@ -253,6 +253,12 @@ namespace BirdGame
             int index = 0;
             foreach (var bird in list)
             {
+                if (mapIndex == this.GetModel<ISaveModel>().BirdInfoData.currentMap &&
+                    this.GetModel<IGameModel>().HatchingBirds.Contains(index))
+                {
+                    index++;
+                    continue;
+                }
                 var item = GameObject.Instantiate(itemPrefab, content).GetComponent<SaleBirdItem>();
                 float price = bird.isSmall ? bird.individualPriceSmall : bird.individualPriceBig;
                 item.SetBird(index, price, mapIndex, OnSaleBird);
