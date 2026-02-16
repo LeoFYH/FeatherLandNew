@@ -108,8 +108,37 @@ namespace BirdGame
                 {
                     SimpleMouseForwarder.rightButtonDown = false;
                 }
-                
-                //DestroyDecoration();
+
+                // 装饰 Collider 范围内有 Bird 时不弹出菜单（避免鸟站在装饰上时被删）
+                var box = GetComponentInParent<BoxCollider2D>();
+                if (box != null)
+                {
+                    var center = (Vector2)box.bounds.center;
+                    var size = (Vector2)box.bounds.size;
+                    var hits = Physics2D.OverlapBoxAll(center, size, 0f);
+                    foreach (var hit in hits)
+                    {
+                        if (hit != null && hit.CompareTag("Bird"))
+                        {
+                            return;
+                        }
+                    }
+                }
+
+                // 有鸟正飞向/落脚在本装饰的 target 上时不弹菜单
+                var birdModel = this.GetModel<IBirdModel>();
+                Transform decorationRoot = transform.parent;
+                for (int i = 0; i < birdModel.BirdList.Count; i++)
+                {
+                    Transform target = birdModel.BirdList[i].bird.nestTrans;
+                    if (target == null) continue;
+                    if (target.IsChildOf(decorationRoot)) return;
+                    if (effects != null)
+                        for (int j = 0; j < effects.Length; j++)
+                            if (effects[j].type == DecorationEffectType.FlyPosition && effects[j].flyPosition == target)
+                                return;
+                }
+
                 this.GetSystem<IUISystem>().ShowMouseMenu(decorationId, decorationIndex, this.transform.parent.gameObject);
             }
         }
