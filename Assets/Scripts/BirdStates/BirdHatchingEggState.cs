@@ -30,14 +30,15 @@ namespace BirdGame
                 return;
             }
             
-            // 检查品种：如果帐篷里已经有一只鸟，检查品种是否相同
+            // 检查品种：如果帐篷里已经有一只鸟，检查是否同种（同种不同配色可交配）
             if (this.GetModel<IGameModel>().HatchingBirds.Count == 1)
             {
-                int firstBirdIndex = this.GetModel<IGameModel>().HatchingBirds[0];
-                int firstBirdType = this.GetModel<IBirdModel>().BirdList[firstBirdIndex].birdType;
+                int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+                int firstBirdType = this.GetModel<IBirdModel>().BirdList[this.GetModel<IGameModel>().HatchingBirds[0]].birdType;
                 int currentBirdType = this.GetModel<IBirdModel>().BirdList[_brid.birdIndex].birdType;
-                
-                if (firstBirdType != currentBirdType)
+                this.GetModel<IConfigModel>().BirdConfig.GetBird(firstBirdType, mapIndex, out int firstClassIndex);
+                this.GetModel<IConfigModel>().BirdConfig.GetBird(currentBirdType, mapIndex, out int currentClassIndex);
+                if (firstClassIndex != currentClassIndex)
                 {
                     DONext();
                     return;
@@ -100,6 +101,7 @@ namespace BirdGame
                                 this.GetModel<IGameModel>().HatchingBirds.Clear();
                                 this.GetModel<IGameModel>().HatchingProgress.Value = 0;
                                 this.GetModel<IGameModel>().IsHatchingFinished.Value = true;
+                                this.GetSystem<IGameSystem>().SendEvent<RefreshSaleBirdEvent>();
                                 ExitTent(0);
                             }
                             else
