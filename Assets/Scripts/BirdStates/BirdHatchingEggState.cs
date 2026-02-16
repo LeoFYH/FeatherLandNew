@@ -13,7 +13,7 @@ namespace BirdGame
         private bool isEnd = false;
         private bool isExit = false;
         private float startTime;
-        private float totalTime = 10f;
+        private float totalTime = 240f;
         
         public BirdHatchingEggState(StateMachine machine) : base(machine)
         {
