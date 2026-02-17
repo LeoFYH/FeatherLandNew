@@ -441,7 +441,7 @@ MonoBehaviour:
       type: 0
       selectionName: Seed
       description: 'Acceleration of bird growth: low'
-      descriptionKey: SeedKey
+      descriptionKey: 'Acceleration of bird growth: low'
       price: 100
       foodScale: 0.04
       addValue: 0.2
@@ -449,8 +449,8 @@ MonoBehaviour:
     - icon: {fileID: -3520649881568307650, guid: c53a4b854fc13b246880f045ae7f38b1, type: 3}
       type: 0
       selectionName: Grain
-      description: MEDIUM
-      descriptionKey: MEDIUM
+      description: 'Acceleration of bird growth: medium'
+      descriptionKey: 'Acceleration of bird growth: medium'
       price: 1000
       foodScale: 0.06
       addValue: 1
@@ -458,8 +458,8 @@ MonoBehaviour:
     - icon: {fileID: 4495422397181781673, guid: 2a09792a324f4874196f98f9c4eb95a7, type: 3}
       type: 0
       selectionName: Bean
-      description: HIGH
-      descriptionKey: HIGH
+      description: 'Acceleration of bird growth: high'
+      descriptionKey: 'Acceleration of bird growth: high'
       price: 10000
       foodScale: 0.06
       addValue: 3
