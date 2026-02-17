@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using DG.Tweening;
 using QFramework;
 using TMPro;
@@ -82,11 +82,9 @@ namespace BirdGame
                 // 优先使用descriptionKey，如果没有设置则使用description
                 var selectedTool = item.selections[gameModel.SelectedToolDic[index].Value];
                 if (!string.IsNullOrEmpty(selectedTool.descriptionKey))
-                {
-                    string str1 = this.GetSystem<ILocalizationSystem>().GetString(selectedTool.descriptionKey);
-
+                    description.SetKey(selectedTool.descriptionKey);
+                else
                     description.SetKey(selectedTool.description);
-                }
             }
 
             if (item.selections[0].type == ToolType.Food)
@@ -210,15 +208,9 @@ namespace BirdGame
                 {
                     selectName.SetKey(item.selections[v].selectionName);
                     if (!string.IsNullOrEmpty(selectedTool.descriptionKey))
-                    {
-                        string str1 = this.GetSystem<ILocalizationSystem>().GetString(selectedTool.descriptionKey);
-                        string str2 = this.GetSystem<ILocalizationSystem>().GetString(selectedTool.description);
-                        //description.ThisText.text = $"{str1}";
-                    }
+                        description.SetKey(selectedTool.descriptionKey);
                     else
-                    {
-                        //description.SetKey(selectedTool.description);
-                    }
+                        description.SetKey(selectedTool.description);
                 }
                 else
                 {
