@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using QFramework;
 using UnityEngine;
@@ -30,8 +31,38 @@ namespace BirdGame
             saveModel = this.GetModel<ISaveModel>();
             saveSystem = this.GetSystem<ISaveSystem>();
 
-            // 设置监听器
             SetupBirdModelListeners();
+            this.GetSystem<IMonoSystem>().StartCoroutine(AllMapsIncomeCoroutine());
+        }
+
+        /// <summary>
+        /// 每分钟结算：所有已解锁地图的鸟一起产生金币收益
+        /// </summary>
+        private IEnumerator AllMapsIncomeCoroutine()
+        {
+            var wait = new WaitForSeconds(60f);
+            while (true)
+            {
+                yield return wait;
+                AddAllMapsIncome();
+            }
+        }
+
+        private void AddAllMapsIncome()
+        {
+            if (saveModel?.BirdInfoData?.mapBirds == null || saveModel.BirdInfoData.mapBirds.Count == 0)
+                return;
+            SyncBirdDataToSave();
+            float total = 0f;
+            for (int i = 0; i < saveModel.BirdInfoData.mapBirds.Count; i++)
+            {
+                var list = saveModel.BirdInfoData.mapBirds[i].birdList;
+                if (list == null) continue;
+                foreach (var bird in list)
+                    total += bird.isSmall ? bird.individualEarningSmall : bird.individualEarningBig;
+            }
+            if (total > 0f)
+                this.GetModel<IAccountModel>().Coins.Value += total;
         }
 
         private void SetupBirdModelListeners()

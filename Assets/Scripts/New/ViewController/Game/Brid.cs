@@ -415,11 +415,10 @@ namespace BirdGame
 
             // if (!isDesktopBird)
             // {
-            // Generate income every minute
+            // 每分钟成长（金币收益已改为全局所有地图结算，见 BirdSystem.AddAllMapsIncome）
             if (Time.time - startTimer >= 60)
             {
                 startTimer = Time.time;
-                AddCoins();
                 AutoExp();
             }
             // }
