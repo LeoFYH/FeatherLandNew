@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3af29a6e86b04fca88f7fd9ffc287542, type: 3}
   m_Name: ShopConfig
   m_EditorClassIdentifier: 
-  startCoins: 500000
+  startCoins: 10
   coinsLimit: 500000
   sceneEggs:
   - eggs:
@@ -467,7 +467,7 @@ MonoBehaviour:
       type: 0
       selectionName: Seed
       description: 'Acceleration of bird growth: low'
-      descriptionKey: SeedKey
+      descriptionKey: 'Acceleration of bird growth: low'
       price: 100
       foodScale: 0.04
       addValue: 0.2
@@ -476,7 +476,7 @@ MonoBehaviour:
       type: 0
       selectionName: Grain
       description: 'Acceleration of bird growth: medium'
-      descriptionKey: GrainKey
+      descriptionKey: 'Acceleration of bird growth: medium'
       price: 1000
       foodScale: 0.06
       addValue: 1
@@ -485,7 +485,7 @@ MonoBehaviour:
       type: 0
       selectionName: Bean
       description: 'Acceleration of bird growth: high'
-      descriptionKey: BeanKey
+      descriptionKey: 'Acceleration of bird growth: high'
       price: 10000
       foodScale: 0.06
       addValue: 3

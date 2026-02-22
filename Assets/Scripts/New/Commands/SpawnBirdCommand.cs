@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Text;
 using QFramework;
 using UnityEngine;
@@ -75,6 +75,7 @@ namespace BirdGame
             int eggtype = this.GetModel<IGameModel>().ShopEggSelectIndex.Value;
             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("OpenEggAnim", obj =>
             {
+                if (obj == null) return;
                 this.SendEvent<HideEggEvent>();
                 var anim = GameObject.Instantiate(obj).GetComponent<OpenEggAnim>();
                 anim.InitBird(val, eggtype, () =>
@@ -109,6 +110,11 @@ namespace BirdGame
             var asset = config.GetBird(birdIndex, mapIndex).prefab;
             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>(asset.AssetGUID, obj =>
             {
+                if (obj == null)
+                {
+                    Debug.LogError($"鸟预制体加载失败 birdIndex={birdIndex}");
+                    return;
+                }
                 GameObject go = GameObject.Instantiate(obj);
                 this.GetModel<IBirdModel>().AddBird(birdIndex, go.GetComponent<Brid>());
                 this.GetSystem<IBirdSystem>().SyncBirdDataToSave();

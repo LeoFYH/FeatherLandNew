@@ -165,8 +165,13 @@ namespace BirdGame
             currentPanel = panel;
             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>(panel.ToString(), obj =>
             {
-                if(obj == null)
+                if (obj == null)
                     return;
+                if (currentPanel != panel)
+                {
+                    this.GetSystem<IAssetSystem>().ReleaseAsset(panel.ToString());
+                    return;
+                }
                 currentPanelObject = GameObject.Instantiate(obj, panelLayer).GetComponent<UIBase>();
                 currentPanelObject.OnShowPanel();
             });

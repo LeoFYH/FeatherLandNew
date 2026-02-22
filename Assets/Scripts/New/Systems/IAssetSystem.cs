@@ -27,6 +27,11 @@ namespace BirdGame
         /// <param name="onProgress"></param>
         /// <typeparam name="T"></typeparam>
         void LoadAssetAsync<T>(string assetName, Action<T> onCompleted, Action<float> onProgress = null);
+
+        /// <summary>
+        /// 通过AssetReference加载预制体（推荐方式，避免GUID解析问题）
+        /// </summary>
+        void LoadPrefabAsync(AssetReferenceGameObject assetRef, Action<GameObject> onCompleted, Action<float> onProgress = null);
         
         /// <summary>
         /// 卸载资源
@@ -126,6 +131,35 @@ namespace BirdGame
                 Debug.LogError($"资源加载失败: {assetName}");
                 onProgress?.Invoke(1f);
                 onCompleted?.Invoke(default(T)); // 传递默认值，让UI层处理
+            }
+        }
+
+        public async void LoadPrefabAsync(AssetReferenceGameObject assetRef, Action<GameObject> onCompleted, Action<float> onProgress = null)
+        {
+            if (assetRef == null || !assetRef.RuntimeKeyIsValid())
+            {
+                onCompleted?.Invoke(null);
+                return;
+            }
+            string key = assetRef.AssetGUID;
+            if (HandleDic.ContainsKey(key))
+            {
+                onCompleted?.Invoke((GameObject)HandleDic[key].Result);
+                return;
+            }
+            var handle = assetRef.LoadAssetAsync<GameObject>();
+            HandleDic.Add(key, handle);
+            while (!handle.IsDone)
+            {
+                onProgress?.Invoke(handle.PercentComplete);
+                await UniTask.Yield();
+            }
+            if (handle.Status == AsyncOperationStatus.Succeeded)
+                onCompleted?.Invoke(handle.Result);
+            else
+            {
+                HandleDic.Remove(key);
+                onCompleted?.Invoke(null);
             }
         }
 

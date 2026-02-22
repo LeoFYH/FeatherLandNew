@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using QFramework;
@@ -91,7 +91,8 @@ namespace BirdGame
                 }
 
                 int price = configModel.ShopConfig.sceneEggs[mapIndex].eggs[gameModel.ShopEggSelectIndex.Value].price;
-                if (price <= this.GetModel<IAccountModel>().Coins.Value)
+                // 使用容差避免浮点数精度问题：29.9+0.1 可能存储为 29.999999 而非 30.0
+                if (this.GetModel<IAccountModel>().Coins.Value >= price - 0.01f)
                 {
                     
                         this.GetModel<IAccountModel>().Coins.Value -= price;
@@ -136,8 +137,8 @@ namespace BirdGame
             gameModel = this.GetModel<IGameModel>();
             configModel = this.GetModel<IConfigModel>();
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
-            if (configModel.ShopConfig.sceneEggs[mapIndex].eggs[gameModel.ShopEggSelectIndex.Value].price >
-                this.GetModel<IAccountModel>().Coins.Value)
+            // 使用容差避免浮点数精度问题，price 为 int，Coins 为 float 累加可能有误差
+            if (this.GetModel<IAccountModel>().Coins.Value < configModel.ShopConfig.sceneEggs[mapIndex].eggs[gameModel.ShopEggSelectIndex.Value].price - 0.01f)
             {
                 buyButton.interactable = false;
                 highlight.enabled = false;

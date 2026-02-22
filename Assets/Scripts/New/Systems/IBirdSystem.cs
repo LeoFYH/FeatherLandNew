@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using QFramework;
 using UnityEngine;
@@ -30,8 +31,38 @@ namespace BirdGame
             saveModel = this.GetModel<ISaveModel>();
             saveSystem = this.GetSystem<ISaveSystem>();
 
-            // 设置监听器
             SetupBirdModelListeners();
+            this.GetSystem<IMonoSystem>().StartCoroutine(AllMapsIncomeCoroutine());
+        }
+
+        /// <summary>
+        /// 每分钟结算：所有已解锁地图的鸟一起产生金币收益
+        /// </summary>
+        private IEnumerator AllMapsIncomeCoroutine()
+        {
+            var wait = new WaitForSeconds(60f);
+            while (true)
+            {
+                yield return wait;
+                AddAllMapsIncome();
+            }
+        }
+
+        private void AddAllMapsIncome()
+        {
+            if (saveModel?.BirdInfoData?.mapBirds == null || saveModel.BirdInfoData.mapBirds.Count == 0)
+                return;
+            SyncBirdDataToSave();
+            float total = 0f;
+            for (int i = 0; i < saveModel.BirdInfoData.mapBirds.Count; i++)
+            {
+                var list = saveModel.BirdInfoData.mapBirds[i].birdList;
+                if (list == null) continue;
+                foreach (var bird in list)
+                    total += bird.isSmall ? bird.individualEarningSmall : bird.individualEarningBig;
+            }
+            if (total > 0f)
+                this.GetModel<IAccountModel>().Coins.Value += total;
         }
 
         private void SetupBirdModelListeners()
@@ -198,9 +229,19 @@ namespace BirdGame
         {
             var config = this.GetModel<IConfigModel>().BirdConfig;
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
-            var asset = config.GetBird(birdIndex, mapIndex).prefab;
-            this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>(asset.AssetGUID, obj =>
+            var birdConfig = config.GetBird(birdIndex, mapIndex);
+            if (birdConfig?.prefab == null || !birdConfig.prefab.RuntimeKeyIsValid())
             {
+                Debug.LogError($"鸟配置 prefab 未分配 birdIndex={birdIndex}");
+                return;
+            }
+            this.GetSystem<IAssetSystem>().LoadPrefabAsync(birdConfig.prefab, obj =>
+            {
+                if (obj == null)
+                {
+                    Debug.LogError($"鸟预制体加载失败 birdIndex={birdIndex}");
+                    return;
+                }
                 GameObject go = GameObject.Instantiate(obj);
                 this.GetModel<IBirdModel>().AddBird(birdIndex, go.GetComponent<Brid>());
                 var agent = go.GetComponent<NavMeshAgent>();
@@ -278,10 +319,19 @@ namespace BirdGame
                 Debug.LogError($"在BirdConfig中找不到类型为 {savedBirdData.birdType} 的鸟配置");
                 return;
             }
-
-            this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>(birdItem.prefab.AssetGUID, obj =>
+            if (birdItem.prefab == null || !birdItem.prefab.RuntimeKeyIsValid())
             {
-                // 实例化鸟预制体
+                Debug.LogError($"鸟配置 prefab 未分配 birdType={savedBirdData.birdType}");
+                return;
+            }
+
+            this.GetSystem<IAssetSystem>().LoadPrefabAsync(birdItem.prefab, obj =>
+            {
+                if (obj == null)
+                {
+                    Debug.LogError($"鸟预制体加载失败 birdType={savedBirdData.birdType}");
+                    return;
+                }
                 GameObject birdObject = GameObject.Instantiate(obj);
 
                 Brid bird = birdObject.GetComponent<Brid>();
