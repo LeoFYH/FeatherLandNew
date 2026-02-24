@@ -616,7 +616,16 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 2.2703671, y: -3.9899101}
+    - - {x: 0.694499, y: -4.033695}
+      - {x: 0.9584223, y: -3.2275202}
+      - {x: 1.65426, y: -3.7292852}
+      - {x: 6.4004364, y: -1.091594}
+      - {x: 8.366383, y: -0.40922958}
+      - {x: 6.258556, y: 0.008220315}
+      - {x: 2.9246106, y: 0.11968863}
+      - {x: 2.093401, y: -0.8286996}
+      - {x: 0.8635795, y: -3.4065526}
+      - {x: 0.68886876, y: -4.0320835}
       - {x: -21.64866, y: -4.12427}
       - {x: -21.619766, y: 3.8585248}
       - {x: -21.085958, y: 3.3013844}
@@ -632,8 +641,12 @@ PolygonCollider2D:
       - {x: -2.258597, y: 2.0572548}
       - {x: -1.3700644, y: 1.9914684}
       - {x: 1.6440421, y: 1.0700498}
-      - {x: 3.197397, y: 1.7268052}
-      - {x: 3.9468315, y: 1.6329831}
+      - {x: 1.9505862, y: 1.4515358}
+      - {x: 3.5582154, y: 1.373906}
+      - {x: 3.5504873, y: 0.731856}
+      - {x: 3.9618244, y: 0.5240445}
+      - {x: 4.49776, y: 0.5898663}
+      - {x: 6.0746455, y: 1.265329}
       - {x: 6.619357, y: 1.7240443}
       - {x: 6.971015, y: 2.4273634}
       - {x: 11.552716, y: 2.0818315}
@@ -1995,9 +2008,7 @@ MonoBehaviour:
   maxTries: 60
   areas:
   - {fileID: 6480060679307864182}
-  notWalkAreas:
-  - {fileID: 7135850478240056636}
-  - {fileID: 5856752786900728899}
+  notWalkAreas: []
   expendAreas:
   - {fileID: 1190854842352147282}
   - {fileID: 4344335874695349629}
@@ -2282,14 +2293,13 @@ GameObject:
   - component: {fileID: 2055492676915702085}
   - component: {fileID: 1900347120959987924}
   - component: {fileID: 9147570319344405543}
-  - component: {fileID: 3696680904636366351}
   m_Layer: 3
   m_Name: NotWalk (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &71186570237407934
 Transform:
   m_ObjectHideFlags: 0
@@ -2328,7 +2338,7 @@ PolygonCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5856752786900728899}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -2392,22 +2402,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   showDebugGizmos: 1
   gizmosColor: {r: 0, g: 1, b: 0, a: 0.2}
---- !u!208 &3696680904636366351
-NavMeshObstacle:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5856752786900728899}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Shape: 1
-  m_Extents: {x: 1.06, y: 0.5, z: 0.5}
-  m_MoveThreshold: 0.1
-  m_Carve: 1
-  m_CarveOnlyStationary: 1
-  m_Center: {x: -2.28, y: 0.74, z: 0}
-  m_TimeToStationary: 0.5
 --- !u!1 &6131871011638862819
 GameObject:
   m_ObjectHideFlags: 0
@@ -2768,14 +2762,13 @@ GameObject:
   - component: {fileID: 2054855523514876863}
   - component: {fileID: 8593629309003665673}
   - component: {fileID: 7509609502711472076}
-  - component: {fileID: 8755297650279432755}
   m_Layer: 3
   m_Name: NotWalk (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7788865519587456118
 Transform:
   m_ObjectHideFlags: 0
@@ -2814,7 +2807,7 @@ PolygonCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7135850478240056636}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -2883,22 +2876,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   showDebugGizmos: 1
   gizmosColor: {r: 0, g: 1, b: 0, a: 0.2}
---- !u!208 &8755297650279432755
-NavMeshObstacle:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7135850478240056636}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Shape: 1
-  m_Extents: {x: 1.06, y: 0.5, z: 0.5}
-  m_MoveThreshold: 0.1
-  m_Carve: 1
-  m_CarveOnlyStationary: 1
-  m_Center: {x: -2.28, y: 0.74, z: 0}
-  m_TimeToStationary: 0.5
 --- !u!1 &7206968127116388558
 GameObject:
   m_ObjectHideFlags: 0

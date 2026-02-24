@@ -60,7 +60,7 @@ namespace BirdGame
             {
                 isTargeted = false;
                 isDisabling = false;
-                //StartCoroutine(nameof(DestroyDelay));
+                StartCoroutine(nameof(DestroyDelay));
             }
         }
 
