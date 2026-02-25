@@ -56,12 +56,21 @@ namespace BirdGame
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
             lockToggle.isOn = data.isLocked;
+            if (this.GetModel<ISaveModel>().BirdInfoData.currentMap == mapIndex)
+            {
+                this.GetModel<IBirdModel>().BirdList[birdIndex].islocked = data.isLocked;
+            }
             saleButton.interactable = !data.isLocked;
             lockToggle.onValueChanged.AddListener(isOn =>
             {
                 data.isLocked = isOn;
-                data.isLocked = isOn;
+                if (this.GetModel<ISaveModel>().BirdInfoData.currentMap == mapIndex)
+                {
+                    this.GetModel<IBirdModel>().BirdList[birdIndex].islocked = isOn;
+                }
+
                 saleButton.interactable = !isOn;
+                this.GetSystem<ISaveSystem>().SaveData();
             });
         }
 
