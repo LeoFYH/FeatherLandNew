@@ -76,7 +76,7 @@ namespace BirdGame
                     $"{str1} {item.selections[gameModel.SelectedToolDic[index].Value].selectionName}.\n<i>{str2}:{current}</i>");
                 selectName.SetKey("Capacity Upgrade");
             }
-            else
+            else if(item.selections[0].type == ToolType.Food)
             {
                 selectName.SetKey(item.selections[gameModel.SelectedToolDic[index].Value].selectionName);
                 // 优先使用descriptionKey，如果没有设置则使用description
@@ -86,8 +86,20 @@ namespace BirdGame
                 else
                     description.SetKey(selectedTool.description);
             }
+            else
+            {
+                selectName.SetKey(item.selections[gameModel.SelectedToolDic[index].Value].selectionName);
+                // 优先使用descriptionKey，如果没有设置则使用description
+                var selectedTool = item.selections[gameModel.SelectedToolDic[index].Value];
+                if (!string.IsNullOrEmpty(selectedTool.descriptionKey))
+                    description.SetKey(selectedTool.descriptionKey);
+                else
+                    description.SetKey(selectedTool.description);
+                if (sp != null)
+                    icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.2f;
+            }
 
-            if (item.selections[0].type == ToolType.Food)
+            if (item.selections[0].type == ToolType.Food || item.selections[0].type != ToolType.BirdMaxCount)
             {
                 if (saveModel.AccountData.sceneTools == null)
                     saveModel.AccountData.sceneTools = new List<SceneToolInfo>();
@@ -204,7 +216,7 @@ namespace BirdGame
             {
                 // 优先使用descriptionKey，如果没有设置则使用description
                 var selectedTool = item.selections[v];
-                if (item.selections[v].type == ToolType.Food)
+                if (item.selections[v].type == ToolType.Food || item.selections[v].type != ToolType.BirdMaxCount)
                 {
                     selectName.SetKey(item.selections[v].selectionName);
                     if (!string.IsNullOrEmpty(selectedTool.descriptionKey))
@@ -236,12 +248,17 @@ namespace BirdGame
                         $"{str1} {item.selections[gameModel.SelectedToolDic[index].Value].selectionName}.\n<i>{str2}:{current}</i>");
                 }
 
-                if (item.selections[0].type == ToolType.Food)
+                if (item.selections[0].type == ToolType.Food || item.selections[0].type != ToolType.BirdMaxCount)
                 {
                     var sp = item.selections[v].icon;
                     icon.sprite = sp;
                     if (sp != null)
-                        icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size;
+                    {
+                        if (item.selections[0].type == ToolType.Food)
+                            icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size;
+                        else 
+                            icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.2f;
+                    }
                     // 检查食物状态，决定显示内容
                     bool isPurchased = saveModel.AccountData.sceneTools[0].tools[index].unlockedList.Contains(v) || v == 0;
                     bool isEquipped = saveModel.AccountData.sceneTools[0].tools[index].equipedId == v;
@@ -339,7 +356,7 @@ namespace BirdGame
                 }
 
 
-                if (item.selections[0].type == ToolType.Food)
+                if (item.selections[0].type == ToolType.Food || item.selections[0].type != ToolType.BirdMaxCount)
                 {
                     bool isInitialPurchased = saveModel.AccountData.sceneTools[0].tools[itemIndex].unlockedList
                                                   .Contains(gameModel.SelectedToolDic[index].Value) ||
@@ -389,7 +406,7 @@ namespace BirdGame
             var saveModel = this.GetModel<ISaveModel>();
             var item = this.GetModel<IConfigModel>().ShopConfig.tools[itemIndex];
 
-            if (item.selections[0].type == ToolType.Food)
+            if (item.selections[0].type == ToolType.Food || item.selections[0].type != ToolType.BirdMaxCount)
             {
                 while (saveModel.AccountData.sceneTools[0].tools.Count <= itemIndex)
                 {
@@ -544,7 +561,7 @@ namespace BirdGame
                 {
                     isPurchased = saveModel.AccountData.sceneTools[mapIndex].tools[itemIndex].unlockedList.Contains(selectedToolIndex + 1);
                 }
-                else if (toolItem.selections[0].type == ToolType.Food)
+                else //if (toolItem.selections[0].type == ToolType.Food)
                 {
                     isPurchased = saveModel.AccountData.sceneTools[0].tools[itemIndex].unlockedList.Contains(selectedToolIndex);
                 }
@@ -567,9 +584,14 @@ namespace BirdGame
 
 
                         // 根据工具类型应用不同的效果
-                        if (toolItem.name.ToLower() == "food")
+                        if (toolItem.name.ToLower() == "food" || toolItem.selections[0].type != ToolType.BirdMaxCount)
                         {
                             saveModel.AccountData.sceneTools[0].tools[itemIndex].equipedId = selectedToolIndex;
+                            this.GetSystem<IGameSystem>().SendEvent(new EquipUISkin()
+                            {
+                                type = toolItem.selections[0].type,
+                                index = selectedToolIndex
+                            });
                             // 设置当前食物类型（立即装备）
                             // string text = this.GetSystem<ILocalizationSystem>()
                             //     .GetString("Purchase successful! Food skins are equipped:");
@@ -636,10 +658,15 @@ namespace BirdGame
                 else
                 {
                     // 已购买，执行装备逻辑
-                    if (toolItem.name.ToLower() == "food")
+                    if (toolItem.name.ToLower() == "food" || toolItem.selections[0].type != ToolType.BirdMaxCount)
                     {
                         // 设置当前食物类型
                         saveModel.AccountData.sceneTools[0].tools[itemIndex].equipedId = selectedToolIndex;
+                        this.GetSystem<IGameSystem>().SendEvent(new EquipUISkin()
+                        {
+                            type = toolItem.selections[0].type,
+                            index = selectedToolIndex
+                        });
                         // string text = this.GetSystem<ILocalizationSystem>().GetString("Food skin equipped:");
                         // string equipName = this.GetSystem<ILocalizationSystem>()
                         //     .GetString(selectedTool.selectionName);

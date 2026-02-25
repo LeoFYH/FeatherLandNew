@@ -35,7 +35,8 @@ namespace BirdGame
                 text.text = this.GetModel<IConfigModel>().ShopConfig.tools[itemIndex].selections[selectIndex]
                     .selectionName;
             }
-            else
+            else if(this.GetModel<IConfigModel>().ShopConfig.tools[itemIndex].selections[selectIndex].type ==
+                    ToolType.Food)
             {
                 text.gameObject.SetActive(false);
                 icon.gameObject.SetActive(true);
@@ -43,6 +44,15 @@ namespace BirdGame
                 icon.sprite = sp;
                 if (sp != null)
                     icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.3f;
+            }
+            else
+            {
+                text.gameObject.SetActive(true);
+                icon.gameObject.SetActive(false);
+                var sp = this.GetModel<IConfigModel>().ShopConfig.tools[itemIndex].selections[selectIndex].icon;
+                icon.sprite = sp;
+                if (sp != null)
+                    icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.3f * 0.2f;
             }
         }
 

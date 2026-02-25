@@ -324,7 +324,11 @@ namespace BirdGame
 
     public enum ToolType
     {
-        Food,
-        BirdMaxCount
+        Food = 0,
+        BirdMaxCount = 1,
+        Radio = 2,
+        Note = 3,
+        Tomato = 4,
+        Illustrated = 5
     }
 }
