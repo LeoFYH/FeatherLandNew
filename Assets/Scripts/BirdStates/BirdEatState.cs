@@ -218,7 +218,7 @@ namespace BirdGame
                     DOTween.To(v =>
                     {
                         _brid.animScale = v;
-                    }, _brid.BabyBirdSize / _brid.AdultBirdSize, 1f, 0.5f).OnComplete(() =>
+                    }, _brid.animScale, _brid.AdultBirdSize, 0.5f).OnComplete(() =>
                     {
                         _brid.anim.SetTrigger(AnimatorHashes.StrokeTrigger);
                     });

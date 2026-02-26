@@ -99,9 +99,12 @@ namespace BirdGame
                     float flyTime = distance / _brid.flySpeed;
 
                     // 飞向目标时逐渐缩小
-                    Vector3 targetScale = Vector3.one * _brid.AdultBirdSize * 0.8f;
-                    _brid.transform.DOScale(targetScale, flyTime).SetEase(Ease.Linear);
-
+                    // Vector3 targetScale = Vector3.one * _brid.AdultBirdSize * 0.8f;
+                    // _brid.transform.DOScale(targetScale, flyTime).SetEase(Ease.Linear);
+                    DOTween.To(v =>
+                    {
+                        _brid.animScale = v;
+                    }, _brid.animScale, _brid.AdultBirdSize * 0.8f, flyTime).SetEase(Ease.Linear);
                     _brid.transform.DOMove(target, flyTime).SetEase(Ease.Linear).OnComplete(() =>
                     {
                         currMachine.ChangeState<BirdFlyWaitState>();

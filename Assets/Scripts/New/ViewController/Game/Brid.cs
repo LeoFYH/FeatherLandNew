@@ -182,22 +182,22 @@ namespace BirdGame
             }
 
             materialNormal = sr.material;
-            if(this.GetModel<IBirdModel>().MaterialHighlight == null)
+            if (this.GetModel<IBirdModel>().MaterialHighlight == null)
             {
-                this.GetSystem<IAssetSystem>().LoadAssetAsync<Material>("MaterialHighlight", 
-                v =>
-                {
-                    if(v != null)
+                this.GetSystem<IAssetSystem>().LoadAssetAsync<Material>("MaterialHighlight",
+                    v =>
                     {
-                        this.GetModel<IBirdModel>().MaterialHighlight = v;
-                    }
-                    else
-                    {
-                        this.GetModel<IBirdModel>().MaterialHighlight = materialNormal;
-                    }
-            });
+                        if (v != null)
+                        {
+                            this.GetModel<IBirdModel>().MaterialHighlight = v;
+                        }
+                        else
+                        {
+                            this.GetModel<IBirdModel>().MaterialHighlight = materialNormal;
+                        }
+                    });
             }
-            
+
             // 保存原始轮廓颜色
             SaveOriginalOutlineColor();
             
@@ -231,7 +231,8 @@ namespace BirdGame
             _stateMachine.AddState(new BirdHatchingEggState(_stateMachine));
             startTimer = Time.time;
 
-            transform.localScale = Vector3.one * BabyBirdSize;
+            animScale = isSmall ? BabyBirdSize : AdultBirdSize;
+            //transform.localScale = Vector3.one * BabyBirdSize;
         }
 
         public void OnMouseEnter()
@@ -369,7 +370,9 @@ namespace BirdGame
             //     Debug.Log("Brid: 检测到跟随鼠标标志，强制切换到RunState");
             //     _stateMachine.ChangeState<BirdRunState>();
             // }
-
+            
+            //统一处理鸟的大小
+            transform.localScale = new Vector3(animScale, animScale, 1f);
             // 统一处理走路动画 - 只要在移动就播放走路动画
             if (agent != null && agent.enabled)
             {
@@ -447,7 +450,7 @@ namespace BirdGame
                 currentExp.Value += conf.autoExp;
                 if (currentExp.Value >= conf.totalExp)
                 {
-                    transform.DOScale(AdultBirdSize, 0.2f);
+                    //transform.DOScale(AdultBirdSize, 0.2f);
                     isSmall = false;
                     // 立即同步状态到存档数据，确保 SaleBirdViewController 显示正确的状态
                     this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
