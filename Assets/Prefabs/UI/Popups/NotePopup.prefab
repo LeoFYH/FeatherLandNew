@@ -672,6 +672,7 @@ GameObject:
   - component: {fileID: 119049730923048819}
   - component: {fileID: 5846090471015599478}
   - component: {fileID: 538057718011202695}
+  - component: {fileID: 3897824736249407244}
   m_Layer: 5
   m_Name: ScheduleBar
   m_TagString: Untagged
@@ -753,6 +754,20 @@ MonoBehaviour:
   content: {fileID: 6417835603772470831}
   prefab: {fileID: 8246762701991571327, guid: 07bc23d556c8091428b633af7deeb75a, type: 3}
   addButton: {fileID: 8022011877555518011}
+--- !u!114 &3897824736249407244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1886191919968001929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99d6ec4ada5b400980e23b4fce75f191, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thisType: 3
+  barImage: {fileID: 5846090471015599478}
 --- !u!1 &1968425076063536449
 GameObject:
   m_ObjectHideFlags: 0
@@ -2502,6 +2517,7 @@ GameObject:
   - component: {fileID: 7477456981685051522}
   - component: {fileID: 2388808566264825235}
   - component: {fileID: 63779103419926882}
+  - component: {fileID: 3821515450686253630}
   m_Layer: 5
   m_Name: DiaryBar
   m_TagString: Untagged
@@ -2557,6 +2573,20 @@ MonoBehaviour:
   addButton: {fileID: 8844736809302455287}
   noteInput: {fileID: 1663502993117155773}
   background: {fileID: 8913573241475834580}
+--- !u!114 &3821515450686253630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5940357580201681505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99d6ec4ada5b400980e23b4fce75f191, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thisType: 3
+  barImage: {fileID: 2630842814947961183}
 --- !u!1 &5965822070912817691
 GameObject:
   m_ObjectHideFlags: 0

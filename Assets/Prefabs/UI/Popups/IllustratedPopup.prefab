@@ -2698,6 +2698,7 @@ GameObject:
   - component: {fileID: 1067855532331404398}
   - component: {fileID: 1096064879441834292}
   - component: {fileID: 6773330428433021966}
+  - component: {fileID: 2039204466524210117}
   m_Layer: 0
   m_Name: Bar
   m_TagString: Untagged
@@ -2766,6 +2767,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &2039204466524210117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7516895998466655373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99d6ec4ada5b400980e23b4fce75f191, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thisType: 5
+  barImage: {fileID: 6773330428433021966}
 --- !u!1 &7778895393006866841
 GameObject:
   m_ObjectHideFlags: 0
