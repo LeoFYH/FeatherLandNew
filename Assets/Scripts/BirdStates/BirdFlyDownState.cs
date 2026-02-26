@@ -49,7 +49,11 @@ namespace BirdGame
             float time = distance / _brid.flySpeed;
             DOTween.Sequence().AppendCallback(() =>
             {
-                _brid.transform.DOScale(_brid.AdultBirdSize, time).SetEase(Ease.Linear);
+                //_brid.transform.DOScale(_brid.AdultBirdSize, time).SetEase(Ease.Linear);
+                DOTween.To(v =>
+                {
+                    _brid.animScale = v;
+                }, _brid.animScale, _brid.isSmall? _brid.BabyBirdSize: _brid.AdultBirdSize, time).SetEase(Ease.Linear);
                 //_brid.sr.sortingOrder = 3;
 
                 var anim = DOTween.Sequence();

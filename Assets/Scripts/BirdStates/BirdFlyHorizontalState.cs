@@ -60,7 +60,11 @@ namespace BirdGame
                 _brid.sr.flipX = deltaX > 0;
 
                 // 斜向飞行时scale逐渐缩小到adultbridsize的0.6倍
-                _brid.transform.DOScale(Vector3.one * (_brid.AdultBirdSize * 0.6f), flyTime).SetEase(Ease.Linear);
+                //_brid.transform.DOScale(Vector3.one * (_brid.AdultBirdSize * 0.6f), flyTime).SetEase(Ease.Linear);
+                DOTween.To(v =>
+                {
+                    _brid.animScale = v;
+                }, _brid.animScale, _brid.AdultBirdSize * 0.6f, flyTime).SetEase(Ease.Linear);
                 _brid.transform.DOMove(targetPosition, flyTime)
                     .SetEase(Ease.Linear)
                     .OnComplete(() =>
