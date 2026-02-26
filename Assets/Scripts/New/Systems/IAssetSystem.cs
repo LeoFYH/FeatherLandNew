@@ -138,13 +138,25 @@ namespace BirdGame
         {
             if (assetRef == null || !assetRef.RuntimeKeyIsValid())
             {
+                Debug.LogError("预制体加载失败: AssetReference 为空或 RuntimeKey 无效");
                 onCompleted?.Invoke(null);
                 return;
             }
             string key = assetRef.AssetGUID;
             if (HandleDic.ContainsKey(key))
             {
-                onCompleted?.Invoke((GameObject)HandleDic[key].Result);
+                var existingHandle = HandleDic[key];
+                while (!existingHandle.IsDone)
+                {
+                    onProgress?.Invoke(existingHandle.PercentComplete);
+                    await UniTask.Yield();
+                }
+                GameObject result = existingHandle.Status == AsyncOperationStatus.Succeeded && existingHandle.Result != null
+                    ? (GameObject)existingHandle.Result
+                    : null;
+                if (result == null && existingHandle.Status != AsyncOperationStatus.Succeeded)
+                    Debug.LogError($"预制体加载失败 key={key}, error={existingHandle.OperationException}");
+                onCompleted?.Invoke(result);
                 return;
             }
             var handle = assetRef.LoadAssetAsync<GameObject>();
@@ -154,11 +166,17 @@ namespace BirdGame
                 onProgress?.Invoke(handle.PercentComplete);
                 await UniTask.Yield();
             }
-            if (handle.Status == AsyncOperationStatus.Succeeded)
+            if (handle.Status == AsyncOperationStatus.Succeeded && handle.Result != null)
+            {
                 onCompleted?.Invoke(handle.Result);
+            }
             else
             {
                 HandleDic.Remove(key);
+                if (handle.Status != AsyncOperationStatus.Succeeded)
+                    Debug.LogError($"预制体加载失败 key={key}, error={handle.OperationException}");
+                else
+                    Debug.LogError($"预制体加载失败 key={key}, Result 为空");
                 onCompleted?.Invoke(null);
             }
         }
