@@ -300,34 +300,56 @@ MonoBehaviour:
       canView: 1
       birds:
       - {fileID: 11400000, guid: 92c5c322f0c0afd4b8f2c0521dfc0366, type: 2}
+      - {fileID: 11400000, guid: 018ee61b5aef0bc4fbf5039c05e71e62, type: 2}
+      - {fileID: 11400000, guid: 7bbd401375fdf994dad2ef8c960dfae2, type: 2}
+      - {fileID: 11400000, guid: 6e171abde3d2a7e4d86d4b6a5e4718bd, type: 2}
     - birdName: Namaqua Dove
       canView: 1
       birds:
       - {fileID: 11400000, guid: e45630f4a10c28948b41eb7e30460c51, type: 2}
       - {fileID: 11400000, guid: 94f92367b3be5ae4b8a2fe3f63b7e7a8, type: 2}
       - {fileID: 11400000, guid: 588db74c6336a57459079161860b2ad2, type: 2}
+      - {fileID: 11400000, guid: 588db74c6336a57459079161860b2ad2, type: 2}
     - birdName: ArabianBustard
       canView: 1
       birds:
       - {fileID: 11400000, guid: 5dca8bf9e1c656b4783d5963593e8011, type: 2}
+      - {fileID: 11400000, guid: c935afb31ed04c44eb8fc4c57c15a718, type: 2}
+      - {fileID: 11400000, guid: b1d41e693a6e4524b93a1d7c37752b1a, type: 2}
+      - {fileID: 11400000, guid: aff82825c9f033545a829547d4918a09, type: 2}
     - birdName: Brown_necked Raven
       canView: 1
       birds:
       - {fileID: 11400000, guid: f30aafa9af4a350489965e439c151bd3, type: 2}
+      - {fileID: 11400000, guid: 6c81c6b05774f1046b6825a282fc52ae, type: 2}
+      - {fileID: 11400000, guid: 368052abbe6171843a0f5374b908b3c9, type: 2}
     - birdName: Southern Yellow-billed Hornbill
       canView: 1
       birds:
       - {fileID: 11400000, guid: 308472ed31814fb4cb6de30fec18ee41, type: 2}
+      - {fileID: 11400000, guid: 6a8b80259fe056f44b1ac9c6ae95c0e4, type: 2}
+      - {fileID: 11400000, guid: 2484ede3ab4906b4e9a9d82627ff360a, type: 2}
+      - {fileID: 11400000, guid: ec6ad0154bded664b975e83e1374f5b7, type: 2}
     - birdName: Desert Finch
       canView: 1
       birds:
       - {fileID: 11400000, guid: 2a01b2e126e2b1c4082aada9987b7067, type: 2}
+      - {fileID: 11400000, guid: 403b07801a0eb6844976514a19b46c38, type: 2}
+      - {fileID: 11400000, guid: 0ff8f412d613238439f0c74ae78c9099, type: 2}
+      - {fileID: 11400000, guid: f00fe88927dbb304e80a162299e7ff6f, type: 2}
     - birdName: Cinnamon-breasted Bunting
       canView: 1
       birds:
       - {fileID: 11400000, guid: cc53a47af7c472e4e9981d987b664e39, type: 2}
       - {fileID: 11400000, guid: 61b5548b52f0cfb44b23ae0e19aeca06, type: 2}
       - {fileID: 11400000, guid: 1b4551e3bfc76ea40aee54870e49b471, type: 2}
+    - birdName: EgyptianVulture
+      canView: 1
+      birds:
+      - {fileID: 11400000, guid: f9b8a77abe5ac2f478d214452bcd8dd3, type: 2}
+      - {fileID: 11400000, guid: 71908a9b72230ce428389ab41038c948, type: 2}
+      - {fileID: 11400000, guid: cd5848d38110c274ba8318bd4237188a, type: 2}
+      - {fileID: 11400000, guid: 98c7fe78373b2884c835a0b98e6b21dd, type: 2}
   - birdClasses:
     - birdName: Chick
       canView: 1
@@ -432,12 +454,14 @@ MonoBehaviour:
       - {fileID: 11400000, guid: ea7df4ac50548be4495dc4a10e814fe0, type: 2}
       - {fileID: 11400000, guid: bffbeb0d172f5e949b4cd82d874f658e, type: 2}
       - {fileID: 11400000, guid: 640e343b29c738b45a6503f860becf1f, type: 2}
+      - {fileID: 11400000, guid: 9eeb7cf6e844ac648b99a5f6510e2bbc, type: 2}
     - birdName: Egret
       canView: 1
       birds:
       - {fileID: 11400000, guid: e564c752b8523fe4f9499847e589e5ab, type: 2}
       - {fileID: 11400000, guid: aa49fa18ebb8f664d9b62b49da281ddd, type: 2}
       - {fileID: 11400000, guid: 2ae2986baf1c3b14ca47ff783f4564f6, type: 2}
+      - {fileID: 11400000, guid: 553192dbdd8b7394c812b49f35bd637d, type: 2}
     - birdName: Pelican
       canView: 1
       birds:
@@ -458,6 +482,7 @@ MonoBehaviour:
       - {fileID: 11400000, guid: b74ec422572d69a47b77ad027c8cac64, type: 2}
       - {fileID: 11400000, guid: 5c7129485a45161488fb4a1a2b77cbf8, type: 2}
       - {fileID: 11400000, guid: 99d4457f61f12034aa7aaebb697f3d3a, type: 2}
+      - {fileID: 11400000, guid: e9ea37b4bf76f9a4597e57c9510ccab0, type: 2}
     - birdName: Wild goose
       canView: 1
       birds:
@@ -471,3 +496,4 @@ MonoBehaviour:
       - {fileID: 11400000, guid: c63c9ba6821f56b4db8297c9f2565275, type: 2}
       - {fileID: 11400000, guid: 05494cd0f7ad78e4fa8662bc5c5226d7, type: 2}
       - {fileID: 11400000, guid: 6e1d662f2fddd494680c9d37ed623907, type: 2}
+      - {fileID: 11400000, guid: 2756c48d3e2a9a6418e3cc362eff5282, type: 2}
