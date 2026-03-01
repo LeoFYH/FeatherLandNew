@@ -8,76 +8,73 @@ namespace BirdGame
     public class GameManager : ViewControllerBase
     {
         public List<Transform> flyPositions;
+        [Header("自动投喂")]
         public float createFoodTime = 0.5f;
-        float foodTimer;
-        private float lastClickTime = 0f; // 记录上次点击时间
-        private float clickInterval = 1f; // 点击间隔时间（1秒）
-        private int previousClickCount = 0;
-        private float lastTime;
-        private bool isDown;
 
-        private void Start()
+        float _foodTimer;
+        int _previousClickCount;
+        bool _isAutoFeeding;
+
+        void Start()
         {
             this.GetModel<IBirdModel>().FlyPositions = flyPositions;
+            this.RegisterEvent<OnSettingCloseEvent>(evt =>
+            {
+                _previousClickCount = SimpleMouseForwarder.clickCount;
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
         }
 
-        private void Update()
+        void Update()
         {
             if (EventSystem.current.IsPointerOverGameObject()) return;
-
-            // 检查是否正在放置装饰物
             if (this.GetSystem<IGameSystem>().IsPlacingDecoration()) return;
-
-            // 检查是否点击到装饰物
             if (IsClickingOnDecoration()) return;
 
-            // 取消撒食物冷却，每次点击都能撒
-            if (Input.GetMouseButtonDown(0) || SimpleMouseForwarder.clickCount > previousClickCount)
+            bool autoFeedingEnabled = this.GetModel<ISaveModel>().SettingData.autoFeeding;
+            bool clicked = Input.GetMouseButtonDown(0) || SimpleMouseForwarder.clickCount > _previousClickCount;
+
+            if (clicked)
             {
-                previousClickCount = SimpleMouseForwarder.clickCount;
-                this.GetSystem<IGameSystem>().CreateFood();
-                lastTime = Time.time;
-                // isDown = true;
+                _previousClickCount = SimpleMouseForwarder.clickCount;
+                if (autoFeedingEnabled)
+                {
+                    _isAutoFeeding = !_isAutoFeeding;
+                    _foodTimer = 0f;
+                    if (_isAutoFeeding)
+                        this.GetSystem<IGameSystem>().CreateFood();
+                }
+                else
+                {
+                    this.GetSystem<IGameSystem>().CreateFood();
+                }
             }
 
-            if (Input.GetMouseButtonUp(0) )
+            if (autoFeedingEnabled && _isAutoFeeding)
             {
-                isDown = false;
-            }
-
-            if (isDown && Time.time - lastTime >= 0.2f)
-            {
-                lastTime = Time.time;
-                this.GetSystem<IGameSystem>().CreateFood();
-            }
-
-            if (SimpleMouseForwarder.clickCount > previousClickCount)
-            {
-                previousClickCount = SimpleMouseForwarder.clickCount;
+                _foodTimer += Time.deltaTime;
+                if (_foodTimer >= createFoodTime)
+                {
+                    _foodTimer = 0f;
+                    this.GetSystem<IGameSystem>().CreateFood();
+                }
             }
         }
 
-        private bool IsClickingOnDecoration()
+        bool IsClickingOnDecoration()
         {
-            if (Input.GetMouseButtonDown(0))
+            if (!Input.GetMouseButtonDown(0)) return false;
+
+            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            RaycastHit2D[] hits = Physics2D.RaycastAll(mousePosition, Vector2.zero);
+
+            foreach (var hit in hits)
             {
-                Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                RaycastHit2D[] hits = Physics2D.RaycastAll(mousePosition, Vector2.zero);
-                
-                foreach (var hit in hits)
-                {
-                    var handler = hit.collider.GetComponent<DecorationClickHandler>();
-                    // 检查是否点击到装饰物（通过检查是否有DecorationClickHandler或DecorationDrag组件）
-                    if (handler != null || 
-                        hit.collider.GetComponent<DecorationDrag>() != null)
-                    {
-                        if (handler != null && handler.canFeed)
-                        {
-                            continue;
-                        }
-                        return true;
-                    }
-                }
+                var handler = hit.collider.GetComponent<DecorationClickHandler>();
+                var hasDrag = hit.collider.GetComponent<DecorationDrag>() != null;
+                if (handler == null && !hasDrag) continue;
+
+                if (handler != null && handler.canFeed) continue;
+                return true;
             }
             return false;
         }

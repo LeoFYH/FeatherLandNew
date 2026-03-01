@@ -28,6 +28,9 @@ namespace BirdGame
         public Sprite itemSprite;
         public Sprite[] dropSps;
         public Button closeButton;
+        [Header("喂食")]
+        public Toggle autoFeedingToggle;
+        public LocalizationText autoFeedingLabelText;
 
         private List<SystemLanguage> languages = new List<SystemLanguage>();
         private bool isScreenExpend = false;
@@ -278,8 +281,21 @@ namespace BirdGame
             screenDropdown.GetComponent<Image>().sprite = dropSps[0];
             languageDropdown.GetComponent<Image>().sprite = dropSps[0];
 
+            if (autoFeedingToggle != null)
+            {
+                autoFeedingToggle.isOn = this.GetModel<ISaveModel>().SettingData.autoFeeding;
+                autoFeedingToggle.onValueChanged.AddListener(isOn =>
+                {
+                    this.GetModel<ISaveModel>().SettingData.autoFeeding = isOn;
+                    RefreshAutoFeedingLabel(isOn);
+                });
+                RefreshAutoFeedingLabel(autoFeedingToggle.isOn);
+            }
+
             this.RegisterEvent<ChangeLanguageEvent>(evt =>
             {
+                if (autoFeedingToggle != null)
+                    RefreshAutoFeedingLabel(autoFeedingToggle.isOn);
                 screenDropdown.options[0].text = this.GetSystem<ILocalizationSystem>().GetString("Windowed");
                 screenDropdown.options[1].text = this.GetSystem<ILocalizationSystem>().GetString("Wallpaper");
                 screenDropdown.options[2].text = this.GetSystem<ILocalizationSystem>().GetString("Full Screen");
@@ -308,6 +324,12 @@ namespace BirdGame
                     isChangingMode = false; // 重置标志
                 }
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+        }
+
+        void RefreshAutoFeedingLabel(bool isAutoFeeding)
+        {
+            if (autoFeedingLabelText == null) return;
+            autoFeedingLabelText.SetKey(isAutoFeeding ? "AutoFeeding" : "ManualFeeding");
         }
 
         private void Update()
