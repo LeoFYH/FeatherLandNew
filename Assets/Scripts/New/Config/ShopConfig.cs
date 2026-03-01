@@ -329,6 +329,7 @@ namespace BirdGame
         Radio = 2,
         Note = 3,
         Tomato = 4,
-        Illustrated = 5
+        Illustrated = 5,
+        Cursor = 6
     }
 }

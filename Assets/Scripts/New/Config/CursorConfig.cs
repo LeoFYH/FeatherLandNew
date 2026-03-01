@@ -18,6 +18,9 @@ namespace BirdGame
         [PreviewField(150, ObjectFieldAlignment.Center), HideLabel]
         public Texture2D cursorTexture;
 
+        [ListDrawerSettings(ShowFoldout = true)]
+        public Texture2D[] cursorTextures;
+        
         [VerticalGroup("Split/Settings")]
         [PropertySpace(5)]
         public CursorState state;
