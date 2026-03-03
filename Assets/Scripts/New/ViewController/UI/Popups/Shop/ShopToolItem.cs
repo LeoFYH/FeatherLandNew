@@ -96,7 +96,7 @@ namespace BirdGame
                 else
                     description.SetKey(selectedTool.description);
                 if (sp != null)
-                    icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.2f;
+                    icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.12f;
             }
 
             if (item.selections[0].type == ToolType.Food || item.selections[0].type != ToolType.BirdMaxCount)
@@ -257,7 +257,7 @@ namespace BirdGame
                         if (item.selections[0].type == ToolType.Food)
                             icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size;
                         else 
-                            icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.2f;
+                            icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.12f;
                     }
                     // 检查食物状态，决定显示内容
                     bool isPurchased = saveModel.AccountData.sceneTools[0].tools[index].unlockedList.Contains(v) || v == 0;

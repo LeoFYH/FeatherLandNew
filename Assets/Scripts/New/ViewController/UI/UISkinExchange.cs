@@ -24,14 +24,7 @@ namespace BirdGame
 
         private void SetBar(int index)
         {
-            if (index == 0)
-            {
-                barImage.color = Color.white;
-            }
-            else
-            {
-                barImage.color = Color.cyan;
-            }
+            barImage.sprite = this.GetModel<IConfigModel>().ShopConfig.tools[(int)thisType].selections[index].icon;
         }
     }
 }

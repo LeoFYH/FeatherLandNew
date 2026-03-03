@@ -97,20 +97,25 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 3.1610003, y: -1.0193627}
-      - {x: 3.0643227, y: -1.3140204}
-      - {x: 2.6446886, y: -1.5575688}
-      - {x: 1.054286, y: -1.6504099}
-      - {x: 0.7842779, y: -1.6277812}
-      - {x: -1.8541362, y: -1.6315758}
+    - - {x: 1.106535, y: -1.472439}
+      - {x: 0.75988317, y: -1.4936879}
+      - {x: 0.4808588, y: -1.4872639}
+      - {x: 0.21062762, y: -1.4941771}
+      - {x: -0.15311903, y: -1.5184186}
+      - {x: -0.73899543, y: -1.5262301}
+      - {x: -1.3404932, y: -1.5574763}
+      - {x: -1.6920156, y: -1.424679}
+      - {x: -2.0357292, y: -1.3153155}
+      - {x: -2.1685264, y: -1.1903279}
+      - {x: -2.3150241, y: -1.1550648}
       - {x: -2.3856456, y: -1.1719935}
       - {x: -2.5207815, y: -0.5827241}
-      - {x: -2.1309156, y: 0.29690424}
-      - {x: 1.8168316, y: 0.3049885}
-      - {x: 2.1229699, y: 0.2513759}
-      - {x: 2.3174796, y: 0.120406926}
-      - {x: 2.604588, y: -0.16975667}
-      - {x: 2.7924933, y: -0.31332633}
+      - {x: -2.1465387, y: -0.031184524}
+      - {x: 1.8168316, y: 0.14875567}
+      - {x: 1.9979832, y: -0.49073142}
+      - {x: 2.005013, y: -0.7232524}
+      - {x: 1.6984363, y: -1.3180691}
+      - {x: 1.4254537, y: -1.3991474}
   m_UseDelaunayMesh: 0
 --- !u!114 &8734232212911961728
 MonoBehaviour:
@@ -777,7 +782,7 @@ Transform:
   m_GameObject: {fileID: 747617636919196424}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -5.46, y: 0, z: -4.45}
+  m_LocalPosition: {x: -0.6, y: -0, z: -3.77}
   m_LocalScale: {x: 0.5, y: 0.49999988, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -845,13 +850,19 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 4.950898, y: -0.50709105}
-      - {x: 4.579049, y: -0.1505449}
-      - {x: 4.6087623, y: 1.3527966}
-      - {x: 5.3366246, y: 1.8071315}
-      - {x: 6.064393, y: 1.1390634}
-      - {x: 6.314984, y: 0.18014103}
-      - {x: 5.8200746, y: -0.4493613}
+    - - {x: 0.40345383, y: -0.14958715}
+      - {x: -0.554656, y: -0.13528728}
+      - {x: -1.0695057, y: 0.3928606}
+      - {x: -1.139894, y: 1.2240953}
+      - {x: -0.7552347, y: 1.5783284}
+      - {x: 0.2156353, y: 1.5680676}
+      - {x: 0.48052645, y: 1.0381498}
+      - {x: 0.67202353, y: 0.48014778}
+      - {x: 0.77212477, y: 0.4229474}
+      - {x: 0.7006233, y: 0.15124464}
+      - {x: 0.58622324, y: 0.051143587}
+      - {x: 0.55762345, y: 0.022543907}
+      - {x: 0.47182226, y: -0.048956364}
   m_UseDelaunayMesh: 0
 --- !u!114 &5436035236410378534
 MonoBehaviour:
@@ -1552,23 +1563,24 @@ PolygonCollider2D:
     m_Paths:
     - - {x: 3.0233116, y: 2.109091}
       - {x: 3.8190184, y: 2.2730634}
-      - {x: 5.16777, y: 0.9883714}
-      - {x: 5.295936, y: 0.86020756}
+      - {x: 4.78414, y: 0.9883714}
+      - {x: 4.9820576, y: 0.75558186}
       - {x: 5.489302, y: 0.5000889}
-      - {x: 5.364234, y: -0.2107284}
-      - {x: 5.1804905, y: -0.44152683}
+      - {x: 5.800176, y: -0.33279106}
+      - {x: 5.4769316, y: -0.49383968}
       - {x: 4.469533, y: -0.7204129}
-      - {x: 2.443358, y: -1.0723271}
+      - {x: 3.2280545, y: -1.0723271}
+      - {x: 1.6047426, y: -1.4124979}
       - {x: 0.44758382, y: -1.2006801}
       - {x: -0.6615435, y: -1.0363646}
-      - {x: -0.5971892, y: -1.0181059}
-      - {x: -4.143711, y: -0.14295909}
-      - {x: -4.262295, y: -0.045632783}
-      - {x: -4.2894034, y: 0.36945555}
-      - {x: -4.2665844, y: 0.6610646}
-      - {x: -4.012431, y: 0.982656}
-      - {x: -2.8826125, y: 2.1557112}
-      - {x: -2.217349, y: 2.2158508}
+      - {x: -1.1551964, y: -0.8262905}
+      - {x: -1.8244975, y: -0.5265898}
+      - {x: -2.5185235, y: -0.13282152}
+      - {x: -2.6153839, y: 0.020700663}
+      - {x: -2.6797535, y: 0.22512105}
+      - {x: -2.4081624, y: 0.4769616}
+      - {x: -2.2897322, y: 0.9001962}
+      - {x: -2.0080967, y: 1.7799091}
       - {x: -0.23653519, y: 1.8592654}
   m_UseDelaunayMesh: 0
 --- !u!114 &8849179039814183157
@@ -1889,170 +1901,6 @@ PolygonCollider2D:
       - {x: 1.4126264, y: -0.7166846}
       - {x: 1.3819427, y: 0.3397941}
   m_UseDelaunayMesh: 0
---- !u!1 &2302819033345355179
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1231632365423536697}
-  - component: {fileID: 6322129442578168786}
-  - component: {fileID: 5497693997872996418}
-  - component: {fileID: 1239350223334167017}
-  m_Layer: 0
-  m_Name: Anim (2)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 4
-  m_IsActive: 0
---- !u!4 &1231632365423536697
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2302819033345355179}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.44, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1487015292255430802}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &6322129442578168786
-SpriteRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2302819033345355179}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 7
-  m_Sprite: {fileID: 7447917381784858983, guid: 5b6b43005a768354eb335ca5dcde78d1, type: 3}
-  m_Color: {r: 0.9, g: 0.9, b: 0.9, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 51.2, y: 28.8}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
---- !u!114 &5497693997872996418
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2302819033345355179}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7db70e0ea77f5ac47a8f4565a9406397, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ShadowGroup: 0
-  m_Priority: -3
-  m_ComponentVersion: 5
-  m_HasRenderer: 1
-  m_UseRendererSilhouette: 1
-  m_CastsShadows: 1
-  m_SelfShadows: 0
-  m_AlphaCutoff: 0.1
-  m_ApplyToSortingLayers: 00000000
-  m_ShapePath:
-  - {x: -12.8, y: -7.2, z: 0}
-  - {x: -12.8, y: 7.2, z: 0}
-  - {x: 12.8, y: 7.2, z: 0}
-  - {x: 12.8, y: -7.2, z: 0}
-  m_ShapePathHash: 0
-  m_InstanceId: 0
-  m_ShadowShape2DComponent: {fileID: 6322129442578168786}
-  m_ShadowShape2DProvider:
-    rid: 4950229283181953024
-  m_ShadowCastingSource: 2
-  m_ShadowMesh:
-    m_Mesh: {fileID: 0}
-    m_LocalBounds:
-      m_Center: {x: 0, y: 0.6075363, z: 0}
-      m_Extent: {x: 12.099991, y: 5.8924637, z: 0}
-    m_EdgeProcessing: 1
-    m_TrimEdge: 0.7
-    m_FlipX: 0
-    m_FlipY: 0
-    m_InitialTrim: 0
-  m_CastingOption: 1
-  m_PreviousTrimEdge: 0.7
-  m_PreviousEdgeProcessing: 1
-  m_PreviousShadowCastingSource: 2
-  m_PreviousShadowShape2DSource: {fileID: 6322129442578168786}
-  references:
-    version: 2
-    RefIds:
-    - rid: 4950229283181953024
-      type: {class: ShadowShape2DProvider_SpriteRenderer, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.2D.Runtime}
-      data: 
---- !u!95 &1239350223334167017
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2302819033345355179}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: cd9e234e1c81a6b4ba1e720e502431b1, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2476183089172147886
 GameObject:
   m_ObjectHideFlags: 0
@@ -2998,7 +2846,6 @@ Transform:
   - {fileID: 638562916729602163}
   - {fileID: 3332180052280654459}
   - {fileID: 7629465073320506657}
-  - {fileID: 1231632365423536697}
   - {fileID: 3568882360637451193}
   - {fileID: 6521339998074970923}
   - {fileID: 1565847492569255513}
@@ -3517,34 +3364,10 @@ MonoBehaviour:
       rgba: 4291348680
     onWeatherEnter:
       m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 2302819033345355179}
-          m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-          m_MethodName: SetActive
-          m_Mode: 6
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 1
-          m_CallState: 2
+        m_Calls: []
     onWeatherExit:
       m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 2302819033345355179}
-          m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-          m_MethodName: SetActive
-          m_Mode: 6
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
+        m_Calls: []
   uiGroup: {fileID: 0}
   others: []
 --- !u!1 &4594954186482499827
@@ -3799,7 +3622,7 @@ MonoBehaviour:
   m_BuildHeightMesh: 0
   m_MinRegionArea: 0
   m_HideEditorLogs: 0
-  m_NavMeshData: {fileID: 23800000, guid: a129b6f9304230c4a87efbef3b297ac8, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 3867e212e30c7ae4cb80a95041572dae, type: 2}
 --- !u!114 &586288876152744169
 MonoBehaviour:
   m_ObjectHideFlags: 0
