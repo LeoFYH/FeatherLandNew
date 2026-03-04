@@ -85,8 +85,8 @@ namespace BirdGame
             {
                 // 如果最终位置不在地面上，回到最后一个有效位置
                 transform.position = lastValidPosition;
-                string text = this.GetSystem<ILocalizationSystem>().GetString("Decorations can only be placed on the ground!");
-                this.GetSystem<IUISystem>().ShowPrompt(text);
+                // string text = this.GetSystem<ILocalizationSystem>().GetString("Decorations can only be placed on the ground!");
+                // this.GetSystem<IUISystem>().ShowPrompt(text);
             }
             else
             {
