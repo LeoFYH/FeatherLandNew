@@ -43,11 +43,13 @@ namespace BirdGame
         private float quitY;
         private float languageY;
         private float volumeY;
+        private float autoFeedY;
         private RectTransform deleteRect;
         private RectTransform tutorialRect;
         private RectTransform quitRect;
         private RectTransform languageRect;
         private RectTransform volumeRect;
+        private RectTransform autoFeedRect;
         private bool isChangingMode = false; // 防止键盘切换时触发onValueChanged导致循环
         private Canvas canvas;
         
@@ -226,12 +228,14 @@ namespace BirdGame
             quitRect = quitButton.GetComponent<RectTransform>();
             languageRect = languageDropdown.GetComponent<RectTransform>();
             volumeRect = volumeDropdown.GetComponent<RectTransform>();
+            autoFeedRect = autoFeedingToggle.GetComponent<RectTransform>();
 
             deleteY = deleteRect.anchoredPosition.y;
             tutorailY = tutorialRect.anchoredPosition.y;
             quitY = quitRect.anchoredPosition.y;
             languageY = languageRect.anchoredPosition.y;
             volumeY = volumeRect.anchoredPosition.y;
+            autoFeedY = autoFeedRect.anchoredPosition.y;
             
             tutorialButton.onClick.AddListener(() =>
             {
@@ -404,6 +408,7 @@ namespace BirdGame
             deleteRect.anchoredPosition = new Vector2(0, deleteY - moveHeight);
             tutorialRect.anchoredPosition = new Vector2(0, tutorailY - moveHeight);
             quitRect.anchoredPosition = new Vector2(0, quitY - moveHeight);
+            autoFeedRect.anchoredPosition = new Vector2(0, autoFeedY - moveHeight);
         }
 
         /// <summary>

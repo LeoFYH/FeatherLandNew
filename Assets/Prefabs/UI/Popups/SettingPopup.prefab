@@ -37,7 +37,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.057434082, y: -389.86023}
+  m_AnchoredPosition: {x: 0, y: -227.531}
   m_SizeDelta: {x: 1095, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3711566665804036806
@@ -718,7 +718,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.057434082, y: 563}
+  m_AnchoredPosition: {x: 0, y: 572.469}
   m_SizeDelta: {x: 1095, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2705729270454798165
@@ -1682,7 +1682,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &5095655336842376947
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1700,7 +1700,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.057434082, y: 327.43994}
+  m_AnchoredPosition: {x: 0, y: -27.531006}
   m_SizeDelta: {x: 1095, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2240093319664893948
@@ -2478,7 +2478,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.057434082, y: -148.76015}
+  m_AnchoredPosition: {x: 0, y: -427.531}
   m_SizeDelta: {x: 1095, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3280402956070006777
@@ -2614,7 +2614,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.057434082, y: 92.43994}
+  m_AnchoredPosition: {x: 0, y: 172.469}
   m_SizeDelta: {x: 1095, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2201146792437658183
@@ -4193,6 +4193,7 @@ GameObject:
   - component: {fileID: 2690853073403055349}
   - component: {fileID: 7808381647720799227}
   - component: {fileID: 5621973832273398605}
+  - component: {fileID: 2372393082755097580}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -4215,10 +4216,10 @@ RectTransform:
   - {fileID: 6521330644330559708}
   - {fileID: 3441415116877649823}
   - {fileID: 1009414203424978097}
+  - {fileID: 5095655336842376947}
   - {fileID: 6612617618404532347}
   - {fileID: 4248021314388259504}
   - {fileID: 3721624237275282206}
-  - {fileID: 5095655336842376947}
   m_Father: {fileID: 1062548432445878478}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -4277,6 +4278,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ShowMaskGraphic: 1
+--- !u!114 &2372393082755097580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6336538459312090519}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 56
+    m_Bottom: 0
+  m_ChildAlignment: 4
+  m_StartCorner: 0
+  m_StartAxis: 1
+  m_CellSize: {x: 1095, y: 150}
+  m_Spacing: {x: 0, y: 50}
+  m_Constraint: 0
+  m_ConstraintCount: 2
 --- !u!1 &6561901652872406219
 GameObject:
   m_ObjectHideFlags: 0
@@ -4316,7 +4341,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.057434082, y: 327.43994}
+  m_AnchoredPosition: {x: 0, y: 372.469}
   m_SizeDelta: {x: 1095, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7034447057377342672
@@ -4630,7 +4655,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.057434082, y: -626.3602}
+  m_AnchoredPosition: {x: 0, y: -627.531}
   m_SizeDelta: {x: 1095, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5018818147059643259
