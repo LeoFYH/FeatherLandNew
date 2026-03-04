@@ -18,6 +18,7 @@ namespace BirdGame
         bool TryGetUntargetedFood(Vector3 position, out Food food);
         bool IsCoverGround();
         bool IsCoverBird();
+        bool IsCoverDecoration();
         bool IsCoverUI();
         bool IsOnGround();
         void CreateDecoration(int decorationId, int index);
@@ -380,6 +381,60 @@ namespace BirdGame
                 }
             }
 
+            return false;
+        }
+
+        public bool IsCoverDecoration()
+        {
+            // 获取鼠标位置
+            Vector2 mousePosition = Input.mousePosition;
+            
+            // Performance optimization: Use cached camera instead of Camera.main
+            if (cachedMainCamera == null)
+            {
+                cachedMainCamera = Camera.main;
+            }
+            if (cachedMainCamera == null)
+            {
+                return false;
+            }
+            
+            // 将鼠标位置转换为世界坐标
+            Vector3 worldPosition = cachedMainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, -cachedMainCamera.transform.position.z));
+            Vector2 worldPosition2D = new Vector2(worldPosition.x, worldPosition.y);
+            
+            // 使用射线检测查找 tag 为"Decoration"的 2D 对象
+            // 从相机向鼠标位置发射射线（2D 射线检测）
+            Vector2 screenPoint = Input.mousePosition;
+            Vector2 rayOrigin = cachedMainCamera.ScreenToWorldPoint(screenPoint);
+            
+            // 执行 2D 射线检测（沿 Z 轴方向）
+            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.zero, 0f);
+            
+            if (hit.collider != null)
+            {
+                // 检查命中的对象是否有"Decoration"标签
+                if (hit.collider.CompareTag("Decoration"))
+                {
+                    Debug.Log($"检测到装饰品：{hit.collider.gameObject.name}");
+                    return true;
+                }
+            }
+            
+            // 备选方案：如果没有使用 Collider，使用 OverlapCircle 检测
+            // 在鼠标位置周围进行小范围检测
+            float checkRadius = 0.5f;
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(worldPosition2D, checkRadius);
+            
+            foreach (Collider2D collider in colliders)
+            {
+                if (collider.CompareTag("Decoration"))
+                {
+                    Debug.Log($"通过范围检测发现装饰品：{collider.gameObject.name}");
+                    return true;
+                }
+            }
+            
             return false;
         }
 

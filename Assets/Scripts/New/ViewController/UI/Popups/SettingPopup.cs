@@ -395,11 +395,11 @@ namespace BirdGame
             
             if (isVloumeExpend)
             {
-                languageRect.anchoredPosition = new Vector2(0, languageY - 105);
+                languageRect.anchoredPosition = new Vector2(0, languageY - 105 - (isScreenExpend ? 204 : 0));
             }
             else
             {
-                languageRect.anchoredPosition = new Vector2(0, languageY);
+                languageRect.anchoredPosition = new Vector2(0, languageY- (isScreenExpend ? 204 : 0));
             }
 
 

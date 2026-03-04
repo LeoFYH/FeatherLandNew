@@ -397,6 +397,7 @@ namespace BirdGame
             // Performance optimization: Use cached system reference
             bool isCoverUI = cachedGameSystem.IsCoverUI();
             bool isCoverBird = cachedGameSystem.IsCoverBird();
+            bool isCoverDecoration = cachedGameSystem.IsCoverDecoration();
             bool isCoverGround = cachedGameSystem.IsCoverGround();
             
             // Determine new cursor state
@@ -406,6 +407,10 @@ namespace BirdGame
                 newState = CursorState.Click;
             }
             else if (isCoverBird)
+            {
+                newState = CursorState.Click;
+            }
+            else if (isCoverDecoration)
             {
                 newState = CursorState.Click;
             }
