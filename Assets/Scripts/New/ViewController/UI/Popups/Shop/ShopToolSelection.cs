@@ -10,6 +10,7 @@ namespace BirdGame
     {
         public Image icon;
         public TextMeshProUGUI text;
+        public Image color;
 
         private int itemId;
         private int selectId;
@@ -32,6 +33,7 @@ namespace BirdGame
             {
                 text.gameObject.SetActive(true);
                 icon.gameObject.SetActive(false);
+                color.gameObject.SetActive(false);
                 text.text = this.GetModel<IConfigModel>().ShopConfig.tools[itemIndex].selections[selectIndex]
                     .selectionName;
             }
@@ -40,6 +42,7 @@ namespace BirdGame
             {
                 text.gameObject.SetActive(false);
                 icon.gameObject.SetActive(true);
+                color.gameObject.SetActive(false);
                 var sp = this.GetModel<IConfigModel>().ShopConfig.tools[itemIndex].selections[selectIndex].icon;
                 icon.sprite = sp;
                 if (sp != null)
@@ -47,8 +50,26 @@ namespace BirdGame
             }
             else
             {
+                if (this.GetModel<IConfigModel>().ShopConfig.tools[itemIndex].selections[selectIndex].type ==
+                    ToolType.Radio ||
+                    this.GetModel<IConfigModel>().ShopConfig.tools[itemIndex].selections[selectIndex].type ==
+                    ToolType.Note ||
+                    this.GetModel<IConfigModel>().ShopConfig.tools[itemIndex].selections[selectIndex].type ==
+                    ToolType.Illustrated ||
+                    this.GetModel<IConfigModel>().ShopConfig.tools[itemIndex].selections[selectIndex].type ==
+                    ToolType.Tomato)
+                {
+                    text.gameObject.SetActive(false);
+                    icon.gameObject.SetActive(false);
+                    color.gameObject.SetActive(true);
+                    color.color = this.GetModel<IConfigModel>().ShopConfig.tools[itemIndex].selections[selectIndex]
+                        .uiColor;
+                    return;
+                }
                 text.gameObject.SetActive(true);
                 icon.gameObject.SetActive(false);
+                color.gameObject.SetActive(false);
+
                 var sp = this.GetModel<IConfigModel>().ShopConfig.tools[itemIndex].selections[selectIndex].icon;
                 icon.sprite = sp;
                 if (sp != null)

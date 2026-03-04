@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using QFramework;
@@ -425,20 +425,23 @@ namespace BirdGame
         public void InitEnvironments()
         {
             if(isEnvironmentInited)
+            {
+                Debug.Log("🔊 环境音效已初始化，跳过重复初始化");
                 return;
+            }
             var config = this.GetModel<IConfigModel>().RadioConfig;
             var saveModel = this.GetModel<ISaveModel>().MusicSettingData;
             
             // 安全检查
             if (config == null)
             {
-                Debug.LogError("RadioConfig未加载，无法初始化环境音效");
+                Debug.LogError("RadioConfig 未加载，无法初始化环境音效");
                 return;
             }
             
             if (saveModel == null)
             {
-                Debug.LogError("MusicSettingData为null，无法初始化环境音效");
+                Debug.LogError("MusicSettingData 为 null，无法初始化环境音效");
                 return;
             }
             
@@ -446,6 +449,8 @@ namespace BirdGame
             {
                 saveModel.environmentVolumes = new List<float>();
             }
+
+            Debug.Log($"💾 开始初始化环境音效，存档中的音量数据：{string.Join(", ", saveModel.environmentVolumes.ConvertAll(v => v.ToString("F2")))}");
 
             for (int i = 0; i < config.environments.Length; i++)
             {
@@ -474,20 +479,31 @@ namespace BirdGame
                 }
 
                 audio.outputAudioMixerGroup = config.environments[i].group;
-                // 如果用户没有设置过这个环境音效的音量，使用默认值
-                if (saveModel.environmentVolumes[i] == 0f)
+                // 从存档加载音量值
+                float savedVolume = saveModel.environmentVolumes[i];
+                
+                // 如果是首次初始化（存档值为 0 且默认值不为 0），使用默认值
+                if (savedVolume == 0f && defaultVolume != 0f)
                 {
-                    saveModel.environmentVolumes[i] = defaultVolume;
+                    Debug.Log($"📢 环境音 [{i}] {config.environments[i].songName}: 首次初始化，使用默认值 {defaultVolume * 100}%");
+                    savedVolume = defaultVolume;
+                    saveModel.environmentVolumes[i] = savedVolume;
                 }
+                else
+                {
+                    Debug.Log($"📢 环境音 [{i}] {config.environments[i].songName}: 从存档加载 {savedVolume * 100}%");
+                }
+                
+                // 设置到 RadioModel（不触发事件）
+                radioModel.EnvironmentVolumes[i].SetValueWithoutEvent(savedVolume);
 
-                audio.volume = saveModel.environmentVolumes[i] * radioModel.Volume.Value;
+                audio.volume = savedVolume * radioModel.Volume.Value;
                 this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(config.environments[i].songFile.AssetGUID,
                     clip =>
                     {
                         audio.clip = clip;
                         audio.Play();
                     });
-                radioModel.EnvironmentVolumes[i].Value = saveModel.environmentVolumes[i];
                 int index = i;
                 radioModel.EnvironmentVolumes[index].Register(v =>
                 {
@@ -510,7 +526,7 @@ namespace BirdGame
             //effectAudio.outputAudioMixerGroup = config.effectMixer.FindMatchingGroups(String.Empty)[0];
             
             isEnvironmentInited = true;
-            //Debug.Log("🌍 环境音效初始化完成！Bird环境音设为100%，Wind环境音设为100%，其他环境音设为0");
+            Debug.Log("✅ 环境音效初始化完成！");
         }
 
         public void SetEnvironmentVolumesByWeather(int weatherIndex, bool useFade = true)

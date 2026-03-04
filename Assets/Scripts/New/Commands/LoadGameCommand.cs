@@ -156,8 +156,10 @@ namespace BirdGame
                 
             this.GetSystem<IGameSystem>().CreateDecorations();
             
-            // 设置默认的晴天环境音（初始化时不使用淡入淡出，直接切换）
-            this.GetSystem<IAudioSystem>().SetEnvironmentVolumesByWeather(0, useFade: false);
+            // ✅ 修复：不再在加载时强制设置天气音量，而是从存档加载用户设置的环境音量
+            // 环境音只在场景加载时（LoadGameCommand）或天气变化时（WeatherManager）才会同步
+            // 这里的 InitEnvironments 会从 MusicSettingData.environmentVolumes 中读取用户保存的音量
+            this.GetSystem<IAudioSystem>().InitEnvironments();
             
             // 检查是否是第一次启动游戏，如果是则自动播放第一首歌
             if (!PlayerPrefs.HasKey("PlayedFirstSong"))

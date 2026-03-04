@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
@@ -54,16 +55,25 @@ namespace BirdGame
             feedAnim = null;
             strokeAnim = null;
             var item = cursorItems[state];
-            if (this.GetModel<ISaveModel>().AccountData.sceneTools.Count == 0)
+            try
             {
-                this.GetModel<ISaveModel>().AccountData.sceneTools.Add(new SceneToolInfo());
+                if (this.GetModel<ISaveModel>().AccountData.sceneTools.Count == 0)
+                {
+                    this.GetModel<ISaveModel>().AccountData.sceneTools.Add(new SceneToolInfo());
+                }
+
+                while (this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools.Count <= 6)
+                {
+                    this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools.Add(new ToolInfo());
+                }
+
+                int index = this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools[6].equipedId;
+                Cursor.SetCursor(item.cursorTextures[index], item.hotspot, CursorMode.Auto);
             }
-            while (this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools.Count <= 6)
+            catch (Exception e)
             {
-                this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools.Add(new ToolInfo());
+
             }
-            int index =this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools[6].equipedId;
-            Cursor.SetCursor(item.cursorTextures[index], item.hotspot, CursorMode.Auto);
         }
 
         public void Feed()
@@ -74,16 +84,24 @@ namespace BirdGame
             feedAnim = null;
             strokeAnim = null;
             var item = cursorItems[CursorState.Feed1];
-            if (this.GetModel<ISaveModel>().AccountData.sceneTools.Count == 0)
+            try
             {
-                this.GetModel<ISaveModel>().AccountData.sceneTools.Add(new SceneToolInfo());
+                if (this.GetModel<ISaveModel>().AccountData.sceneTools.Count == 0)
+                {
+                    this.GetModel<ISaveModel>().AccountData.sceneTools.Add(new SceneToolInfo());
+                }
+                while (this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools.Count <= 6)
+                {
+                    this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools.Add(new ToolInfo());
+                }
+                int index =this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools[6].equipedId;
+                Cursor.SetCursor(item.cursorTextures[index], item.hotspot, CursorMode.Auto);
             }
-            while (this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools.Count <= 6)
+            catch (Exception e)
             {
-                this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools.Add(new ToolInfo());
+                
             }
-            int index =this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools[6].equipedId;
-            Cursor.SetCursor(item.cursorTextures[index], item.hotspot, CursorMode.Auto);
+            
             currentState = CursorState.Feed1;
             feedAnim = DOTween.Sequence();
             feedAnim.AppendInterval(0.2f);
@@ -91,32 +109,47 @@ namespace BirdGame
             {
                 item = cursorItems[CursorState.Feed2];
                 currentState = CursorState.Feed2;
-                if (this.GetModel<ISaveModel>().AccountData.sceneTools.Count == 0)
+                try
                 {
-                    this.GetModel<ISaveModel>().AccountData.sceneTools.Add(new SceneToolInfo());
+                    if (this.GetModel<ISaveModel>().AccountData.sceneTools.Count == 0)
+                    {
+                        this.GetModel<ISaveModel>().AccountData.sceneTools.Add(new SceneToolInfo());
+                    }
+                    while (this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools.Count <= 6)
+                    {
+                        this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools.Add(new ToolInfo());
+                    }
+                    int index =this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools[6].equipedId;
+                    Cursor.SetCursor(item.cursorTextures[index], item.hotspot, CursorMode.Auto);
                 }
-                while (this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools.Count <= 6)
+                catch (Exception e)
                 {
-                    this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools.Add(new ToolInfo());
+                    
                 }
-                index =this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools[6].equipedId;
-                Cursor.SetCursor(item.cursorTextures[index], item.hotspot, CursorMode.Auto);
+                
             });
             feedAnim.AppendInterval(0.2f);
             feedAnim.AppendCallback(() =>
             {
                 item = cursorItems[CursorState.Feed1];
                 currentState = CursorState.Feed1;
-                if (this.GetModel<ISaveModel>().AccountData.sceneTools.Count == 0)
+                try
                 {
-                    this.GetModel<ISaveModel>().AccountData.sceneTools.Add(new SceneToolInfo());
+                    if (this.GetModel<ISaveModel>().AccountData.sceneTools.Count == 0)
+                    {
+                        this.GetModel<ISaveModel>().AccountData.sceneTools.Add(new SceneToolInfo());
+                    }
+                    while (this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools.Count <= 6)
+                    {
+                        this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools.Add(new ToolInfo());
+                    }
+                    int index =this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools[6].equipedId;
+                    Cursor.SetCursor(item.cursorTextures[index], item.hotspot, CursorMode.Auto);
                 }
-                while (this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools.Count <= 6)
+                catch (Exception e)
                 {
-                    this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools.Add(new ToolInfo());
                 }
-                index =this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools[6].equipedId;
-                Cursor.SetCursor(item.cursorTextures[index], item.hotspot, CursorMode.Auto);
+                
                 feedAnim = null;
             });
             feedAnim.OnComplete(() =>

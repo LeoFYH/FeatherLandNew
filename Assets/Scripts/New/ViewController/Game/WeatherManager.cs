@@ -25,11 +25,12 @@ namespace BirdGame
         public SpriteRenderer groundCover2;
         public SpriteRenderer foregroundGrass;
         public Weather[] weathers;
-        public CanvasGroup uiGroup;
         public SpriteRenderer[] others;
+        public CanvasGroup uiGroup;
         private Material birdMaterial;
 
         private int currentIndex = -1;
+        private bool isGameStartup = true; // 标记是否是游戏启动时的初始天气设置
 
         private void Start()
         {
@@ -235,10 +236,21 @@ namespace BirdGame
             {
                 Debug.Log("天气切换完成");
                 
-                // 根据天气索引设置环境音音量
-                if (index == 0 || index == 1 || index == 2 || index == 3 || index == 4)
+                // ✅ 修复：只在游戏首次启动时不应用天气音量，保留用户设置
+                // 只有当用户主动切换天气时，才应用天气相关的音量
+                // 这里需要判断是否是游戏启动时的初始天气设置
+                if (isGameStartup)
                 {
-                    this.GetSystem<IAudioSystem>().SetEnvironmentVolumesByWeather(index);
+                    Debug.Log("游戏启动时的初始天气，不应用天气音量，保留用户设置");
+                    isGameStartup = false; // 重置标志
+                }
+                else
+                {
+                    // 用户主动切换天气，应用天气音量
+                    if (index == 0 || index == 1 || index == 2 || index == 3 || index == 4)
+                    {
+                        this.GetSystem<IAudioSystem>().SetEnvironmentVolumesByWeather(index);
+                    }
                 }
             });
         }
