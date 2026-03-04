@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3386887195317774118}
   - component: {fileID: 1497017549079633442}
   - component: {fileID: 7892823815029705138}
+  - component: {fileID: -5298930559880154149}
   m_Layer: 0
   m_Name: Decoration 1
   m_TagString: Untagged
@@ -67,7 +68,7 @@ MonoBehaviour:
   - serializedVersion: 2
     rgba: 4291348680
   - serializedVersion: 2
-    rgba: 4289769648
+    rgba: 4294557891
   - serializedVersion: 2
     rgba: 4290897145
   - serializedVersion: 2
@@ -161,6 +162,18 @@ MonoBehaviour:
   backgroundPadding: {x: 10, y: 5}
   cornerRadius: 10
   isHovering: 0
+--- !u!114 &-5298930559880154149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1166340943317647624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f90d5e1aeefad2458a912d2a1dddd3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3690973508546238135
 GameObject:
   m_ObjectHideFlags: 0

@@ -330,7 +330,7 @@ MonoBehaviour:
       sceneSprite: {fileID: 21300000, guid: d0ff1c070095f7e428dae21530b4c2f0, type: 3}
       fixedPositions:
       - {x: -11.702, y: -4.215, z: 0}
-      isGround: 0
+      isGround: 1
       isVisible: 1
       preview: {fileID: 2252215622904973494, guid: e8d6224ed5ee28e43a5a9a9d32903735, type: 3}
     - icon: {fileID: 6982110751293372397, guid: cb68f22159717fe43b941bae039fff23, type: 3}
@@ -349,7 +349,7 @@ MonoBehaviour:
       sceneSprite: {fileID: 6982110751293372397, guid: cb68f22159717fe43b941bae039fff23, type: 3}
       fixedPositions:
       - {x: 7.814, y: -3.271, z: 0}
-      isGround: 0
+      isGround: 1
       isVisible: 1
       preview: {fileID: 4211650801804232175, guid: a59790bee586e3e4e87a9af00ff998c8, type: 3}
     - icon: {fileID: 7320429712980989233, guid: b8a1d1a9fa425334095d0c24f48a0f75, type: 3}
@@ -388,7 +388,7 @@ MonoBehaviour:
       sceneSprite: {fileID: 2689972777894202174, guid: f5ea4031c8816f642ab6937adba2b5f2, type: 3}
       fixedPositions:
       - {x: 3.48, y: -4.76, z: 0}
-      isGround: 0
+      isGround: 1
       isVisible: 1
       preview: {fileID: 2249036447366657726, guid: 10fc14826a0ea1043838ec63412928db, type: 3}
     - icon: {fileID: -679213774000786348, guid: 8e3ff9ec32dc3af42bfb1eeda501c28e, type: 3}
@@ -426,7 +426,7 @@ MonoBehaviour:
       sceneSprite: {fileID: -7587855472081280043, guid: f04e840945b6c274196d0e2b12a54c39, type: 3}
       fixedPositions:
       - {x: -5.622, y: -5.952, z: 0}
-      isGround: 0
+      isGround: 1
       isVisible: 1
       preview: {fileID: 0}
     - icon: {fileID: -2464363996540667765, guid: 5e29f7c18b6a16f4ea1f8aca86865443, type: 3}
@@ -445,7 +445,7 @@ MonoBehaviour:
       sceneSprite: {fileID: -2464363996540667765, guid: 5e29f7c18b6a16f4ea1f8aca86865443, type: 3}
       fixedPositions:
       - {x: -1.894, y: -5.812, z: 0}
-      isGround: 0
+      isGround: 1
       isVisible: 1
       preview: {fileID: 0}
     - icon: {fileID: 6027984722769239347, guid: 3bc7264884ed79047a5f1e8f0266bf2a, type: 3}
@@ -1518,6 +1518,7 @@ MonoBehaviour:
       isGround: 0
       isVisible: 1
       preview: {fileID: 0}
+  canDrag: 0
   tools:
   - name: Food
     isVisible: 1

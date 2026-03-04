@@ -409,6 +409,7 @@ GameObject:
   - component: {fileID: 5295478886245352673}
   - component: {fileID: 7281341936792542116}
   - component: {fileID: 2265798116250182191}
+  - component: {fileID: 3600818717911260655}
   m_Layer: 0
   m_Name: Decoration 3
   m_TagString: Untagged
@@ -463,9 +464,21 @@ MonoBehaviour:
   - serializedVersion: 2
     rgba: 4291348680
   - serializedVersion: 2
-    rgba: 4289769648
+    rgba: 4294557891
   - serializedVersion: 2
     rgba: 4290897145
   - serializedVersion: 2
     rgba: 4291348680
   sr: {fileID: 699730295821953808}
+--- !u!114 &3600818717911260655
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5691537437215484801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f90d5e1aeefad2458a912d2a1dddd3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -316,8 +316,7 @@ namespace BirdGame
                     var effectAudio = GetEffectAudio();
                     effectAudio.clip = audioClip;
                     effectAudio.outputAudioMixerGroup = group;
-                    //撒食物音效调整
-                    effectAudio.volume = 0.22f; //降低音量0.22
+                    effectAudio.volume = this.GetModel<ISaveModel>().MusicSettingData.effectVolume;
 
                     // 为撒食物音效设置特殊参数
                     if (type == EffectType.DropFood)

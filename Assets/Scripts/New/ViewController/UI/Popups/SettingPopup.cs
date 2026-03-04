@@ -21,6 +21,7 @@ namespace BirdGame
         private static extern void ExitProcess(int ExitCode);
         
         public TMP_Dropdown screenDropdown;
+        public TMP_Dropdown volumeDropdown;
         public TMP_Dropdown languageDropdown;
         public Button quitButton;
         public Button tutorialButton;
@@ -34,16 +35,19 @@ namespace BirdGame
 
         private List<SystemLanguage> languages = new List<SystemLanguage>();
         private bool isScreenExpend = false;
+        private bool isVloumeExpend = false;
         private bool isLanguageExpend = false;
         private float moveHeight = 0;
         private float deleteY;
         private float tutorailY;
         private float quitY;
         private float languageY;
+        private float volumeY;
         private RectTransform deleteRect;
         private RectTransform tutorialRect;
         private RectTransform quitRect;
         private RectTransform languageRect;
+        private RectTransform volumeRect;
         private bool isChangingMode = false; // 防止键盘切换时触发onValueChanged导致循环
         private Canvas canvas;
         
@@ -221,11 +225,13 @@ namespace BirdGame
             tutorialRect = tutorialButton.GetComponent<RectTransform>();
             quitRect = quitButton.GetComponent<RectTransform>();
             languageRect = languageDropdown.GetComponent<RectTransform>();
+            volumeRect = volumeDropdown.GetComponent<RectTransform>();
 
             deleteY = deleteRect.anchoredPosition.y;
             tutorailY = tutorialRect.anchoredPosition.y;
             quitY = quitRect.anchoredPosition.y;
             languageY = languageRect.anchoredPosition.y;
+            volumeY = volumeRect.anchoredPosition.y;
             
             tutorialButton.onClick.AddListener(() =>
             {
@@ -265,6 +271,12 @@ namespace BirdGame
             InitializeScreenDropdown();
             //初始化语言
             InitializeLanguageDropdown();
+            
+            volumeDropdown.ClearOptions();
+            volumeDropdown.AddOptions(new List<TMP_Dropdown.OptionData>()
+            {
+                new TMP_Dropdown.OptionData("Effect Volume"),
+            });
             
             screenDropdown.onValueChanged.AddListener(id =>
             {
@@ -346,6 +358,15 @@ namespace BirdGame
                 isScreenExpend = false;
                 screenDropdown.GetComponent<Image>().sprite = dropSps[0];
             }
+            
+            if (!isVloumeExpend && volumeDropdown.IsExpanded)
+            {
+                isVloumeExpend = true;
+            }
+            else if (isVloumeExpend && !volumeDropdown.IsExpanded)
+            {
+                isVloumeExpend = false;
+            }
 
             if (!isLanguageExpend && languageDropdown.IsExpanded)
             {
@@ -360,14 +381,25 @@ namespace BirdGame
 
             if (isScreenExpend)
             {
-                languageRect.anchoredPosition = new Vector2(0, languageY - 204);
+                volumeRect.anchoredPosition = new Vector2(0, volumeY - 204);
+            }
+            else
+            {
+                volumeRect.anchoredPosition = new Vector2(0, volumeY);
+            }
+            
+            
+            if (isVloumeExpend)
+            {
+                languageRect.anchoredPosition = new Vector2(0, languageY - 105);
             }
             else
             {
                 languageRect.anchoredPosition = new Vector2(0, languageY);
             }
 
-            moveHeight = (isScreenExpend ? 204 : 0) + (isLanguageExpend ? 105 : 0);
+
+            moveHeight = (isScreenExpend ? 204 : 0) + (isVloumeExpend? 105 : 0) + (isLanguageExpend ? 105 : 0);
 
             deleteRect.anchoredPosition = new Vector2(0, deleteY - moveHeight);
             tutorialRect.anchoredPosition = new Vector2(0, tutorailY - moveHeight);

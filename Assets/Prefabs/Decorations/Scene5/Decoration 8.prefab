@@ -566,6 +566,8 @@ GameObject:
   - component: {fileID: 5613375902227111113}
   - component: {fileID: 8312397845111938999}
   - component: {fileID: 2800091725133710695}
+  - component: {fileID: 6574276649048277152}
+  - component: {fileID: -2306611804747310786}
   m_Layer: 0
   m_Name: Decoration 8
   m_TagString: Untagged
@@ -651,12 +653,48 @@ MonoBehaviour:
   - serializedVersion: 2
     rgba: 4291348680
   - serializedVersion: 2
-    rgba: 4289769648
+    rgba: 4294557891
   - serializedVersion: 2
     rgba: 4290897145
   - serializedVersion: 2
     rgba: 4291348680
   sr: {fileID: 1788447028003223345}
+--- !u!114 &6574276649048277152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3012990827443070192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8696a8b13b1b40dbb22d4f123937e296, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colors:
+  - serializedVersion: 2
+    rgba: 4294967295
+  - serializedVersion: 2
+    rgba: 4291348680
+  - serializedVersion: 2
+    rgba: 4294557891
+  - serializedVersion: 2
+    rgba: 4290897145
+  - serializedVersion: 2
+    rgba: 4291348680
+  sr: {fileID: 8116594790089562277}
+--- !u!114 &-2306611804747310786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3012990827443070192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f90d5e1aeefad2458a912d2a1dddd3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3399968892424376433
 GameObject:
   m_ObjectHideFlags: 0

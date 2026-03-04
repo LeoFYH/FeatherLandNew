@@ -18,6 +18,8 @@ namespace BirdGame
         private SceneEgg currentEgg = null;
         [ShowInInspector, BoxGroup("场景商店配置"), Title("饰品配置"), HideLabel]
         private SceneDecoration currentDecoration = null;
+        [BoxGroup("场景商店配置"), LabelText("能否拖拽")]
+        public bool canDrag = false;
 
         [OnInspectorInit]
         private void OnInit()
@@ -77,7 +79,6 @@ namespace BirdGame
         
         [HideInInspector]
         public List<SceneDecoration> sceneDecorations = new List<SceneDecoration>();
-        
         [TableList(ShowIndexLabels = true), BoxGroup("工具配置")]
         public ToolItem[] tools;
     }

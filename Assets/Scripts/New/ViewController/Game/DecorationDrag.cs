@@ -14,7 +14,7 @@ namespace BirdGame
         private void Start()
         {
             mainCamera = Camera.main;
-            spriteRenderer = GetComponent<SpriteRenderer>();
+            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
             
             // 添加碰撞器以便更好地检测鼠标
             if (GetComponent<Collider2D>() == null)
@@ -33,6 +33,9 @@ namespace BirdGame
         
         private void OnMouseDown()
         {
+            if(!this.GetModel<IConfigModel>().ShopConfig.canDrag)
+                return;
+            
             isDragging = true;
             Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
             offset = transform.position - mouseWorldPos;
@@ -40,6 +43,9 @@ namespace BirdGame
         
         private void OnMouseDrag()
         {
+            if(!this.GetModel<IConfigModel>().ShopConfig.canDrag)
+                return;
+            
             if (isDragging)
             {
                 Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
@@ -69,6 +75,9 @@ namespace BirdGame
         
         private void OnMouseUp()
         {
+            if(!this.GetModel<IConfigModel>().ShopConfig.canDrag)
+                return;
+            
             isDragging = false;
             
             // 检查最终位置是否在地面上

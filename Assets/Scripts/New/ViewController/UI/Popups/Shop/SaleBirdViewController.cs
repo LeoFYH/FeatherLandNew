@@ -104,62 +104,67 @@ namespace BirdGame
             });
             releaseAll.onClick.AddListener(() =>
             {
-                bool isRelease = false;
-                int count = birdItems.Count;
-                // 从后往前删除，避免索引变化导致的问题
-                for (int i = count - 1; i >= 0; i--)
+                this.GetSystem<IUISystem>().ShowConfirm("是否全部放飞？", () =>
                 {
-                    if (birdItems[i].lockToggle.isOn)
+                    bool isRelease = false;
+                    int count = birdItems.Count;
+                    // 从后往前删除，避免索引变化导致的问题
+                    for (int i = count - 1; i >= 0; i--)
                     {
-                        continue;
-                    }
+                        if (birdItems[i].lockToggle.isOn)
+                        {
+                            continue;
+                        }
 
-                    isRelease = true;
-                    
-                    // 先从IBirdModel中移除鸟
-                    if (mapIndex == this.GetModel<ISaveModel>().BirdInfoData.currentMap && i < this.GetModel<IBirdModel>().BirdList.Count)
-                    {
-                        var birdData = this.GetModel<IBirdModel>().BirdList[i];
-                        if (birdData.bird.isSmall)
+                        isRelease = true;
+
+                        // 先从IBirdModel中移除鸟
+                        if (mapIndex == this.GetModel<ISaveModel>().BirdInfoData.currentMap &&
+                            i < this.GetModel<IBirdModel>().BirdList.Count)
                         {
-                            this.GetModel<IAccountModel>().Coins.Value += birdData.individualPriceSmall;
-                        }
-                        else
-                        {
-                            this.GetModel<IAccountModel>().Coins.Value += birdData.individualPriceBig;
-                        }
-                        this.GetModel<IBirdModel>().RemoveBird(i);
-                    }
-                    else
-                    {
-                        // 如果不在当前地图或IBirdModel中没有数据，则从存档中获取数据
-                        if (i < this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.Count)
-                        {
-                            var data = this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList[i];
-                            if (data.isSmall)
+                            var birdData = this.GetModel<IBirdModel>().BirdList[i];
+                            if (birdData.bird.isSmall)
                             {
-                                this.GetModel<IAccountModel>().Coins.Value += data.individualPriceSmall;
+                                this.GetModel<IAccountModel>().Coins.Value += birdData.individualPriceSmall;
                             }
                             else
                             {
-                                this.GetModel<IAccountModel>().Coins.Value += data.individualPriceBig;
+                                this.GetModel<IAccountModel>().Coins.Value += birdData.individualPriceBig;
+                            }
+
+                            this.GetModel<IBirdModel>().RemoveBird(i);
+                        }
+                        else
+                        {
+                            // 如果不在当前地图或IBirdModel中没有数据，则从存档中获取数据
+                            if (i < this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.Count)
+                            {
+                                var data = this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList[i];
+                                if (data.isSmall)
+                                {
+                                    this.GetModel<IAccountModel>().Coins.Value += data.individualPriceSmall;
+                                }
+                                else
+                                {
+                                    this.GetModel<IAccountModel>().Coins.Value += data.individualPriceBig;
+                                }
                             }
                         }
-                    }
-                    
-                    // 再从存档中移除鸟数据
-                    if (i < this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.Count)
-                        this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.RemoveAt(i);
-                }
 
-                if (isRelease)
-                {
-                    // 同步数据到存档
-                    this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
-                    RefreshBirdList();
-                    RefreshName(); // 刷新容量显示
-                    this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
-                }
+                        // 再从存档中移除鸟数据
+                        if (i < this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.Count)
+                            this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList.RemoveAt(i);
+                    }
+
+                    if (isRelease)
+                    {
+                        // 同步数据到存档
+                        this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
+                        RefreshBirdList();
+                        RefreshName(); // 刷新容量显示
+                        this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
+                    }
+                });
             });
             RefreshButtons();
             this.RegisterEvent<RefreshSaleBirdEvent>(evt =>
