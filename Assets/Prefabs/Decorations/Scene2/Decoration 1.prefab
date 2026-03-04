@@ -43,6 +43,7 @@ GameObject:
   - component: {fileID: 7335666988186969635}
   - component: {fileID: 345647327506789621}
   - component: {fileID: 1706029302268114749}
+  - component: {fileID: 2268215730134491352}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Decoration
@@ -303,6 +304,18 @@ PolygonCollider2D:
       - {x: -1.05, y: 1.4499999}
       - {x: -1.05, y: 1.4599999}
   m_UseDelaunayMesh: 0
+--- !u!114 &2268215730134491352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2221285016626137168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f90d5e1aeefad2458a912d2a1dddd3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4463724722352328304
 GameObject:
   m_ObjectHideFlags: 0
@@ -315,7 +328,6 @@ GameObject:
   - component: {fileID: 3260257077749394965}
   - component: {fileID: 1941383745310756757}
   - component: {fileID: 489489841158258131}
-  - component: {fileID: 731335230922472544}
   m_Layer: 0
   m_Name: Decoration 1
   m_TagString: Untagged
@@ -420,18 +432,6 @@ MonoBehaviour:
   backgroundPadding: {x: 10, y: 5}
   cornerRadius: 10
   isHovering: 0
---- !u!114 &731335230922472544
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4463724722352328304}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f90d5e1aeefad2458a912d2a1dddd3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &5899726503973276853
 GameObject:
   m_ObjectHideFlags: 0

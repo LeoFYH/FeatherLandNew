@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2215999630940848556}
   - component: {fileID: 3244015245438639924}
   - component: {fileID: 7149505083618974007}
+  - component: {fileID: 7936482779451466355}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Decoration
@@ -601,6 +602,18 @@ PolygonCollider2D:
       - {x: -0.01, y: 0.64}
       - {x: 0, y: 0.64}
   m_UseDelaunayMesh: 0
+--- !u!114 &7936482779451466355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1987841749456683779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f90d5e1aeefad2458a912d2a1dddd3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2929794707948516033
 GameObject:
   m_ObjectHideFlags: 0
@@ -612,7 +625,6 @@ GameObject:
   - component: {fileID: 2574244487561079595}
   - component: {fileID: 8911403977587701832}
   - component: {fileID: 5796031203496234877}
-  - component: {fileID: 3816523090855391459}
   m_Layer: 0
   m_Name: Decoration 4
   m_TagString: Untagged
@@ -673,15 +685,3 @@ MonoBehaviour:
   - serializedVersion: 2
     rgba: 4291348680
   sr: {fileID: 2215999630940848556}
---- !u!114 &3816523090855391459
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2929794707948516033}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f90d5e1aeefad2458a912d2a1dddd3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

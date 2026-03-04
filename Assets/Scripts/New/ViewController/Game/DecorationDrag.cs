@@ -16,19 +16,19 @@ namespace BirdGame
             mainCamera = Camera.main;
             spriteRenderer = GetComponentInChildren<SpriteRenderer>();
             
-            // 添加碰撞器以便更好地检测鼠标
-            if (GetComponent<Collider2D>() == null)
-            {
-                BoxCollider2D collider = gameObject.AddComponent<BoxCollider2D>();
-                // 根据 Sprite 的大小设置碰撞器
-                if (spriteRenderer != null && spriteRenderer.sprite != null)
-                {
-                    collider.size = spriteRenderer.sprite.bounds.size;
-                }
-            }
+            // // 添加碰撞器以便更好地检测鼠标
+            // if (spriteRenderer.GetComponent<Collider2D>() == null)
+            // {
+            //     BoxCollider2D collider = spriteRenderer.gameObject.AddComponent<BoxCollider2D>();
+            //     // 根据 Sprite 的大小设置碰撞器
+            //     if (spriteRenderer != null && spriteRenderer.sprite != null)
+            //     {
+            //         collider.size = spriteRenderer.sprite.bounds.size;
+            //     }
+            // }
             
             // 记录初始位置为有效位置
-            lastValidPosition = transform.position;
+            lastValidPosition = transform.parent.position;
         }
         
         private void OnMouseDown()
@@ -38,7 +38,7 @@ namespace BirdGame
             
             isDragging = true;
             Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-            offset = transform.position - mouseWorldPos;
+            offset = transform.parent.position - mouseWorldPos;
         }
         
         private void OnMouseDrag()
@@ -57,7 +57,7 @@ namespace BirdGame
                 {
                     // 在地面上：正常显示，更新位置
                     SetVisualFeedback(true);
-                    transform.position = newPosition;
+                    transform.parent.position = newPosition;
                     lastValidPosition = newPosition;
                 }
                 else
@@ -68,8 +68,8 @@ namespace BirdGame
                 }
                 
                 // 限制在屏幕边界内
-                Vector3 clampedPosition = ClampToScreenBounds(transform.position);
-                transform.position = clampedPosition;
+                Vector3 clampedPosition = ClampToScreenBounds(transform.parent.position);
+                transform.parent.position = clampedPosition;
             }
         }
         
@@ -81,17 +81,17 @@ namespace BirdGame
             isDragging = false;
             
             // 检查最终位置是否在地面上
-            if (!IsOnGround(transform.position))
+            if (!IsOnGround(transform.parent.position))
             {
                 // 如果最终位置不在地面上，回到最后一个有效位置
-                transform.position = lastValidPosition;
+                transform.parent.position = lastValidPosition;
                 // string text = this.GetSystem<ILocalizationSystem>().GetString("Decorations can only be placed on the ground!");
                 // this.GetSystem<IUISystem>().ShowPrompt(text);
             }
             else
             {
                 // 在地面上，更新最后一个有效位置
-                lastValidPosition = transform.position;
+                lastValidPosition = transform.parent.position;
             }
             
             // 恢复正常显示

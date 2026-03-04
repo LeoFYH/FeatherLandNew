@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3af29a6e86b04fca88f7fd9ffc287542, type: 3}
   m_Name: ShopConfig
   m_EditorClassIdentifier: 
+  canDrag: 1
   startCoins: 10
   coinsLimit: 500000
   sceneEggs:
@@ -1518,7 +1519,6 @@ MonoBehaviour:
       isGround: 0
       isVisible: 1
       preview: {fileID: 0}
-  canDrag: 0
   tools:
   - name: Food
     isVisible: 1
