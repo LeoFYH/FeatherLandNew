@@ -18,8 +18,6 @@ namespace BirdGame
         private SceneEgg currentEgg = null;
         [ShowInInspector, BoxGroup("场景商店配置"), Title("饰品配置"), HideLabel]
         private SceneDecoration currentDecoration = null;
-        [BoxGroup("场景商店配置"), LabelText("能否拖拽")]
-        public bool canDrag = false;
 
         [OnInspectorInit]
         private void OnInit()
@@ -69,6 +67,8 @@ namespace BirdGame
         }
 #endif
 
+        [LabelText("能否拖拽"), BoxGroup("信息")]
+        public bool canDrag = false;
         [LabelText("初始金币"), BoxGroup("信息")]
         public int startCoins = 200;
         [LabelText("金币上限"), BoxGroup("信息")]
