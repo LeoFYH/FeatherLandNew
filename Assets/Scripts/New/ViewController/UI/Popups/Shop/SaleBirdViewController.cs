@@ -113,7 +113,7 @@ namespace BirdGame
             });
             releaseAll.onClick.AddListener(() =>
             {
-                this.GetSystem<IUISystem>().ShowConfirm("是否全部放飞？", () =>
+                this.GetSystem<IUISystem>().ShowConfirm(this.GetSystem<ILocalizationSystem>().GetString("ReleaseAllConfirm"), () =>
                 {
                     bool isRelease = false;
                     int count = birdItems.Count;
