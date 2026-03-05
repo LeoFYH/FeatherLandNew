@@ -510,7 +510,7 @@ namespace BirdGame
                     // 如果该环境音正在淡入淡出，不直接设置音量，让协程控制
                     if (!environmentFadeCoroutines.ContainsKey(index))
                     {
-                        audio.volume = v * radioModel.Volume.Value;
+                        audio.volume = v * radioModel.EnvironmentVolume.Value;
                     }
                 });
                 radioModel.EnvironmentMutes[index].Register(v =>
@@ -518,6 +518,13 @@ namespace BirdGame
                     if (!environmentFadeCoroutines.ContainsKey(index))
                     {
                         audio.mute = v;
+                    }
+                });
+                radioModel.EnvironmentVolume.Register(v =>
+                {
+                    if (!environmentFadeCoroutines.ContainsKey(index))
+                    {
+                        audio.volume = v * radioModel.EnvironmentVolumes[index].Value;
                     }
                 });
             }
