@@ -18,6 +18,8 @@ namespace BirdGame
         void FullscreenMode();
         void WindowedMode();
         bool IsWallpaperModeActive();
+        /// <summary>Try to give the game window keyboard focus then immediately send it back in Z-order so IME might work while staying in wallpaper. Returns true if attempted.</summary>
+        bool TryGiveFocusThenSendBackInWallpaper();
         bool IsRunningAsAdministrator();
         bool RequestAdministratorPrivileges();
     }
@@ -646,6 +648,28 @@ namespace BirdGame
         }
 
         public bool IsWallpaperModeActive() => isWallpaperMode;
+
+        /// <summary>Give the game window focus then immediately send it back in Z-order so the system may still deliver IME to us while we stay visually behind the desktop.</summary>
+        public bool TryGiveFocusThenSendBackInWallpaper()
+        {
+            if (!isWallpaperMode || windowHandle == IntPtr.Zero)
+                return false;
+            try
+            {
+                InitializeWindowHandle();
+                SetForegroundWindow(windowHandle);
+                SetFocus(windowHandle);
+                // Send window back to bottom of its parent (WorkerW) so it stays behind desktop; keep position/size
+                SetWindowPos(windowHandle, HWND_BOTTOM, 0, 0, 0, 0, (uint)(SWP_NOMOVE | SWP_NOSIZE));
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[TryGiveFocusThenSendBackInWallpaper] {e.Message}");
+                return false;
+            }
+        }
+
         public bool IsRunningAsAdministrator() => false;
         public bool RequestAdministratorPrivileges() => false;
 #else
@@ -655,6 +679,7 @@ namespace BirdGame
         public void FullscreenMode() { Debug.LogWarning("全屏模式仅在 Windows 平台支持"); }
         public void WindowedMode() { Debug.LogWarning("窗口模式仅在 Windows 平台支持"); }
         public bool IsWallpaperModeActive() { return false; }
+        public bool TryGiveFocusThenSendBackInWallpaper() { return false; }
         public bool IsRunningAsAdministrator() { return false; }
         public bool RequestAdministratorPrivileges() { return false; }
 #endif
