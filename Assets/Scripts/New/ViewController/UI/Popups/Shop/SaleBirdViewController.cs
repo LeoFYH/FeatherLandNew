@@ -19,6 +19,7 @@ namespace BirdGame
         public Toggle sortingToggle0;
         public Toggle sortingToggle1;
         public Toggle sortingToggle2;
+        public Toggle sortingToggle3;
         public Button releaseAll;
         public LocalizationText nameText;
         public TextMeshProUGUI capacityText;
@@ -75,6 +76,14 @@ namespace BirdGame
                     Sorting();
                 }
             });
+            sortingToggle3.onValueChanged.AddListener(isOn =>
+            {
+                if (isOn)
+                {
+                    sortType = 3;
+                    Sorting();
+                }
+            });
             leftButton.onClick.AddListener(() =>
             {
                 if (mapIndex > 0)
@@ -104,7 +113,7 @@ namespace BirdGame
             });
             releaseAll.onClick.AddListener(() =>
             {
-                this.GetSystem<IUISystem>().ShowConfirm("是否全部放飞？", () =>
+                this.GetSystem<IUISystem>().ShowConfirm(this.GetSystem<ILocalizationSystem>().GetString("ReleaseAllConfirm"), () =>
                 {
                     bool isRelease = false;
                     int count = birdItems.Count;
@@ -277,8 +286,33 @@ namespace BirdGame
         private void Sorting()
         {
             var list = new List<int>();
-            int current = 0;
             var config = this.GetModel<IConfigModel>().BirdConfig;
+
+            if (sortType == 3)
+            {
+                foreach (var item in birdItems)
+                {
+                    if(list.Contains(item.index))
+                        continue;
+                    list.Add(item.index);
+                    foreach (var searchItem in birdItems)
+                    {
+                        if(searchItem == item)
+                            continue;
+                        if (searchItem.id == item.id)
+                        {
+                            list.Add(searchItem.index);
+                        }
+                    }
+                }
+                int count1 = list.Count;
+                for (int i = 0; i < count1; i++)
+                {
+                    birdItems[list[i]].transform.SetSiblingIndex(i);
+                }
+                return;
+            }
+
             foreach (var item in birdItems)
             {
                 bool isSert = false;
@@ -308,7 +342,7 @@ namespace BirdGame
                             break;
                         }
                     }
-                    else
+                    else if(sortType == 2)
                     {
                         var data1 = this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList[item.index];
                         var data2 = this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList[list[i]];

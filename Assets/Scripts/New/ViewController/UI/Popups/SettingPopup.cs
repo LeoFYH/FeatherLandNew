@@ -395,7 +395,7 @@ namespace BirdGame
             
             if (isVloumeExpend)
             {
-                languageRect.anchoredPosition = new Vector2(0, languageY - 105 - (isScreenExpend ? 204 : 0));
+                languageRect.anchoredPosition = new Vector2(0, languageY - 204 - (isScreenExpend ? 204 : 0));
             }
             else
             {
@@ -403,7 +403,7 @@ namespace BirdGame
             }
 
 
-            moveHeight = (isScreenExpend ? 204 : 0) + (isVloumeExpend? 105 : 0) + (isLanguageExpend ? 105 : 0);
+            moveHeight = (isScreenExpend ? 204 : 0) + (isVloumeExpend? 204 : 0) + (isLanguageExpend ? 105 : 0);
 
             deleteRect.anchoredPosition = new Vector2(0, deleteY - moveHeight);
             tutorialRect.anchoredPosition = new Vector2(0, tutorailY - moveHeight);
@@ -434,6 +434,7 @@ namespace BirdGame
                     // Performance optimization: 60 FPS for wallpaper mode (needed for smooth cursor movement)
                     //Application.targetFrameRate = 60;
                     //OnDemandRendering.renderFrameInterval = 1;
+                    this.GetSystem<IUISystem>().ShowPrompt(this.GetSystem<ILocalizationSystem>().GetString("Wallpaper Mode currently supports single-monitor only."));
                     Debug.Log("WallpaperMode (60 FPS - 流畅光标)");
                     break;
                 case 2:

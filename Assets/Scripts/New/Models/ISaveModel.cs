@@ -105,6 +105,7 @@ namespace BirdGame
     {
         public float bgmVolume = 0.5f;
         public float effectVolume = 0.5f;
+        public float environmentVolume = 0.5f;
         public List<float> environmentVolumes = new List<float>();
         public List<bool> likes = new List<bool>();
     }

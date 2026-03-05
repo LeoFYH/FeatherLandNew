@@ -16,6 +16,7 @@ namespace BirdGame
         BindableProperty<float> CurrentTime { get; }
         List<BindableProperty<float>> EnvironmentVolumes { get; }
         List<BindableProperty<bool>> EnvironmentMutes { get; }
+        BindableProperty<float> EnvironmentVolume { get; set; }
         BindableProperty<bool> IsMuteSong { get; }
     }
 
@@ -36,6 +37,7 @@ namespace BirdGame
         public BindableProperty<float> CurrentTime { get; } = new BindableProperty<float>();
         public List<BindableProperty<float>> EnvironmentVolumes { get; } = new List<BindableProperty<float>>();
         public List<BindableProperty<bool>> EnvironmentMutes { get; } = new List<BindableProperty<bool>>();
+        public BindableProperty<float> EnvironmentVolume { get; set; } = new BindableProperty<float>(0.5f);
         public BindableProperty<bool> IsMuteSong { get; } = new BindableProperty<bool>();
     }
 }
