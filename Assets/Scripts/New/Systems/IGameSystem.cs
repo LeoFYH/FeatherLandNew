@@ -812,7 +812,7 @@ namespace BirdGame
                 accountData.sceneDecorationInfos.Add(new SceneDecorationInfo());
             }
             int count = accountData.sceneDecorationInfos[mapIndex].decorations.Count;
-            Dictionary<int, int> decount = new Dictionary<int, int>();
+            //Dictionary<int, int> decount = new Dictionary<int, int>();
             for (int i = 0; i < count; i++)
             {
                 var decorationInfo = accountData.sceneDecorationInfos[mapIndex].decorations[i];
@@ -863,49 +863,32 @@ namespace BirdGame
                     }
                 }
                 
-                for (int j = 0; j < decorationInfo.count; j++)
+                // 先确保 position 列表有足够的容量
+                while (decorationInfo.position.Count < decorationInfo.count)
                 {
-                    // 创建一个 GameObject 来承载 Sprite
-                    // GameObject decoration = new GameObject("Decoration");
-                    // Sprite spriteToUse = decorationItem.sceneSprite != null
-                    //     ? decorationItem.sceneSprite
-                    //     : decorationItem.icon;
-                    //
-                    // // 添加 SpriteRenderer 组件
-                    // SpriteRenderer spriteRenderer = decoration.AddComponent<SpriteRenderer>();
-                    // spriteRenderer.sprite = spriteToUse; // 设置 Sprite
-                    // spriteRenderer.sortingOrder = 3;
-                    // spriteRenderer.spriteSortPoint = SpriteSortPoint.Pivot;
-                    // if (!decorationItem.isGround)
-                    //     decoration.AddComponent<DepthMask>();
-                    //
-                    // // 设置大小
-                    // decoration.transform.localScale = Vector3.one * decorationItem.scale;
-                    //
-                    // // 添加碰撞器用于点击检测
-                    // BoxCollider2D collider = decoration.AddComponent<BoxCollider2D>();
-                    // collider.size = spriteRenderer.sprite.bounds.size;
-                    //
-                    // // 添加点击检测组件
-                    // DecorationClickHandler clickHandler = decoration.AddComponent<DecorationClickHandler>();
-                    // clickHandler.Initialize(i, j);
-                    int id = i;
-                    int index = j;
-                    this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>(decorationItem.prefab.AssetGUID,
-                        obj =>
-                        {
-                            var decoration = GameObject.Instantiate(obj);
-                            DecorationClickHandler clickHandler =
-                                decoration.GetComponentInChildren<DecorationClickHandler>();
-                            clickHandler.Initialize(id, index);
-                            if (decorationInfo.position.Count <= index)
-                            {
-                                decorationInfo.position.Add(Vector3.zero);
-                            }
-
-                            decoration.transform.position = decorationInfo.position[index];
-                        });
+                    decorationInfo.position.Add(Vector3.zero);
                 }
+                
+                // 只加载一次 Prefab，然后多次实例化，避免异步问题
+                int finalId = i;
+                this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>(decorationItem.prefab.AssetGUID,
+                    obj =>
+                    {
+                        // 实例化所有该类型的装饰品
+                        for (int j = 0; j < decorationInfo.count; j++)
+                        {
+                            var decoration = GameObject.Instantiate(obj, decorationInfo.position[j], Quaternion.identity);
+                            DecorationClickHandler clickHandler = decoration.GetComponentInChildren<DecorationClickHandler>();
+                            if (clickHandler != null)
+                            {
+                                clickHandler.Initialize(finalId, j);
+                            }
+                            else
+                            {
+                                Debug.LogError($"Decoration {finalId} at index {j} 缺少 DecorationClickHandler 组件");
+                            }
+                        }
+                    });
             }
         }
 
