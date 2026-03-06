@@ -288,28 +288,35 @@ namespace BirdGame
             var list = new List<int>();
             var config = this.GetModel<IConfigModel>().BirdConfig;
 
-            if (sortType == 3)
+            if (sortType == 3) // 按种类(class)再按花色(birds数组顺序)排：同种类不同花色挨在一起
             {
+                int GetBirdIndexInClass(int birdId, int cIndex)
+                {
+                    var birdsList = config.sceneBirds[mapIndex].birdClasses[cIndex].birds;
+                    for (int k = 0; k < birdsList.Count; k++)
+                        if (birdsList[k].id == birdId) return k;
+                    return 0;
+                }
                 foreach (var item in birdItems)
                 {
-                    if(list.Contains(item.index))
-                        continue;
-                    list.Add(item.index);
-                    foreach (var searchItem in birdItems)
+                    config.GetBird(item.id, mapIndex, out int classIndex1);
+                    int birdIndex1 = GetBirdIndexInClass(item.id, classIndex1);
+                    bool isSert = false;
+                    for (int i = 0; i < list.Count; i++)
                     {
-                        if(searchItem == item)
-                            continue;
-                        if (searchItem.id == item.id)
+                        config.GetBird(birdItems[list[i]].id, mapIndex, out int classIndex2);
+                        int birdIndex2 = GetBirdIndexInClass(birdItems[list[i]].id, classIndex2);
+                        if (classIndex2 > classIndex1 || (classIndex2 == classIndex1 && birdIndex2 > birdIndex1))
                         {
-                            list.Add(searchItem.index);
+                            list.Insert(i, item.index);
+                            isSert = true;
+                            break;
                         }
                     }
+                    if (!isSert) list.Add(item.index);
                 }
-                int count1 = list.Count;
-                for (int i = 0; i < count1; i++)
-                {
+                for (int i = 0; i < list.Count; i++)
                     birdItems[list[i]].transform.SetSiblingIndex(i);
-                }
                 return;
             }
 
