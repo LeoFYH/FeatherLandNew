@@ -988,12 +988,11 @@ namespace BirdGame
                     return result.gameObject;
                 }
                 
-                // Look for slider drag handlers
-                SliderBarClickHandler sliderHandler = result.gameObject.GetComponent<SliderBarClickHandler>();
+                // Look for slider drag handlers (self or parent, so Fill/Handle hit still works in wallpaper mode)
+                SliderBarClickHandler sliderHandler = result.gameObject.GetComponent<SliderBarClickHandler>()
+                    ?? result.gameObject.GetComponentInParent<SliderBarClickHandler>();
                 if (sliderHandler != null)
-                {
-                    return result.gameObject;
-                }
+                    return sliderHandler.gameObject;
                 
                 // Look for Scrollbar components (check the object and its parents)
                 Transform current = result.gameObject.transform;
