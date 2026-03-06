@@ -69,6 +69,13 @@ namespace BirdGame
 
         private static LowLevelKeyboardProc _keyboardProc = KeyboardHookCallback;
         private static GameObject _focusedTMPInputField = null;
+        /// <summary>True after we called TryGiveFocusThenSendBackInWallpaper so HookTMPInputHandler can try reading Input.inputString (IME may work if focus was retained).</summary>
+        public static bool AttemptedFocusWhileWallpaper { get; set; }
+        /// <summary>True when we switched to fullscreen for IME input; HookTMPInputHandler switches back to wallpaper on deselect/submit.</summary>
+        public static bool SwitchedToFullscreenForInput { get; set; }
+        /// <summary>Set when TMP input focused in wallpaper; GiveFocusToProxy runs on next Update (main thread).</summary>
+        private static bool _pendingImeProxyFocus;
+
         private static GameObject _currentHoveredPointerEvent = null;
         private static HashSet<GameObject> _currentHoveredUIElements = new HashSet<GameObject>();
 
@@ -354,6 +361,11 @@ namespace BirdGame
             // Send to TMP InputField if focused
             if (_focusedTMPInputField != null)
             {
+#if UNITY_STANDALONE_WIN
+                // When IME proxy is active (or focus trick), character input comes from proxy/Input.inputString; skip from hook
+                if ((ImeProxyWindow.IsProxyActive || AttemptedFocusWhileWallpaper) && keyData.keyType == HookTMPInputHandler.KeyType.Character)
+                    return;
+#endif
                 SendKeyEventToTMPInputField(keyData);
             }
 
@@ -976,12 +988,11 @@ namespace BirdGame
                     return result.gameObject;
                 }
                 
-                // Look for slider drag handlers
-                SliderBarClickHandler sliderHandler = result.gameObject.GetComponent<SliderBarClickHandler>();
+                // Look for slider drag handlers (self or parent, so Fill/Handle hit still works in wallpaper mode)
+                SliderBarClickHandler sliderHandler = result.gameObject.GetComponent<SliderBarClickHandler>()
+                    ?? result.gameObject.GetComponentInParent<SliderBarClickHandler>();
                 if (sliderHandler != null)
-                {
-                    return result.gameObject;
-                }
+                    return sliderHandler.gameObject;
                 
                 // Look for Scrollbar components (check the object and its parents)
                 Transform current = result.gameObject.transform;
@@ -1575,6 +1586,19 @@ namespace BirdGame
 
         private void Update()
         {
+#if UNITY_STANDALONE_WIN
+            if (_pendingImeProxyFocus)
+            {
+                _pendingImeProxyFocus = false;
+                if (ImeProxyWindow.GiveFocusToProxy())
+                {
+                    ImeProxyWindow.IsProxyActive = true;
+                    if (showDebugLog)
+                        Debug.Log("[SimpleMouseForwarder] IME proxy window focused for input (main thread)");
+                }
+            }
+#endif
+
             // Performance optimization: Cache GetForegroundWindowTitle() result per frame
             // This expensive Windows API call was being called twice every frame!
             if (Time.frameCount != lastForegroundWindowCheckFrame)
@@ -1821,6 +1845,11 @@ namespace BirdGame
             }
 
             _focusedTMPInputField = null;
+            AttemptedFocusWhileWallpaper = false;
+#if UNITY_STANDALONE_WIN
+            ImeProxyWindow.ReleaseProxyFocus();
+            ImeProxyWindow.IsProxyActive = false;
+#endif
 
             // Performance optimization: Reuse PointerEventData
             if (reusablePointerData == null)
@@ -1852,6 +1881,16 @@ namespace BirdGame
                     {
                         tmpHandler.ActivateInputField();
                         _focusedTMPInputField = hitObject;
+
+#if UNITY_STANDALONE_WIN
+                        // Use IME proxy: request focus on main thread (SimulateMouseClick may run from hook thread)
+                        if (GameApp.Interface != null)
+                        {
+                            var fullScreen = GameApp.Interface.GetUtility<IFullScreenUtility>();
+                            if (fullScreen != null && fullScreen.IsWallpaperModeActive())
+                                _pendingImeProxyFocus = true;
+                        }
+#endif
 
                         // PASS THE CLICK POSITION TO THE HANDLER
                         if (tmpHandler.enableClickToPositionCaret)

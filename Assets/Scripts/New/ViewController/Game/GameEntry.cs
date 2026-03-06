@@ -122,6 +122,7 @@ namespace BirdGame
                     break;
                 case 1:
                     this.GetUtility<IFullScreenUtility>().WallpaperMode();
+                     this.GetSystem<IUISystem>().ShowPrompt(this.GetSystem<ILocalizationSystem>().GetString("Wallpaper Mode currently supports single-monitor only."));
                     // Performance optimization: 60 FPS for wallpaper mode (needed for smooth cursor movement)
                     // Lower FPS causes cursor lag, so we keep it higher here
                    // Application.targetFrameRate = 60;

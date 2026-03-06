@@ -6,6 +6,7 @@ using System.Collections;
 using QFramework;
 using System.Runtime.InteropServices;
 using System;
+using BirdGame;
 
 public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
@@ -79,13 +80,18 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
         }
             
         originalText = inputField != null ? inputField.text : "";
-        
-        // if (inputField != null)
-        // {
-        //     inputField.onSubmit.AddListener(OnSubmit);
-        //     inputField.onDeselect.AddListener(OnDeselect);
-        //     inputField.onSelect.AddListener(OnSelect);
-        // }
+
+        if (inputField != null)
+        {
+            inputField.onSubmit.AddListener(OnSubmit);
+            inputField.onDeselect.AddListener(OnDeselect);
+            inputField.onSelect.AddListener(OnSelect);
+        }
+
+#if UNITY_STANDALONE_WIN
+        // Create IME proxy window on main thread so it receives messages from Unity's message pump
+        ImeProxyWindow.EnsureCreated();
+#endif
     }
 
     private void DisableCaretRaycastTargets()
@@ -107,7 +113,102 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
     void Update()
     {
         DisableCaretRaycastTargets();
+
+#if UNITY_STANDALONE_WIN
+        // IME proxy: when active, drain received IME text and update IME composition window position to follow caret
+        if (isFocused && inputField != null && ImeProxyWindow.IsProxyActive)
+        {
+            UpdateImeCompositionPosition();
+            string input = ImeProxyWindow.GetPendingInput();
+            if (!string.IsNullOrEmpty(input))
+                ProcessInputString(input);
+        }
+        // Fallback: if focus trick was used in wallpaper (no proxy), read Input.inputString
+        else if (isFocused && inputField != null && SimpleMouseForwarder.AttemptedFocusWhileWallpaper && GameApp.Interface != null)
+        {
+            var fullScreen = GameApp.Interface.GetUtility<IFullScreenUtility>();
+            if (fullScreen != null && fullScreen.IsWallpaperModeActive())
+            {
+                string input = UnityEngine.Input.inputString;
+                if (!string.IsNullOrEmpty(input))
+                    ProcessInputString(input);
+            }
+        }
+#endif
     }
+
+    private void ProcessInputString(string input)
+    {
+        for (int i = 0; i < input.Length; i++)
+        {
+            char c = input[i];
+            if (c == '\b')
+                HandleBackspace();
+            else if (c == '\u001b')
+                CancelInput();
+            else if (c == '\n' || c == '\r')
+                HandleEnter();
+            else if (char.IsHighSurrogate(c) && i + 1 < input.Length && char.IsLowSurrogate(input[i + 1]))
+            {
+                InsertStringAtCaret(input.Substring(i, 2));
+                i++;
+            }
+            else if (IsPrintableChar(c) || char.IsSurrogate(c))
+                InsertStringAtCaret(c.ToString());
+        }
+    }
+
+    private void InsertStringAtCaret(string s)
+    {
+        if (string.IsNullOrEmpty(s) || inputField == null) return;
+        if (HasSelection())
+            ReplaceSelection(s);
+        else
+        {
+            int caretPos = inputField.caretPosition;
+            string currentText = inputField.text;
+            if (caretPos >= 0 && caretPos <= currentText.Length)
+            {
+                inputField.text = currentText.Insert(caretPos, s);
+                inputField.caretPosition = caretPos + s.Length;
+                inputField.selectionAnchorPosition = inputField.caretPosition;
+                inputField.selectionFocusPosition = inputField.caretPosition;
+            }
+        }
+    }
+
+#if UNITY_STANDALONE_WIN
+    private void UpdateImeCompositionPosition()
+    {
+        if (inputField?.textComponent == null) return;
+        TMP_Text textComponent = inputField.textComponent;
+        textComponent.ForceMeshUpdate();
+        if (textComponent.textInfo == null) return;
+
+        int caretPos = inputField.caretPosition;
+        int charCount = textComponent.textInfo.characterCount;
+        Vector3 localCaret;
+
+        if (charCount > 0 && caretPos < charCount)
+        {
+            var ci = textComponent.textInfo.characterInfo[caretPos];
+            localCaret = ci.bottomLeft;
+        }
+        else if (charCount > 0)
+        {
+            var ci = textComponent.textInfo.characterInfo[charCount - 1];
+            localCaret = ci.topRight;
+        }
+        else
+            localCaret = Vector3.zero;
+
+        Vector3 worldCaret = textComponent.rectTransform.TransformPoint(localCaret);
+        Camera cam = textComponent.canvas?.renderMode == RenderMode.ScreenSpaceCamera ? textComponent.canvas.worldCamera : null;
+        Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(cam, worldCaret);
+        int screenYWin = Screen.height - (int)screenPoint.y;
+        ImeProxyWindow.SetCompositionPosition((int)screenPoint.x, screenYWin);
+    }
+#endif
 
     private void UpdateCaretPosition(int newPosition)
     {
@@ -957,11 +1058,33 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
 
     private void OnSubmit(string text)
     {
+#if UNITY_STANDALONE_WIN
+        if (SimpleMouseForwarder.SwitchedToFullscreenForInput && GameApp.Interface != null)
+        {
+            var fullScreen = GameApp.Interface.GetUtility<IFullScreenUtility>();
+            if (fullScreen != null)
+            {
+                fullScreen.WallpaperMode();
+                SimpleMouseForwarder.SwitchedToFullscreenForInput = false;
+            }
+        }
+#endif
         SubmitInput();
     }
 
     private void OnDeselect(string text)
     {
+#if UNITY_STANDALONE_WIN
+        if (SimpleMouseForwarder.SwitchedToFullscreenForInput && GameApp.Interface != null)
+        {
+            var fullScreen = GameApp.Interface.GetUtility<IFullScreenUtility>();
+            if (fullScreen != null)
+            {
+                fullScreen.WallpaperMode();
+                SimpleMouseForwarder.SwitchedToFullscreenForInput = false;
+            }
+        }
+#endif
         isFocused = false;
         DeactivateInputField();
     }
