@@ -581,13 +581,21 @@ namespace BirdGame
                                 {
                                     sliderHandler.ReceiveDragBegin(currentMousePosition);
                                 }
-                                else
+                                                else
                                 {
-                                    // Check if it's a Scrollbar - send pointer down event
-                                    Scrollbar scrollbar = currentDragTarget.GetComponent<Scrollbar>();
-                                    if (scrollbar != null && scrollbar.interactable)
+                                    DecorationDrag decorationDrag = currentDragTarget.GetComponent<DecorationDrag>();
+                                    if (decorationDrag != null && decorationDrag.enableHookSupport)
                                     {
-                                        ForwardPointerDownToScrollbar(scrollbar, currentMousePosition);
+                                        decorationDrag.ReceiveDragBegin(currentMousePosition);
+                                    }
+                                    else
+                                    {
+                                        // Check if it's a Scrollbar - send pointer down event
+                                        Scrollbar scrollbar = currentDragTarget.GetComponent<Scrollbar>();
+                                        if (scrollbar != null && scrollbar.interactable)
+                                        {
+                                            ForwardPointerDownToScrollbar(scrollbar, currentMousePosition);
+                                        }
                                     }
                                 }
                             }
@@ -639,14 +647,12 @@ namespace BirdGame
                             Vector2 actualMousePos = GetCurrentMousePositionRealtime();
                             ClearAllHoverStates(actualMousePos, currentDragTarget);
 
-                            // Find drag target if not already found (could be DragAspect or ScrollRect)
+                            // Find drag target if not already found (could be DragAspect, ScrollRect, or DecorationDrag)
                             if (currentDragTarget == null)
                             {
                                 currentDragTarget = FindDragTarget(currentMousePosition);
                                 if (currentDragTarget == null)
-                                {
                                     currentDragTarget = FindScrollRectTarget(currentMousePosition);
-                                }
                                 
                                 // If we found a drag target, notify it about drag begin
                                 if (currentDragTarget != null)
@@ -675,11 +681,18 @@ namespace BirdGame
                                             }
                                             else
                                             {
-                                                // Check if it's a Scrollbar - send pointer down event
-                                                Scrollbar scrollbar = currentDragTarget.GetComponent<Scrollbar>();
-                                                if (scrollbar != null && scrollbar.interactable)
+                                                DecorationDrag decorationDrag = currentDragTarget.GetComponent<DecorationDrag>();
+                                                if (decorationDrag != null && decorationDrag.enableHookSupport)
                                                 {
-                                                    ForwardPointerDownToScrollbar(scrollbar, dragStartPosition);
+                                                    decorationDrag.ReceiveDragBegin(dragStartPosition);
+                                                }
+                                                else
+                                                {
+                                                    Scrollbar scrollbar = currentDragTarget.GetComponent<Scrollbar>();
+                                                    if (scrollbar != null && scrollbar.interactable)
+                                                    {
+                                                        ForwardPointerDownToScrollbar(scrollbar, dragStartPosition);
+                                                    }
                                                 }
                                             }
                                         }
@@ -713,25 +726,30 @@ namespace BirdGame
                             }
                             else
                             {
-                                // Check if it's a slider handler
-                                SliderBarClickHandler sliderHandler = currentDragTarget.GetComponent<SliderBarClickHandler>();
-                                if (sliderHandler != null)
+                                DecorationDrag decorationDrag = currentDragTarget.GetComponent<DecorationDrag>();
+                                if (decorationDrag != null && decorationDrag.enableHookSupport)
                                 {
-                                    sliderHandler.ReceiveHookMousePosition(currentMousePosition);
+                                    decorationDrag.ReceiveDrag(currentMousePosition);
                                 }
                                 else
                                 {
-                                    // Check if it's a Scrollbar
-                                    Scrollbar scrollbar = currentDragTarget.GetComponent<Scrollbar>();
-                                    if (scrollbar != null && scrollbar.interactable)
+                                    SliderBarClickHandler sliderHandler = currentDragTarget.GetComponent<SliderBarClickHandler>();
+                                    if (sliderHandler != null)
                                     {
-                                        ForwardDragToScrollbar(scrollbar, currentMousePosition);
+                                        sliderHandler.ReceiveHookMousePosition(currentMousePosition);
                                     }
                                     else
                                     {
-                                        // Otherwise, forward to scroll rect
-                                        Vector2 delta = currentMousePosition - lastMousePosition;
-                                        ForwardDragToScrollRect(currentDragTarget, delta);
+                                        Scrollbar scrollbar = currentDragTarget.GetComponent<Scrollbar>();
+                                        if (scrollbar != null && scrollbar.interactable)
+                                        {
+                                            ForwardDragToScrollbar(scrollbar, currentMousePosition);
+                                        }
+                                        else
+                                        {
+                                            Vector2 delta = currentMousePosition - lastMousePosition;
+                                            ForwardDragToScrollRect(currentDragTarget, delta);
+                                        }
                                     }
                                 }
                             }
@@ -786,28 +804,28 @@ namespace BirdGame
                                 }
                                 else
                                 {
-                                    // Check if it's a slider handler
-                                    SliderBarClickHandler sliderHandler = currentDragTarget.GetComponent<SliderBarClickHandler>();
-                                    if (sliderHandler != null)
+                                    DecorationDrag decorationDrag = currentDragTarget.GetComponent<DecorationDrag>();
+                                    if (decorationDrag != null && decorationDrag.enableHookSupport)
                                     {
-                                        sliderHandler.ReceiveDragEnd();
-                                        
-                                        if (instance != null && instance.showDebugLog)
-                                        {
-                                            Debug.Log($"[SimpleMouseForwarder] 滑块拖动结束: {currentDragTarget.name}");
-                                        }
+                                        decorationDrag.ReceiveDragEnd();
                                     }
                                     else
                                     {
-                                        // Check if it's a Scrollbar
-                                        Scrollbar scrollbar = currentDragTarget.GetComponent<Scrollbar>();
-                                        if (scrollbar != null && scrollbar.interactable)
+                                        SliderBarClickHandler sliderHandler = currentDragTarget.GetComponent<SliderBarClickHandler>();
+                                        if (sliderHandler != null)
                                         {
-                                            ForwardPointerUpToScrollbar(scrollbar, currentMousePosition);
-                                            
+                                            sliderHandler.ReceiveDragEnd();
                                             if (instance != null && instance.showDebugLog)
+                                                Debug.Log($"[SimpleMouseForwarder] 滑块拖动结束: {currentDragTarget.name}");
+                                        }
+                                        else
+                                        {
+                                            Scrollbar scrollbar = currentDragTarget.GetComponent<Scrollbar>();
+                                            if (scrollbar != null && scrollbar.interactable)
                                             {
-                                                Debug.Log($"[SimpleMouseForwarder] Scrollbar 拖动结束: {currentDragTarget.name}");
+                                                ForwardPointerUpToScrollbar(scrollbar, currentMousePosition);
+                                                if (instance != null && instance.showDebugLog)
+                                                    Debug.Log($"[SimpleMouseForwarder] Scrollbar 拖动结束: {currentDragTarget.name}");
                                             }
                                         }
                                     }
@@ -1007,6 +1025,22 @@ namespace BirdGame
                 }
             }
 
+            // 壁纸模式：UI 未命中时用 Physics2D 检测场景装饰
+            GameObject decoration = FindDecorationDragTarget(screenPosition);
+            if (decoration != null) return decoration;
+
+            return null;
+        }
+
+        private static GameObject FindDecorationDragTarget(Vector2 screenPosition)
+        {
+            Camera cam = Camera.main;
+            if (cam == null) return null;
+            Vector3 world = cam.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, 0f));
+            Collider2D hit = Physics2D.OverlapPoint(new Vector2(world.x, world.y));
+            if (hit == null) return null;
+            DecorationDrag drag = hit.GetComponentInParent<DecorationDrag>();
+            if (drag != null && drag.enableHookSupport) return drag.gameObject;
             return null;
         }
 

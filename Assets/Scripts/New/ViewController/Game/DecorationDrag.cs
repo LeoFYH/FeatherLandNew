@@ -5,12 +5,16 @@ namespace BirdGame
 {
     public class DecorationDrag : ViewControllerBase
     {
+        [Header("壁纸模式")]
+        public bool enableHookSupport = true;
+
         private bool isDragging = false;
         private Vector3 offset;
         private Camera mainCamera;
         private SpriteRenderer spriteRenderer;
         private Vector3 lastValidPosition; // 记录最后一个有效位置
-        
+        private bool isDraggingFromHook;
+
         private void Start()
         {
             mainCamera = Camera.main;
@@ -33,6 +37,7 @@ namespace BirdGame
         
         private void OnMouseDown()
         {
+            if (isDraggingFromHook) return;
             if(!this.GetModel<IConfigModel>().ShopConfig.canDrag)
                 return;
             
@@ -40,61 +45,77 @@ namespace BirdGame
             Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
             offset = transform.parent.position - mouseWorldPos;
         }
+
+        public void ReceiveDragBegin(Vector2 screenPosition)
+        {
+            if (!enableHookSupport || !this.GetModel<IConfigModel>().ShopConfig.canDrag) return;
+            isDraggingFromHook = true;
+            isDragging = true;
+            var cam = mainCamera != null ? mainCamera : Camera.main;
+            if (cam == null) return;
+            Vector3 mouseWorldPos = cam.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, 0));
+            mouseWorldPos.z = 0;
+            offset = transform.parent.position - mouseWorldPos;
+        }
+
+        public void ReceiveDrag(Vector2 screenPosition)
+        {
+            if (!enableHookSupport || !isDragging) return;
+            var cam = mainCamera != null ? mainCamera : Camera.main;
+            if (cam == null) return;
+            Vector3 mouseWorldPos = cam.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, 0));
+            mouseWorldPos.z = 0;
+            ApplyDragPosition(mouseWorldPos + offset);
+        }
+
+        public void ReceiveDragEnd()
+        {
+            if (!enableHookSupport) return;
+            isDraggingFromHook = false;
+            isDragging = false;
+            if (!IsOnGround(transform.parent.position))
+                transform.parent.position = lastValidPosition;
+            else
+                lastValidPosition = transform.parent.position;
+            SetVisualFeedback(true);
+        }
         
         private void OnMouseDrag()
         {
+            if (isDraggingFromHook) return;
             if(!this.GetModel<IConfigModel>().ShopConfig.canDrag)
                 return;
             
             if (isDragging)
+                ApplyDragPosition(mainCamera.ScreenToWorldPoint(Input.mousePosition) + offset);
+        }
+
+        private void ApplyDragPosition(Vector3 newPosition)
+        {
+            newPosition.z = 0;
+            if (IsOnGround(newPosition))
             {
-                Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-                Vector3 newPosition = mouseWorldPos + offset;
-                newPosition.z = 0; // 保持Z轴为0
-                
-                // 检查是否在地面上
-                if (IsOnGround(newPosition))
-                {
-                    // 在地面上：正常显示，更新位置
-                    SetVisualFeedback(true);
-                    transform.parent.position = newPosition;
-                    lastValidPosition = newPosition;
-                }
-                else
-                {
-                    // 不在地面上：半透明显示，不更新位置
-                    SetVisualFeedback(false);
-                    // 可以显示提示，但不移动物体
-                }
-                
-                // 限制在屏幕边界内
-                Vector3 clampedPosition = ClampToScreenBounds(transform.parent.position);
-                transform.parent.position = clampedPosition;
+                SetVisualFeedback(true);
+                transform.parent.position = newPosition;
+                lastValidPosition = newPosition;
             }
+            else
+                SetVisualFeedback(false);
+            Vector3 clamped = ClampToScreenBounds(transform.parent.position);
+            transform.parent.position = clamped;
         }
         
         private void OnMouseUp()
         {
+            if (isDraggingFromHook) return;
             if(!this.GetModel<IConfigModel>().ShopConfig.canDrag)
                 return;
             
             isDragging = false;
-            
-            // 检查最终位置是否在地面上
             if (!IsOnGround(transform.parent.position))
-            {
-                // 如果最终位置不在地面上，回到最后一个有效位置
                 transform.parent.position = lastValidPosition;
-                // string text = this.GetSystem<ILocalizationSystem>().GetString("Decorations can only be placed on the ground!");
-                // this.GetSystem<IUISystem>().ShowPrompt(text);
-            }
             else
-            {
-                // 在地面上，更新最后一个有效位置
                 lastValidPosition = transform.parent.position;
-            }
-            
-            // 恢复正常显示
             SetVisualFeedback(true);
         }
         
