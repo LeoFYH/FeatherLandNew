@@ -150,6 +150,7 @@ namespace BirdGame
         public Vector3 position;
         public int walkArea;
         public bool isLocked = false;
+        public bool isLiked = false;
         
         // 个体化数值（必须保存以保持一致性）
         public float individualEarningSmall;

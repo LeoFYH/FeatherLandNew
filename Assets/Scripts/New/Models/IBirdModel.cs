@@ -97,6 +97,7 @@ namespace BirdGame
         public bool isAddedToDesktop;
         public string customName; // 自定义名称
         public bool islocked;
+        public bool isLiked;
         
         // 个体化数值（实例化时计算一次，之后不变）
         public float individualEarningSmall;  // 幼鸟每分钟收入

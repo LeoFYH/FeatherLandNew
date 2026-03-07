@@ -24,6 +24,7 @@ namespace BirdGame
         public TMP_InputField cutomName;
         public Button addtoDesktop;
         public Button editorButton;
+        public Toggle likeToggle;
 
         [Header("点击外部关闭设置")]
         public Transform contentTransform;  // 主要内容区域，用于检测点击区域
@@ -159,6 +160,14 @@ namespace BirdGame
                         }
                     }
                 }
+            }
+            if (likeToggle != null)
+            {
+                RectTransform likeRect = likeToggle.GetComponent<RectTransform>();
+                if (likeRect != null && RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                        likeRect, mousePosition, null, out Vector2 localPoint)
+                    && likeRect.rect.Contains(localPoint))
+                    return;
             }
             
             // 检查是否点击了输入框
@@ -375,6 +384,15 @@ namespace BirdGame
 
                 addtoDesktop.gameObject.SetActive(false);
             });
+            if (likeToggle != null)
+            {
+                likeToggle.isOn = data.isLiked;
+                likeToggle.onValueChanged.AddListener(isOn =>
+                {
+                    data.isLiked = isOn;
+                    this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
+                });
+            }
             //addtoDesktop.gameObject.SetActive(!data.isAddedToDesktop);
             // 初始化鸟名称文本和字体
             UpdateBirdNameText();

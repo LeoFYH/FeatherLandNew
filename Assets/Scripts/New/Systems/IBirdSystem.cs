@@ -107,6 +107,7 @@ namespace BirdGame
                     individualPriceSmall = birdData.individualPriceSmall,
                     individualPriceBig = birdData.individualPriceBig,
                     isLocked = birdData.islocked,
+                    isLiked = birdData.isLiked,
                 };
                 saveModel.BirdInfoData.mapBirds[mapIndex].birdList.Add(serializableData);
             }
@@ -374,6 +375,7 @@ namespace BirdGame
                 // 设置自定义名称和个体化数值（从存档恢复）
                 var birdData = birdModel.BirdList[^1];
                 birdData.customName = savedBirdData.customName;
+                birdData.isLiked = savedBirdData.isLiked;
 
                 // 恢复保存的个体化数值（如果存档没有这些值，使用刚生成的随机值）
                 if (savedBirdData.individualEarningBig > 0)
