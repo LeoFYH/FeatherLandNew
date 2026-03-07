@@ -75,11 +75,17 @@ namespace BirdGame
         public void SyncBirdDataToSave()
         {
             if (saveModel?.BirdInfoData == null) return;
-
+            if (saveModel.BirdInfoData.mapBirds == null)
+                saveModel.BirdInfoData.mapBirds = new List<MapBirdList>();
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
-            // 更新birdList
-            if (mapIndex < saveModel.BirdInfoData.mapBirds.Count)
-                saveModel.BirdInfoData.mapBirds[mapIndex].birdList.Clear();
+            if (mapIndex < 0 || mapIndex >= saveModel.BirdInfoData.mapBirds.Count)
+            {
+                Debug.LogWarning($"SyncBirdDataToSave: currentMap={mapIndex} 越界，不写入避免覆盖存档");
+                return;
+            }
+            if (saveModel.BirdInfoData.mapBirds[mapIndex].birdList == null)
+                saveModel.BirdInfoData.mapBirds[mapIndex].birdList = new List<SerializableBirdData>();
+            saveModel.BirdInfoData.mapBirds[mapIndex].birdList.Clear();
             foreach (var birdData in birdModel.BirdList)
             {
                 if (birdData.bird == null) continue;
@@ -102,8 +108,6 @@ namespace BirdGame
                     individualPriceBig = birdData.individualPriceBig,
                     isLocked = birdData.islocked,
                 };
-                if(saveModel.BirdInfoData.mapBirds.Count <= mapIndex)
-                    return;
                 saveModel.BirdInfoData.mapBirds[mapIndex].birdList.Add(serializableData);
             }
 
@@ -178,26 +182,21 @@ namespace BirdGame
         public void GenerateBirdsFromSave()
         {
             Debug.Log("加载鸟");
-            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
-
+            if (saveModel?.BirdInfoData == null) return;
             if (saveModel.BirdInfoData.mapBirds == null)
                 saveModel.BirdInfoData.mapBirds = new List<MapBirdList>();
-            if (saveModel.BirdInfoData.mapBirds.Count <= mapIndex && mapIndex != 0)
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            if (mapIndex < 0 || mapIndex >= saveModel.BirdInfoData.mapBirds.Count)
             {
-                Debug.LogError("该地图未解锁");
-                return;
+                if (mapIndex != 0)
+                    Debug.LogWarning($"GenerateBirdsFromSave: currentMap={mapIndex} 越界，已修正为 0");
+                mapIndex = 0;
+                this.GetModel<ISaveModel>().BirdInfoData.currentMap = 0;
             }
-
-            if (mapIndex == 0 && saveModel.BirdInfoData.mapBirds.Count == 0)
-            {
+            while (saveModel.BirdInfoData.mapBirds.Count <= mapIndex)
                 saveModel.BirdInfoData.mapBirds.Add(new MapBirdList());
-            }
-
-            // 先判断存档里有没有鸟信息，没有就不做
             if (saveModel.BirdInfoData.mapBirds[mapIndex].birdList == null)
-            {
                 saveModel.BirdInfoData.mapBirds[mapIndex].birdList = new List<SerializableBirdData>();
-            }
 
             // 根据存档生成鸟
             foreach (var savedBirdData in saveModel.BirdInfoData.mapBirds[mapIndex].birdList)
