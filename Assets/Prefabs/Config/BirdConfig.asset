@@ -434,7 +434,11 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 5c48757cde40dda46ad77680e568088b, type: 2}
       - {fileID: 11400000, guid: 99efed1b2ae1a334b889c45a58ef4561, type: 2}
       - {fileID: 11400000, guid: 6e1a393273845e8429bb8b87cbe66bb5, type: 2}
-  - birdClasses: []
+  - birdClasses:
+    - birdName: XInTianWeng
+      canView: 1
+      birds:
+      - {fileID: 11400000, guid: fb8c9b89f0972da48a55efad753f08bf, type: 2}
   - birdClasses:
     - birdName: 1
       canView: 1

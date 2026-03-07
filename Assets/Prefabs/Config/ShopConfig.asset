@@ -274,7 +274,14 @@ MonoBehaviour:
         probability: 0.5
       - birdType: 107
         probability: 0.5
-  - eggs: []
+  - eggs:
+    - eggSp: {fileID: 4465636764377432600, guid: 4b35a17a28a48d0408c858c2d19a3046, type: 3}
+      price: 0
+      birdCount: 3
+      description: 
+      birds:
+      - birdType: 175
+        probability: 0.5
   - eggs:
     - eggSp: {fileID: 4465636764377432600, guid: 4b35a17a28a48d0408c858c2d19a3046, type: 3}
       price: 0
