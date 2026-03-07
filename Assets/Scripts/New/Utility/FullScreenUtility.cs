@@ -14,6 +14,8 @@ namespace BirdGame
     public interface IFullScreenUtility : IUtility
     {
         bool EnableWallpaperMode { get; }
+        /// <summary>True when more than one display is connected (Windows only). Used to force wallpaper onto primary.</summary>
+        bool HasMultipleMonitors { get; }
         void WallpaperMode();
         void FullscreenMode();
         void WindowedMode();
@@ -365,8 +367,9 @@ namespace BirdGame
                 // 将Unity窗口设置为WorkerW的子窗口（嵌入桌面）
                 SetParent(windowHandle, workerW);
 
-                // 获取目标显示器工作区并调整窗口大小（多显示器下按 targetDisplay 取对应显示器）
-                Rect workingArea = GetScreenWorkingArea(targetDisplay);
+                // 多显示器时仅支持主屏，强制使用主显示器
+                int displayIndex = HasMultipleMonitors ? 0 : targetDisplay;
+                Rect workingArea = GetScreenWorkingArea(displayIndex);
                 int w = (int)workingArea.width;
                 int h = (int)workingArea.height;
                 if (w <= 0 || h <= 0)
@@ -429,6 +432,19 @@ namespace BirdGame
             s_monitorHandles[s_monitorCount++] = hMonitor;
             return true;
         }
+
+        /// <summary>
+        /// 枚举显示器并返回数量。多显示器时壁纸模式强制使用主屏。
+        /// </summary>
+        private static int GetMonitorCount()
+        {
+            s_monitorHandles = new IntPtr[16];
+            s_monitorCount = 0;
+            EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, EnumMonitorsCallback, IntPtr.Zero);
+            return s_monitorCount;
+        }
+
+        public bool HasMultipleMonitors => GetMonitorCount() > 1;
 
         /// <summary>
         /// 获取指定显示器的工作区（排除任务栏）。多显示器下使用 Win32 按显示器索引取对应工作区。
@@ -675,6 +691,7 @@ namespace BirdGame
 #else
         // 非 Windows 平台
         public bool EnableWallpaperMode => false;
+        public bool HasMultipleMonitors => false;
         public void WallpaperMode() { Debug.LogWarning("桌面模式仅在 Windows 平台支持"); }
         public void FullscreenMode() { Debug.LogWarning("全屏模式仅在 Windows 平台支持"); }
         public void WindowedMode() { Debug.LogWarning("窗口模式仅在 Windows 平台支持"); }

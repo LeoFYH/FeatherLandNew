@@ -208,27 +208,32 @@ namespace BirdGame
             mainSequence.Join(anim8);
             mainSequence.Join(anim9);
             mainSequence.Join(anim10);
-            foreach (var item in weather.others)
+            if (weather.others != null)
             {
-                var anim11 = DOTween.Sequence();
-                anim11.Append(item.renderer.DOColor(Color.black, 0.5f));
-                anim11.AppendCallback(() =>
+                foreach (var item in weather.others)
                 {
-                    item.renderer.sprite = item.item.sprite;
-                    item.renderer.transform.localScale = Vector3.one * item.item.scale;
-                });
-                anim11.Append(item.renderer.DOColor(Color.white, 0.5f));
-                mainSequence.Join(anim11);
+                    var anim11 = DOTween.Sequence();
+                    anim11.Append(item.renderer.DOColor(Color.black, 0.5f));
+                    anim11.AppendCallback(() =>
+                    {
+                        item.renderer.sprite = item.item.sprite;
+                        item.renderer.transform.localScale = Vector3.one * item.item.scale;
+                    });
+                    anim11.Append(item.renderer.DOColor(Color.white, 0.5f));
+                    mainSequence.Join(anim11);
+                }
             }
-            
-            
-            // 添加其他元素的动画
-            for (int i = 0; i < others.Length; i++)
+
+            // 添加其他元素的动画（Inspector 未赋值 others 时跳过，避免 NullReference 与 DOTween 报错）
+            if (others != null && others.Length > 0)
             {
-                var anim = DOTween.Sequence();
-                anim.Append(others[i].DOColor(Color.black, 0.5f));
-                anim.Append(others[i].DOColor(Color.white, 0.5f));
-                mainSequence.Join(anim);
+                for (int i = 0; i < others.Length; i++)
+                {
+                    var anim = DOTween.Sequence();
+                    anim.Append(others[i].DOColor(Color.black, 0.5f));
+                    anim.Append(others[i].DOColor(Color.white, 0.5f));
+                    mainSequence.Join(anim);
+                }
             }
             
             // 在所有动画完成后记录日志
