@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using QFramework;
@@ -268,11 +269,30 @@ namespace BirdGame
             _saveModel.SettingData = GetData<SettingData>("SettingData");
             _saveModel.MusicSettingData = GetData<MusicSettingData>("MusicSettingData");
             _saveModel.BirdInfoData = GetData<BirdInfoData>("BirdInfoData");
+            EnsureBirdInfoDataValid(_saveModel.BirdInfoData);
             _saveModel.NoteData = GetData<NoteData>("NoteData");
             _saveModel.ScheduleData = GetData<ScheduleData>("ScheduleData");
             _saveModel.IllustratedData = GetData<IllustratedData>("IllustratedData");
 
             this.GetModel<IRadioModel>().EnvironmentVolume.Value = _saveModel.MusicSettingData.environmentVolume;
+        }
+
+        private void EnsureBirdInfoDataValid(BirdInfoData data)
+        {
+            if (data == null) return;
+            if (data.mapBirds == null)
+                data.mapBirds = new List<MapBirdList>();
+            int safeMap = Mathf.Clamp(data.currentMap, 0, Mathf.Max(0, data.mapBirds.Count - 1));
+            if (safeMap != data.currentMap)
+            {
+                Debug.LogWarning($"BirdInfoData.currentMap 越界已修正: {data.currentMap} -> {safeMap}");
+                data.currentMap = safeMap;
+            }
+            while (data.mapBirds.Count <= data.currentMap)
+                data.mapBirds.Add(new MapBirdList());
+            var list = data.mapBirds[data.currentMap];
+            if (list.birdList == null) list.birdList = new List<SerializableBirdData>();
+            if (list.eggList == null) list.eggList = new List<int>();
         }
 
         public void SaveData()
