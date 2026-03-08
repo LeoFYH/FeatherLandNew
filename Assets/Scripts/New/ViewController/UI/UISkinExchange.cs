@@ -7,6 +7,7 @@ namespace BirdGame
     public class UISkinExchange : ViewControllerBase
     {
         public ToolType thisType;
+        public int spIndex = 0;
         public Image barImage;
         
         private void Start()
@@ -36,7 +37,7 @@ namespace BirdGame
             if (toolItem?.selections == null || toolItem.selections.Length == 0) return;
             int safeIndex = Mathf.Clamp(index, 0, toolItem.selections.Length - 1);
             var sel = toolItem.selections[safeIndex];
-            barImage.sprite = sel?.icon;
+            barImage.sprite = sel?.uiColorItem?.uiSprites[spIndex];
         }
     }
 }

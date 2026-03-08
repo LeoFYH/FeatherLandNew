@@ -63,7 +63,7 @@ namespace BirdGame
                     icon.gameObject.SetActive(false);
                     color.gameObject.SetActive(true);
                     color.color = this.GetModel<IConfigModel>().ShopConfig.tools[itemIndex].selections[selectIndex]
-                        .uiColor;
+                        .uiColorItem.uiColor;
                     return;
                 }
                 text.gameObject.SetActive(true);

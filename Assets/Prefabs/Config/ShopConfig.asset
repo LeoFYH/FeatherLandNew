@@ -1539,9 +1539,11 @@ MonoBehaviour:
       foodScale: 0.04
       addValue: 0.2
       addCount: 0
-      uiColor:
-        serializedVersion: 2
-        rgba: 0
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 0
+        uiSprites: []
     - icon: {fileID: -3520649881568307650, guid: c53a4b854fc13b246880f045ae7f38b1, type: 3}
       type: 0
       selectionName: Grain
@@ -1551,9 +1553,11 @@ MonoBehaviour:
       foodScale: 0.06
       addValue: 1
       addCount: 0
-      uiColor:
-        serializedVersion: 2
-        rgba: 0
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 0
+        uiSprites: []
     - icon: {fileID: 4495422397181781673, guid: 2a09792a324f4874196f98f9c4eb95a7, type: 3}
       type: 0
       selectionName: Bean
@@ -1563,9 +1567,11 @@ MonoBehaviour:
       foodScale: 0.06
       addValue: 3
       addCount: 0
-      uiColor:
-        serializedVersion: 2
-        rgba: 0
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 0
+        uiSprites: []
   - name: Capacity
     isVisible: 1
     selections:
@@ -1578,9 +1584,11 @@ MonoBehaviour:
       foodScale: 1
       addValue: 0.1
       addCount: 10
-      uiColor:
-        serializedVersion: 2
-        rgba: 0
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 0
+        uiSprites: []
     - icon: {fileID: 21300000, guid: e0c15553e37d03d45a3146ce6a2d539f, type: 3}
       type: 1
       selectionName: 40
@@ -1590,9 +1598,11 @@ MonoBehaviour:
       foodScale: 1
       addValue: 0.1
       addCount: 20
-      uiColor:
-        serializedVersion: 2
-        rgba: 0
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 0
+        uiSprites: []
     - icon: {fileID: 21300000, guid: e0c15553e37d03d45a3146ce6a2d539f, type: 3}
       type: 1
       selectionName: 50
@@ -1602,9 +1612,11 @@ MonoBehaviour:
       foodScale: 1
       addValue: 0.1
       addCount: 30
-      uiColor:
-        serializedVersion: 2
-        rgba: 0
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 0
+        uiSprites: []
   - name: Raido
     isVisible: 1
     selections:
@@ -1617,10 +1629,13 @@ MonoBehaviour:
       foodScale: 1
       addValue: 0.1
       addCount: 0
-      uiColor:
-        serializedVersion: 2
-        rgba: 4294967295
-    - icon: {fileID: -2806109933538863506, guid: 870cf41e514b51346a10d2a8ff882d22, type: 3}
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 4285625449
+        uiSprites:
+        - {fileID: -2806109933538863506, guid: 870cf41e514b51346a10d2a8ff882d22, type: 3}
+    - icon: {fileID: 6301804155422343661, guid: 42f8941684e2cf74eabdc200641bb401, type: 3}
       type: 2
       selectionName: 
       description: 
@@ -1629,9 +1644,42 @@ MonoBehaviour:
       foodScale: 1
       addValue: 0.1
       addCount: 0
-      uiColor:
-        serializedVersion: 2
-        rgba: 4294967295
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 4289971923
+        uiSprites:
+        - {fileID: 6301804155422343661, guid: 42f8941684e2cf74eabdc200641bb401, type: 3}
+    - icon: {fileID: 199622502028629037, guid: c7ea6d4a1a591a94d89f8fa93c2fd12a, type: 3}
+      type: 2
+      selectionName: 
+      description: 
+      descriptionKey: 
+      price: 0
+      foodScale: 1
+      addValue: 0.1
+      addCount: 0
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 4290765799
+        uiSprites:
+        - {fileID: 6301804155422343661, guid: 42f8941684e2cf74eabdc200641bb401, type: 3}
+    - icon: {fileID: 2487443498364726475, guid: 9920678a283b9514898d9009cc1abc59, type: 3}
+      type: 2
+      selectionName: 
+      description: 
+      descriptionKey: 
+      price: 0
+      foodScale: 1
+      addValue: 0.1
+      addCount: 0
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 4289377981
+        uiSprites:
+        - {fileID: 2487443498364726475, guid: 9920678a283b9514898d9009cc1abc59, type: 3}
   - name: Note
     isVisible: 1
     selections:
@@ -1644,9 +1692,13 @@ MonoBehaviour:
       foodScale: 1
       addValue: 0.1
       addCount: 0
-      uiColor:
-        serializedVersion: 2
-        rgba: 4290366929
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 4290366929
+        uiSprites:
+        - {fileID: 3787814576625459163, guid: 8df010a815c66064db8d9caf94820de8, type: 3}
+        - {fileID: 2326940303404105805, guid: 6f795cca9c35d344ea8c5bdf6dcb885d, type: 3}
     - icon: {fileID: -5412988472827725419, guid: 51dc8d2c3e2fa8540b763c231044b27a, type: 3}
       type: 3
       selectionName: 
@@ -1656,9 +1708,13 @@ MonoBehaviour:
       foodScale: 1
       addValue: 0.1
       addCount: 0
-      uiColor:
-        serializedVersion: 2
-        rgba: 4292864496
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 4292864496
+        uiSprites:
+        - {fileID: -5412988472827725419, guid: 51dc8d2c3e2fa8540b763c231044b27a, type: 3}
+        - {fileID: 2734046516100381373, guid: 58ce34181f26a6642a546ceea24a2c59, type: 3}
     - icon: {fileID: -1541549967667120291, guid: 607d41f01ebebe74e9f6933f2718009f, type: 3}
       type: 3
       selectionName: 
@@ -1668,9 +1724,13 @@ MonoBehaviour:
       foodScale: 1
       addValue: 0.1
       addCount: 0
-      uiColor:
-        serializedVersion: 2
-        rgba: 4290701549
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 4290701549
+        uiSprites:
+        - {fileID: -1541549967667120291, guid: 607d41f01ebebe74e9f6933f2718009f, type: 3}
+        - {fileID: 8991694166704825584, guid: c09f9d9a3dacbaf4e85a04fd5095d918, type: 3}
     - icon: {fileID: 780062711214391349, guid: 907894bbbdc41d846aa134285a43bcb5, type: 3}
       type: 3
       selectionName: 
@@ -1680,9 +1740,13 @@ MonoBehaviour:
       foodScale: 1
       addValue: 0.1
       addCount: 0
-      uiColor:
-        serializedVersion: 2
-        rgba: 4292856025
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 4292856025
+        uiSprites:
+        - {fileID: 780062711214391349, guid: 907894bbbdc41d846aa134285a43bcb5, type: 3}
+        - {fileID: 3980892751941988541, guid: 49afe6fc6833a0646960627cf2d4b07b, type: 3}
   - name: Tomato
     isVisible: 1
     selections:
@@ -1695,10 +1759,17 @@ MonoBehaviour:
       foodScale: 1
       addValue: 0.1
       addCount: 0
-      uiColor:
-        serializedVersion: 2
-        rgba: 4294967295
-    - icon: {fileID: -2806109933538863506, guid: 0b138db8322b07b48b4b4d217742a70e, type: 3}
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 4288131511
+        uiSprites:
+        - {fileID: -2806109933538863506, guid: 0b138db8322b07b48b4b4d217742a70e, type: 3}
+        - {fileID: 5135864160056585237, guid: 09c0b63daa23b744e90eccd87f5bd1ad, type: 3}
+        - {fileID: 5509186955571051643, guid: bfb98ab5f3786024ea6b2da5b5d2cf85, type: 3}
+        - {fileID: 734706571724624371, guid: 961ce576a9e48a64b990f5eab6b53957, type: 3}
+        - {fileID: 1495683634730232202, guid: ed4e5fab59f8bcc4b9663d0723d9ea05, type: 3}
+    - icon: {fileID: 6301804155422343661, guid: 7991df085500bb747a5a29839a35ed90, type: 3}
       type: 4
       selectionName: 
       description: 
@@ -1707,9 +1778,54 @@ MonoBehaviour:
       foodScale: 1
       addValue: 0.1
       addCount: 0
-      uiColor:
-        serializedVersion: 2
-        rgba: 4294967295
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 4289768882
+        uiSprites:
+        - {fileID: 6301804155422343661, guid: 7991df085500bb747a5a29839a35ed90, type: 3}
+        - {fileID: -7473324217310814628, guid: 261f5ef877f1c0b4495626efeb287960, type: 3}
+        - {fileID: -7991128292494537048, guid: 9f4faf95e8b4e014cb0b9960b1953d1a, type: 3}
+        - {fileID: 2741140845400543712, guid: cddaeadf28e4b93469a66f19be22ed78, type: 3}
+        - {fileID: 5830920829309748135, guid: 1347c5b2a3e80834fa6f2443f0df4b01, type: 3}
+    - icon: {fileID: 199622502028629037, guid: 83d9989c01aa946409494d40c12a91bd, type: 3}
+      type: 4
+      selectionName: 
+      description: 
+      descriptionKey: 
+      price: 0
+      foodScale: 1
+      addValue: 0.1
+      addCount: 0
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 4292790489
+        uiSprites:
+        - {fileID: 199622502028629037, guid: 83d9989c01aa946409494d40c12a91bd, type: 3}
+        - {fileID: -6448831331943364455, guid: 14dc5e2c3f4a6614db6de456ed661048, type: 3}
+        - {fileID: 1888096270988416231, guid: b998e33a2e8eab34a84fa69ff798dc39, type: 3}
+        - {fileID: -2467229101014504901, guid: ca1fb85f07827354aa431b454fd2cfbb, type: 3}
+        - {fileID: -480164200702657450, guid: 1d38408fcda8f354793d92a282894857, type: 3}
+    - icon: {fileID: 2487443498364726475, guid: 488b8ff838660d24dbd5137f73eba68e, type: 3}
+      type: 4
+      selectionName: 
+      description: 
+      descriptionKey: 
+      price: 0
+      foodScale: 1
+      addValue: 0.1
+      addCount: 0
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 4290636012
+        uiSprites:
+        - {fileID: 2487443498364726475, guid: 488b8ff838660d24dbd5137f73eba68e, type: 3}
+        - {fileID: -8618629927122339336, guid: 682a0d4d45476f849abadd0365d0c952, type: 3}
+        - {fileID: -1271864340416224652, guid: 2b0c0879cc362fc4a84fc5443e41b6c2, type: 3}
+        - {fileID: -7564124307332697398, guid: 524ef2018d59a334cbab960cf19f5c8e, type: 3}
+        - {fileID: -3964189264357474733, guid: 08f6369e3f4a3a74ab48f9afad7c2b19, type: 3}
   - name: Illustrated
     isVisible: 1
     selections:
@@ -1722,9 +1838,12 @@ MonoBehaviour:
       foodScale: 1
       addValue: 0.1
       addCount: 0
-      uiColor:
-        serializedVersion: 2
-        rgba: 4294967295
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 4284127817
+        uiSprites:
+        - {fileID: 1075567761237792722, guid: f591c8d784aa7c04783199d445263274, type: 3}
     - icon: {fileID: -4843771885645649803, guid: 06688a2d0ccaf4e47b2b1c822efb5a2c, type: 3}
       type: 5
       selectionName: 
@@ -1734,9 +1853,12 @@ MonoBehaviour:
       foodScale: 1
       addValue: 0.1
       addCount: 0
-      uiColor:
-        serializedVersion: 2
-        rgba: 4278190080
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 4280690214
+        uiSprites:
+        - {fileID: -4843771885645649803, guid: 06688a2d0ccaf4e47b2b1c822efb5a2c, type: 3}
     - icon: {fileID: -7331785369475584458, guid: 9b0e85c36ed492640afab7926e8ca76c, type: 3}
       type: 5
       selectionName: 
@@ -1746,9 +1868,12 @@ MonoBehaviour:
       foodScale: 1
       addValue: 0.1
       addCount: 0
-      uiColor:
-        serializedVersion: 2
-        rgba: 4294941440
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 4291277392
+        uiSprites:
+        - {fileID: -7331785369475584458, guid: 9b0e85c36ed492640afab7926e8ca76c, type: 3}
     - icon: {fileID: 1760558185013968418, guid: 8b253a81f06f82a408eb1aa1e0a524c6, type: 3}
       type: 5
       selectionName: 
@@ -1758,9 +1883,12 @@ MonoBehaviour:
       foodScale: 1
       addValue: 0.1
       addCount: 0
-      uiColor:
-        serializedVersion: 2
-        rgba: 4288484037
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 4289557917
+        uiSprites:
+        - {fileID: 1760558185013968418, guid: 8b253a81f06f82a408eb1aa1e0a524c6, type: 3}
   - name: Cursor
     isVisible: 1
     selections:
@@ -1773,9 +1901,11 @@ MonoBehaviour:
       foodScale: 1
       addValue: 0.1
       addCount: 0
-      uiColor:
-        serializedVersion: 2
-        rgba: 0
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 0
+        uiSprites: []
     - icon: {fileID: -1762204038450373753, guid: 577a2556ec7c643449dcc60a6926d9d3, type: 3}
       type: 0
       selectionName: Cursor2
@@ -1785,6 +1915,8 @@ MonoBehaviour:
       foodScale: 1
       addValue: 0.1
       addCount: 0
-      uiColor:
-        serializedVersion: 2
-        rgba: 0
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 0
+        uiSprites: []

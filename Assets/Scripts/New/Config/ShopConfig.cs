@@ -319,10 +319,18 @@ namespace BirdGame
         public float addValue = 0.1f;
         [LabelText("增加鸟的容量大小"), HorizontalGroup("Content"), VerticalGroup("Content/Info"), ShowIf("@type==ToolType.BirdMaxCount")]
         public int addCount;
-        [LabelText("UI颜色"), HorizontalGroup("Content"), VerticalGroup("Content/Info"), ShowIf("@type==ToolType.Radio||type==ToolType.Note||type==ToolType.Tomato||type==ToolType.Illustrated")]
-        public Color32 uiColor;
+        [LabelText("UI颜色列表"), HorizontalGroup("Content"), VerticalGroup("Content/Info"), ShowIf("@type==ToolType.Radio||type==ToolType.Note||type==ToolType.Tomato||type==ToolType.Illustrated")]
+        public UIColorItem uiColorItem;
         
         private Color32 buttonColor = Color.green;
+    }
+
+    [Serializable]
+    public class UIColorItem
+    {
+        [LabelText("UI颜色"), VerticalGroup("UI Color")]
+        public Color32 uiColor;
+        public Sprite[] uiSprites;
     }
 
     public enum ToolType
