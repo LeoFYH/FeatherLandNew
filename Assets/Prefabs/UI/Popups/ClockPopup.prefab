@@ -4574,6 +4574,7 @@ GameObject:
   - component: {fileID: 5770089398447805042}
   - component: {fileID: 8803449643517397701}
   - component: {fileID: 1473123603688501218}
+  - component: {fileID: 1167509615053093676}
   m_Layer: 0
   m_Name: SessionSlider
   m_TagString: Untagged
@@ -4641,6 +4642,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1167509615053093676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1508515597250177732}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99d6ec4ada5b400980e23b4fce75f191, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thisType: 4
+  spIndex: 5
+  barImage: {fileID: 1473123603688501218}
 --- !u!1 &1633355318594178476
 GameObject:
   m_ObjectHideFlags: 0
@@ -14623,6 +14639,7 @@ GameObject:
   - component: {fileID: 3362822886893942801}
   - component: {fileID: 4470416515098457250}
   - component: {fileID: 7749513366951345481}
+  - component: {fileID: 8355056484573765895}
   m_Layer: 0
   m_Name: Fill
   m_TagString: Untagged
@@ -14687,6 +14704,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8355056484573765895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5708838082278757437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99d6ec4ada5b400980e23b4fce75f191, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thisType: 4
+  spIndex: 6
+  barImage: {fileID: 7749513366951345481}
 --- !u!1 &5745530771306376910
 GameObject:
   m_ObjectHideFlags: 0
