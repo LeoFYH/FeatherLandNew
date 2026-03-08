@@ -96,7 +96,20 @@ namespace BirdGame
                 else
                     description.SetKey(selectedTool.description);
                 if (sp != null)
-                    icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.12f;
+                {
+                    if (item.selections[0].type == ToolType.Illustrated)
+                    {
+                        icon.GetComponent<RectTransform>().sizeDelta = new Vector2(sp.rect.size.x * 0.12f, sp.rect.size.y * 0.16f);
+                    }
+                    else if(item.selections[0].type == ToolType.Note)
+                    {
+                        icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.18f;
+                    }
+                    else
+                    {
+                        icon.GetComponent<RectTransform>().sizeDelta = new Vector2(sp.rect.size.x * 0.18f, sp.rect.size.y * 0.22f);
+                    }
+                }
             }
 
             if (item.selections[0].type == ToolType.Food || item.selections[0].type != ToolType.BirdMaxCount)
@@ -256,8 +269,18 @@ namespace BirdGame
                     {
                         if (item.selections[0].type == ToolType.Food)
                             icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size;
-                        else 
-                            icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.12f;
+                        else if (item.selections[0].type == ToolType.Illustrated)
+                        {
+                            icon.GetComponent<RectTransform>().sizeDelta = new Vector2(sp.rect.size.x * 0.12f, sp.rect.size.y * 0.16f);
+                        }
+                        else if(item.selections[0].type == ToolType.Note)
+                        {
+                            icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.18f;
+                        }
+                        else
+                        {
+                            icon.GetComponent<RectTransform>().sizeDelta = new Vector2(sp.rect.size.x * 0.18f, sp.rect.size.y * 0.22f);
+                        }
                     }
                     // 检查食物状态，决定显示内容
                     bool isPurchased = saveModel.AccountData.sceneTools[0].tools[index].unlockedList.Contains(v) || v == 0;
