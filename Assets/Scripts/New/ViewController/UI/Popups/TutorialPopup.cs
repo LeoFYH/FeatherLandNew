@@ -7,6 +7,7 @@ namespace BirdGame
     public class TutorialPopup : UIBase
     {
         public Button closeButton;
+        public Button previewButton;
         public GameObject[] panels;
         
         private void Start()
@@ -19,6 +20,7 @@ namespace BirdGame
                 {
                     panels[0].SetActive(false);
                     panels[1].SetActive(true);
+                    previewButton.gameObject.SetActive(true);
                 }
                 else
                 {
@@ -27,6 +29,14 @@ namespace BirdGame
                 }
 
             });
+            
+            previewButton.onClick.AddListener(() =>
+            {
+                panels[0].SetActive(true);
+                panels[1].SetActive(false);
+                previewButton.gameObject.SetActive(false);
+            });
+            previewButton.gameObject.SetActive(false);
         }
     }
 }
