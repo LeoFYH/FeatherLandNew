@@ -288,6 +288,8 @@ namespace BirdGame
             var list = new List<int>();
             var config = this.GetModel<IConfigModel>().BirdConfig;
 
+            var birdList = this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList;
+
             if (sortType == 3) // 按种类(class)再按花色(birds数组顺序)排：同种类不同花色挨在一起
             {
                 int GetBirdIndexInClass(int birdId, int cIndex)
@@ -297,8 +299,9 @@ namespace BirdGame
                         if (birdsList[k].id == birdId) return k;
                     return 0;
                 }
-                foreach (var item in birdItems)
+                for (int j = 0; j < birdItems.Count; j++)
                 {
+                    var item = birdItems[j];
                     config.GetBird(item.id, mapIndex, out int classIndex1);
                     int birdIndex1 = GetBirdIndexInClass(item.id, classIndex1);
                     bool isSert = false;
@@ -308,20 +311,21 @@ namespace BirdGame
                         int birdIndex2 = GetBirdIndexInClass(birdItems[list[i]].id, classIndex2);
                         if (classIndex2 > classIndex1 || (classIndex2 == classIndex1 && birdIndex2 > birdIndex1))
                         {
-                            list.Insert(i, item.index);
+                            list.Insert(i, j);
                             isSert = true;
                             break;
                         }
                     }
-                    if (!isSert) list.Add(item.index);
+                    if (!isSert) list.Add(j);
                 }
                 for (int i = 0; i < list.Count; i++)
                     birdItems[list[i]].transform.SetSiblingIndex(i);
                 return;
             }
 
-            foreach (var item in birdItems)
+            for (int j = 0; j < birdItems.Count; j++)
             {
+                var item = birdItems[j];
                 bool isSert = false;
                 for (int i = 0; i < list.Count; i++)
                 {
@@ -331,31 +335,31 @@ namespace BirdGame
                         var bird2 = config.GetBird(birdItems[list[i]].id, mapIndex);
                         if (GetRarityValue(bird2.reality) < GetRarityValue(bird1.reality))
                         {
-                            list.Insert(i, item.index);
+                            list.Insert(i, j);
                             isSert = true;
                             break;
                         }
                     }
                     else if (sortType == 1)
                     {
-                        var data1 = this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList[item.index];
-                        var data2 = this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList[list[i]];
+                        var data1 = birdList[item.index];
+                        var data2 = birdList[birdItems[list[i]].index];
                         float price1 = data1.isSmall ? data1.individualEarningSmall : data1.individualEarningBig;
                         float price2 = data2.isSmall ? data2.individualEarningSmall : data2.individualEarningBig;
                         if (price2 < price1)
                         {
-                            list.Insert(i, item.index);
+                            list.Insert(i, j);
                             isSert = true;
                             break;
                         }
                     }
-                    else if(sortType == 2)
+                    else if (sortType == 2)
                     {
-                        var data1 = this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList[item.index];
-                        var data2 = this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].birdList[list[i]];
+                        var data1 = birdList[item.index];
+                        var data2 = birdList[birdItems[list[i]].index];
                         if (data2.currentExp < data1.currentExp)
                         {
-                            list.Insert(i, item.index);
+                            list.Insert(i, j);
                             isSert = true;
                             break;
                         }
@@ -363,9 +367,7 @@ namespace BirdGame
                 }
 
                 if (!isSert)
-                {
-                    list.Add(item.index);
-                }
+                    list.Add(j);
             }
 
             int count = list.Count;
