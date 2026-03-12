@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using DG.Tweening;
 using QFramework;
@@ -47,6 +47,7 @@ namespace BirdGame
         private bool isSyncingShopButton = false; // 标志位：正在同步 shopButton 状态，避免重复调用 HidePopup
         private bool isSyncingIllustratedButton = false; // 标志位：正在同步 illustratedButton 状态
         private bool isSyncingMapButton = false; // 标志位：正在同步 mapButton 状态
+        private bool isSyncingSettingButton = false; // 标志位：正在同步 settingButton 状态
         
         public override void OnShowPanel()
         {
@@ -57,6 +58,29 @@ namespace BirdGame
         {
             Destroy(gameObject);
             onComplete?.Invoke();
+        }
+
+        /// <summary> 关闭与 Tutorial 互斥的 4 个弹窗并同步 Toggle（打开 Tutorial 前调用） </summary>
+        public void CloseMutualPopupsForTutorial()
+        {
+            var ui = this.GetSystem<IUISystem>();
+            if (ui == null) return;
+            ui.HidePopup(UIPopup.ShopPopup);
+            ui.HidePopup(UIPopup.IllustratedPopup);
+            ui.HidePopup(UIPopup.MapPopup);
+            ui.HidePopup(UIPopup.SettingPopup);
+            isSyncingShopButton = true;
+            shopButton.isOn = false;
+            isSyncingShopButton = false;
+            isSyncingIllustratedButton = true;
+            illustratedButton.isOn = false;
+            isSyncingIllustratedButton = false;
+            isSyncingMapButton = true;
+            mapButton.isOn = false;
+            isSyncingMapButton = false;
+            isSyncingSettingButton = true;
+            settingButton.isOn = false;
+            isSyncingSettingButton = false;
         }
 
         private void Start()
@@ -122,8 +146,22 @@ namespace BirdGame
 
             settingButton.onValueChanged.AddListener(isOn =>
             {
+                if (isSyncingSettingButton) return;
                 if (isOn)
                 {
+                    uiSystem.HidePopup(UIPopup.ShopPopup);
+                    uiSystem.HidePopup(UIPopup.IllustratedPopup);
+                    uiSystem.HidePopup(UIPopup.MapPopup);
+                    uiSystem.HidePopup(UIPopup.TutorialPopup);
+                    isSyncingShopButton = true;
+                    shopButton.isOn = false;
+                    isSyncingShopButton = false;
+                    isSyncingIllustratedButton = true;
+                    illustratedButton.isOn = false;
+                    isSyncingIllustratedButton = false;
+                    isSyncingMapButton = true;
+                    mapButton.isOn = false;
+                    isSyncingMapButton = false;
                     uiSystem.ShowPopup(UIPopup.SettingPopup);
                 }
                 else
@@ -142,19 +180,19 @@ namespace BirdGame
                 
                 if (isOn)
                 {
-                    // 先关闭其他两个互斥的弹窗UI
                     uiSystem.HidePopup(UIPopup.IllustratedPopup);
                     uiSystem.HidePopup(UIPopup.MapPopup);
-                    
-                    // 再同步toggle状态（使用标志位防止重复调用HidePopup）
+                    uiSystem.HidePopup(UIPopup.SettingPopup);
+                    uiSystem.HidePopup(UIPopup.TutorialPopup);
                     isSyncingIllustratedButton = true;
                     illustratedButton.isOn = false;
                     isSyncingIllustratedButton = false;
-                    
                     isSyncingMapButton = true;
                     mapButton.isOn = false;
                     isSyncingMapButton = false;
-                    
+                    isSyncingSettingButton = true;
+                    settingButton.isOn = false;
+                    isSyncingSettingButton = false;
                     uiSystem.ShowPopup(UIPopup.ShopPopup);
                 }
                 else
@@ -174,19 +212,19 @@ namespace BirdGame
                 
                 if (isOn)
                 {
-                    // 先关闭其他两个互斥的弹窗UI
                     uiSystem.HidePopup(UIPopup.ShopPopup);
                     uiSystem.HidePopup(UIPopup.MapPopup);
-                    
-                    // 再同步toggle状态（使用标志位防止重复调用HidePopup）
+                    uiSystem.HidePopup(UIPopup.SettingPopup);
+                    uiSystem.HidePopup(UIPopup.TutorialPopup);
                     isSyncingShopButton = true;
                     shopButton.isOn = false;
                     isSyncingShopButton = false;
-                    
                     isSyncingMapButton = true;
                     mapButton.isOn = false;
                     isSyncingMapButton = false;
-                    
+                    isSyncingSettingButton = true;
+                    settingButton.isOn = false;
+                    isSyncingSettingButton = false;
                     uiSystem.ShowPopup(UIPopup.IllustratedPopup);
                 }
                 else
@@ -206,19 +244,19 @@ namespace BirdGame
                 
                 if (isOn)
                 {
-                    // 先关闭其他两个互斥的弹窗UI
                     uiSystem.HidePopup(UIPopup.ShopPopup);
                     uiSystem.HidePopup(UIPopup.IllustratedPopup);
-                    
-                    // 再同步toggle状态（使用标志位防止重复调用HidePopup）
+                    uiSystem.HidePopup(UIPopup.SettingPopup);
+                    uiSystem.HidePopup(UIPopup.TutorialPopup);
                     isSyncingShopButton = true;
                     shopButton.isOn = false;
                     isSyncingShopButton = false;
-                    
                     isSyncingIllustratedButton = true;
                     illustratedButton.isOn = false;
                     isSyncingIllustratedButton = false;
-                    
+                    isSyncingSettingButton = true;
+                    settingButton.isOn = false;
+                    isSyncingSettingButton = false;
                     uiSystem.ShowPopup(UIPopup.MapPopup);
                 }
                 else
@@ -274,7 +312,10 @@ namespace BirdGame
 
             this.RegisterEvent<OnSettingCloseEvent>(evt =>
             {
+                isSyncingSettingButton = true;
+                uiSystem.HidePopup(UIPopup.SettingPopup);
                 settingButton.isOn = false;
+                isSyncingSettingButton = false;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
             this.RegisterEvent<OnShopCloseEvent>(evt =>
