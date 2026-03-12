@@ -21,7 +21,7 @@ namespace BirdGame
             mainCamera = Camera.main;
             spriteRenderer = GetComponentInChildren<SpriteRenderer>();
             var clickHandler = GetComponent<DecorationClickHandler>();
-            info = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[clickHandler.sceneId].decorations[clickHandler.decorationIndex];
+            info = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[clickHandler.sceneId].decorations[clickHandler.decorationId];
             
             // // 添加碰撞器以便更好地检测鼠标
             // if (spriteRenderer.GetComponent<Collider2D>() == null)
@@ -47,12 +47,14 @@ namespace BirdGame
             isDragging = true;
             Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
             offset = transform.parent.position - mouseWorldPos;
+            this.GetSystem<ICursorSystem>().SetCursorState(CursorState.Click);
         }
 
         public void ReceiveDragBegin(Vector2 screenPosition)
         {
             if (!enableHookSupport || !this.GetModel<IConfigModel>().ShopConfig.canDrag) return;
             isDraggingFromHook = true;
+            this.GetSystem<ICursorSystem>().SetCursorState(CursorState.Click);
             isDragging = true;
             var cam = mainCamera != null ? mainCamera : Camera.main;
             if (cam == null) return;
@@ -64,6 +66,7 @@ namespace BirdGame
         public void ReceiveDrag(Vector2 screenPosition)
         {
             if (!enableHookSupport || !isDragging) return;
+            this.GetSystem<ICursorSystem>().SetCursorState(CursorState.Click);
             var cam = mainCamera != null ? mainCamera : Camera.main;
             if (cam == null) return;
             Vector3 mouseWorldPos = cam.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, 0));
@@ -74,6 +77,7 @@ namespace BirdGame
         public void ReceiveDragEnd()
         {
             if (!enableHookSupport) return;
+            this.GetSystem<ICursorSystem>().SetCursorState(CursorState.Click);
             isDraggingFromHook = false;
             isDragging = false;
             if (!IsOnGround(transform.parent.position))
@@ -88,7 +92,7 @@ namespace BirdGame
             if (isDraggingFromHook) return;
             if(!this.GetModel<IConfigModel>().ShopConfig.canDrag)
                 return;
-            
+            this.GetSystem<ICursorSystem>().SetCursorState(CursorState.Click);
             if (isDragging)
                 ApplyDragPosition(mainCamera.ScreenToWorldPoint(Input.mousePosition) + offset);
         }

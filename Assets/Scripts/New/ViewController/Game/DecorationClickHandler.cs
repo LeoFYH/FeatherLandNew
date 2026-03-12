@@ -9,7 +9,7 @@ namespace BirdGame
     public class DecorationClickHandler : ViewControllerBase
     {
         public int sceneId;
-        private int decorationId;
+        public int decorationId;
         public int decorationIndex;
         public bool canFeed;
         [TableList(ShowIndexLabels = true, AlwaysExpanded = true)]
@@ -21,8 +21,8 @@ namespace BirdGame
 
         public void Initialize(int id, int index)
         {
-            // decorationId = id;
-            // decorationIndex = index;
+            decorationId = id;
+            decorationIndex = index;
             controller?.SetSp(index);
             
             // 安全访问配置数据，避免索引越界
