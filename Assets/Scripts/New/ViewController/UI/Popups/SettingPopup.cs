@@ -239,6 +239,7 @@ namespace BirdGame
             
             tutorialButton.onClick.AddListener(() =>
             {
+                this.GetSystem<IUISystem>().SendEvent<OnSettingCloseEvent>();
                 this.GetSystem<IUISystem>().ShowPopup(UIPopup.TutorialPopup);
             });
             quitButton.onClick.AddListener(() =>

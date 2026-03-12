@@ -592,8 +592,14 @@ namespace BirdGame
             }
             else if (GetKeyDownAny(KeyCode.T))
             {
-                // Tutorial - TutorialPopup (没有对应的toggle按钮，保持原有行为)
-                this.GetSystem<IUISystem>().TogglePopup(UIPopup.TutorialPopup);
+                var uiSystem = this.GetSystem<IUISystem>();
+                if (uiSystem.GetPopup<UIBase>(UIPopup.TutorialPopup) != null)
+                    uiSystem.HidePopup(UIPopup.TutorialPopup);
+                else
+                {
+                    if (menuPanel != null) menuPanel.CloseMutualPopupsForTutorial();
+                    uiSystem.ShowPopup(UIPopup.TutorialPopup);
+                }
             }
             else if (GetKeyDownAny(KeyCode.C))
             {
