@@ -14,11 +14,14 @@ namespace BirdGame
         private SpriteRenderer spriteRenderer;
         private Vector3 lastValidPosition; // 记录最后一个有效位置
         private bool isDraggingFromHook;
+        private DecorationItem info;
 
         private void Start()
         {
             mainCamera = Camera.main;
             spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            var clickHandler = GetComponent<DecorationClickHandler>();
+            info = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[clickHandler.sceneId].decorations[clickHandler.decorationIndex];
             
             // // 添加碰撞器以便更好地检测鼠标
             // if (spriteRenderer.GetComponent<Collider2D>() == null)
@@ -121,13 +124,25 @@ namespace BirdGame
         
         private bool IsOnGround(Vector3 position)
         {
+            Debug.Log(info.name);
             if (NavigationManager.Instance == null)
                 return false;
-                
+            if (!info.isGround)
+                return false;
             Vector2 worldPosition = new Vector2(position.x, position.y);
-            
-            // 检查位置是否在可导航区域（地面）
-            return NavigationManager.Instance.IsPointInNavMeshArea(3, worldPosition);
+
+            if (info.dragType == DragType.DefaultGround)
+                // 检查位置是否在可导航区域（地面）
+                return NavigationManager.Instance.IsPointInNavMeshArea(3, worldPosition);
+            else if (info.areas != null && info.areas.Length > 0)
+            {
+                foreach (var area in info.areas)
+                {
+                    if (NavigationManager.Instance.IsPointInNavMeshArea(area, worldPosition))
+                        return true;
+                }
+            }
+            return false;
         }
         
         private void SetVisualFeedback(bool isOnGround)

@@ -303,7 +303,7 @@ namespace Coffee.UIEffectInternal
     }
 
 #if UNITY_EDITOR
-    internal class ShaderVariantRegistryEditor
+    public class ShaderVariantRegistryEditor
     {
         private static readonly MethodInfo s_MiDrawShaderEntry =
             Type.GetType("UnityEditor.ShaderVariantCollectionInspector, UnityEditor")

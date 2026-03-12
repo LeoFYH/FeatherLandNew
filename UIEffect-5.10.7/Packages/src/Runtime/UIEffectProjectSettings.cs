@@ -15,10 +15,9 @@ namespace Coffee.UIEffects
     {
         [Header("Setting")]
         [SerializeField]
-        internal List<UIEffect> m_RuntimePresets = new List<UIEffect>();
+        public List<UIEffect> m_RuntimePresets = new List<UIEffect>();
 
-        [SerializeField]
-        internal List<UIEffectPreset> m_RuntimePresetsV2 = new List<UIEffectPreset>();
+        [SerializeField] public List<UIEffectPreset> m_RuntimePresetsV2 = new List<UIEffectPreset>();
 
         [Header("Editor")]
         [Tooltip("Use HDR color pickers on color fields.")]
@@ -233,7 +232,7 @@ namespace Coffee.UIEffects
             m_ShaderVariantRegistry.RegisterOptionalShaders(this);
         }
 
-        internal static UIEffect[] LoadEditorPresets()
+        public static UIEffect[] LoadEditorPresets()
         {
             var dirs = AssetDatabase.FindAssets(k_PresetDir + " t:folder")
                 .Select(AssetDatabase.GUIDToAssetPath)
@@ -248,7 +247,7 @@ namespace Coffee.UIEffects
                 .ToArray();
         }
 
-        internal static UIEffectPreset[] LoadEditorPresetsV2()
+        public static UIEffectPreset[] LoadEditorPresetsV2()
         {
             var dirs = AssetDatabase.FindAssets(k_PresetDir + " t:folder")
                 .Select(AssetDatabase.GUIDToAssetPath)
@@ -262,7 +261,7 @@ namespace Coffee.UIEffects
                 .ToArray();
         }
 
-        internal static void SaveAsNewPreset(UIEffect effect)
+        public static void SaveAsNewPreset(UIEffect effect)
         {
             if (!Directory.Exists(k_PresetSaveDir))
             {
@@ -287,7 +286,7 @@ namespace Coffee.UIEffects
             return new PreloadedProjectSettingsProvider("Project/UI/UI Effect");
         }
 
-        internal static (string path, bool builtin) GetPresetPath(Object preset)
+        public static (string path, bool builtin) GetPresetPath(Object preset)
         {
             var assetPath = AssetDatabase.GetAssetPath(preset);
             var builtin = assetPath.StartsWith("Packages/com.coffee.ui-effect/");

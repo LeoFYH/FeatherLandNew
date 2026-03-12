@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.AI;
+using UnityEngine.UI;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -201,6 +203,12 @@ namespace BirdGame
 #endif
     }
 
+    public enum DragType
+    {
+        DefaultGround,
+        MultiAreas
+    }
+
     [Serializable]
     public class DecorationItem
     {
@@ -227,6 +235,10 @@ namespace BirdGame
         public Vector3[] fixedPositions;
         [VerticalGroup("Icon/Info")]
         public bool isGround = false;
+        [VerticalGroup("Icon/Info"), ShowIf("@isGround==true")]
+        public DragType dragType = DragType.DefaultGround;
+        [VerticalGroup("Icon/Info"), ShowIf("@dragType==DragType.MultiAreas"), ValueDropdown("GetAreaList")]
+        public int[] areas = new[] { 3 };
         [LabelText("是否显示"), VerticalGroup("Icon/Info"), InfoBox("取消勾选后，该装饰物不会出现在游戏商店中")]
         public bool isVisible = true;
         [LabelText("示意图"), VerticalGroup("Icon/Info")]
@@ -245,6 +257,22 @@ namespace BirdGame
 
             fixedPositions = newVecs;
 
+        }
+        
+        private ValueDropdownList<int> GetAreaList()
+        {
+            string[] areaNames = NavMesh.GetAreaNames(); // 获取所有区域名称
+        
+            var list = new ValueDropdownList<int>();
+            foreach (string areaName in areaNames)
+            {
+                // 通过名称获取对应的索引
+                int areaIndex = NavMesh.GetAreaFromName(areaName); 
+                Debug.Log($"区域名称: {areaName}, 索引: {areaIndex}");
+                list.Add(areaName, areaIndex);
+            }
+            
+            return list;
         }
     }
 
