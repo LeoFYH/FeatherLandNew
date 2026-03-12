@@ -9,7 +9,7 @@ namespace BirdGame
     {
         public List<Transform> flyPositions;
         [Header("自动投喂")]
-        public float createFoodTime = 0.5f;
+        public float createFoodTime = 1f;
 
         float _foodTimer;
         int _previousClickCount;
