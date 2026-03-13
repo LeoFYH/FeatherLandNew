@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using QFramework;
 using UnityEngine.UI;
 
@@ -10,12 +10,19 @@ namespace BirdGame
 
         private void Start()
         {
+            var radioModel = this.GetModel<IRadioModel>();
+            var saveModel = this.GetModel<ISaveModel>();
             _slider = GetComponent<Slider>();
-            _slider.value = this.GetModel<IRadioModel>().Volume.Value;
+            _slider.SetValueWithoutNotify(radioModel.Volume.Value);
             _slider.onValueChanged.AddListener(v =>
             {
-                this.GetModel<IRadioModel>().Volume.Value = v;
+                radioModel.Volume.Value = v;
+                saveModel.MusicSettingData.bgmVolume = v;
             });
+            radioModel.Volume.Register(v =>
+            {
+                _slider.SetValueWithoutNotify(v);
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
         }
     }
 }

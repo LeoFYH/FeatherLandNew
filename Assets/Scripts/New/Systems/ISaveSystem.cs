@@ -274,6 +274,7 @@ namespace BirdGame
             _saveModel.ScheduleData = GetData<ScheduleData>("ScheduleData");
             _saveModel.IllustratedData = GetData<IllustratedData>("IllustratedData");
 
+            this.GetModel<IRadioModel>().Volume.Value = _saveModel.MusicSettingData.bgmVolume;
             this.GetModel<IRadioModel>().EnvironmentVolume.Value = _saveModel.MusicSettingData.environmentVolume;
         }
 
