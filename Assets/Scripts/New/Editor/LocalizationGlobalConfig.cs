@@ -400,6 +400,8 @@ namespace BirdGame.Editor
                         // }
                         foreach (var word in words)
                         {
+                            if(word.keys.Count <= i || wordKeys.Count <= i)
+                                continue;
                             word.keys[i] = wordKeys[i];
                         }
 
