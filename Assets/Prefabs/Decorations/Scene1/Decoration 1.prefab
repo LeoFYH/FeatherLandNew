@@ -143,7 +143,7 @@ Transform:
   m_GameObject: {fileID: 3690973508546238135}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -1}
   m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -217,6 +217,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 0
+  decorationId: 0
   decorationIndex: 1
   canFeed: 0
   effects: []
@@ -403,3 +404,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f90d5e1aeefad2458a912d2a1dddd3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enableHookSupport: 1

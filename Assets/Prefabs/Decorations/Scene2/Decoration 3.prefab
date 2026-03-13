@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 2329688499522363160}
   - component: {fileID: 5355641733467094195}
   - component: {fileID: 6316886634503728960}
-  - component: {fileID: 3714622231321766554}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Decoration
@@ -104,6 +103,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 1
+  decorationId: 0
   decorationIndex: 3
   canFeed: 0
   effects: []
@@ -399,18 +399,6 @@ PolygonCollider2D:
       - {x: 0.17100036, y: -0.041599732}
       - {x: 0.15100037, y: -0.05159973}
   m_UseDelaunayMesh: 0
---- !u!114 &3714622231321766554
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2870156106938477661}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f90d5e1aeefad2458a912d2a1dddd3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &5691537437215484801
 GameObject:
   m_ObjectHideFlags: 0

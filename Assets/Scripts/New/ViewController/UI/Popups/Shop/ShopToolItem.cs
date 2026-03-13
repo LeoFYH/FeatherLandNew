@@ -105,6 +105,10 @@ namespace BirdGame
                     {
                         icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.18f;
                     }
+                    else if (item.selections[0].type == ToolType.Cursor)
+                    {
+                        icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size;
+                    }
                     else
                     {
                         icon.GetComponent<RectTransform>().sizeDelta = new Vector2(sp.rect.size.x * 0.18f, sp.rect.size.y * 0.22f);
@@ -276,6 +280,10 @@ namespace BirdGame
                         else if(item.selections[0].type == ToolType.Note)
                         {
                             icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size * 0.18f;
+                        }
+                        else if (item.selections[0].type == ToolType.Cursor)
+                        {
+                            icon.GetComponent<RectTransform>().sizeDelta = sp.rect.size;
                         }
                         else
                         {
@@ -565,6 +573,8 @@ namespace BirdGame
                     toggle.targetGraphic.gameObject.SetActive(true);
                 }
             }
+            
+            this.GetSystem<ICursorSystem>().RefreshCursor();
         }
 
         private void Start()
@@ -666,6 +676,11 @@ namespace BirdGame
                                 }
                             }
                         }
+                        else if(toolItem.selections[0].type == ToolType.Cursor)
+                        {
+                            saveModel.AccountData.sceneTools[0].tools[itemIndex].equipedId = selectedToolIndex;
+                            this.GetSystem<ICursorSystem>().RefreshCursor();
+                        }
 
                         UpdateButtonState();
                         //this.GetSystem<IUISystem>().HidePopup(UIPopup.ShopPopup);
@@ -696,14 +711,10 @@ namespace BirdGame
                         // this.GetSystem<IUISystem>().ShowPrompt($"{text} {equipName}");
                         //this.GetSystem<IUISystem>().ShowPrompt($"{text} {selectedTool.selectionName}");
                     }
-                    else if (toolItem.name.ToLower() == "cursor")
+                    else if(toolItem.selections[0].type == ToolType.Cursor)
                     {
-                        // 应用光标类型
-                        // string text = this.GetSystem<ILocalizationSystem>().GetString("Cursor skin equipped:");
-                        // string equipName = this.GetSystem<ILocalizationSystem>()
-                        //     .GetString(selectedTool.selectionName);
-                        // this.GetSystem<IUISystem>().ShowPrompt($"{text} {equipName}");
-                        //this.GetSystem<IUISystem>().ShowPrompt($"{text} {selectedTool.selectionName}");
+                        saveModel.AccountData.sceneTools[0].tools[itemIndex].equipedId = selectedToolIndex;
+                        this.GetSystem<ICursorSystem>().RefreshCursor();
                     }
 
                     UpdateButtonState();

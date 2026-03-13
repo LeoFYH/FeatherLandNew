@@ -66,6 +66,19 @@ namespace BirdGame
                         .uiColorItem.uiColor;
                     return;
                 }
+                else if (this.GetModel<IConfigModel>().ShopConfig.tools[itemIndex].selections[selectIndex].type ==
+                         ToolType.Cursor)
+                {
+                    text.gameObject.SetActive(false);
+                    icon.gameObject.SetActive(true);
+                    color.gameObject.SetActive(false);
+                    var sprite = this.GetModel<IConfigModel>().ShopConfig.tools[itemIndex].selections[selectIndex].icon;
+                    icon.sprite = sprite;
+                    if (sprite != null)
+                        icon.GetComponent<RectTransform>().sizeDelta = sprite.rect.size * 0.5f;
+                    return;
+                }
+
                 text.gameObject.SetActive(true);
                 icon.gameObject.SetActive(false);
                 color.gameObject.SetActive(false);

@@ -11,8 +11,10 @@ namespace BirdGame
     {
         bool IsPlayingAnim();
         void SetCursorState(CursorState state);
+        void RefreshCursor();
         void Feed();
         //void Stroke();
+        
     }
 
     public class CursorSystem : AbstractSystem, ICursorSystem
@@ -55,6 +57,30 @@ namespace BirdGame
             feedAnim = null;
             strokeAnim = null;
             var item = cursorItems[state];
+            try
+            {
+                if (this.GetModel<ISaveModel>().AccountData.sceneTools.Count == 0)
+                {
+                    this.GetModel<ISaveModel>().AccountData.sceneTools.Add(new SceneToolInfo());
+                }
+
+                while (this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools.Count <= 6)
+                {
+                    this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools.Add(new ToolInfo());
+                }
+
+                int index = this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools[6].equipedId;
+                Cursor.SetCursor(item.cursorTextures[index], item.hotspot, CursorMode.Auto);
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+
+        public void RefreshCursor()
+        {
+            var item = cursorItems[currentState];
             try
             {
                 if (this.GetModel<ISaveModel>().AccountData.sceneTools.Count == 0)

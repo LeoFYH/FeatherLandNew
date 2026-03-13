@@ -423,7 +423,7 @@ MonoBehaviour:
       sceneSprite: {fileID: -679213774000786348, guid: 8e3ff9ec32dc3af42bfb1eeda501c28e, type: 3}
       fixedPositions:
       - {x: -8.225, y: -4.862, z: 0}
-      isGround: 0
+      isGround: 1
       dragType: 0
       areas: 03000000
       isVisible: 1
@@ -2026,8 +2026,8 @@ MonoBehaviour:
   - name: Mouse
     isVisible: 1
     selections:
-    - icon: {fileID: 3316791359350907884, guid: 683eac49016f3cc409a12fc89a787353, type: 3}
-      type: 0
+    - icon: {fileID: 373152348389702700, guid: d477f6b5cd9041e43bd31f0b04b4c427, type: 3}
+      type: 6
       selectionName: Cursor1
       description: 
       descriptionKey: 
@@ -2040,9 +2040,37 @@ MonoBehaviour:
           serializedVersion: 2
           rgba: 0
         uiSprites: []
-    - icon: {fileID: -1762204038450373753, guid: 577a2556ec7c643449dcc60a6926d9d3, type: 3}
-      type: 0
+    - icon: {fileID: -917800121156400532, guid: ce9f3028bf0067c40af765dfd028b572, type: 3}
+      type: 6
       selectionName: Cursor2
+      description: 
+      descriptionKey: 
+      price: 0
+      foodScale: 1
+      addValue: 0.1
+      addCount: 0
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 0
+        uiSprites: []
+    - icon: {fileID: -5235260111290608695, guid: 904872047a11af7419f5d5a681cc5c31, type: 3}
+      type: 6
+      selectionName: Cursor3
+      description: 
+      descriptionKey: 
+      price: 0
+      foodScale: 1
+      addValue: 0.1
+      addCount: 0
+      uiColorItem:
+        uiColor:
+          serializedVersion: 2
+          rgba: 0
+        uiSprites: []
+    - icon: {fileID: -5423100851648531940, guid: d87212207c004284fa81fc50ab5aa51a, type: 3}
+      type: 6
+      selectionName: Cursor4
       description: 
       descriptionKey: 
       price: 0
