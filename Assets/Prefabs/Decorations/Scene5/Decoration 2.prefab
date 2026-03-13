@@ -103,6 +103,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 4
+  decorationId: 0
   decorationIndex: 2
   canFeed: 1
   effects: []
@@ -213,6 +214,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f90d5e1aeefad2458a912d2a1dddd3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enableHookSupport: 1
 --- !u!1 &7099460407733767612
 GameObject:
   m_ObjectHideFlags: 0
@@ -290,7 +292,7 @@ MonoBehaviour:
   detectionRange: 1
   autoAdjustDetectionRange: 1
   showDebugInfo: 0
-  localizationKey: OnlyDeleteHint
+  localizationKey: Right Click To Delete
   useLocalization: 1
   checkUIRaycast: 1
   onClick:
