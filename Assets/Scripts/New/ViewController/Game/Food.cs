@@ -94,6 +94,7 @@ namespace BirdGame
                     {
                         spriteRenderer.color = new Color(1f, 1f, 1f, 1f);
                     }
+                    isDisabling = false;
 
                     yield break;
                 }
