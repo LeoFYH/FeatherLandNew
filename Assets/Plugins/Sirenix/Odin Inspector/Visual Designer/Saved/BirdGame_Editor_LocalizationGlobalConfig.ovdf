@@ -1,0 +1,11 @@
+OVDF v1.1
+BirdGame.Editor.LocalizationGlobalConfig, Assembly-CSharp-Editor
+MetaGuid:ee6ecee361ca41c495c74b67757f2522
+
+# importExcelPath
++ [Sirenix.OdinInspector.FilePathAttribute]
+	Extensions = ".xlsx"
+	ParentFolder = "Assets/Scripts/New/Editor/Excels"
+	RequireExistingPath = True
+	RequireValidPath = False
+	AbsolutePath = True

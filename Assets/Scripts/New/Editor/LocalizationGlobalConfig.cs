@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Text;
 using System.Net;
 using System.IO;
+using System.Linq;
+using OfficeOpenXml;
 using Sirenix.OdinInspector;
 using Sirenix.Utilities;
 using TMPro;
@@ -266,10 +268,10 @@ namespace BirdGame.Editor
             }
         }
 
-        [ShowIf("@page==Page.Excel设置"), BoxGroup("Excel"), FolderPath(ParentFolder = "Assets/Scripts/New/Editor/Excels", RequireExistingPath = true, AbsolutePath = true)]
+        [ShowIf("@page==Page.Excel设置"), BoxGroup("导出"), FolderPath(ParentFolder = "Assets/Scripts/New/Editor/Excels", RequireExistingPath = true, AbsolutePath = true)]
         public string excelPath;
 
-        [ShowIf("@page==Page.Excel设置&&!string.IsNullOrEmpty(excelPath)"), BoxGroup("Excel"), Button("导出Excel")]
+        [ShowIf("@page==Page.Excel设置&&!string.IsNullOrEmpty(excelPath)"), BoxGroup("导出"), Button("导出Excel")]
         private void OnExportExcel()
         {
             List<string[]> rowData = new List<string[]>();
@@ -311,6 +313,97 @@ namespace BirdGame.Editor
             // 保存文件
             string filePath = Path.Combine(excelPath, "data.csv");
             File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
+        }
+        [ShowIf("@page==Page.Excel设置"), BoxGroup("装饰本地化导入")]
+        public string importExcelPath;
+        [Button("Excel导入配置"), ShowIf("@page==Page.Excel设置"), BoxGroup("装饰本地化导入")]
+        private void ImportExcel()
+        { 
+            using (FileStream fs = new FileStream(importExcelPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                using (ExcelPackage excel = new ExcelPackage(fs))
+                {
+                    // 获取第一个工作表
+                    ExcelWorksheet worksheet = excel.Workbook.Worksheets[1];
+
+                    for (int i = 2; i <= worksheet.Dimension.Rows; i++)
+                    {
+                        string key = worksheet.Cells[i, 4].Text;
+                        if (!wordKeys.Contains(key))
+                        {
+                            string englishValue = worksheet.Cells[i, 4].Text;
+                            string chineseValue = worksheet.Cells[i, 2].Text;
+                            wordKeys.Add(key);
+                            foreach (var word in words)
+                            {
+                                word.keys.Add(key);
+                                word.values.Add("");
+                                word.spValues.Add(null);
+                                word.isImageFlags.Add(false);
+                            }
+                            words[0].values[^1] = englishValue;
+                            words[1].values[^1] = chineseValue;
+                        }
+                        string descKey = $"{key} Desc";
+                        if (!wordKeys.Contains(descKey))
+                        {
+                            string descEnglish = worksheet.Cells[i, 5].Text;
+                            string descChinese = worksheet.Cells[i, 3].Text;
+                            wordKeys.Add(descKey);
+                            foreach (var word in words)
+                            {
+                                word.keys.Add(descKey);
+                                word.values.Add("");
+                                word.spValues.Add(null);
+                                word.isImageFlags.Add(false);
+                            }
+                            words[0].values[^1] = descEnglish;
+                            words[1].values[^1] = descChinese;
+                        }
+
+                    }
+                }
+            }
+        }
+        [Button("检查并导出缺失的装饰"), ShowIf("@page==Page.Excel设置"), BoxGroup("装饰本地化导入")]
+        private void ExportLessDecorations()
+        {
+            LoadWords();
+            var shopConfig = AssetDatabase.LoadAssetAtPath<ShopConfig>("Assets/Prefabs/Config/ShopConfig.asset");
+            var mapConfig = AssetDatabase.LoadAssetAtPath<MapConfig>("Assets/Prefabs/Config/MapConfig.asset");
+            int mapIndex = 0;
+            ExcelPackage excel = new ExcelPackage();
+            ExcelWorksheet worksheet = excel.Workbook.Worksheets.Add("Sheet1");
+            int rowIndex = 1;
+            worksheet.Cells[rowIndex, 1].Value = "地图";
+            worksheet.Cells[rowIndex, 2].Value = "Chinese Name";
+            worksheet.Cells[rowIndex, 3].Value = "Chinese description";
+            worksheet.Cells[rowIndex, 4].Value = "English Name";
+            worksheet.Cells[rowIndex, 5].Value = "English description";
+            rowIndex++;
+            foreach (var scene in shopConfig.sceneDecorations)
+            {
+                string mapName = mapConfig.maps[mapIndex].mapName;
+                foreach (var decoration in scene.decorations)
+                {
+                    string key = decoration.name;
+                    string desKey = decoration.description;
+                    if (!wordKeys.Contains(key) || !wordKeys.Contains(desKey))
+                    {
+                        worksheet.Cells[rowIndex, 1].Value = mapName;
+                        worksheet.Cells[rowIndex, 2].Value = "";
+                        worksheet.Cells[rowIndex, 3].Value = "";
+                        worksheet.Cells[rowIndex, 4].Value = key;
+                        worksheet.Cells[rowIndex, 5].Value = "";
+                        rowIndex++;
+                    }
+                }
+
+                mapIndex++;
+            }
+            string filePath = Path.Combine(excelPath, "less.xlsx");
+            FileInfo excelFile = new FileInfo(filePath);
+            excel.SaveAs(excelFile);
         }
 
         [OnInspectorGUI]
@@ -807,7 +900,7 @@ namespace BirdGame.Editor
                 word.isImageFlags.Add(false);
             }
         }
-        
+
         private void TranslateAllKeys()
         {
             if (languages[currentSelectedLanguage].Language == SystemLanguage.English)
