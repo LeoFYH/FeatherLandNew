@@ -28,10 +28,14 @@ namespace BirdGame
         {
             if (EventSystem.current.IsPointerOverGameObject()) return;
             if (this.GetSystem<IGameSystem>().IsPlacingDecoration()) return;
-            if (IsClickingOnDecoration()) return;
 
             bool autoFeedingEnabled = this.GetModel<ISaveModel>().SettingData.autoFeeding;
             bool clicked = Input.GetMouseButtonDown(0) || SimpleMouseForwarder.clickCount > _previousClickCount;
+            if (IsClickingOnDecoration(clicked))
+            {
+                _previousClickCount = SimpleMouseForwarder.clickCount;
+                return;
+            }
 
             if (clicked)
             {
@@ -60,9 +64,9 @@ namespace BirdGame
             }
         }
 
-        bool IsClickingOnDecoration()
+        bool IsClickingOnDecoration(bool clicked)
         {
-            if (!Input.GetMouseButtonDown(0)) return false;
+            if (!clicked) return false;
 
             Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             RaycastHit2D[] hits = Physics2D.RaycastAll(mousePosition, Vector2.zero);
@@ -72,8 +76,6 @@ namespace BirdGame
                 var handler = hit.collider.GetComponent<DecorationClickHandler>();
                 var hasDrag = hit.collider.GetComponent<DecorationDrag>() != null;
                 if (handler == null && !hasDrag) continue;
-
-                if (handler != null && handler.canFeed) continue;
                 return true;
             }
             return false;
