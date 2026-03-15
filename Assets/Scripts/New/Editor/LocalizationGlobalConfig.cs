@@ -406,6 +406,29 @@ namespace BirdGame.Editor
             excel.SaveAs(excelFile);
         }
 
+        [Button("导出所有本地化"), ShowIf("@page==Page.Excel设置"), BoxGroup("装饰本地化导入")]
+        private void ExportAllLocalization()
+        {
+            LoadWords();
+            ExcelPackage excel = new ExcelPackage();
+            ExcelWorksheet worksheet = excel.Workbook.Worksheets.Add("Sheet1");
+            int rowIndex = 1;
+            worksheet.Cells[rowIndex, 1].Value = "key";
+            worksheet.Cells[rowIndex, 2].Value = "English";
+            worksheet.Cells[rowIndex, 3].Value = "Chinese";
+            rowIndex++;
+            foreach (var key in wordKeys)
+            {
+                worksheet.Cells[rowIndex, 1].Value = key;
+                worksheet.Cells[rowIndex, 2].Value = words[0].values[wordKeys.IndexOf(key)];
+                worksheet.Cells[rowIndex, 3].Value = words[1].values[wordKeys.IndexOf(key)];
+                rowIndex++;
+            }
+            string filePath = Path.Combine(excelPath, "Localization.xlsx");
+            FileInfo excelFile = new FileInfo(filePath);
+            excel.SaveAs(excelFile);
+        }
+
         [OnInspectorGUI]
         private void OnGUI()
         {
