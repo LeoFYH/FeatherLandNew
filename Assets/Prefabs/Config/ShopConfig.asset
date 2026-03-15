@@ -282,6 +282,21 @@ MonoBehaviour:
       birds:
       - birdType: 175
         probability: 0.5
+    - eggSp: {fileID: -8002347335681798773, guid: d93b287acabe7c14a97b2d5b6eb6fe35, type: 3}
+      price: 0
+      birdCount: 3
+      description: 
+      birds:
+      - birdType: 176
+        probability: 0.5
+      - birdType: 177
+        probability: 0.5
+      - birdType: 179
+        probability: 0.5
+      - birdType: 180
+        probability: 0.5
+      - birdType: 178
+        probability: 0.5
   - eggs:
     - eggSp: {fileID: 4465636764377432600, guid: 4b35a17a28a48d0408c858c2d19a3046, type: 3}
       price: 0
@@ -2030,7 +2045,7 @@ MonoBehaviour:
       type: 6
       selectionName: Cursor1
       description: 
-      descriptionKey: 
+      descriptionKey: Cursor1Dec
       price: 0
       foodScale: 1
       addValue: 0.1
@@ -2044,7 +2059,7 @@ MonoBehaviour:
       type: 6
       selectionName: Cursor2
       description: 
-      descriptionKey: 
+      descriptionKey: Cursor2Dec
       price: 0
       foodScale: 1
       addValue: 0.1
@@ -2058,7 +2073,7 @@ MonoBehaviour:
       type: 6
       selectionName: Cursor3
       description: 
-      descriptionKey: 
+      descriptionKey: Cursor3Dec
       price: 0
       foodScale: 1
       addValue: 0.1
@@ -2072,7 +2087,7 @@ MonoBehaviour:
       type: 6
       selectionName: Cursor4
       description: 
-      descriptionKey: 
+      descriptionKey: Cursor4Dec
       price: 0
       foodScale: 1
       addValue: 0.1
