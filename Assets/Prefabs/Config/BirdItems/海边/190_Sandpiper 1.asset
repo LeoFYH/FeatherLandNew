@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5ca5921b75b4d93a3c385d453e820a4, type: 3}
+  m_Name: 190_Sandpiper 1
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  preview: {fileID: -8868803461578586678, guid: 39494dada7420094e815d613e03183de, type: 3}
+  id: 190
+  prefab:
+    m_AssetGUID: 745e23665ac15ce4d9aa736f6bbea4e0
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
+  canFly: 1
+  canFlyWait: 1
+  canFlyHorizontal: 0
+  reality: Rare
+  eraningForSmall: 2
+  eraningForBig: 4
+  priceForSmall: 20
+  priceForBig: 40
+  clickEarning: 3
+  clickEarningForFiveTimes: 0
+  description: Pharaoh Eagle-Owl
+  clickAudio: {fileID: 0}
+  totalExp: 5
+  eatExp: 1
+  autoExp: 0.1
+  habitat: 
+  scenePreview: {fileID: 0}
