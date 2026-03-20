@@ -395,6 +395,7 @@ namespace BirdGame
                     this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(asset.AssetGUID, clip =>
                     {
                         alertAudio.clip = clip;
+                        alertAudio.outputAudioMixerGroup = this.GetModel<IConfigModel>().RadioConfig.alertClips[clockModel.TimerItem.AudioSelected.Value].group;
                         alertAudio.volume = clockModel.TimerItem.AudioVolume.Value;
                         alertAudio.Play();
                     });
@@ -408,6 +409,7 @@ namespace BirdGame
                     this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(asset.AssetGUID, clip =>
                     {
                         alertAudio.clip = clip;
+                        alertAudio.outputAudioMixerGroup = this.GetModel<IConfigModel>().RadioConfig.alertClips[clockModel.TomatoItem.AudioSelected.Value].group;
                         alertAudio.volume = clockModel.TomatoItem.AudioVolume.Value;
                         alertAudio.Play();
                     });
