@@ -683,9 +683,10 @@ namespace BirdGame
         {
             var config = this.GetModel<IConfigModel>().RadioConfig;
             int index = Random.Range(0, config.pettingClips.Length);
-            this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(config.pettingClips[index].AssetGUID, clip =>
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(config.pettingClips[index].songFile.AssetGUID, clip =>
             {
                 pettingAudio.clip = clip;
+                pettingAudio.outputAudioMixerGroup =config.pettingClips[index].group;
                 pettingAudio.Play();
             });
         }
