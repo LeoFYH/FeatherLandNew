@@ -565,7 +565,7 @@ MonoBehaviour:
       sceneSprite: {fileID: 533221092263363272, guid: 6e1662933a97bdc41914541745d4891c, type: 3}
       fixedPositions:
       - {x: -8.795, y: -5.801, z: 0}
-      isGround: 1
+      isGround: 0
       dragType: 0
       areas: 03000000
       isVisible: 1
@@ -1430,9 +1430,9 @@ MonoBehaviour:
       sceneSprite: {fileID: -1332092520995441507, guid: 53bd03b17b310c14b802d6ab5a7c61ce, type: 3}
       fixedPositions:
       - {x: 5.566, y: -2.441, z: 0}
-      isGround: 0
-      dragType: 0
-      areas: 03000000
+      isGround: 1
+      dragType: 1
+      areas: 0500000003000000
       isVisible: 1
       preview: {fileID: 0}
     - icon: {fileID: -8936907074689660566, guid: 7780d800a55a5a243a01125eec546d76, type: 3}
