@@ -121,10 +121,21 @@ namespace BirdGame
                     Debug.Log("设置为窗口模式 (45 FPS)");
                     break;
                 case 1:
-                    this.GetUtility<IFullScreenUtility>().WallpaperMode();
-                    if (this.GetUtility<IFullScreenUtility>().HasMultipleMonitors)
-                        this.GetSystem<IUISystem>().ShowPrompt(this.GetSystem<ILocalizationSystem>().GetString("WallpaperSingleMonitorOnly"));
-                    Debug.Log("设置为壁纸模式 (60 FPS - 流畅光标)");
+                    var fullScreenUtility = this.GetUtility<IFullScreenUtility>();
+                    fullScreenUtility.WallpaperMode();
+                    if (fullScreenUtility.IsWallpaperModeActive())
+                    {
+                        if (fullScreenUtility.HasMultipleMonitors)
+                            this.GetSystem<IUISystem>().ShowPrompt(this.GetSystem<ILocalizationSystem>().GetString("WallpaperSingleMonitorOnly"));
+                        Debug.Log("设置为壁纸模式 (60 FPS - 流畅光标)");
+                    }
+                    else
+                    {
+                        // 壁纸挂载失败时回退到全屏，避免“日志成功但实际失败”。
+                        fullScreenUtility.FullscreenMode();
+                        mode = 2;
+                        Debug.LogWarning("壁纸模式切换失败，已回退到全屏模式 (45 FPS)");
+                    }
                     break;
                 default:
                     this.GetUtility<IFullScreenUtility>().FullscreenMode();

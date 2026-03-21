@@ -312,6 +312,65 @@ namespace BirdGame
             }
         }
 
+        /// <summary>
+        /// 壁纸挂载失败时回滚窗口状态，避免窗口停留在错误层级遮挡桌面。
+        /// </summary>
+        private void RestoreWindowAfterWallpaperFailure(string reason)
+        {
+            if (windowHandle == IntPtr.Zero)
+                return;
+
+            try
+            {
+                SetParent(windowHandle, IntPtr.Zero);
+
+                if (originalStyle != IntPtr.Zero)
+                    SetWindowLongPtr(windowHandle, GWL_STYLE, originalStyle);
+                if (originalExStyle != IntPtr.Zero)
+                    SetWindowLongPtr(windowHandle, GWL_EXSTYLE, originalExStyle);
+
+                SetWindowPos(windowHandle, IntPtr.Zero, 0, 0, 0, 0,
+                    SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+                ShowWindow(windowHandle, SW_SHOW);
+
+                isWallpaperMode = false;
+
+                SimpleMouseForwarder mouseForwarder = UnityEngine.Object.FindObjectOfType<SimpleMouseForwarder>(true);
+                if (mouseForwarder != null)
+                    mouseForwarder.gameObject.SetActive(false);
+
+                Debug.LogWarning($"[WallpaperMode] 已回滚窗口状态: {reason}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[WallpaperMode] 回滚窗口状态失败: {e.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 某些机型/系统上，GetParent 可能返回 0 但实际可正常作为壁纸层使用。
+        /// 这些环境允许走宽松挂载路径，避免严格校验误杀。
+        /// </summary>
+        private bool AllowLenientAttach()
+        {
+            try
+            {
+                string machineName = Environment.MachineName ?? string.Empty;
+                if (machineName.Equals("ROG_G16", StringComparison.OrdinalIgnoreCase))
+                    return true;
+
+                // 仅作为兼容兜底：Win11 26200 系列在部分设备上存在句柄校验不稳定
+                string osInfo = SystemInfo.operatingSystem ?? string.Empty;
+                if (osInfo.Contains("10.0.26200"))
+                    return true;
+            }
+            catch
+            {
+                // ignore
+            }
+            return false;
+        }
+
         // ---------------- main methods ----------------
         public bool EnableWallpaperMode
         {
@@ -338,18 +397,6 @@ namespace BirdGame
                 SendMessage(hProgman, 0x052C, new IntPtr(13), new IntPtr(1));
                 IntPtr workerW = FindWorkerWWithIconsVisible(hProgman);
 
-                IntPtr desktopParent = workerW != IntPtr.Zero ? workerW : hProgman;
-                // 找不到 WorkerW 时回退到 Progman（仅作为兼容兜底）
-                if (desktopParent == IntPtr.Zero)
-                {
-                    Debug.LogError("找不到WorkerW/Progman窗口（桌面背景容器）");
-                    return;
-                }
-                if (workerW == IntPtr.Zero)
-                {
-                    Debug.LogWarning("[WallpaperMode] 未找到 WorkerW，回退到 Progman");
-                }
-
                 // 设置窗口样式：无边框弹出窗口
                 int newStyle = GetWindowLong(windowHandle, GWL_STYLE);
                 newStyle &= ~unchecked((int)WS_OVERLAPPEDWINDOW);
@@ -370,24 +417,63 @@ namespace BirdGame
                 SetWindowPos(windowHandle, IntPtr.Zero, 0, 0, 0, 0,
                     SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
-                // 将Unity窗口设置为桌面容器子窗口（嵌入桌面）
-                SetParent(windowHandle, desktopParent);
-                // 某些机器首次调用可能未生效，重试一次并做校验。
-                if (GetParent(windowHandle) != desktopParent)
+                // 多轮回退挂载：优先 WorkerW，失败后刷新 WorkerW，再回退 Progman。
+                // 仅在真正挂载成功后继续，避免“假成功”。
+                IntPtr desktopParent = IntPtr.Zero;
+                bool usedLenientAttach = false;
+                bool allowLenientAttach = AllowLenientAttach();
+                const int maxAttachRounds = 3;
+                for (int round = 0; round < maxAttachRounds && desktopParent == IntPtr.Zero; round++)
                 {
+                    // 每轮都刷新一次 WorkerW，适配 Explorer 动态变化
                     SendMessage(hProgman, 0x052C, new IntPtr(13), new IntPtr(1));
                     workerW = FindWorkerWWithIconsVisible(hProgman);
-                    if (workerW != IntPtr.Zero)
+
+                    var candidates = new System.Collections.Generic.List<IntPtr>();
+                    if (workerW != IntPtr.Zero) candidates.Add(workerW);
+
+                    // 兜底补充：直接查找 Progman 下首个 WorkerW（部分系统与上面结果不同）
+                    IntPtr firstWorkerW = hProgman != IntPtr.Zero
+                        ? FindWindowEx(hProgman, IntPtr.Zero, "WorkerW", null)
+                        : IntPtr.Zero;
+                    if (firstWorkerW != IntPtr.Zero && !candidates.Contains(firstWorkerW)) candidates.Add(firstWorkerW);
+
+                    // 最后兜底 Progman
+                    if (hProgman != IntPtr.Zero && !candidates.Contains(hProgman)) candidates.Add(hProgman);
+
+                    foreach (IntPtr candidate in candidates)
                     {
-                        desktopParent = workerW;
-                        SetParent(windowHandle, desktopParent);
+                        if (candidate == IntPtr.Zero) continue;
+
+                        SetParent(windowHandle, candidate);
+                        IntPtr actualParent = GetParent(windowHandle);
+                        if (actualParent == candidate)
+                        {
+                            desktopParent = candidate;
+                            Debug.Log($"[WallpaperMode] 挂载成功: round={round + 1}, parent={desktopParent}");
+                            break;
+                        }
+                        else if (allowLenientAttach && actualParent == IntPtr.Zero)
+                        {
+                            // 宽松路径：允许在句柄校验不稳定机型继续尝试显示。
+                            // 后续会使用屏幕坐标定位并跳过 ActivateWindow，减少遮挡图标风险。
+                            desktopParent = candidate;
+                            usedLenientAttach = true;
+                            Debug.LogWarning($"[WallpaperMode] 宽松挂载启用: round={round + 1}, candidate={candidate}, actual={actualParent}");
+                            break;
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"[WallpaperMode] 挂载校验失败: round={round + 1}, candidate={candidate}, actual={actualParent}");
+                        }
                     }
                 }
-                if (GetParent(windowHandle) != desktopParent)
+
+                if (desktopParent == IntPtr.Zero)
                 {
-                    // 兼容策略：这里不再中止，避免把原本可交互的机器误判为失败。
-                    // 后续仍按屏幕坐标定位并启用输入转发，最大化“可见+可点击”概率。
-                    Debug.LogWarning("[WallpaperMode] SetParent 校验失败，继续使用兼容路径");
+                    Debug.LogError("[WallpaperMode] 所有桌面层挂载尝试均失败，已放弃进入壁纸模式");
+                    RestoreWindowAfterWallpaperFailure("所有候选桌面层挂载失败");
+                    return;
                 }
 
                 // 多显示器时仅支持主屏，强制使用主显示器
@@ -398,11 +484,12 @@ namespace BirdGame
                 if (w <= 0 || h <= 0)
                 {
                     Debug.LogError($"[WallpaperMode] 无效工作区尺寸 {w}x{h}，中止");
-                    SetParent(windowHandle, IntPtr.Zero);
+                    RestoreWindowAfterWallpaperFailure($"无效工作区尺寸 {w}x{h}");
                     return;
                 }
-                IntPtr actualParent = GetParent(windowHandle);
-                IntPtr parentForCoordinate = actualParent != IntPtr.Zero ? actualParent : desktopParent;
+                IntPtr actualParentForPosition = GetParent(windowHandle);
+                // 未真正成为子窗口时不要用 parent 客户区坐标换算，直接走屏幕坐标更稳定。
+                IntPtr parentForCoordinate = actualParentForPosition != IntPtr.Zero ? actualParentForPosition : IntPtr.Zero;
                 // 子窗口 SetWindowPos 使用父窗口客户区坐标，不是屏幕坐标；需转换
                 var pt = new POINT { X = (int)workingArea.x, Y = (int)workingArea.y };
                 if (parentForCoordinate != IntPtr.Zero && ScreenToClient(parentForCoordinate, ref pt))
@@ -435,13 +522,21 @@ namespace BirdGame
                 }
                 
                 // Activate window and set focus
-                // Note: In wallpaper mode, window is a child of desktop, so focus behavior may differ
-                // But we still attempt to set focus to ensure keyboard input works when transitioning
-                ActivateWindow();
+                // Note: In wallpaper mode, window is a child of desktop, so focus behavior may differ.
+                // 宽松挂载下窗口可能仍是顶级窗口，激活会把它抬到前景遮挡图标，因此跳过。
+                if (!usedLenientAttach)
+                {
+                    ActivateWindow();
+                }
+                else
+                {
+                    Debug.Log("[WallpaperMode] 宽松挂载路径：跳过 ActivateWindow 以避免遮挡桌面图标");
+                }
             }
             catch (Exception e)
             {
                 Debug.LogError($"进入壁纸模式失败: {e.Message}");
+                RestoreWindowAfterWallpaperFailure($"异常: {e.Message}");
             }
 #endif
         }

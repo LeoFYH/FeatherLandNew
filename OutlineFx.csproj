@@ -65,13 +65,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Outline\Runtime\OutlineFx.cs" />
-    <Compile Include="Assets\Outline\Editor\SolidMaskDrawer.cs" />
     <Compile Include="Assets\Outline\Runtime\Optional.cs" />
     <Compile Include="Assets\Outline\Runtime\OutlineFxFeature.cs" />
     <Compile Include="Assets\Outline\Runtime\OutlineBlocker.cs" />
     <Compile Include="Assets\Outline\Runtime\OutlineFx.Pass.cs" />
     <Compile Include="Assets\Outline\Runtime\Outline.cs" />
-    <Compile Include="Assets\Outline\Editor\OptionalDrawer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Outline\OutlineShader.shader" />
