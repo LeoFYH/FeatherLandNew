@@ -1640,7 +1640,16 @@ namespace BirdGame
                 cachedForegroundWindowTitle = GetForegroundWindowTitle();
                 lastForegroundWindowCheckFrame = Time.frameCount;
             }
-            isOnDesktop = cachedForegroundWindowTitle == "Program Manager" || cachedForegroundWindowTitle == string.Empty;
+
+            // In wallpaper mode the game window can be foreground temporarily (ActivateWindow),
+            // but we still need to forward mouse events as "desktop mode".
+            bool wallpaperModeActive = false;
+            if (GameApp.Interface != null)
+            {
+                var fullScreen = GameApp.Interface.GetUtility<IFullScreenUtility>();
+                wallpaperModeActive = fullScreen != null && fullScreen.IsWallpaperModeActive();
+            }
+            isOnDesktop = wallpaperModeActive || cachedForegroundWindowTitle == "Program Manager" || cachedForegroundWindowTitle == string.Empty;
             
             // Performance optimization: Update cached values periodically
             if (Time.frameCount % 60 == 0) // Update every 60 frames (~1 second at 60fps)
