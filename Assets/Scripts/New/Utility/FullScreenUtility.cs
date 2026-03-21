@@ -338,11 +338,16 @@ namespace BirdGame
                 SendMessage(hProgman, 0x052C, new IntPtr(13), new IntPtr(1));
                 IntPtr workerW = FindWorkerWWithIconsVisible(hProgman);
 
-                // 找不到WorkerW窗口时退出
+                IntPtr desktopParent = workerW != IntPtr.Zero ? workerW : hProgman;
+                // 找不到 WorkerW 时回退到 Progman（仅作为兼容兜底）
+                if (desktopParent == IntPtr.Zero)
+                {
+                    Debug.LogError("找不到WorkerW/Progman窗口（桌面背景容器）");
+                    return;
+                }
                 if (workerW == IntPtr.Zero)
                 {
-                    Debug.LogError("找不到WorkerW窗口（桌面背景容器）");
-                    return;
+                    Debug.LogWarning("[WallpaperMode] 未找到 WorkerW，回退到 Progman");
                 }
 
                 // 设置窗口样式：无边框弹出窗口
@@ -352,20 +357,38 @@ namespace BirdGame
                 newStyle |= unchecked((int)WS_VISIBLE);
                 SetWindowLongPtr(windowHandle, GWL_STYLE, new IntPtr((long)newStyle));
 
-                // 调整扩展样式：设置为工具窗口，支持分层
+                // 调整扩展样式：保持工具窗口，但禁用 LAYERED。
+                // 在部分 Win11 机型上，LAYERED + WorkerW 会出现“有声音但画面不可见”。
                 int newExStyle = GetWindowLong(windowHandle, GWL_EXSTYLE);
                 newExStyle |= unchecked((int)WS_EX_TOOLWINDOW);
-                newExStyle |= unchecked((int)WS_EX_LAYERED);
                 newExStyle &= ~WS_EX_APPWINDOW;
                 newExStyle &= ~WS_EX_TRANSPARENT;
+                newExStyle &= ~WS_EX_LAYERED;
                 SetWindowLongPtr(windowHandle, GWL_EXSTYLE, new IntPtr((long)newExStyle));
 
                 // 应用样式变化
                 SetWindowPos(windowHandle, IntPtr.Zero, 0, 0, 0, 0,
                     SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
-                // 将Unity窗口设置为WorkerW的子窗口（嵌入桌面）
-                SetParent(windowHandle, workerW);
+                // 将Unity窗口设置为桌面容器子窗口（嵌入桌面）
+                SetParent(windowHandle, desktopParent);
+                // 某些机器首次调用可能未生效，重试一次并做校验。
+                if (GetParent(windowHandle) != desktopParent)
+                {
+                    SendMessage(hProgman, 0x052C, new IntPtr(13), new IntPtr(1));
+                    workerW = FindWorkerWWithIconsVisible(hProgman);
+                    if (workerW != IntPtr.Zero)
+                    {
+                        desktopParent = workerW;
+                        SetParent(windowHandle, desktopParent);
+                    }
+                }
+                if (GetParent(windowHandle) != desktopParent)
+                {
+                    // 兼容策略：这里不再中止，避免把原本可交互的机器误判为失败。
+                    // 后续仍按屏幕坐标定位并启用输入转发，最大化“可见+可点击”概率。
+                    Debug.LogWarning("[WallpaperMode] SetParent 校验失败，继续使用兼容路径");
+                }
 
                 // 多显示器时仅支持主屏，强制使用主显示器
                 int displayIndex = HasMultipleMonitors ? 0 : targetDisplay;
@@ -378,15 +401,17 @@ namespace BirdGame
                     SetParent(windowHandle, IntPtr.Zero);
                     return;
                 }
-                // 子窗口的 SetWindowPos 使用父窗口(WorkerW)的客户区坐标，不是屏幕坐标；需转换
+                IntPtr actualParent = GetParent(windowHandle);
+                IntPtr parentForCoordinate = actualParent != IntPtr.Zero ? actualParent : desktopParent;
+                // 子窗口 SetWindowPos 使用父窗口客户区坐标，不是屏幕坐标；需转换
                 var pt = new POINT { X = (int)workingArea.x, Y = (int)workingArea.y };
-                if (ScreenToClient(workerW, ref pt))
+                if (parentForCoordinate != IntPtr.Zero && ScreenToClient(parentForCoordinate, ref pt))
                 {
                     SetWindowPos(windowHandle, HWND_BOTTOM, pt.X, pt.Y, w, h, SWP_FRAMECHANGED | SWP_SHOWWINDOW);
                 }
                 else
                 {
-                    // 回退：部分环境下 WorkerW 客户区与虚拟屏一致，仍用屏幕坐标
+                    // 回退：父窗口客户区转换失败时，仍用屏幕坐标
                     SetWindowPos(windowHandle, HWND_BOTTOM,
                         (int)workingArea.x, (int)workingArea.y, w, h, SWP_FRAMECHANGED | SWP_SHOWWINDOW);
                 }

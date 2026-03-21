@@ -1453,12 +1453,12 @@
       <HintPath>Library\ScriptAssemblies\Unity.Mathematics.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Unity.VisualScripting.SettingsProvider.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.SettingsProvider.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Unity.RenderPipelines.Core.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.RenderPipelines.Core.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.VisualScripting.SettingsProvider.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.SettingsProvider.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Universal.Runtime">
@@ -1542,6 +1542,7 @@
     <ProjectReference Include="UniTask.DOTween.csproj" />
     <ProjectReference Include="com.rlabrecque.steamworks.net.csproj" />
     <ProjectReference Include="QFramework.csproj" />
+    <ProjectReference Include="OutlineFx.Editor.csproj" />
     <ProjectReference Include="Coffee.UIEffect.csproj" />
     <ProjectReference Include="UniTask.TextMeshPro.csproj" />
   </ItemGroup>
