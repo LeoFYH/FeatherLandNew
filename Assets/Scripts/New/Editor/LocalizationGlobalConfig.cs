@@ -428,6 +428,58 @@ namespace BirdGame.Editor
             FileInfo excelFile = new FileInfo(filePath);
             excel.SaveAs(excelFile);
         }
+        
+        [ShowIf("@page==Page.Excel设置"), BoxGroup("鸟本地化导入")]
+        public string importBirdsExcelPath;
+        
+        [Button("Excel导入鸟配置"), ShowIf("@page==Page.Excel设置"), BoxGroup("鸟本地化导入")]
+        private void ImportBirdsExcel()
+        { 
+            using (FileStream fs = new FileStream(importBirdsExcelPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                using (ExcelPackage excel = new ExcelPackage(fs))
+                {
+                    // 获取第一个工作表
+                    ExcelWorksheet worksheet = excel.Workbook.Worksheets[1];
+
+                    for (int i = 2; i <= worksheet.Dimension.Rows; i++)
+                    {
+                        string key = worksheet.Cells[i, 3].Text;
+                        if (!wordKeys.Contains(key))
+                        {
+                            string englishValue = worksheet.Cells[i, 3].Text;
+                            string chineseValue = worksheet.Cells[i, 2].Text;
+                            wordKeys.Add(key);
+                            foreach (var word in words)
+                            {
+                                word.keys.Add(key);
+                                word.values.Add("");
+                                word.spValues.Add(null);
+                                word.isImageFlags.Add(false);
+                            }
+                            words[0].values[^1] = englishValue;
+                            words[1].values[^1] = chineseValue;
+                        }
+                        string descKey = $"{key} Desc";
+                        if (!wordKeys.Contains(descKey))
+                        {
+                            string descEnglish = worksheet.Cells[i, 4].Text;
+                            string descChinese = worksheet.Cells[i, 5].Text;
+                            wordKeys.Add(descKey);
+                            foreach (var word in words)
+                            {
+                                word.keys.Add(descKey);
+                                word.values.Add("");
+                                word.spValues.Add(null);
+                                word.isImageFlags.Add(false);
+                            }
+                            words[0].values[^1] = descEnglish;
+                            words[1].values[^1] = descChinese;
+                        }
+                    }
+                }
+            }
+        }
 
         [OnInspectorGUI]
         private void OnGUI()

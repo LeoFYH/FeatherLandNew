@@ -9,3 +9,10 @@ MetaGuid:ee6ecee361ca41c495c74b67757f2522
 	RequireExistingPath = True
 	RequireValidPath = False
 	AbsolutePath = True
+
+# importBirdsExcelPath
++ [Sirenix.OdinInspector.FilePathAttribute]
+	AbsolutePath = True
+	Extensions = ".xlsx"
+	RequireExistingPath = True
+	ParentFolder = "Assets/Scripts/New/Editor/Excels"
