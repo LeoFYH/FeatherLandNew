@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using QFramework;
@@ -152,17 +152,8 @@ namespace BirdGame
             int classIndex;
 
             var birdInfo = this.GetModel<IConfigModel>().BirdConfig.GetBird(index, mapIndex, out classIndex);
-            var controller = animator.runtimeAnimatorController as UnityEditor.Animations.AnimatorController;
+            var controller = animator.runtimeAnimatorController;
             if (controller == null) return;
-
-            foreach (var layer in controller.layers)
-            {
-                Debug.Log($"Layer: {layer.name}");
-                foreach (var state in layer.stateMachine.states)
-                {
-                    Debug.Log($"  State: {state.state.name}, Full Path: {state.state.name}");
-                }
-            }
 
 
             animator.Play("Idle " + birdInfo.id);
