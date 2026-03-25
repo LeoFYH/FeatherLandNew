@@ -40,6 +40,13 @@ namespace BirdGame
         [DllImport("user32.dll", SetLastError = true)]
         private static extern IntPtr GetParent(IntPtr hWnd);
 
+        /// <summary>GW_HWNDNEXT = 2 (below in Z-order), GW_HWNDPREV = 3 (above).</summary>
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr GetWindow(IntPtr hWnd, int uCmd);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
+
         [DllImport("user32.dll", SetLastError = true)]
         private static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
 
@@ -143,6 +150,9 @@ namespace BirdGame
         private const int SWP_NOOWNERZORDER = 0x0200;
         private const int SWP_NOSENDCHANGING = 0x0400;
 
+        private const int GW_HWNDNEXT = 2;
+        private const int GW_HWNDPREV = 3;
+
         // ---------------- members ----------------
         private int workAreaWidth;
         private int workAreaHeight;
@@ -181,10 +191,6 @@ namespace BirdGame
 
         #region Windows API 导入
 
-        // 枚举所有顶级窗口
-        [DllImport("user32.dll")]
-        private static extern bool EnumWindows(EnumWindowsProc enumProc, IntPtr lParam);
-
         // 多显示器：枚举所有显示器
         [DllImport("user32.dll")]
         private static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, EnumMonitorsDelegate lpfnEnum, IntPtr dwData);
@@ -209,9 +215,6 @@ namespace BirdGame
         #endregion
 
         #region 委托与结构体
-
-        // 枚举窗口的回调委托
-        private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
 
         // 窗口矩形区域结构体
         [StructLayout(LayoutKind.Sequential)]
@@ -269,8 +272,21 @@ namespace BirdGame
         {
             if (windowHandle == IntPtr.Zero)
             {
-                // 用窗口标题找 Unity 窗口
                 windowHandle = FindWindow(null, Application.productName);
+                if (windowHandle == IntPtr.Zero)
+                {
+                    try
+                    {
+                        IntPtr main = Process.GetCurrentProcess().MainWindowHandle;
+                        if (main != IntPtr.Zero)
+                            windowHandle = main;
+                    }
+                    catch
+                    {
+                        // ignore
+                    }
+                }
+
                 if (windowHandle != IntPtr.Zero)
                 {
                     originalStyle = GetWindowLongPtr(windowHandle, GWL_STYLE);
@@ -279,7 +295,7 @@ namespace BirdGame
                 }
                 else
                 {
-                    Debug.LogWarning("InitializeWindowHandle: FindWindow failed");
+                    Debug.LogWarning("InitializeWindowHandle: FindWindow 与 MainWindowHandle 均未取到句柄");
                 }
             }
         }
@@ -395,7 +411,6 @@ namespace BirdGame
                 IntPtr hProgman = FindWindow("Progman", "Program Manager");
                 // 向ProgMan发送消息，确保Win11能正确找到WorkerW
                 SendMessage(hProgman, 0x052C, new IntPtr(13), new IntPtr(1));
-                IntPtr workerW = FindWorkerWWithIconsVisible(hProgman);
 
                 // 设置窗口样式：无边框弹出窗口
                 int newStyle = GetWindowLong(windowHandle, GWL_STYLE);
@@ -427,19 +442,9 @@ namespace BirdGame
                 {
                     // 每轮都刷新一次 WorkerW，适配 Explorer 动态变化
                     SendMessage(hProgman, 0x052C, new IntPtr(13), new IntPtr(1));
-                    workerW = FindWorkerWWithIconsVisible(hProgman);
 
                     var candidates = new System.Collections.Generic.List<IntPtr>();
-                    if (workerW != IntPtr.Zero) candidates.Add(workerW);
-
-                    // 兜底补充：直接查找 Progman 下首个 WorkerW（部分系统与上面结果不同）
-                    IntPtr firstWorkerW = hProgman != IntPtr.Zero
-                        ? FindWindowEx(hProgman, IntPtr.Zero, "WorkerW", null)
-                        : IntPtr.Zero;
-                    if (firstWorkerW != IntPtr.Zero && !candidates.Contains(firstWorkerW)) candidates.Add(firstWorkerW);
-
-                    // 最后兜底 Progman
-                    if (hProgman != IntPtr.Zero && !candidates.Contains(hProgman)) candidates.Add(hProgman);
+                    BuildDesktopParentCandidates(hProgman, candidates);
 
                     foreach (IntPtr candidate in candidates)
                     {
@@ -630,43 +635,95 @@ namespace BirdGame
             Screen.fullScreen = fullscreen;
         }
 
-        // 修复：使用静态字段来存储查找结果
-        private static IntPtr foundWorkerW = IntPtr.Zero;
-
         /// <summary>
-        /// 查找包含桌面图标的WorkerW窗口（兼容Win10/11）
+        /// 在 Progman 子树中查找是否包含桌面图标视图（含嵌套 WorkerW，兼容 Win10/11）。
         /// </summary>
-        private IntPtr FindWorkerWWithIconsVisible(IntPtr progman)
+        private static bool SubtreeContainsShellDllDefView(IntPtr hwnd)
         {
-            foundWorkerW = IntPtr.Zero;
-
-            // 使用静态方法而不是lambda表达式（IL2CPP兼容）
-            EnumWindows(EnumWindowsCallback, IntPtr.Zero);
-
-            // 极端情况处理：直接查找第一个WorkerW
-            if (foundWorkerW == IntPtr.Zero)
+            if (hwnd == IntPtr.Zero)
+                return false;
+            if (FindWindowEx(hwnd, IntPtr.Zero, "SHELLDLL_DefView", null) != IntPtr.Zero)
+                return true;
+            IntPtr child = IntPtr.Zero;
+            while (true)
             {
-                foundWorkerW = FindWindowEx(progman, IntPtr.Zero, "WorkerW", null);
+                child = FindWindowEx(hwnd, child, null, null);
+                if (child == IntPtr.Zero)
+                    break;
+                if (SubtreeContainsShellDllDefView(child))
+                    return true;
             }
+            return false;
+        }
 
-            return foundWorkerW;
+        private static bool IsWorkerWClass(IntPtr hwnd)
+        {
+            if (hwnd == IntPtr.Zero)
+                return false;
+            var sb = new StringBuilder(256);
+            return GetClassName(hwnd, sb, sb.Capacity) > 0 && sb.ToString() == "WorkerW";
         }
 
         /// <summary>
-        /// EnumWindows的静态回调方法（IL2CPP兼容）
+        /// 按顺序收集 SetParent 候选：优先「含 DefView 的 WorkerW」之前的同级 WorkerW（壁纸层），
+        /// 再含图标层的 WorkerW，再其它 WorkerW，最后 Progman。避免误用首个 WorkerW 导致窗口在壁纸位图之下不可见。
         /// </summary>
-        [MonoPInvokeCallback(typeof(EnumWindowsProc))]
-        private static bool EnumWindowsCallback(IntPtr hwnd, IntPtr lParam)
+        private static void BuildDesktopParentCandidates(IntPtr progman, System.Collections.Generic.List<IntPtr> candidates)
         {
-            // 查找包含SHELLDLL_DefView控件的窗口（管理桌面图标）
-            if (FindWindowEx(hwnd, IntPtr.Zero, "SHELLDLL_DefView", null) != IntPtr.Zero)
+            candidates.Clear();
+            if (progman == IntPtr.Zero)
+                return;
+
+            IntPtr workerBeforeDefHost = IntPtr.Zero;
+            IntPtr defViewHostWorker = IntPtr.Zero;
+            IntPtr w = IntPtr.Zero;
+            while (true)
             {
-                // 获取同级的WorkerW窗口（桌面背景容器）
-                foundWorkerW = FindWindowEx(IntPtr.Zero, hwnd, "WorkerW", null);
+                w = FindWindowEx(progman, w, "WorkerW", null);
+                if (w == IntPtr.Zero)
+                    break;
+                if (SubtreeContainsShellDllDefView(w))
+                {
+                    defViewHostWorker = w;
+                    break;
+                }
+                workerBeforeDefHost = w;
             }
 
-            // 找到后停止枚举
-            return foundWorkerW == IntPtr.Zero;
+            if (defViewHostWorker != IntPtr.Zero)
+            {
+                if (workerBeforeDefHost != IntPtr.Zero)
+                    candidates.Add(workerBeforeDefHost);
+                else
+                {
+                    // DefView 在枚举到的第一个 WorkerW 内：壁纸层通常是其 Z 序更低的同级
+                    IntPtr below = GetWindow(defViewHostWorker, GW_HWNDNEXT);
+                    if (below != IntPtr.Zero && GetParent(below) == progman && IsWorkerWClass(below))
+                        candidates.Add(below);
+                }
+
+                if (!candidates.Contains(defViewHostWorker))
+                    candidates.Add(defViewHostWorker);
+            }
+            else
+            {
+                w = IntPtr.Zero;
+                while (true)
+                {
+                    w = FindWindowEx(progman, w, "WorkerW", null);
+                    if (w == IntPtr.Zero)
+                        break;
+                    if (!candidates.Contains(w))
+                        candidates.Add(w);
+                }
+            }
+
+            IntPtr firstW = FindWindowEx(progman, IntPtr.Zero, "WorkerW", null);
+            if (firstW != IntPtr.Zero && !candidates.Contains(firstW))
+                candidates.Add(firstW);
+
+            if (!candidates.Contains(progman))
+                candidates.Add(progman);
         }
 
         public void FullscreenMode()
