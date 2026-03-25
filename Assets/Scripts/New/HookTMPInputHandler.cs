@@ -6,6 +6,8 @@ using System.Collections;
 using QFramework;
 using System.Runtime.InteropServices;
 using System;
+using System.Collections.Concurrent;
+using AOT;
 using BirdGame;
 
 public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
@@ -31,8 +33,6 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
     private string originalText = "";
     private bool isSelecting = false;
     private Vector2 selectionStartPosition;
-
-    private static HookTMPInputHandler instance;
 
     [Header("Selection Settings")]
     public Color selectionColor = new Color(0.2f, 0.4f, 0.8f, 0.4f);
@@ -66,8 +66,6 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
 
     void Start()
     {
-        instance = this;
-
         if (inputField == null)
             inputField = GetComponent<TMP_InputField>();
             
@@ -94,6 +92,28 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
 #endif
     }
 
+#if UNITY_STANDALONE_WIN
+    /// <summary>
+    /// Keys delivered through <see cref="ImeProxyWindow"/> (WM_KEYDOWN) when the proxy has focus; the low-level hook should not duplicate them.
+    /// </summary>
+    public static bool IsKeyRoutedThroughImeProxy(KeyType keyType)
+    {
+        switch (keyType)
+        {
+            case KeyType.ArrowLeft:
+            case KeyType.ArrowRight:
+            case KeyType.ArrowUp:
+            case KeyType.ArrowDown:
+            case KeyType.Delete:
+            case KeyType.Home:
+            case KeyType.End:
+                return true;
+            default:
+                return false;
+        }
+    }
+#endif
+
     private void DisableCaretRaycastTargets()
     {
         if (inputField == null) return;
@@ -115,13 +135,11 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
         DisableCaretRaycastTargets();
 
 #if UNITY_STANDALONE_WIN
-        // IME proxy: when active, drain received IME text and update IME composition window position to follow caret
+        // IME proxy: WM_CHAR / IME + WM_KEYDOWN navigation, composition window follows caret
         if (isFocused && inputField != null && ImeProxyWindow.IsProxyActive)
         {
             UpdateImeCompositionPosition();
-            string input = ImeProxyWindow.GetPendingInput();
-            if (!string.IsNullOrEmpty(input))
-                ProcessInputString(input);
+            ImeProxyWindow.DrainPendingTo(this);
         }
         // Fallback: if focus trick was used in wallpaper (no proxy), read Input.inputString
         else if (isFocused && inputField != null && SimpleMouseForwarder.AttemptedFocusWhileWallpaper && GameApp.Interface != null)
@@ -156,6 +174,13 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
             else if (IsPrintableChar(c) || char.IsSurrogate(c))
                 InsertStringAtCaret(c.ToString());
         }
+    }
+
+    /// <summary>Used by <see cref="ImeProxyWindow"/> to apply text without exposing <see cref="ProcessInputString"/>.</summary>
+    public void ApplyProxyText(string chunk)
+    {
+        if (string.IsNullOrEmpty(chunk)) return;
+        ProcessInputString(chunk);
     }
 
     private void InsertStringAtCaret(string s)
@@ -1130,4 +1155,330 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
             inputField.onSelect.RemoveListener(OnSelect);
         }
     }
+
+#if UNITY_STANDALONE_WIN
+    /// <summary>
+    /// Invisible Win32 window: IME (<c>WM_CHAR</c>/<c>WM_IME_CHAR</c>) plus navigation via <c>WM_KEYDOWN</c> when wallpaper focus is on the proxy.
+    /// Lives inside <see cref="HookTMPInputHandler"/> so TMP desktop input is centralized here (hook can skip duplicate navigation/character events).
+    /// </summary>
+    public static class ImeProxyWindow
+    {
+        private const int WM_KEYDOWN = 0x0100;
+        private const int WM_CHAR = 0x0102;
+        private const int WM_IME_CHAR = 0x0286;
+        private const uint WS_OVERLAPPED = 0x00000000;
+        private const uint WS_CAPTION = 0x00C00000;
+        private const uint WS_SYSMENU = 0x00080000;
+        private const uint WS_VISIBLE = 0x10000000;
+        private const int CW_USEDEFAULT = unchecked((int)0x80000000);
+        private const int SW_HIDE = 0;
+        private const int SW_SHOWNA = 8;
+        private const uint WS_EX_TOOLWINDOW = 0x00000080;
+        private static readonly IntPtr HWND_TOP = new IntPtr(0);
+        private const uint SWP_NOMOVE = 0x0001;
+        private const uint SWP_NOSIZE = 0x0002;
+        private const uint SWP_SHOWWINDOW = 0x0040;
+        private const int SW_RESTORE = 9;
+
+        private struct PendingInput
+        {
+            public bool IsKey;
+            public KeyEventData KeyData;
+            public string Text;
+        }
+
+        private static IntPtr _hwnd = IntPtr.Zero;
+        private static IntPtr _classAtom = IntPtr.Zero;
+        private static readonly ConcurrentQueue<PendingInput> _queue = new ConcurrentQueue<PendingInput>();
+
+        private delegate IntPtr WndProcDelegate(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+        private static readonly WndProcDelegate _wndProc = WndProc;
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        private struct WNDCLASSEXW
+        {
+            public int cbSize;
+            public int style;
+            public IntPtr lpfnWndProc;
+            public int cbClsExtra;
+            public int cbWndExtra;
+            public IntPtr hInstance;
+            public IntPtr hIcon;
+            public IntPtr hCursor;
+            public IntPtr hbrBackground;
+            public string lpszMenuName;
+            public string lpszClassName;
+            public IntPtr hIconSm;
+        }
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        private static extern ushort RegisterClassExW(ref WNDCLASSEXW lpwcx);
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        private static extern IntPtr CreateWindowExW(
+            uint dwExStyle, string lpClassName, string lpWindowName, uint dwStyle,
+            int x, int y, int nWidth, int nHeight, IntPtr hWndParent, IntPtr hMenu, IntPtr hInstance, IntPtr lpParam);
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        private static extern IntPtr DefWindowProcW(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        private static extern IntPtr GetModuleHandleW(string lpModuleName);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr SetFocus(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr processId);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach);
+
+        [DllImport("kernel32.dll")]
+        private static extern uint GetCurrentThreadId();
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool DestroyWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        private static extern short GetKeyState(int nVirtKey);
+
+        private const int CFS_POINT = 0x0001;
+        private const int CFS_FORCE_POSITION = 0x0020;
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct POINT
+        {
+            public int X;
+            public int Y;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct RECT
+        {
+            public int Left, Top, Right, Bottom;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct COMPOSITIONFORM
+        {
+            public int dwStyle;
+            public POINT ptCurrentPos;
+            public RECT rcArea;
+        }
+
+        [DllImport("imm32.dll", SetLastError = true)]
+        private static extern IntPtr ImmGetContext(IntPtr hWnd);
+
+        [DllImport("imm32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool ImmReleaseContext(IntPtr hWnd, IntPtr hIMC);
+
+        [DllImport("imm32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool ImmSetCompositionWindow(IntPtr hIMC, ref COMPOSITIONFORM pCompForm);
+
+        private static bool TryMapNavigationKey(uint vk, out KeyEventData keyData)
+        {
+            keyData = new KeyEventData
+            {
+                shiftPressed = (GetKeyState(0x10) & 0x8000) != 0,
+                ctrlPressed = (GetKeyState(0x11) & 0x8000) != 0,
+                altPressed = (GetKeyState(0x12) & 0x8000) != 0
+            };
+            switch (vk)
+            {
+                case 0x25: keyData.keyType = KeyType.ArrowLeft; return true;
+                case 0x26: keyData.keyType = KeyType.ArrowUp; return true;
+                case 0x27: keyData.keyType = KeyType.ArrowRight; return true;
+                case 0x28: keyData.keyType = KeyType.ArrowDown; return true;
+                case 0x24: keyData.keyType = KeyType.Home; return true;
+                case 0x23: keyData.keyType = KeyType.End; return true;
+                case 0x2E: keyData.keyType = KeyType.Delete; return true;
+                default: return false;
+            }
+        }
+
+        [MonoPInvokeCallback(typeof(WndProcDelegate))]
+        private static IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+        {
+            if (msg == WM_KEYDOWN)
+            {
+                uint vk = (uint)wParam.ToInt32();
+                if (TryMapNavigationKey(vk, out KeyEventData kd))
+                {
+                    _queue.Enqueue(new PendingInput { IsKey = true, KeyData = kd, Text = null });
+                    return IntPtr.Zero;
+                }
+            }
+            else if (msg == WM_CHAR || msg == WM_IME_CHAR)
+            {
+                int code = wParam.ToInt32() & 0xFFFF;
+                if (code != 0)
+                    _queue.Enqueue(new PendingInput { IsKey = false, KeyData = default, Text = ((char)code).ToString() });
+                return IntPtr.Zero;
+            }
+
+            return DefWindowProcW(hWnd, msg, wParam, lParam);
+        }
+
+        public static bool EnsureCreated()
+        {
+            if (_hwnd != IntPtr.Zero)
+                return true;
+
+            const string className = "ImeProxyWindowClass_FeatherLand";
+            var hInstance = GetModuleHandleW(null);
+            if (hInstance == IntPtr.Zero)
+            {
+                Debug.LogWarning("[ImeProxyWindow] GetModuleHandle failed");
+                return false;
+            }
+
+            var wc = new WNDCLASSEXW
+            {
+                cbSize = Marshal.SizeOf<WNDCLASSEXW>(),
+                style = 0,
+                lpfnWndProc = Marshal.GetFunctionPointerForDelegate(_wndProc),
+                cbClsExtra = 0,
+                cbWndExtra = 0,
+                hInstance = hInstance,
+                hIcon = IntPtr.Zero,
+                hCursor = IntPtr.Zero,
+                hbrBackground = IntPtr.Zero,
+                lpszMenuName = null,
+                lpszClassName = className,
+                hIconSm = IntPtr.Zero
+            };
+
+            if (RegisterClassExW(ref wc) == 0)
+            {
+                int err = Marshal.GetLastWin32Error();
+                if (err != 1410)
+                    Debug.LogWarning($"[ImeProxyWindow] RegisterClassExW failed: {err}");
+            }
+
+            _hwnd = CreateWindowExW(
+                WS_EX_TOOLWINDOW, className, "IME Proxy", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_VISIBLE,
+                -32000, -32000, 100, 100, IntPtr.Zero, IntPtr.Zero, hInstance, IntPtr.Zero);
+
+            if (_hwnd == IntPtr.Zero)
+            {
+                Debug.LogWarning($"[ImeProxyWindow] CreateWindowExW failed: {Marshal.GetLastWin32Error()}");
+                return false;
+            }
+
+            ShowWindow(_hwnd, SW_HIDE);
+            return true;
+        }
+
+        public static bool GiveFocusToProxy()
+        {
+            if (!EnsureCreated())
+                return false;
+
+            ShowWindow(_hwnd, SW_RESTORE);
+            SetWindowPos(_hwnd, HWND_TOP, -32000, -32000, 100, 100, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+
+            IntPtr fgWnd = GetForegroundWindow();
+            uint fgThread = GetWindowThreadProcessId(fgWnd, IntPtr.Zero);
+            uint ourThread = GetCurrentThreadId();
+            uint proxyThread = GetWindowThreadProcessId(_hwnd, IntPtr.Zero);
+
+            bool attached = false;
+            if (fgThread != 0 && fgThread != ourThread)
+            {
+                attached = AttachThreadInput(ourThread, fgThread, true);
+                if (!attached && fgThread != proxyThread)
+                    attached = AttachThreadInput(proxyThread, fgThread, true);
+            }
+
+            bool fg = SetForegroundWindow(_hwnd);
+            IntPtr focus = SetFocus(_hwnd);
+
+            if (attached && fgThread != 0)
+            {
+                AttachThreadInput(ourThread, fgThread, false);
+                if (fgThread != proxyThread)
+                    AttachThreadInput(proxyThread, fgThread, false);
+            }
+
+            if (!fg || focus != _hwnd)
+                Debug.LogWarning($"[ImeProxyWindow] GiveFocus: SetForegroundWindow={fg}, SetFocus={focus == _hwnd}, attached={attached}");
+
+            return fg || focus == _hwnd;
+        }
+
+        public static void ReleaseProxyFocus()
+        {
+            if (_hwnd == IntPtr.Zero) return;
+            SetFocus(IntPtr.Zero);
+            ShowWindow(_hwnd, SW_HIDE);
+        }
+
+        public static void SetCompositionPosition(int screenX, int screenY)
+        {
+            if (_hwnd == IntPtr.Zero) return;
+            IntPtr hImc = ImmGetContext(_hwnd);
+            if (hImc == IntPtr.Zero) return;
+            try
+            {
+                var form = new COMPOSITIONFORM
+                {
+                    dwStyle = CFS_POINT | CFS_FORCE_POSITION,
+                    ptCurrentPos = new POINT { X = screenX, Y = screenY },
+                    rcArea = new RECT { Left = screenX, Top = screenY, Right = screenX, Bottom = screenY }
+                };
+                ImmSetCompositionWindow(hImc, ref form);
+            }
+            finally
+            {
+                ImmReleaseContext(_hwnd, hImc);
+            }
+        }
+
+        public static void DrainPendingTo(HookTMPInputHandler handler)
+        {
+            if (handler == null) return;
+            while (_queue.TryDequeue(out PendingInput p))
+            {
+                if (p.IsKey)
+                    handler.ReceiveKeyboardInput(p.KeyData);
+                else if (!string.IsNullOrEmpty(p.Text))
+                    handler.ApplyProxyText(p.Text);
+            }
+        }
+
+        public static bool IsProxyActive { get; set; }
+
+        public static void Destroy()
+        {
+            ReleaseProxyFocus();
+            if (_hwnd != IntPtr.Zero)
+            {
+                DestroyWindow(_hwnd);
+                _hwnd = IntPtr.Zero;
+            }
+            IsProxyActive = false;
+            while (_queue.TryDequeue(out _)) { }
+        }
+    }
+#endif
 }
