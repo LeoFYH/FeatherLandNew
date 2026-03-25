@@ -1649,7 +1649,7 @@ namespace BirdGame
                 var fullScreen = GameApp.Interface.GetUtility<IFullScreenUtility>();
                 wallpaperModeActive = fullScreen != null && fullScreen.IsWallpaperModeActive();
             }
-            isOnDesktop = wallpaperModeActive || cachedForegroundWindowTitle == "Program Manager" || cachedForegroundWindowTitle == string.Empty;
+            isOnDesktop = wallpaperModeActive && (cachedForegroundWindowTitle == "Program Manager" || cachedForegroundWindowTitle == string.Empty);
             
             // Performance optimization: Update cached values periodically
             if (Time.frameCount % 60 == 0) // Update every 60 frames (~1 second at 60fps)
