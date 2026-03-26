@@ -31,7 +31,7 @@ namespace BirdGame
         [Header("功能设置")]
         public bool enableClickOutsideToClose = true;  // 是否启用点击外部关闭功能
 
-        private const int BirdNameMaxLength = 9;
+        private const int BirdNameMaxLength = 11;
 
         private float price;
         private int previousClickCount = 0;
@@ -536,6 +536,10 @@ namespace BirdGame
             {
                 cutomName.text = data.customName;
             }
+
+            // 改名后立即同步到存档并通知管理页刷新名称显示
+            this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
+            this.GetSystem<IGameSystem>().SendEvent<RefreshSaleBirdEvent>();
         } 
         
         private void UpdateBirdNameText()
