@@ -679,15 +679,18 @@ namespace BirdGame
 
         public void RandomPlayPetting()
         {
-            float effectVolume = this.GetModel<ISaveModel>().MusicSettingData.effectVolume;
-            if (effectVolume <= 0f) return;
+            var musicSetting = this.GetModel<ISaveModel>().MusicSettingData;
+            float birdVolume = musicSetting.birdVolumeConfigured
+                ? musicSetting.birdVolume
+                : musicSetting.effectVolume;
+            if (birdVolume <= 0f) return;
 
             var config = this.GetModel<IConfigModel>().RadioConfig;
             int index = Random.Range(0, config.pettingClips.Length);
             this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(config.pettingClips[index].AssetGUID, clip =>
             {
                 pettingAudio.clip = clip;
-                pettingAudio.volume = effectVolume * 0.6f;
+                pettingAudio.volume = birdVolume * 0.6f;
                 pettingAudio.Play();
             });
         }

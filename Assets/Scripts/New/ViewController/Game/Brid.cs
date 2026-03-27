@@ -340,8 +340,8 @@ namespace BirdGame
                                     _stateMachine.ChangeState<BirdIdleState>();
                                 }
 
-                                this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Stroke);
-                                this.GetSystem<IAudioSystem>().PlayBirdEffect(index);
+                                //this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Stroke);
+                                //this.GetSystem<IAudioSystem>().PlayBirdEffect(index);
                                 anim.SetTrigger(AnimatorHashes.StrokeTrigger);
                                 this.GetSystem<IAudioSystem>().RandomPlayPetting();
                                 // 使用对象池获取心形特效
