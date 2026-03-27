@@ -104,6 +104,8 @@ namespace BirdGame
     public class MusicSettingData : SavableData
     {
         public float bgmVolume = 0.5f;
+        public float masterVolume = 1.0f;
+        public bool masterVolumeConfigured = false;
         public float effectVolume = 0.5f;
         public float birdVolume = 0.5f;
         public bool birdVolumeConfigured = false;

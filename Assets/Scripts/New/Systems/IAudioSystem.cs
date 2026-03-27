@@ -72,6 +72,7 @@ namespace BirdGame
         void SetEnvironmentVolumesByWeather(int weatherIndex, bool useFade = true);
 
         void RandomPlayPetting();
+        void RefreshMasterVolume();
     }
 
     public class AudioSystem : AbstractSystem, IAudioSystem
@@ -101,12 +102,12 @@ namespace BirdGame
             radioAudio.loop = radioModel.Loop.Value;
             birdAudio = obj.AddComponent<AudioSource>();
             birdAudio.loop = false;
-            radioAudio.volume = radioModel.Volume.Value;
+            radioAudio.volume = radioModel.Volume.Value * GetMasterVolume();
             pettingAudio = obj.AddComponent<AudioSource>();
             pettingAudio.loop = false;
             radioModel.Volume.Register(v =>
             {
-                radioAudio.volume = v;
+                radioAudio.volume = v * GetMasterVolume();
             });
             radioModel.Loop.Register(v =>
             {
@@ -316,7 +317,7 @@ namespace BirdGame
                     var effectAudio = GetEffectAudio();
                     effectAudio.clip = audioClip;
                     effectAudio.outputAudioMixerGroup = group;
-                    effectAudio.volume = this.GetModel<ISaveModel>().MusicSettingData.effectVolume;
+                    effectAudio.volume = this.GetModel<ISaveModel>().MusicSettingData.effectVolume * GetMasterVolume();
 
                     // 为撒食物音效设置特殊参数
                     if (type == EffectType.DropFood)
@@ -363,6 +364,7 @@ namespace BirdGame
             birdAudio.pitch = 1.0f;
             birdAudio.reverbZoneMix = 1f;
             birdAudio.spatialBlend = 0f;
+            birdAudio.volume = GetMasterVolume();
             birdAudio.Play();
         }
 
@@ -399,7 +401,7 @@ namespace BirdGame
                             ? musicSetting.tomatoAlertVolume
                             : clockModel.TimerItem.AudioVolume.Value;
                         alertAudio.clip = clip;
-                        alertAudio.volume = alertVolume;
+                        alertAudio.volume = alertVolume * GetMasterVolume();
                         alertAudio.Play();
                     });
                 }
@@ -416,7 +418,7 @@ namespace BirdGame
                             ? musicSetting.tomatoAlertVolume
                             : clockModel.TomatoItem.AudioVolume.Value;
                         alertAudio.clip = clip;
-                        alertAudio.volume = tomatoAlertVolume;
+                        alertAudio.volume = tomatoAlertVolume * GetMasterVolume();
                         alertAudio.Play();
                     });
                 }
@@ -504,7 +506,7 @@ namespace BirdGame
                 // 设置到 RadioModel（不触发事件）
                 radioModel.EnvironmentVolumes[i].SetValueWithoutEvent(savedVolume);
 
-                audio.volume = savedVolume * radioModel.Volume.Value;
+                audio.volume = savedVolume * radioModel.Volume.Value * GetMasterVolume();
                 this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(config.environments[i].songFile.AssetGUID,
                     clip =>
                     {
@@ -518,7 +520,7 @@ namespace BirdGame
                     // 如果该环境音正在淡入淡出，不直接设置音量，让协程控制
                     if (!environmentFadeCoroutines.ContainsKey(index))
                     {
-                        audio.volume = v * radioModel.EnvironmentVolume.Value;
+                        audio.volume = v * radioModel.EnvironmentVolume.Value * GetMasterVolume();
                     }
                 });
                 radioModel.EnvironmentMutes[index].Register(v =>
@@ -532,7 +534,7 @@ namespace BirdGame
                 {
                     if (!environmentFadeCoroutines.ContainsKey(index))
                     {
-                        audio.volume = v * radioModel.EnvironmentVolumes[index].Value;
+                        audio.volume = v * radioModel.EnvironmentVolumes[index].Value * GetMasterVolume();
                     }
                 });
             }
@@ -698,9 +700,40 @@ namespace BirdGame
             this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(config.pettingClips[index].AssetGUID, clip =>
             {
                 pettingAudio.clip = clip;
-                pettingAudio.volume = birdVolume * 0.6f;
+                pettingAudio.volume = birdVolume * 0.6f * GetMasterVolume();
                 pettingAudio.Play();
             });
+        }
+
+        public void RefreshMasterVolume()
+        {
+            float masterVolume = GetMasterVolume();
+            var saveModel = this.GetModel<ISaveModel>().MusicSettingData;
+
+            radioAudio.volume = radioModel.Volume.Value * masterVolume;
+
+            for (int i = 0; i < environmentAudios.Count && i < radioModel.EnvironmentVolumes.Count; i++)
+            {
+                environmentAudios[i].volume = radioModel.EnvironmentVolumes[i].Value * radioModel.EnvironmentVolume.Value * masterVolume;
+            }
+
+            float birdVolume = saveModel.birdVolumeConfigured ? saveModel.birdVolume : saveModel.effectVolume;
+            pettingAudio.volume = birdVolume * 0.6f * masterVolume;
+            birdAudio.volume = masterVolume;
+
+            foreach (var effectAudio in effectAudios)
+            {
+                if (effectAudio.isPlaying)
+                {
+                    effectAudio.volume = saveModel.effectVolume * masterVolume;
+                }
+            }
+
+            if (alertAudio != null && alertAudio.isPlaying)
+            {
+                float alertVolume = saveModel.tomatoAlertVolumeConfigured ? saveModel.tomatoAlertVolume : 0.5f;
+                alertAudio.volume = alertVolume * masterVolume;
+            }
         }
 
         /// <summary>
@@ -730,19 +763,28 @@ namespace BirdGame
                 
                 // 直接设置音频音量（不触发监听器，避免循环）
                 // 每次更新时读取最新的主音量，以响应主音量变化
-                audio.volume = currentVolume * radioModel.Volume.Value;
+                audio.volume = currentVolume * radioModel.Volume.Value * GetMasterVolume();
                 
                 yield return null;
             }
             
             // 淡入淡出完成后，确保最终音量正确（EnvironmentVolumes 已经在开始时设置为目标值了）
-            audio.volume = targetVolume * radioModel.Volume.Value;
+            audio.volume = targetVolume * radioModel.Volume.Value * GetMasterVolume();
             
             // 从字典中移除已完成的协程
             if (environmentFadeCoroutines.ContainsKey(index))
             {
                 environmentFadeCoroutines.Remove(index);
             }
+        }
+
+        private float GetMasterVolume()
+        {
+            var saveModel = this.GetModel<ISaveModel>();
+            if (saveModel?.MusicSettingData == null)
+                return 1.0f;
+            var musicSetting = saveModel.MusicSettingData;
+            return musicSetting.masterVolumeConfigured ? musicSetting.masterVolume : 1.0f;
         }
     }
 }
