@@ -396,7 +396,7 @@ namespace BirdGame
             
             if (isVloumeExpend)
             {
-                languageRect.anchoredPosition = new Vector2(0, languageY - 264 - (isScreenExpend ? 204 : 0));
+                languageRect.anchoredPosition = new Vector2(0, languageY - 324 - (isScreenExpend ? 204 : 0));
             }
             else
             {
@@ -404,9 +404,9 @@ namespace BirdGame
             }
 
 
-            moveHeight = (isScreenExpend ? 204 : 0) + (isVloumeExpend? 264 : 0) + (isLanguageExpend ? 105 : 0);
+            moveHeight = (isScreenExpend ? 204 : 0) + (isVloumeExpend? 324 : 0) + (isLanguageExpend ? 105 : 0);
 
-            deleteRect.anchoredPosition = new Vector2(0, deleteY - moveHeight);
+            deleteRect.anchoredPosition = new Vector2(0, deleteY - moveHeight); 
             tutorialRect.anchoredPosition = new Vector2(0, tutorailY - moveHeight);
             quitRect.anchoredPosition = new Vector2(0, quitY - moveHeight);
             autoFeedRect.anchoredPosition = new Vector2(0, autoFeedY - moveHeight);

@@ -54,6 +54,15 @@ namespace BirdGame
         private void Start()
         {
             var item = this.GetModel<IClockModel>().TomatoItem;
+            var musicSetting = this.GetModel<ISaveModel>().MusicSettingData;
+            if (musicSetting.tomatoAlertVolumeConfigured)
+            {
+                item.AudioVolume.Value = musicSetting.tomatoAlertVolume;
+            }
+            else
+            {
+                musicSetting.tomatoAlertVolume = item.AudioVolume.Value;
+            }
             this.RegisterEvent<TomatoOverEvent>(evt =>
             {
                 Refresh(false);
@@ -417,6 +426,8 @@ namespace BirdGame
             {
                 volumeFill.fillAmount = v;
                 item.AudioVolume.Value = v;
+                musicSetting.tomatoAlertVolume = v;
+                musicSetting.tomatoAlertVolumeConfigured = true;
             });
 
             

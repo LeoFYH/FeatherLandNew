@@ -394,8 +394,12 @@ namespace BirdGame
                 {
                     this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(asset.AssetGUID, clip =>
                     {
+                        var musicSetting = this.GetModel<ISaveModel>().MusicSettingData;
+                        float alertVolume = musicSetting.tomatoAlertVolumeConfigured
+                            ? musicSetting.tomatoAlertVolume
+                            : clockModel.TimerItem.AudioVolume.Value;
                         alertAudio.clip = clip;
-                        alertAudio.volume = clockModel.TimerItem.AudioVolume.Value;
+                        alertAudio.volume = alertVolume;
                         alertAudio.Play();
                     });
                 }
@@ -407,8 +411,12 @@ namespace BirdGame
                 {
                     this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(asset.AssetGUID, clip =>
                     {
+                        var musicSetting = this.GetModel<ISaveModel>().MusicSettingData;
+                        float tomatoAlertVolume = musicSetting.tomatoAlertVolumeConfigured
+                            ? musicSetting.tomatoAlertVolume
+                            : clockModel.TomatoItem.AudioVolume.Value;
                         alertAudio.clip = clip;
-                        alertAudio.volume = clockModel.TomatoItem.AudioVolume.Value;
+                        alertAudio.volume = tomatoAlertVolume;
                         alertAudio.Play();
                     });
                 }
