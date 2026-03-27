@@ -107,7 +107,7 @@ namespace BirdGame
         public float masterVolume = 1.0f;
         public bool masterVolumeConfigured = false;
         public float effectVolume = 0.5f;
-        public float birdVolume = 0.5f;
+        public float birdVolume = 0.3f;
         public bool birdVolumeConfigured = false;
         public float tomatoAlertVolume = 0.5f;
         public bool tomatoAlertVolumeConfigured = false;

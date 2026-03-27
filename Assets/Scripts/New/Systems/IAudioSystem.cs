@@ -692,7 +692,7 @@ namespace BirdGame
             var musicSetting = this.GetModel<ISaveModel>().MusicSettingData;
             float birdVolume = musicSetting.birdVolumeConfigured
                 ? musicSetting.birdVolume
-                : musicSetting.effectVolume;
+                : musicSetting.birdVolume;
             if (birdVolume <= 0f) return;
 
             var config = this.GetModel<IConfigModel>().RadioConfig;
@@ -717,7 +717,7 @@ namespace BirdGame
                 environmentAudios[i].volume = radioModel.EnvironmentVolumes[i].Value * radioModel.EnvironmentVolume.Value * masterVolume;
             }
 
-            float birdVolume = saveModel.birdVolumeConfigured ? saveModel.birdVolume : saveModel.effectVolume;
+            float birdVolume = saveModel.birdVolumeConfigured ? saveModel.birdVolume : saveModel.birdVolume;
             pettingAudio.volume = birdVolume * 0.6f * masterVolume;
             birdAudio.volume = masterVolume;
 
