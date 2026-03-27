@@ -1129,16 +1129,29 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
 
     private bool IsPrintableChar(char c)
     {
-        // Support basic ASCII + Chinese/Unicode characters
-        // Chinese characters typically fall in these Unicode ranges:
-        // - CJK Unified Ideographs: 0x4E00-0x9FFF
-        // - CJK Compatibility Ideographs: 0xF900-0xFAFF
-        // - CJK Unified Ideographs Extension A: 0x3400-0x4DBF
-        // - CJK Unified Ideographs Extension B: 0x20000-0x2A6DF
-        return (c >= 32 && c <= 126) || 
-            (c >= 0x4E00 && c <= 0x9FFF) ||
-            (c >= 0xF900 && c <= 0xFAFF) ||
-            (c >= 0x3400 && c <= 0x4DBF);
+        // ASCII printable
+        if (c >= 32 && c <= 126) return true;
+        // General Punctuation — curly quotes " " ' ', ellipsis …, en/em dash, etc. (IME / smart punctuation)
+        if (c >= 0x2000 && c <= 0x206F) return true;
+        // Mathematical Operators — e.g. U+22EF ⋯ (CJK-style ellipsis) when IME sends that instead of U+2026
+        if (c >= 0x2200 && c <= 0x22FF) return true;
+        // Halfwidth and Fullwidth Forms — fullwidth punctuation/symbols (e.g. ！，　) from Chinese/Japanese IME
+        if (c >= 0xFF00 && c <= 0xFFEF) return true;
+        // CJK Symbols and Punctuation, Hiragana, Katakana
+        if (c >= 0x3000 && c <= 0x303F) return true;
+        if (c >= 0x3040 && c <= 0x309F) return true;
+        if (c >= 0x30A0 && c <= 0x30FF) return true;
+        // Hangul syllables
+        if (c >= 0xAC00 && c <= 0xD7AF) return true;
+        // CJK Compatibility Forms (vertical punctuation, etc.)
+        if (c >= 0xFE30 && c <= 0xFE4F) return true;
+        // CJK Unified Ideographs Extension A
+        if (c >= 0x3400 && c <= 0x4DBF) return true;
+        // CJK Unified Ideographs
+        if (c >= 0x4E00 && c <= 0x9FFF) return true;
+        // CJK Compatibility Ideographs
+        if (c >= 0xF900 && c <= 0xFAFF) return true;
+        return false;
     }
 
     public bool IsFocused()
