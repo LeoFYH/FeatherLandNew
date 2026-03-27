@@ -40,6 +40,13 @@ namespace BirdGame
         [DllImport("user32.dll", SetLastError = true)]
         private static extern IntPtr GetParent(IntPtr hWnd);
 
+        /// <summary>GW_HWNDNEXT = 2 (below in Z-order), GW_HWNDPREV = 3 (above).</summary>
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr GetWindow(IntPtr hWnd, int uCmd);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
+
         [DllImport("user32.dll", SetLastError = true)]
         private static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
 
@@ -143,6 +150,9 @@ namespace BirdGame
         private const int SWP_NOOWNERZORDER = 0x0200;
         private const int SWP_NOSENDCHANGING = 0x0400;
 
+        private const int GW_HWNDNEXT = 2;
+        private const int GW_HWNDPREV = 3;
+
         // ---------------- members ----------------
         private int workAreaWidth;
         private int workAreaHeight;
@@ -181,10 +191,6 @@ namespace BirdGame
 
         #region Windows API 导入
 
-        // 枚举所有顶级窗口
-        [DllImport("user32.dll")]
-        private static extern bool EnumWindows(EnumWindowsProc enumProc, IntPtr lParam);
-
         // 多显示器：枚举所有显示器
         [DllImport("user32.dll")]
         private static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, EnumMonitorsDelegate lpfnEnum, IntPtr dwData);
@@ -209,9 +215,6 @@ namespace BirdGame
         #endregion
 
         #region 委托与结构体
-
-        // 枚举窗口的回调委托
-        private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
 
         // 窗口矩形区域结构体
         [StructLayout(LayoutKind.Sequential)]
@@ -269,8 +272,21 @@ namespace BirdGame
         {
             if (windowHandle == IntPtr.Zero)
             {
-                // 用窗口标题找 Unity 窗口
                 windowHandle = FindWindow(null, Application.productName);
+                if (windowHandle == IntPtr.Zero)
+                {
+                    try
+                    {
+                        IntPtr main = Process.GetCurrentProcess().MainWindowHandle;
+                        if (main != IntPtr.Zero)
+                            windowHandle = main;
+                    }
+                    catch
+                    {
+                        // ignore
+                    }
+                }
+
                 if (windowHandle != IntPtr.Zero)
                 {
                     originalStyle = GetWindowLongPtr(windowHandle, GWL_STYLE);
@@ -279,7 +295,7 @@ namespace BirdGame
                 }
                 else
                 {
-                    Debug.LogWarning("InitializeWindowHandle: FindWindow failed");
+                    Debug.LogWarning("InitializeWindowHandle: FindWindow 与 MainWindowHandle 均未取到句柄");
                 }
             }
         }
@@ -312,6 +328,65 @@ namespace BirdGame
             }
         }
 
+        /// <summary>
+        /// 壁纸挂载失败时回滚窗口状态，避免窗口停留在错误层级遮挡桌面。
+        /// </summary>
+        private void RestoreWindowAfterWallpaperFailure(string reason)
+        {
+            if (windowHandle == IntPtr.Zero)
+                return;
+
+            try
+            {
+                SetParent(windowHandle, IntPtr.Zero);
+
+                if (originalStyle != IntPtr.Zero)
+                    SetWindowLongPtr(windowHandle, GWL_STYLE, originalStyle);
+                if (originalExStyle != IntPtr.Zero)
+                    SetWindowLongPtr(windowHandle, GWL_EXSTYLE, originalExStyle);
+
+                SetWindowPos(windowHandle, IntPtr.Zero, 0, 0, 0, 0,
+                    SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+                ShowWindow(windowHandle, SW_SHOW);
+
+                isWallpaperMode = false;
+
+                SimpleMouseForwarder mouseForwarder = UnityEngine.Object.FindObjectOfType<SimpleMouseForwarder>(true);
+                if (mouseForwarder != null)
+                    mouseForwarder.gameObject.SetActive(false);
+
+                Debug.LogWarning($"[WallpaperMode] 已回滚窗口状态: {reason}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[WallpaperMode] 回滚窗口状态失败: {e.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 某些机型/系统上，GetParent 可能返回 0 但实际可正常作为壁纸层使用。
+        /// 这些环境允许走宽松挂载路径，避免严格校验误杀。
+        /// </summary>
+        private bool AllowLenientAttach()
+        {
+            try
+            {
+                string machineName = Environment.MachineName ?? string.Empty;
+                if (machineName.Equals("ROG_G16", StringComparison.OrdinalIgnoreCase))
+                    return true;
+
+                // 仅作为兼容兜底：Win11 26200 系列在部分设备上存在句柄校验不稳定
+                string osInfo = SystemInfo.operatingSystem ?? string.Empty;
+                if (osInfo.Contains("10.0.26200"))
+                    return true;
+            }
+            catch
+            {
+                // ignore
+            }
+            return false;
+        }
+
         // ---------------- main methods ----------------
         public bool EnableWallpaperMode
         {
@@ -336,14 +411,6 @@ namespace BirdGame
                 IntPtr hProgman = FindWindow("Progman", "Program Manager");
                 // 向ProgMan发送消息，确保Win11能正确找到WorkerW
                 SendMessage(hProgman, 0x052C, new IntPtr(13), new IntPtr(1));
-                IntPtr workerW = FindWorkerWWithIconsVisible(hProgman);
-
-                // 找不到WorkerW窗口时退出
-                if (workerW == IntPtr.Zero)
-                {
-                    Debug.LogError("找不到WorkerW窗口（桌面背景容器）");
-                    return;
-                }
 
                 // 设置窗口样式：无边框弹出窗口
                 int newStyle = GetWindowLong(windowHandle, GWL_STYLE);
@@ -352,20 +419,67 @@ namespace BirdGame
                 newStyle |= unchecked((int)WS_VISIBLE);
                 SetWindowLongPtr(windowHandle, GWL_STYLE, new IntPtr((long)newStyle));
 
-                // 调整扩展样式：设置为工具窗口，支持分层
+                // 调整扩展样式：保持工具窗口，但禁用 LAYERED。
+                // 在部分 Win11 机型上，LAYERED + WorkerW 会出现“有声音但画面不可见”。
                 int newExStyle = GetWindowLong(windowHandle, GWL_EXSTYLE);
                 newExStyle |= unchecked((int)WS_EX_TOOLWINDOW);
-                newExStyle |= unchecked((int)WS_EX_LAYERED);
                 newExStyle &= ~WS_EX_APPWINDOW;
                 newExStyle &= ~WS_EX_TRANSPARENT;
+                newExStyle &= ~WS_EX_LAYERED;
                 SetWindowLongPtr(windowHandle, GWL_EXSTYLE, new IntPtr((long)newExStyle));
 
                 // 应用样式变化
                 SetWindowPos(windowHandle, IntPtr.Zero, 0, 0, 0, 0,
                     SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
-                // 将Unity窗口设置为WorkerW的子窗口（嵌入桌面）
-                SetParent(windowHandle, workerW);
+                // 多轮回退挂载：优先 WorkerW，失败后刷新 WorkerW，再回退 Progman。
+                // 仅在真正挂载成功后继续，避免“假成功”。
+                IntPtr desktopParent = IntPtr.Zero;
+                bool usedLenientAttach = false;
+                bool allowLenientAttach = AllowLenientAttach();
+                const int maxAttachRounds = 3;
+                for (int round = 0; round < maxAttachRounds && desktopParent == IntPtr.Zero; round++)
+                {
+                    // 每轮都刷新一次 WorkerW，适配 Explorer 动态变化
+                    SendMessage(hProgman, 0x052C, new IntPtr(13), new IntPtr(1));
+
+                    var candidates = new System.Collections.Generic.List<IntPtr>();
+                    BuildDesktopParentCandidates(hProgman, candidates);
+
+                    foreach (IntPtr candidate in candidates)
+                    {
+                        if (candidate == IntPtr.Zero) continue;
+
+                        SetParent(windowHandle, candidate);
+                        IntPtr actualParent = GetParent(windowHandle);
+                        if (actualParent == candidate)
+                        {
+                            desktopParent = candidate;
+                            Debug.Log($"[WallpaperMode] 挂载成功: round={round + 1}, parent={desktopParent}");
+                            break;
+                        }
+                        else if (allowLenientAttach && actualParent == IntPtr.Zero)
+                        {
+                            // 宽松路径：允许在句柄校验不稳定机型继续尝试显示。
+                            // 后续会使用屏幕坐标定位并跳过 ActivateWindow，减少遮挡图标风险。
+                            desktopParent = candidate;
+                            usedLenientAttach = true;
+                            Debug.LogWarning($"[WallpaperMode] 宽松挂载启用: round={round + 1}, candidate={candidate}, actual={actualParent}");
+                            break;
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"[WallpaperMode] 挂载校验失败: round={round + 1}, candidate={candidate}, actual={actualParent}");
+                        }
+                    }
+                }
+
+                if (desktopParent == IntPtr.Zero)
+                {
+                    Debug.LogError("[WallpaperMode] 所有桌面层挂载尝试均失败，已放弃进入壁纸模式");
+                    RestoreWindowAfterWallpaperFailure("所有候选桌面层挂载失败");
+                    return;
+                }
 
                 // 多显示器时仅支持主屏，强制使用主显示器
                 int displayIndex = HasMultipleMonitors ? 0 : targetDisplay;
@@ -375,18 +489,21 @@ namespace BirdGame
                 if (w <= 0 || h <= 0)
                 {
                     Debug.LogError($"[WallpaperMode] 无效工作区尺寸 {w}x{h}，中止");
-                    SetParent(windowHandle, IntPtr.Zero);
+                    RestoreWindowAfterWallpaperFailure($"无效工作区尺寸 {w}x{h}");
                     return;
                 }
-                // 子窗口的 SetWindowPos 使用父窗口(WorkerW)的客户区坐标，不是屏幕坐标；需转换
+                IntPtr actualParentForPosition = GetParent(windowHandle);
+                // 未真正成为子窗口时不要用 parent 客户区坐标换算，直接走屏幕坐标更稳定。
+                IntPtr parentForCoordinate = actualParentForPosition != IntPtr.Zero ? actualParentForPosition : IntPtr.Zero;
+                // 子窗口 SetWindowPos 使用父窗口客户区坐标，不是屏幕坐标；需转换
                 var pt = new POINT { X = (int)workingArea.x, Y = (int)workingArea.y };
-                if (ScreenToClient(workerW, ref pt))
+                if (parentForCoordinate != IntPtr.Zero && ScreenToClient(parentForCoordinate, ref pt))
                 {
                     SetWindowPos(windowHandle, HWND_BOTTOM, pt.X, pt.Y, w, h, SWP_FRAMECHANGED | SWP_SHOWWINDOW);
                 }
                 else
                 {
-                    // 回退：部分环境下 WorkerW 客户区与虚拟屏一致，仍用屏幕坐标
+                    // 回退：父窗口客户区转换失败时，仍用屏幕坐标
                     SetWindowPos(windowHandle, HWND_BOTTOM,
                         (int)workingArea.x, (int)workingArea.y, w, h, SWP_FRAMECHANGED | SWP_SHOWWINDOW);
                 }
@@ -410,13 +527,21 @@ namespace BirdGame
                 }
                 
                 // Activate window and set focus
-                // Note: In wallpaper mode, window is a child of desktop, so focus behavior may differ
-                // But we still attempt to set focus to ensure keyboard input works when transitioning
-                ActivateWindow();
+                // Note: In wallpaper mode, window is a child of desktop, so focus behavior may differ.
+                // 宽松挂载下窗口可能仍是顶级窗口，激活会把它抬到前景遮挡图标，因此跳过。
+                if (!usedLenientAttach)
+                {
+                    ActivateWindow();
+                }
+                else
+                {
+                    Debug.Log("[WallpaperMode] 宽松挂载路径：跳过 ActivateWindow 以避免遮挡桌面图标");
+                }
             }
             catch (Exception e)
             {
                 Debug.LogError($"进入壁纸模式失败: {e.Message}");
+                RestoreWindowAfterWallpaperFailure($"异常: {e.Message}");
             }
 #endif
         }
@@ -510,43 +635,95 @@ namespace BirdGame
             Screen.fullScreen = fullscreen;
         }
 
-        // 修复：使用静态字段来存储查找结果
-        private static IntPtr foundWorkerW = IntPtr.Zero;
-
         /// <summary>
-        /// 查找包含桌面图标的WorkerW窗口（兼容Win10/11）
+        /// 在 Progman 子树中查找是否包含桌面图标视图（含嵌套 WorkerW，兼容 Win10/11）。
         /// </summary>
-        private IntPtr FindWorkerWWithIconsVisible(IntPtr progman)
+        private static bool SubtreeContainsShellDllDefView(IntPtr hwnd)
         {
-            foundWorkerW = IntPtr.Zero;
-
-            // 使用静态方法而不是lambda表达式（IL2CPP兼容）
-            EnumWindows(EnumWindowsCallback, IntPtr.Zero);
-
-            // 极端情况处理：直接查找第一个WorkerW
-            if (foundWorkerW == IntPtr.Zero)
+            if (hwnd == IntPtr.Zero)
+                return false;
+            if (FindWindowEx(hwnd, IntPtr.Zero, "SHELLDLL_DefView", null) != IntPtr.Zero)
+                return true;
+            IntPtr child = IntPtr.Zero;
+            while (true)
             {
-                foundWorkerW = FindWindowEx(progman, IntPtr.Zero, "WorkerW", null);
+                child = FindWindowEx(hwnd, child, null, null);
+                if (child == IntPtr.Zero)
+                    break;
+                if (SubtreeContainsShellDllDefView(child))
+                    return true;
             }
+            return false;
+        }
 
-            return foundWorkerW;
+        private static bool IsWorkerWClass(IntPtr hwnd)
+        {
+            if (hwnd == IntPtr.Zero)
+                return false;
+            var sb = new StringBuilder(256);
+            return GetClassName(hwnd, sb, sb.Capacity) > 0 && sb.ToString() == "WorkerW";
         }
 
         /// <summary>
-        /// EnumWindows的静态回调方法（IL2CPP兼容）
+        /// 按顺序收集 SetParent 候选：优先「含 DefView 的 WorkerW」之前的同级 WorkerW（壁纸层），
+        /// 再含图标层的 WorkerW，再其它 WorkerW，最后 Progman。避免误用首个 WorkerW 导致窗口在壁纸位图之下不可见。
         /// </summary>
-        [MonoPInvokeCallback(typeof(EnumWindowsProc))]
-        private static bool EnumWindowsCallback(IntPtr hwnd, IntPtr lParam)
+        private static void BuildDesktopParentCandidates(IntPtr progman, System.Collections.Generic.List<IntPtr> candidates)
         {
-            // 查找包含SHELLDLL_DefView控件的窗口（管理桌面图标）
-            if (FindWindowEx(hwnd, IntPtr.Zero, "SHELLDLL_DefView", null) != IntPtr.Zero)
+            candidates.Clear();
+            if (progman == IntPtr.Zero)
+                return;
+
+            IntPtr workerBeforeDefHost = IntPtr.Zero;
+            IntPtr defViewHostWorker = IntPtr.Zero;
+            IntPtr w = IntPtr.Zero;
+            while (true)
             {
-                // 获取同级的WorkerW窗口（桌面背景容器）
-                foundWorkerW = FindWindowEx(IntPtr.Zero, hwnd, "WorkerW", null);
+                w = FindWindowEx(progman, w, "WorkerW", null);
+                if (w == IntPtr.Zero)
+                    break;
+                if (SubtreeContainsShellDllDefView(w))
+                {
+                    defViewHostWorker = w;
+                    break;
+                }
+                workerBeforeDefHost = w;
             }
 
-            // 找到后停止枚举
-            return foundWorkerW == IntPtr.Zero;
+            if (defViewHostWorker != IntPtr.Zero)
+            {
+                if (workerBeforeDefHost != IntPtr.Zero)
+                    candidates.Add(workerBeforeDefHost);
+                else
+                {
+                    // DefView 在枚举到的第一个 WorkerW 内：壁纸层通常是其 Z 序更低的同级
+                    IntPtr below = GetWindow(defViewHostWorker, GW_HWNDNEXT);
+                    if (below != IntPtr.Zero && GetParent(below) == progman && IsWorkerWClass(below))
+                        candidates.Add(below);
+                }
+
+                if (!candidates.Contains(defViewHostWorker))
+                    candidates.Add(defViewHostWorker);
+            }
+            else
+            {
+                w = IntPtr.Zero;
+                while (true)
+                {
+                    w = FindWindowEx(progman, w, "WorkerW", null);
+                    if (w == IntPtr.Zero)
+                        break;
+                    if (!candidates.Contains(w))
+                        candidates.Add(w);
+                }
+            }
+
+            IntPtr firstW = FindWindowEx(progman, IntPtr.Zero, "WorkerW", null);
+            if (firstW != IntPtr.Zero && !candidates.Contains(firstW))
+                candidates.Add(firstW);
+
+            if (!candidates.Contains(progman))
+                candidates.Add(progman);
         }
 
         public void FullscreenMode()

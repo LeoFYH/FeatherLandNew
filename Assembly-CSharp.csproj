@@ -123,6 +123,7 @@
     <Compile Include="Assets\Scripts\New\Events\DeleteScheduleItemEvent.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Localization\LocalizationText.cs" />
     <Compile Include="Assets\Scripts\New\Systems\ISteamSystem.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\UI\TomatoAlertVolume.cs" />
     <Compile Include="Assets\Scripts\BirdStates\BirdFlyHorizontalState.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\TentViewController.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\ShopPopup.cs" />
@@ -290,7 +291,6 @@
     <Compile Include="Assets\SpritePivotEditor\Demo\Scripts\Player.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\BagChecker.cs" />
     <Compile Include="Assets\Scripts\New\Commands\LeaveDesktopCommand.cs" />
-    <Compile Include="Assets\Scripts\New\ImeProxyWindow.cs" />
     <Compile Include="Assets\Scripts\Heart.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Shop\ShopEggItem.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\Test.cs" />
@@ -298,6 +298,7 @@
     <Compile Include="Assets\SpritePivotEditor\Demo\Scripts\ScrollBg.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\ButtonHighlight.cs" />
     <Compile Include="Assets\Scripts\New\Utility\PrefabAtlasManager.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\UI\BirdVolume.cs" />
     <Compile Include="Assets\Scripts\UI\StorePanel.cs" />
     <Compile Include="Assets\Scripts\New\Events\ShowBranchEvent.cs" />
     <Compile Include="Assets\Scripts\New\Events\EquipUISkin.cs" />
@@ -308,6 +309,7 @@
     <Compile Include="Assets\Scripts\New\ViewController\UI\MapInfo.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\HatchingBirdPopup.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\PointerEvent.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\UI\MasterVolume.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\UISkinExchange.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Clock\AddButton.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Radio\EnvironmentViewController.cs" />

@@ -363,7 +363,13 @@ namespace BirdGame
             {
 #if UNITY_STANDALONE_WIN
                 // When IME proxy is active (or focus trick), character input comes from proxy/Input.inputString; skip from hook
-                if ((ImeProxyWindow.IsProxyActive || AttemptedFocusWhileWallpaper) && keyData.keyType == HookTMPInputHandler.KeyType.Character)
+                if (HookTMPInputHandler.ImeProxyWindow.IsProxyActive)
+                {
+                    if (keyData.keyType == HookTMPInputHandler.KeyType.Character ||
+                        HookTMPInputHandler.IsKeyRoutedThroughImeProxy(keyData.keyType))
+                        return;
+                }
+                else if (AttemptedFocusWhileWallpaper && keyData.keyType == HookTMPInputHandler.KeyType.Character)
                     return;
 #endif
                 SendKeyEventToTMPInputField(keyData);
@@ -1624,9 +1630,9 @@ namespace BirdGame
             if (_pendingImeProxyFocus)
             {
                 _pendingImeProxyFocus = false;
-                if (ImeProxyWindow.GiveFocusToProxy())
+                if (HookTMPInputHandler.ImeProxyWindow.GiveFocusToProxy())
                 {
-                    ImeProxyWindow.IsProxyActive = true;
+                    HookTMPInputHandler.ImeProxyWindow.IsProxyActive = true;
                     if (showDebugLog)
                         Debug.Log("[SimpleMouseForwarder] IME proxy window focused for input (main thread)");
                 }
@@ -1640,7 +1646,16 @@ namespace BirdGame
                 cachedForegroundWindowTitle = GetForegroundWindowTitle();
                 lastForegroundWindowCheckFrame = Time.frameCount;
             }
-            isOnDesktop = cachedForegroundWindowTitle == "Program Manager" || cachedForegroundWindowTitle == string.Empty;
+
+            // In wallpaper mode the game window can be foreground temporarily (ActivateWindow),
+            // but we still need to forward mouse events as "desktop mode".
+            bool wallpaperModeActive = false;
+            if (GameApp.Interface != null)
+            {
+                var fullScreen = GameApp.Interface.GetUtility<IFullScreenUtility>();
+                wallpaperModeActive = fullScreen != null && fullScreen.IsWallpaperModeActive();
+            }
+            isOnDesktop = wallpaperModeActive && (cachedForegroundWindowTitle == "Program Manager" || cachedForegroundWindowTitle == string.Empty);
             
             // Performance optimization: Update cached values periodically
             if (Time.frameCount % 60 == 0) // Update every 60 frames (~1 second at 60fps)
@@ -1881,8 +1896,8 @@ namespace BirdGame
             _focusedTMPInputField = null;
             AttemptedFocusWhileWallpaper = false;
 #if UNITY_STANDALONE_WIN
-            ImeProxyWindow.ReleaseProxyFocus();
-            ImeProxyWindow.IsProxyActive = false;
+            HookTMPInputHandler.ImeProxyWindow.ReleaseProxyFocus();
+            HookTMPInputHandler.ImeProxyWindow.IsProxyActive = false;
 #endif
 
             // Performance optimization: Reuse PointerEventData
