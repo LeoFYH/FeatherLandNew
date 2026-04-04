@@ -239,11 +239,12 @@ namespace BirdGame
         private void InitBodyType()
         {
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            var birdType = this.GetModel<IBirdModel>().BirdList[birdIndex].birdType;
             foreach (var birdClass in this.GetModel<IConfigModel>().BirdConfig.sceneBirds[mapIndex].birdClasses)
             {
                 foreach (var bird in birdClass.birds)
                 {
-                    if (bird.id == birdIndex)
+                    if (bird.id == birdType)
                     {
                         bodyType = birdClass.type;
                         return;
@@ -360,6 +361,7 @@ namespace BirdGame
                                 //this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Stroke);
                                 this.GetSystem<IAudioSystem>().PlayBirdEffect(index);
                                 anim.SetTrigger(AnimatorHashes.StrokeTrigger);
+                                InitBodyType();
                                 this.GetSystem<IAudioSystem>().RandomPlayPetting(bodyType);
                                 // 使用对象池获取心形特效
                                 if (heart != null && heart.activeSelf)
