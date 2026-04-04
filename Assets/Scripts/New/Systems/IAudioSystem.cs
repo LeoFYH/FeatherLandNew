@@ -687,6 +687,10 @@ namespace BirdGame
             {
                 index = Random.Range(0, 3);
             }
+            else if (type == BirdBodyType.Middle)
+            {
+                index = Random.Range(3, 6);
+            }
             else if(type == BirdBodyType.Big)
             {
                 index = Random.Range(6, config.pettingClips.Length);
