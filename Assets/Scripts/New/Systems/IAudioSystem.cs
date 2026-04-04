@@ -14,7 +14,6 @@ namespace BirdGame
     {
         Click,
         DropFood,
-        Stroke,
         GrowUp,
         Buy,
         Hatch,
@@ -287,21 +286,18 @@ namespace BirdGame
                     clip = this.GetModel<IConfigModel>().RadioConfig.effects[1].songFile;
                     group = this.GetModel<IConfigModel>().RadioConfig.effects[1].group;
                     break;
-                case EffectType.Stroke:
+                
+                case EffectType.GrowUp:
                     clip = this.GetModel<IConfigModel>().RadioConfig.effects[2].songFile;
                     group = this.GetModel<IConfigModel>().RadioConfig.effects[2].group;
                     break;
-                case EffectType.GrowUp:
+                case EffectType.Buy:
                     clip = this.GetModel<IConfigModel>().RadioConfig.effects[3].songFile;
                     group = this.GetModel<IConfigModel>().RadioConfig.effects[3].group;
                     break;
-                case EffectType.Buy:
+                case EffectType.Hatch:
                     clip = this.GetModel<IConfigModel>().RadioConfig.effects[4].songFile;
                     group = this.GetModel<IConfigModel>().RadioConfig.effects[4].group;
-                    break;
-                case EffectType.Hatch:
-                    clip = this.GetModel<IConfigModel>().RadioConfig.effects[5].songFile;
-                    group = this.GetModel<IConfigModel>().RadioConfig.effects[5].group;
                     break;
                 // case EffectType.Hover:
                 //     clip = this.GetModel<IConfigModel>().RadioConfig.effects[6].songFile;
