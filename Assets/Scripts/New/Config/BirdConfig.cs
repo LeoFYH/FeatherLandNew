@@ -156,9 +156,9 @@ namespace BirdGame
 
     public enum BirdBodyType
     {
-        Small,
-        Middle,
-        Big,
+        Small=0,
+        Big = 1,
+        Middle = 2,
     }
 
     [Serializable]
