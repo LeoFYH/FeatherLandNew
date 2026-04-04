@@ -395,6 +395,7 @@ namespace BirdGame
                     this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(asset.AssetGUID, clip =>
                     {
                         alertAudio.clip = clip;
+                        alertAudio.outputAudioMixerGroup = this.GetModel<IConfigModel>().RadioConfig.alertClips[clockModel.TimerItem.AudioSelected.Value].group;
                         alertAudio.volume = clockModel.TimerItem.AudioVolume.Value;
                         alertAudio.Play();
                     });
@@ -408,6 +409,7 @@ namespace BirdGame
                     this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(asset.AssetGUID, clip =>
                     {
                         alertAudio.clip = clip;
+                        alertAudio.outputAudioMixerGroup = this.GetModel<IConfigModel>().RadioConfig.alertClips[clockModel.TomatoItem.AudioSelected.Value].group;
                         alertAudio.volume = clockModel.TomatoItem.AudioVolume.Value;
                         alertAudio.Play();
                     });
@@ -681,9 +683,10 @@ namespace BirdGame
         {
             var config = this.GetModel<IConfigModel>().RadioConfig;
             int index = Random.Range(0, config.pettingClips.Length);
-            this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(config.pettingClips[index].AssetGUID, clip =>
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(config.pettingClips[index].songFile.AssetGUID, clip =>
             {
                 pettingAudio.clip = clip;
+                pettingAudio.outputAudioMixerGroup =config.pettingClips[index].group;
                 pettingAudio.Play();
             });
         }
