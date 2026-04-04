@@ -71,7 +71,7 @@ namespace BirdGame
         /// <param name="useFade">是否使用淡入淡出效果，默认为true</param>
         void SetEnvironmentVolumesByWeather(int weatherIndex, bool useFade = true);
 
-        void RandomPlayPetting();
+        void RandomPlayPetting(BirdBodyType type);
     }
 
     public class AudioSystem : AbstractSystem, IAudioSystem
@@ -679,10 +679,19 @@ namespace BirdGame
             }
         }
 
-        public void RandomPlayPetting()
+        public void RandomPlayPetting(BirdBodyType type)
         {
             var config = this.GetModel<IConfigModel>().RadioConfig;
-            int index = Random.Range(0, config.pettingClips.Length);
+            int index = 0;
+            if (type == BirdBodyType.Small)
+            {
+                index = Random.Range(0, 3);
+            }
+            else if(type == BirdBodyType.Big)
+            {
+                index = Random.Range(6, config.pettingClips.Length);
+            }
+
             this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(config.pettingClips[index].songFile.AssetGUID, clip =>
             {
                 pettingAudio.clip = clip;

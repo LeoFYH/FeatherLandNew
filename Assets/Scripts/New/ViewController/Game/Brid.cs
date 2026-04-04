@@ -127,6 +127,7 @@ namespace BirdGame
         public bool isDesktopBird;
         private GameObject heart;
         private int weatherIndex = 0;
+        private BirdBodyType bodyType = BirdBodyType.Small;
 
         void Start()
         {
@@ -139,8 +140,15 @@ namespace BirdGame
                 ani.Append(sr.DOColor(Color.black, 0.5f));
                 ani.Append(sr.DOColor(Color.white, 0.5f));
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
-            
-            
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            foreach (var birdClass in this.GetModel<IConfigModel>().BirdConfig.sceneBirds[mapIndex].birdClasses)
+            {
+                if (birdClass.birds[0].id == birdIndex)
+                {
+                    bodyType = birdClass.type;
+                    break;
+                }
+            }
             lineRenderer.startColor = new Color(0, 1, 0, 0); // 绿色，透明度为0
             lineRenderer.endColor = new Color(0, 1, 0, 0); // 绿色，透明度为0
             // Initialize walkable area and basic components
@@ -343,7 +351,7 @@ namespace BirdGame
                                 this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Stroke);
                                 this.GetSystem<IAudioSystem>().PlayBirdEffect(index);
                                 anim.SetTrigger(AnimatorHashes.StrokeTrigger);
-                                this.GetSystem<IAudioSystem>().RandomPlayPetting();
+                                this.GetSystem<IAudioSystem>().RandomPlayPetting(bodyType);
                                 // 使用对象池获取心形特效
                                 if (heart != null && heart.activeSelf)
                                 {
