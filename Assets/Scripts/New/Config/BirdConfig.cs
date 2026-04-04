@@ -157,7 +157,7 @@ namespace BirdGame
     public enum BirdBodyType
     {
         Small,
-        Middle,
+        //Middle,
         Big,
     }
 
