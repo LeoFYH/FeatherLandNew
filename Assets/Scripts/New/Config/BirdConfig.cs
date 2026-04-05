@@ -147,6 +147,28 @@ namespace BirdGame
             classIndex = 0;
             return null;
         }
+
+        public BirdItem GetBird(int birdId)
+        {
+            foreach (var sceneBird in sceneBirds)
+            {
+                for (int i = 0; i < sceneBird.birdClasses.Length; i++)
+                {
+                    foreach (var bird in sceneBird.birdClasses[i].birds)
+                    {
+                        if (bird == null)
+                        {
+                            Debug.Log(sceneBird.birdClasses[i].birdName + "有空项！");
+                            continue;
+                        }
+                        if (bird.id == birdId)
+                            return bird;
+                    }
+                }
+            }
+            Debug.Log($"没有找到id为{birdId}的鸟的配置!");
+            return null;
+        }
     }
 
     [Serializable]

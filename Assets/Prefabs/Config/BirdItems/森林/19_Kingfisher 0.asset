@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 19_Kingfisher 0
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 0
+    SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -33,15 +33,15 @@ MonoBehaviour:
   canFlyWait: 0
   canFlyHorizontal: 1
   reality: Rare
-  eraningForSmall: 0.2
-  eraningForBig: 1.4681
-  priceForSmall: 2
-  priceForBig: 8.1184
-  clickEarning: 0.01
+  eraningForSmall: 0.16
+  eraningForBig: 0.8
+  priceForSmall: 0.86
+  priceForBig: 4.3
+  clickEarning: 0
   clickEarningForFiveTimes: 0
   description: FisherDescription
   clickAudio: {fileID: 0}
-  totalExp: 10
+  totalExp: 3
   eatExp: 1
   autoExp: 1
   habitat: CardinalHabitat

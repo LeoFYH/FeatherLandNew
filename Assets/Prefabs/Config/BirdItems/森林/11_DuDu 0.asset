@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 11_DuDu 0
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 0
+    SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -33,15 +33,15 @@ MonoBehaviour:
   canFlyWait: 0
   canFlyHorizontal: 1
   reality: Extinct
-  eraningForSmall: 5
-  eraningForBig: 20
-  priceForSmall: 20
-  priceForBig: 100
-  clickEarning: 0.01
+  eraningForSmall: 0.26
+  eraningForBig: 1.3
+  priceForSmall: 1.32
+  priceForBig: 6.6
+  clickEarning: 0
   clickEarningForFiveTimes: 0
   description: DodoDescription
   clickAudio: {fileID: 0}
-  totalExp: 20
+  totalExp: 3.9
   eatExp: 0.5
   autoExp: 1
   habitat: DodoHabitat
