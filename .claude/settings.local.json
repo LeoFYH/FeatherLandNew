@@ -8,7 +8,17 @@
       "Bash(python -c \":*)",
       "Bash(find E:/Unity/Projects/Work/FeatherLandNew/Assets/Scripts/New/Config -type f -name *.cs)",
       "Bash(xargs grep:*)",
-      "Bash(grep -r class.*Egg E:/Unity/Projects/Work/FeatherLandNew/Assets/Scripts/New/Config)"
+      "Bash(grep -r class.*Egg E:/Unity/Projects/Work/FeatherLandNew/Assets/Scripts/New/Config)",
+      "Bash(tasklist)",
+      "Bash(wmic OS get FreePhysicalMemory,TotalVisibleMemorySize /value)",
+      "Bash(powershell -c \"[math]::Round\\(\\(Get-CimInstance Win32_OperatingSystem\\).FreePhysicalMemory/1MB,1\\), [math]::Round\\(\\(Get-CimInstance Win32_OperatingSystem\\).TotalVisibleMemorySize/1MB,1\\)\")",
+      "Bash(taskkill /F /PID 31228)",
+      "Bash(taskkill /F /PID 12988)",
+      "Bash(taskkill /F /PID 35324)",
+      "Bash(taskkill /F /PID 31048)",
+      "Bash(taskkill /F /PID 1988)",
+      "Bash(powershell -c \"Get-Process | Sort-Object WorkingSet64 -Descending | Select-Object -First 10 Name, Id, @{N=''MemMB'';E={[math]::Round\\($_WorkingSet64/1MB\\)}} | Format-Table -AutoSize\")",
+      "Bash(powershell -Command \"Get-Process | Sort-Object WorkingSet64 -Descending | Select-Object -First 10 Name, Id, @{N=''MemMB'';E={[math]::Round\\($_.WorkingSet64/1MB\\)}} | Format-Table -AutoSize\")"
     ]
   }
 }
