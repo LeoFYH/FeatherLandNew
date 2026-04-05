@@ -52,7 +52,7 @@ namespace BirdGame.Editor
             // }
         }
         
-        [Button("应用数据", ButtonSizes.Large), GUIColor(0.4f, 0.8f, 0.4f)]
+        [Button("应用数据", ButtonSizes.Large), GUIColor(0.4f, 0.8f, 0f)]
         private void ApplyData()
         {
             if (previewMapData == null || previewEggData == null || previewBirdData == null || previewDecorationData == null)
@@ -326,19 +326,20 @@ namespace BirdGame.Editor
             var mapConfig = AssetDatabase.LoadAssetAtPath<MapConfig>("Assets/Prefabs/Config/MapConfig.asset");
             if (mapConfig == null || mapConfig.maps == null) return;
 
+            int index = 0;
             foreach (var previewItem in previewMapData)
             {
-                if (previewItem.sceneIndex >= mapConfig.maps.Length) continue;
-                var map = mapConfig.maps[previewItem.sceneIndex];
+                if (index >= mapConfig.maps.Length) continue;
+                var map = mapConfig.maps[index];
                 if (map == null) continue;
 
                 map.mapName = previewItem.mapName;
                 map.cost = previewItem.cost;
                 map.uiPosition = new Vector2(previewItem.uiPositionX, previewItem.uiPositionY);
                 map.purchasable = previewItem.purchasable;
-
-                EditorUtility.SetDirty(mapConfig);
+                index++;
             }
+            EditorUtility.SetDirty(mapConfig);
         }
 
         private void ApplyEggConfig()
@@ -346,20 +347,33 @@ namespace BirdGame.Editor
             var shopConfig = AssetDatabase.LoadAssetAtPath<ShopConfig>("Assets/Prefabs/Config/ShopConfig.asset");
             if (shopConfig == null || shopConfig.sceneEggs == null) return;
 
+            int currentSceneIndex = -1;
+            var list = new List<EggItem>();
             foreach (var previewItem in previewEggData)
             {
-                if (previewItem.sceneIndex >= shopConfig.sceneEggs.Count) continue;
+                if (previewItem.sceneIndex >= shopConfig.sceneEggs.Count)
+                {
+                    shopConfig.sceneEggs.Add(new SceneEgg());
+                }
                 var sceneEgg = shopConfig.sceneEggs[previewItem.sceneIndex];
                 if (sceneEgg == null || sceneEgg.eggs == null) continue;
-
-                if (previewItem.eggIndex >= sceneEgg.eggs.Length) continue;
-                var egg = sceneEgg.eggs[previewItem.eggIndex];
+                if (currentSceneIndex != previewItem.sceneIndex)
+                {
+                    currentSceneIndex = previewItem.sceneIndex;
+                    list = sceneEgg.eggs.ToList();
+                }
+                if (previewItem.eggIndex >= sceneEgg.eggs.Length)
+                {
+                    list.Add(new EggItem());
+                }
+                var egg = list[previewItem.eggIndex];
                 if (egg == null) continue;
 
                 egg.price = previewItem.price;
                 egg.birdCount = previewItem.birdCount;
                 egg.description = previewItem.description;
 
+                sceneEgg.eggs = list.ToArray();
                 EditorUtility.SetDirty(shopConfig);
             }
         }
@@ -379,7 +393,8 @@ namespace BirdGame.Editor
                 var birdClass = sceneBird.birdClasses[previewItem.classIndex];
                 if (birdClass == null || birdClass.birds == null) continue;
 
-                var bird = birdClass.birds.FirstOrDefault(b => b != null && b.id == previewItem.id);
+                //var bird = birdClass.birds.FirstOrDefault(b => b != null && b.id == previewItem.id);
+                var bird = birdConfig.GetBird(previewItem.id);
                 if (bird == null) continue;
 
                 bird.reality = previewItem.reality;
@@ -398,8 +413,9 @@ namespace BirdGame.Editor
                 bird.canFlyHorizontal = previewItem.canFlyHorizontal;
                 bird.canFlyWait = previewItem.canFlyWait;
 
-                EditorUtility.SetDirty(birdConfig);
+                EditorUtility.SetDirty(bird);
             }
+            EditorUtility.SetDirty(birdConfig);
         }
 
         private void ApplyDecorationConfig()

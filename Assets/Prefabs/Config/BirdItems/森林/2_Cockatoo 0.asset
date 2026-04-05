@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 2_Cockatoo 0
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 0
+    SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -33,15 +33,15 @@ MonoBehaviour:
   canFlyWait: 1
   canFlyHorizontal: 1
   reality: Common
-  eraningForSmall: 0
-  eraningForBig: 1.0836
-  priceForSmall: 1
-  priceForBig: 2.8147
-  clickEarning: 0.01
+  eraningForSmall: 0.1
+  eraningForBig: 0.5
+  priceForSmall: 0.74
+  priceForBig: 3.7
+  clickEarning: 0
   clickEarningForFiveTimes: 0
   description: CockatooDescription
   clickAudio: {fileID: 0}
-  totalExp: 10
+  totalExp: 3
   eatExp: 0.5
   autoExp: 1
   habitat: CockatooHabitat

@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: MapConfig
   m_EditorClassIdentifier: 
   maps:
-  - mapName: Wetland
+  - mapName: Forest
     mapPreview: {fileID: 765954583785660313, guid: 2d52a003b346e5e459a7f384b7218040, type: 3}
-    cost: 400000
-    uiPosition: {x: -74, y: -54}
+    cost: 0
+    uiPosition: {x: 169.1, y: 220.8}
     purchasable: 1
   - mapName: Mountain
     mapPreview: {fileID: 6521805550339181256, guid: 61875ff100cc2664d9fcffefa32783e0, type: 3}
@@ -25,26 +25,26 @@ MonoBehaviour:
     purchasable: 1
   - mapName: Dessert
     mapPreview: {fileID: 4813417214287935668, guid: 5bdb6adf24e26644aa2e51e588dac56d, type: 3}
-    cost: 2000
+    cost: 15000
     uiPosition: {x: -345, y: -272}
     purchasable: 1
   - mapName: Paddy field
     mapPreview: {fileID: 2221558333506440283, guid: 08be6fa863492d447a0508d481abfd4f, type: 3}
-    cost: 2000
+    cost: 50000
     uiPosition: {x: -41, y: 153}
     purchasable: 1
   - mapName: Sea
     mapPreview: {fileID: -3016300295724352377, guid: 38b81e374e4901447a92bcc48256c669, type: 3}
-    cost: 2000
+    cost: 100000
     uiPosition: {x: 180, y: -272}
     purchasable: 1
   - mapName: tundra
     mapPreview: {fileID: 2002294864892405418, guid: 6e82b42f028f74e7cbd624547b19ffb2, type: 3}
-    cost: 2123
+    cost: 200000
     uiPosition: {x: -340, y: 423}
     purchasable: 1
   - mapName: Wetland
     mapPreview: {fileID: 7582690801741875501, guid: a14a0e9892a5c4a90a26f7db35e57566, type: 3}
-    cost: 2457
+    cost: 400000
     uiPosition: {x: -74, y: -54}
     purchasable: 1

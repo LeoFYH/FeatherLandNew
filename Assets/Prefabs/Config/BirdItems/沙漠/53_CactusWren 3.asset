@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 53_CactusWren 3
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 0
+    SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -32,17 +32,17 @@ MonoBehaviour:
   canFly: 1
   canFlyWait: 0
   canFlyHorizontal: 1
-  reality: Rare
-  eraningForSmall: 2
-  eraningForBig: 4
-  priceForSmall: 20
-  priceForBig: 40
-  clickEarning: 3
+  reality: Common
+  eraningForSmall: 0.2
+  eraningForBig: 1.4
+  priceForSmall: 4
+  priceForBig: 20
+  clickEarning: 0
   clickEarningForFiveTimes: 0
-  description: CardinalDescription
+  description: Cinnamon-breasted BuntingDescription
   clickAudio: {fileID: 0}
-  totalExp: 5
+  totalExp: 8.5
   eatExp: 1
-  autoExp: 0.1
+  autoExp: 1
   habitat: CardinalHabitat
   scenePreview: {fileID: 765954583785660313, guid: 2d52a003b346e5e459a7f384b7218040, type: 3}

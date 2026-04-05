@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 26_Kakapo 1
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 0
+    SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -33,15 +33,15 @@ MonoBehaviour:
   canFlyWait: 0
   canFlyHorizontal: 0
   reality: Rare
-  eraningForSmall: 0.3
-  eraningForBig: 0.0821
-  priceForSmall: 1.5
-  priceForBig: 8.6728
-  clickEarning: 0.01
+  eraningForSmall: 0.16
+  eraningForBig: 0.8
+  priceForSmall: 0.86
+  priceForBig: 4.3
+  clickEarning: 0
   clickEarningForFiveTimes: 0
   description: KakapoDescription
   clickAudio: {fileID: 0}
-  totalExp: 10
+  totalExp: 3
   eatExp: 0.5
   autoExp: 1
   habitat: KakapoHabitat
