@@ -54,7 +54,7 @@ namespace BirdGame
             else
             {
                 // 前一个地图未购买，隐藏当前地图图标
-                gameObject.SetActive(true);
+                gameObject.SetActive(false);
             }
         }
 

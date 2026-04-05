@@ -18,8 +18,15 @@ namespace BirdGame
             });
             
             var config = this.GetModel<IConfigModel>().MapConfig;
+            int unlockedCount = this.GetModel<ISaveModel>().BirdInfoData.mapBirds.Count;
             for (int i = 0; i < config.maps.Length; i++)
             {
+                bool isUnlocked = i < unlockedCount;
+                bool isNextPurchasable = i == unlockedCount && config.maps[i].purchasable;
+                if (!isUnlocked && !isNextPurchasable)
+                {
+                    continue;
+                }
                 var item = GameObject.Instantiate(itemPrefab, content).GetComponent<MapItem>();
                 item.Init(i, config.maps[i].uiPosition);
             }
