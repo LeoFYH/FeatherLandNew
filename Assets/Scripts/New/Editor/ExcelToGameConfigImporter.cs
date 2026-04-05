@@ -71,6 +71,7 @@ namespace BirdGame.Editor
                 ApplyMapConfig();
                 ApplyEggConfig();
                 ApplyBirdConfig();
+                ApplyEggBirdConfig();
                 ApplyDecorationConfig();
 
                 AssetDatabase.SaveAssets();
@@ -145,6 +146,8 @@ namespace BirdGame.Editor
             [LabelText("能否飞行")] public bool canFly;
             [LabelText("能否横向飞行")] public bool canFlyHorizontal;
             [LabelText("飞行等待")] public bool canFlyWait;
+            [LabelText("所属蛋")] public string belongEgg;
+            [LabelText("出现概率%")] public float probability;
         }
 
         [Serializable]
@@ -165,6 +168,13 @@ namespace BirdGame.Editor
         #endregion
 
         #region 加载Excel数据
+
+        private static float ParseFloat(string text, float defaultValue = 0f)
+        {
+            if (float.TryParse(text, out float result))
+                return result;
+            return defaultValue;
+        }
 
         private void LoadExcelData()
         {
@@ -270,20 +280,22 @@ namespace BirdGame.Editor
                     classIndex = int.Parse(worksheet.Cells[row, 2].Text),
                     id = int.Parse(worksheet.Cells[row, 3].Text),
                     reality = worksheet.Cells[row, 5].Text,
-                    eraningForBig = float.Parse(worksheet.Cells[row, 6].Text),
-                    eraningForSmall = float.Parse(worksheet.Cells[row, 7].Text),
-                    priceForBig = float.Parse(worksheet.Cells[row, 8].Text),
-                    priceForSmall = float.Parse(worksheet.Cells[row, 9].Text),
-                    clickEarning = float.Parse(worksheet.Cells[row, 10].Text),
-                    clickEarningForFiveTimes = float.Parse(worksheet.Cells[row, 11].Text),
-                    totalExp = float.Parse(worksheet.Cells[row, 12].Text),
-                    eatExp = float.Parse(worksheet.Cells[row, 13].Text),
-                    autoExp = float.Parse(worksheet.Cells[row, 14].Text),
+                    eraningForBig = ParseFloat(worksheet.Cells[row, 6].Text),
+                    eraningForSmall = ParseFloat(worksheet.Cells[row, 7].Text),
+                    priceForBig = ParseFloat(worksheet.Cells[row, 8].Text),
+                    priceForSmall = ParseFloat(worksheet.Cells[row, 9].Text),
+                    clickEarning = ParseFloat(worksheet.Cells[row, 10].Text),
+                    clickEarningForFiveTimes = ParseFloat(worksheet.Cells[row, 11].Text),
+                    totalExp = ParseFloat(worksheet.Cells[row, 12].Text),
+                    eatExp = ParseFloat(worksheet.Cells[row, 13].Text),
+                    autoExp = ParseFloat(worksheet.Cells[row, 14].Text),
                     description = worksheet.Cells[row, 15].Text,
                     habitat = worksheet.Cells[row, 16].Text,
                     canFly = worksheet.Cells[row, 17].Text == "是",
                     canFlyHorizontal = worksheet.Cells[row, 18].Text == "是",
-                    canFlyWait = worksheet.Cells[row, 19].Text == "是"
+                    canFlyWait = worksheet.Cells[row, 19].Text == "是",
+                    belongEgg = worksheet.Cells[row, 20].Text,
+                    probability = ParseFloat(worksheet.Cells[row, 21].Text)
                 };
                 
                 previewBirdData.Add(item);
@@ -416,6 +428,47 @@ namespace BirdGame.Editor
                 EditorUtility.SetDirty(bird);
             }
             EditorUtility.SetDirty(birdConfig);
+        }
+
+        private void ApplyEggBirdConfig()
+        {
+            var shopConfig = AssetDatabase.LoadAssetAtPath<ShopConfig>("Assets/Prefabs/Config/ShopConfig.asset");
+            if (shopConfig == null || shopConfig.sceneEggs == null) return;
+
+            var groups = new Dictionary<string, List<EggBirdItem>>();
+
+            foreach (var item in previewBirdData)
+            {
+                if (string.IsNullOrEmpty(item.belongEgg)) continue;
+
+                int eggIndex = int.Parse(item.belongEgg.Replace("蛋", ""));
+                string key = $"{item.sceneIndex}_{eggIndex}";
+
+                if (!groups.ContainsKey(key))
+                    groups[key] = new List<EggBirdItem>();
+
+                groups[key].Add(new EggBirdItem
+                {
+                    birdType = item.id,
+                    probability = item.probability
+                });
+            }
+
+            foreach (var kvp in groups)
+            {
+                var parts = kvp.Key.Split('_');
+                int sceneIndex = int.Parse(parts[0]);
+                int eggIndex = int.Parse(parts[1]);
+
+                if (sceneIndex >= shopConfig.sceneEggs.Count) continue;
+                var sceneEgg = shopConfig.sceneEggs[sceneIndex];
+                if (sceneEgg == null || sceneEgg.eggs == null) continue;
+                if (eggIndex >= sceneEgg.eggs.Length) continue;
+
+                sceneEgg.eggs[eggIndex].birds = kvp.Value.ToArray();
+            }
+
+            EditorUtility.SetDirty(shopConfig);
         }
 
         private void ApplyDecorationConfig()

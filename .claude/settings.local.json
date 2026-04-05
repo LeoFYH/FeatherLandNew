@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/11752/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/5cc5a46e-a593-4e55-a38f-9234a0acdcc1/d8902542-d7eb-43ed-8579-d269993c5bd4/skills/xlsx/**)",
+      "Bash(pip install:*)",
+      "Bash(where python:*)",
+      "Bash(python -m pip install pandas openpyxl -q)",
+      "Bash(python -c \":*)",
+      "Bash(find E:/Unity/Projects/Work/FeatherLandNew/Assets/Scripts/New/Config -type f -name *.cs)",
+      "Bash(xargs grep:*)",
+      "Bash(grep -r class.*Egg E:/Unity/Projects/Work/FeatherLandNew/Assets/Scripts/New/Config)"
+    ]
+  }
+}
