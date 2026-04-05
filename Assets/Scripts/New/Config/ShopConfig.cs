@@ -137,7 +137,7 @@ namespace BirdGame
         private Texture2D preview;
         [ValueDropdown("GetBirdList"), HorizontalGroup("info", PaddingLeft = 30), VerticalGroup("info/content"), HideLabel, OnValueChanged("RefreshBirdTexture"), OnInspectorGUI("OnDrawTexture")]
         public int birdType;
-        [Range(0, 1f), VerticalGroup("info/content"), LabelText("概率"), InfoBox("概率不能为0！", InfoMessageType.Error, VisibleIf = "@probability==0f")]
+        [VerticalGroup("info/content"), LabelText("概率")]
         public float probability = 0.5f;
 
 
