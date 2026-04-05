@@ -12,7 +12,7 @@ namespace BirdGame.Editor
 {
     public class GameConfigExporter : EditorWindow
     {
-        [MenuItem("Tools/导出游戏配置到Excel")]
+        [MenuItem("Tools/Excel/导出游戏配置到Excel")]
         public static void ShowWindow()
         {
             GetWindow<GameConfigExporter>("游戏配置导出");
