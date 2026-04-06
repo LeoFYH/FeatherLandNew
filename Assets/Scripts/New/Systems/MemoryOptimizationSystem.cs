@@ -119,33 +119,7 @@ namespace BirdGame
         /// </summary>
         public void CleanupObjectPools()
         {
-            // 这里可以添加具体的对象池清理逻辑
-            // 检查并清理长时间未使用的对象
-            var poolsField = typeof(ObjectPoolSystem).GetField("pools",
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            
-            if (poolsField != null)
-            {
-                var pools = (Dictionary<string, object>)poolsField.GetValue(objectPoolSystem);
-                
-                foreach (var poolKVP in pools)
-                {
-                    var poolType = poolKVP.Value.GetType();
-                    var inactiveField = poolType.GetField("inactive",
-                        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                    var inactiveStack = (System.Collections.Stack)inactiveField.GetValue(poolKVP.Value);
-                    
-                    // 限制非活跃对象数量，防止无限增长
-                    while (inactiveStack.Count > 20) // 最多保留20个非活跃对象
-                    {
-                        var obj = (GameObject)inactiveStack.Pop();
-                        if (obj != null)
-                        {
-                            GameObject.DestroyImmediate(obj);
-                        }
-                    }
-                }
-            }
+            objectPoolSystem.TrimInactivePools(20);
         }
 
         /// <summary>

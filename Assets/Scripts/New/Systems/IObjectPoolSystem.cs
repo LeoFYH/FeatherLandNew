@@ -35,6 +35,11 @@ namespace BirdGame
         /// 清空所有对象池
         /// </summary>
         void ClearAll();
+
+        /// <summary>
+        /// 裁剪所有池中多余的非活跃对象，每个池最多保留 maxInactivePerPool 个
+        /// </summary>
+        void TrimInactivePools(int maxInactivePerPool);
     }
 
     public class ObjectPoolSystem : AbstractSystem, IObjectPoolSystem
@@ -44,6 +49,7 @@ namespace BirdGame
         /// </summary>
         public class Pool
         {
+            public string name; // Memory optimization: store name to avoid reverse dictionary lookup
             public GameObject prefab;
             public Stack<GameObject> inactive = new Stack<GameObject>();
             public HashSet<GameObject> active = new HashSet<GameObject>();
@@ -82,8 +88,9 @@ namespace BirdGame
                         return;
                     }
 
-                    Pool pool = new Pool 
-                    { 
+                    Pool pool = new Pool
+                    {
+                        name = prefabName,
                         prefab = prefab,
                         // 保存预制体的原始transform
                         originalLocalPosition = prefab.transform.localPosition,
@@ -107,6 +114,8 @@ namespace BirdGame
                 GameObject obj = targetPool.inactive.Pop();
                 if (obj != null)
                 {
+                    var pooledObj = obj.GetComponent<PooledObject>();
+                    if (pooledObj != null) pooledObj.isInPool = false;
                     obj.transform.SetParent(parent);
                     // 恢复预制体的原始transform设置
                     obj.transform.localPosition = targetPool.originalLocalPosition;
@@ -144,12 +153,7 @@ namespace BirdGame
 
         private string GetPoolName(Pool pool)
         {
-            foreach (var kvp in pools)
-            {
-                if (kvp.Value == pool)
-                    return kvp.Key;
-            }
-            return string.Empty;
+            return pool.name;
         }
 
         public void Recycle(string prefabName, GameObject obj)
@@ -168,8 +172,16 @@ namespace BirdGame
             // 从活跃列表移除
             pool.active.Remove(obj);
 
-            // 添加到非活跃列表
-            if (!pool.inactive.Contains(obj))
+            // 添加到非活跃列表 - use PooledObject flag to avoid O(n) Stack.Contains
+            var pooledObj = obj.GetComponent<PooledObject>();
+            if (pooledObj != null && !pooledObj.isInPool)
+            {
+                pooledObj.isInPool = true;
+                obj.SetActive(false);
+                obj.transform.SetParent(poolRoot);
+                pool.inactive.Push(obj);
+            }
+            else if (pooledObj == null)
             {
                 obj.SetActive(false);
                 obj.transform.SetParent(poolRoot);
@@ -211,6 +223,20 @@ namespace BirdGame
             }
             pools.Clear();
         }
+
+        public void TrimInactivePools(int maxInactivePerPool)
+        {
+            foreach (var kvp in pools)
+            {
+                var pool = kvp.Value;
+                while (pool.inactive.Count > maxInactivePerPool)
+                {
+                    var obj = pool.inactive.Pop();
+                    if (obj != null)
+                        GameObject.Destroy(obj);
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -219,5 +245,6 @@ namespace BirdGame
     public class PooledObject : MonoBehaviour
     {
         public string poolName;
+        public bool isInPool; // Memory optimization: flag to avoid O(n) Stack.Contains check
     }
 }

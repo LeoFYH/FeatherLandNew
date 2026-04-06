@@ -92,18 +92,35 @@ namespace BirdGame
             
             UpdateBirdNameText();
             
-            ClearSkinItems();
+            HideSkinItems();
+            int reuseIndex = 0;
             int unlockedIndex = -1;
             foreach (var bird in classInfo.birds)
             {
-                var item = GameObject.Instantiate(skinPrefab, skinContent).GetComponent<BirdSkin>();
+                BirdSkin item;
+                if (reuseIndex < skinItems.Count)
+                {
+                    skinItems[reuseIndex].SetActive(true);
+                    item = skinItems[reuseIndex].GetComponent<BirdSkin>();
+                }
+                else
+                {
+                    var go = GameObject.Instantiate(skinPrefab, skinContent);
+                    item = go.GetComponent<BirdSkin>();
+                    skinItems.Add(go);
+                }
                 item.Init(mapIndex, bird.id, OnSkinSelected);
-                skinItems.Add(item.gameObject);
+                reuseIndex++;
                 int birdIndex = bird.id;
                 if (unlockedIndex == -1 && this.GetModel<ISaveModel>().IllustratedData.birds.Contains(birdIndex))
                 {
                     unlockedIndex = birdIndex;
                 }
+            }
+            // 隐藏多余的项
+            for (int i = reuseIndex; i < skinItems.Count; i++)
+            {
+                skinItems[i].SetActive(false);
             }
 
             if (unlockedIndex == -1)
@@ -137,13 +154,11 @@ namespace BirdGame
             birdNameText.ForceMeshUpdate();
         }
 
-        private void ClearSkinItems()
+        private void HideSkinItems()
         {
-            for (int i = skinItems.Count - 1; i >= 0; i--)
+            for (int i = 0; i < skinItems.Count; i++)
             {
-                var item = skinItems[i];
-                skinItems.RemoveAt(i);
-                GameObject.Destroy(item.gameObject);
+                skinItems[i].SetActive(false);
             }
         }
 

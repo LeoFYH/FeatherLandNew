@@ -13,9 +13,14 @@ namespace BirdGame
         private GameObject lastHoveredObject;
         private Camera mainCam;
 
+        // Memory optimization: reuse PointerEventData and RaycastResult list to avoid GC allocations
+        private PointerEventData _reusableEventData;
+        private readonly List<RaycastResult> _reusableResults = new List<RaycastResult>();
+
         void Start()
         {
             mainCam = Camera.main;
+            _reusableEventData = new PointerEventData(EventSystem.current);
         }
 
         void Update()
@@ -82,16 +87,17 @@ namespace BirdGame
         // ---------------- UI 处理 ----------------
         private void HandleMouseDown(Vector2 pos)
         {
-            var eventData = new PointerEventData(EventSystem.current) { position = pos };
-            var results = new List<RaycastResult>();
-            EventSystem.current.RaycastAll(eventData, results);
+            _reusableEventData.Reset();
+            _reusableEventData.position = pos;
+            _reusableResults.Clear();
+            EventSystem.current.RaycastAll(_reusableEventData, _reusableResults);
 
-            if (results.Count > 0)
+            if (_reusableResults.Count > 0)
             {
-                eventData.pointerCurrentRaycast = results[0];
-                eventData.pointerPressRaycast = results[0];
-                lastPressedUI = results[0].gameObject;
-                ExecuteEvents.Execute(lastPressedUI, eventData, ExecuteEvents.pointerDownHandler);
+                _reusableEventData.pointerCurrentRaycast = _reusableResults[0];
+                _reusableEventData.pointerPressRaycast = _reusableResults[0];
+                lastPressedUI = _reusableResults[0].gameObject;
+                ExecuteEvents.Execute(lastPressedUI, _reusableEventData, ExecuteEvents.pointerDownHandler);
             }
 
             // 3D / 2D 检测
@@ -100,17 +106,18 @@ namespace BirdGame
 
         private void HandleMouseUp(Vector2 pos)
         {
-            var eventData = new PointerEventData(EventSystem.current) { position = pos };
+            _reusableEventData.Reset();
+            _reusableEventData.position = pos;
 
             if (lastPressedUI != null)
             {
-                ExecuteEvents.Execute(lastPressedUI, eventData, ExecuteEvents.pointerUpHandler);
+                ExecuteEvents.Execute(lastPressedUI, _reusableEventData, ExecuteEvents.pointerUpHandler);
 
-                var results = new List<RaycastResult>();
-                EventSystem.current.RaycastAll(eventData, results);
-                if (results.Count > 0 && results[0].gameObject == lastPressedUI)
+                _reusableResults.Clear();
+                EventSystem.current.RaycastAll(_reusableEventData, _reusableResults);
+                if (_reusableResults.Count > 0 && _reusableResults[0].gameObject == lastPressedUI)
                 {
-                    ExecuteEvents.Execute(lastPressedUI, eventData, ExecuteEvents.pointerClickHandler);
+                    ExecuteEvents.Execute(lastPressedUI, _reusableEventData, ExecuteEvents.pointerClickHandler);
                 }
 
                 lastPressedUI = null;
@@ -121,14 +128,15 @@ namespace BirdGame
 
         private void HandleMouseMove(Vector2 pos)
         {
-            var eventData = new PointerEventData(EventSystem.current) { position = pos };
-            var results = new List<RaycastResult>();
-            EventSystem.current.RaycastAll(eventData, results);
+            _reusableEventData.Reset();
+            _reusableEventData.position = pos;
+            _reusableResults.Clear();
+            EventSystem.current.RaycastAll(_reusableEventData, _reusableResults);
 
-            if (results.Count > 0)
+            if (_reusableResults.Count > 0)
             {
-                eventData.pointerCurrentRaycast = results[0];
-                ExecuteEvents.Execute(results[0].gameObject, eventData, ExecuteEvents.pointerEnterHandler);
+                _reusableEventData.pointerCurrentRaycast = _reusableResults[0];
+                ExecuteEvents.Execute(_reusableResults[0].gameObject, _reusableEventData, ExecuteEvents.pointerEnterHandler);
             }
 
             DoPhysicsHover(pos);

@@ -8,6 +8,10 @@ namespace BirdGame
 {
     public class Food : ViewControllerBase
     {
+        // Memory optimization: cache WaitForSeconds to avoid repeated allocations
+        private static readonly WaitForSeconds _wait8s = new WaitForSeconds(8f);
+        private static readonly WaitForFixedUpdate _waitFixed = new WaitForFixedUpdate();
+
         public bool isTargeted = false;
         public bool isDisabling = false;
         public int hp = 1;
@@ -44,7 +48,7 @@ namespace BirdGame
         /// </summary>
         private IEnumerator AutoDestroyIfUntargeted()
         {
-            yield return new WaitForSeconds(8f);
+            yield return _wait8s;
             
             // 8秒后检查是否还被 target
             if (!isTargeted && !isDisabling)
@@ -72,7 +76,6 @@ namespace BirdGame
 
         private IEnumerator DestroyDelay()
         {
-            var frame = new WaitForFixedUpdate();
             timer = 0f;
 
             while (timer < 5)
@@ -80,7 +83,7 @@ namespace BirdGame
                 if (isTargeted)
                     yield break;
                 timer += Time.deltaTime;
-                yield return frame;
+                yield return _waitFixed;
             }
 
             isDisabling = true;
@@ -107,7 +110,7 @@ namespace BirdGame
                     spriteRenderer.color = new Color(1f, 1f, 1f, alpha);
                 }
 
-                yield return frame;
+                yield return _waitFixed;
             }
 
             // 完全透明后销毁

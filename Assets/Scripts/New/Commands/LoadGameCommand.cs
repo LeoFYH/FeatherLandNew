@@ -184,6 +184,13 @@ namespace BirdGame
             this.GetSystem<IUISystem>().ShowPanel(UIPanel.MenuPanel);
 
             this.GetSystem<IMonoSystem>().StartCoroutine(EnableUiInteractionsNextFrame());
+
+            // 释放非当前场景和不常用popup的预加载资源，大幅降低内存占用
+            ReleaseUnusedPreloadedAssets();
+            // 清空非当前地图鸟的重资源引用（clickAudio只用于当前地图的鸟）
+            StripNonCurrentMapBirdAssets();
+            // 延迟执行完整清理，确保异步卸载完成
+            this.GetSystem<IMonoSystem>().StartCoroutine(DeferredMemoryCleanup());
         }
 
         private IEnumerator EnableUiInteractionsNextFrame()
@@ -191,6 +198,107 @@ namespace BirdGame
             yield return null;
             this.GetSystem<IGameSystem>().SendEvent<EnableHoverScaleEvent>();
             this.GetSystem<IGameSystem>().SendEvent<EnableButtonEvent>();
+        }
+
+        /// <summary>
+        /// 释放预加载但当前不需要的资源
+        /// PreloadEssentialAssets 会把所有 "preload" 标签资源加载到 HandleDic，
+        /// 但玩家同时只在一个地图，其余6个场景的纹理/精灵白占内存。
+        /// Popup也是按需加载即可，首次打开会从Addressables重新加载（本地加载很快）。
+        /// </summary>
+        private void ReleaseUnusedPreloadedAssets()
+        {
+            int currentMap = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            var assetSystem = this.GetSystem<IAssetSystem>();
+
+            // 1. 释放非当前地图的场景prefab（每个场景含天气/背景等大量纹理）
+            for (int i = 0; i <= 6; i++)
+            {
+                if (i != currentMap)
+                {
+                    assetSystem.ReleaseAsset($"Scene{i}");
+                }
+            }
+
+            // 2. 释放所有预加载的装饰场景prefab（CreateDecorations按单个GUID加载，这些容器prefab不需要）
+            string[] decorationScenes = {
+                "Assets/Prefabs/Decorations/Scene1",
+                "Assets/Prefabs/Decorations/Scene2",
+                "Assets/Prefabs/Decorations/Scene4",
+                "Assets/Prefabs/Decorations/Scene5",
+                "Assets/Prefabs/Decorations/Scene6",
+                "Assets/Prefabs/Decorations/Scene7"
+            };
+            foreach (var dec in decorationScenes)
+            {
+                assetSystem.ReleaseAsset(dec);
+            }
+
+            // 3. 释放开蛋动画（仅在开蛋时需要，按需重新加载）
+            assetSystem.ReleaseAsset("OpenEggAnim");
+
+            // 4. 释放不常用的UI Popup prefab（按需从Addressables重新加载，本地加载很快）
+            string[] deferredPopups = {
+                "TutorialPopup", "RadioPopup", "IllustratedPopup",
+                "MapPopup", "NotePopup", "ShopPopup", "SettingPopup",
+                "HatchingBirdPopup", "ClockPopup", "MapInfo",
+                "ThanksPopup", "AddCoinPopup", "InfoPopup",
+                "BuyFailPopup", "BuyConfirmPopup", "MouseMenu"
+            };
+            foreach (var popup in deferredPopups)
+            {
+                assetSystem.ReleaseAsset(popup);
+            }
+
+            Debug.Log($"已释放非当前场景(保留Scene{currentMap})、装饰容器、开蛋动画和16个Popup的预加载资源");
+        }
+
+        /// <summary>
+        /// 清空非当前地图鸟的重资源引用。
+        /// BirdConfig作为ScriptableObject直接引用了所有地图80+鸟的Sprite和AudioClip，
+        /// 但运行时只需要当前地图的鸟的clickAudio，其他地图的这些资源白占内存。
+        /// 置空后GC可以回收这些Sprite/AudioClip对象。
+        /// </summary>
+        private void StripNonCurrentMapBirdAssets()
+        {
+            int currentMap = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            var config = this.GetModel<IConfigModel>().BirdConfig;
+            if (config?.sceneBirds == null) return;
+
+            for (int mapIdx = 0; mapIdx < config.sceneBirds.Count; mapIdx++)
+            {
+                if (mapIdx == currentMap) continue;
+                var sceneBird = config.sceneBirds[mapIdx];
+                if (sceneBird?.birdClasses == null) continue;
+                foreach (var birdClass in sceneBird.birdClasses)
+                {
+                    if (birdClass?.birds == null) continue;
+                    foreach (var bird in birdClass.birds)
+                    {
+                        if (bird == null) continue;
+                        bird.clickAudio = null;  // 非当前地图的鸟不会播放点击音效
+                        bird.scenePreview = null; // 图鉴场景预览 — 打开图鉴时图片为空但不影响功能
+                    }
+                }
+            }
+            Debug.Log($"已清空非当前地图(map{currentMap})鸟的clickAudio和scenePreview引用");
+        }
+
+        /// <summary>
+        /// 延迟执行完整内存清理，确保异步操作完成后再回收
+        /// </summary>
+        private IEnumerator DeferredMemoryCleanup()
+        {
+            // 等待1帧让Addressables异步释放完成
+            yield return null;
+            // 第一轮：回收托管对象引用
+            System.GC.Collect();
+            // 异步卸载无引用的原生资源（纹理/网格/AudioClip等）
+            var op = Resources.UnloadUnusedAssets();
+            yield return op;
+            // 第二轮：清理卸载过程中产生的托管垃圾
+            System.GC.Collect();
+            Debug.Log("延迟内存清理完成");
         }
 
         /// <summary>

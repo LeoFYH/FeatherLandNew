@@ -8,6 +8,9 @@ namespace BirdGame
 {
     public class DecorationClickHandler : ViewControllerBase
     {
+        // Memory optimization: pre-allocate physics buffer to avoid GC allocations
+        private static readonly Collider2D[] _overlapBoxBuffer = new Collider2D[16];
+
         public int sceneId;
         public int decorationId;
         public int decorationIndex;
@@ -115,10 +118,10 @@ namespace BirdGame
                 {
                     var center = (Vector2)box.bounds.center;
                     var size = (Vector2)box.bounds.size;
-                    var hits = Physics2D.OverlapBoxAll(center, size, 0f);
-                    foreach (var hit in hits)
+                    int hitCount = Physics2D.OverlapBoxNonAlloc(center, size, 0f, _overlapBoxBuffer);
+                    for (int i = 0; i < hitCount; i++)
                     {
-                        if (hit != null && hit.CompareTag("Bird"))
+                        if (_overlapBoxBuffer[i] != null && _overlapBoxBuffer[i].CompareTag("Bird"))
                         {
                             return;
                         }

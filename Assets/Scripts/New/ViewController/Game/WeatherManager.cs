@@ -31,6 +31,7 @@ namespace BirdGame
 
         private int currentIndex = -1;
         private bool isGameStartup = true; // 标记是否是游戏启动时的初始天气设置
+        private Sequence _currentWeatherSequence;
 
         private void Start()
         {
@@ -43,7 +44,7 @@ namespace BirdGame
             this.RegisterEvent<SwitchWeatherEvent>(evt =>
             {
                 int index = evt.index;
-                Debug.Log($"天气：" + index);
+                // Debug.Log($"天气：" + index);
                 SwitchWeather(index);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             SwitchWeather(0);
@@ -78,7 +79,9 @@ namespace BirdGame
         {
             if (currentIndex == index)
                 return;
-            Debug.Log("天气index为" + index);
+            // 杀掉上次未完成的天气切换动画，防止序列堆积
+            _currentWeatherSequence?.Kill();
+            // Debug.Log("天气index为" + index);
             if (currentIndex != -1)
             {
                 var lastWeather = weathers[currentIndex];
@@ -194,7 +197,8 @@ namespace BirdGame
             
 
             // 创建一个主序列来协调所有动画
-            var mainSequence = DOTween.Sequence();
+            _currentWeatherSequence = DOTween.Sequence();
+            var mainSequence = _currentWeatherSequence;
             
             // 添加所有背景动画到主序列
             mainSequence.Join(anim0);
