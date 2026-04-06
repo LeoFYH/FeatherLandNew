@@ -66,6 +66,7 @@
   <ItemGroup>
     <Compile Include="Assets\SpritePivotEditor\Editor\SpriteAlignmentEditor.cs" />
     <Compile Include="UIEffect-5.10.7\Packages\src\Editor\RemoveSoftMaskableVariantsIfNeeded.cs" />
+    <Compile Include="Assets\Scripts\New\Editor\SwapSceneIndexTool.cs" />
     <Compile Include="Assets\Editor\TextureAnalysisTool.cs" />
     <Compile Include="UIEffect-5.10.7\Packages\src\Editor\UIEffectPresetEditor.cs" />
     <Compile Include="Assets\Scripts\New\Editor\QuickTextureExport.cs" />
@@ -669,10 +670,6 @@
     </Reference>
     <Reference Include="Coffee.UIEffect.R">
       <HintPath>UIEffect-5.10.7\Packages\src\Runtime\Coffee.UIEffect.R.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Sirenix.Serialization.AOTGenerated">
-      <HintPath>Assets\Plugins\Sirenix\Assemblies\AOT\Sirenix.Serialization.AOTGenerated.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
