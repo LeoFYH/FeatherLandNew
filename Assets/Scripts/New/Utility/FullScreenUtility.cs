@@ -474,6 +474,24 @@ namespace BirdGame
                     }
                 }
 
+                // 严格校验全部失败后，尝试宽松挂载：用第一个非 Progman 候选重新 SetParent
+                if (desktopParent == IntPtr.Zero)
+                {
+                    SendMessage(hProgman, 0x052C, new IntPtr(13), new IntPtr(1));
+                    var fallbackCandidates = new System.Collections.Generic.List<IntPtr>();
+                    BuildDesktopParentCandidates(hProgman, fallbackCandidates);
+
+                    foreach (IntPtr candidate in fallbackCandidates)
+                    {
+                        if (candidate == IntPtr.Zero || candidate == hProgman) continue;
+                        SetParent(windowHandle, candidate);
+                        desktopParent = candidate;
+                        usedLenientAttach = true;
+                        Debug.LogWarning($"[WallpaperMode] 严格校验全部失败，宽松挂载到: {candidate}");
+                        break;
+                    }
+                }
+
                 if (desktopParent == IntPtr.Zero)
                 {
                     Debug.LogError("[WallpaperMode] 所有桌面层挂载尝试均失败，已放弃进入壁纸模式");
@@ -512,7 +530,9 @@ namespace BirdGame
                 isWallpaperMode = true;
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
-                Debug.Log($"[WallpaperMode] 激活 - {(int)workingArea.width}x{(int)workingArea.height}");
+                Debug.Log($"[WallpaperMode] 激活 - {(int)workingArea.width}x{(int)workingArea.height}, " +
+                    $"OS={SystemInfo.operatingSystem}, parent={desktopParent}, lenient={usedLenientAttach}, " +
+                    $"actualParent={GetParent(windowHandle)}");
                 
                 // Enable SimpleMouseForwarder object in wallpaper mode
                 SimpleMouseForwarder mouseForwarder = UnityEngine.Object.FindObjectOfType<SimpleMouseForwarder>(true);
@@ -676,6 +696,8 @@ namespace BirdGame
 
             IntPtr workerBeforeDefHost = IntPtr.Zero;
             IntPtr defViewHostWorker = IntPtr.Zero;
+
+            // ---- 第一轮：搜索 Progman 子窗口（ROG_G16 等机型走这条路径） ----
             IntPtr w = IntPtr.Zero;
             while (true)
             {
@@ -689,24 +711,49 @@ namespace BirdGame
                 }
                 workerBeforeDefHost = w;
             }
+            Debug.Log($"[BuildCandidates] Progman子窗口搜索: defViewHost={defViewHostWorker}, workerBefore={workerBeforeDefHost}");
+
+            // ---- 第二轮：Progman 子窗口中未找到 DefView，回退搜索桌面顶级窗口 ----
+            // Win10/Win11 多数版本上 WorkerW 是顶级窗口（和 Progman 同级），不是 Progman 子窗口
+            if (defViewHostWorker == IntPtr.Zero)
+            {
+                workerBeforeDefHost = IntPtr.Zero;
+                w = IntPtr.Zero;
+                while (true)
+                {
+                    w = FindWindowEx(IntPtr.Zero, w, "WorkerW", null);
+                    if (w == IntPtr.Zero)
+                        break;
+                    if (SubtreeContainsShellDllDefView(w))
+                    {
+                        defViewHostWorker = w;
+                        break;
+                    }
+                    workerBeforeDefHost = w;
+                }
+                Debug.Log($"[BuildCandidates] 顶级窗口搜索: defViewHost={defViewHostWorker}, workerBefore={workerBeforeDefHost}");
+            }
 
             if (defViewHostWorker != IntPtr.Zero)
             {
-                if (workerBeforeDefHost != IntPtr.Zero)
-                    candidates.Add(workerBeforeDefHost);
-                else
+                // 最高优先：DefView 宿主在 Z 序上的下一个 WorkerW（真正的壁纸层）
+                IntPtr below = GetWindow(defViewHostWorker, GW_HWNDNEXT);
+                if (below != IntPtr.Zero && IsWorkerWClass(below))
                 {
-                    // DefView 在枚举到的第一个 WorkerW 内：壁纸层通常是其 Z 序更低的同级
-                    IntPtr below = GetWindow(defViewHostWorker, GW_HWNDNEXT);
-                    if (below != IntPtr.Zero && GetParent(below) == progman && IsWorkerWClass(below))
-                        candidates.Add(below);
+                    candidates.Add(below);
+                    Debug.Log($"[BuildCandidates] 壁纸层候选(below): {below}");
                 }
+
+                // 次优先：枚举中 DefView 之前的 WorkerW（Progman 子窗口搜索时有效）
+                if (workerBeforeDefHost != IntPtr.Zero && !candidates.Contains(workerBeforeDefHost))
+                    candidates.Add(workerBeforeDefHost);
 
                 if (!candidates.Contains(defViewHostWorker))
                     candidates.Add(defViewHostWorker);
             }
             else
             {
+                // 两轮都没找到 DefView，收集所有可用的 WorkerW
                 w = IntPtr.Zero;
                 while (true)
                 {
@@ -716,14 +763,29 @@ namespace BirdGame
                     if (!candidates.Contains(w))
                         candidates.Add(w);
                 }
+                w = IntPtr.Zero;
+                while (true)
+                {
+                    w = FindWindowEx(IntPtr.Zero, w, "WorkerW", null);
+                    if (w == IntPtr.Zero)
+                        break;
+                    if (!candidates.Contains(w))
+                        candidates.Add(w);
+                }
             }
 
+            // 兜底：确保 Progman 子窗口和顶级 WorkerW 都被考虑
             IntPtr firstW = FindWindowEx(progman, IntPtr.Zero, "WorkerW", null);
             if (firstW != IntPtr.Zero && !candidates.Contains(firstW))
                 candidates.Add(firstW);
+            IntPtr firstTopW = FindWindowEx(IntPtr.Zero, IntPtr.Zero, "WorkerW", null);
+            if (firstTopW != IntPtr.Zero && !candidates.Contains(firstTopW))
+                candidates.Add(firstTopW);
 
             if (!candidates.Contains(progman))
                 candidates.Add(progman);
+
+            Debug.Log($"[BuildCandidates] 最终候选数量: {candidates.Count}");
         }
 
         public void FullscreenMode()
