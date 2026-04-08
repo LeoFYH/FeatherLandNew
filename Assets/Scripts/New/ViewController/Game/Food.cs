@@ -20,6 +20,8 @@ namespace BirdGame
         private SpriteRenderer spriteRenderer;
         private float fadeDuration = 4f; // 总淡出时间
         private float timer = 0f; // 淡出计时器
+        // CPU优化：缓存Color避免协程中每帧new Color分配
+        private Color fadeColor = Color.white;
         
 
         void Awake()
@@ -95,7 +97,8 @@ namespace BirdGame
                     // 如果被目标选中，恢复完全不透明
                     if (spriteRenderer != null)
                     {
-                        spriteRenderer.color = new Color(1f, 1f, 1f, 1f);
+                        fadeColor.a = 1f;
+                        spriteRenderer.color = fadeColor;
                     }
                     isDisabling = false;
 
@@ -103,11 +106,12 @@ namespace BirdGame
                 }
 
                 timer += Time.deltaTime;
-                // 计算当前透明度（从1逐渐变为0）
+                // CPU优化：复用fadeColor，仅修改alpha，避免每帧new Color
                 float alpha = 1f - (timer / fadeDuration);
                 if (spriteRenderer != null)
                 {
-                    spriteRenderer.color = new Color(1f, 1f, 1f, alpha);
+                    fadeColor.a = alpha;
+                    spriteRenderer.color = fadeColor;
                 }
 
                 yield return _waitFixed;

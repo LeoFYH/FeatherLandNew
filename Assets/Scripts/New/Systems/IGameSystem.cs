@@ -257,19 +257,15 @@ namespace BirdGame
             Vector3 worldPosition = cachedMainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, -cachedMainCamera.transform.position.z));
             Vector2 worldPosition2D = new Vector2(worldPosition.x, worldPosition.y);
             
-            // Performance optimization: Use IBirdModel.BirdList instead of FindGameObjectsWithTag
-            // 检查是否点击到鸟，如果点击到鸟，则不生成食物
+            // CPU优化：使用Brid.birdCollider（已缓存），避免每帧GetComponent
             foreach (var birdData in birdModel.BirdList)
             {
                 if (birdData?.bird == null || birdData.bird.gameObject == null) continue;
-                
-                GameObject bird = birdData.bird.gameObject;
-                // 获取鸟的Collider2D
-                Collider2D collider2D = bird.GetComponent<Collider2D>();
-                
+
+                Collider2D collider2D = birdData.bird.birdCollider;
+
                 if (collider2D != null)
                 {
-                    // 使用OverlapPoint检测鼠标是否在碰撞器内（适用于触发器）
                     if (collider2D.OverlapPoint(worldPosition2D))
                     {
                         return false;
@@ -277,11 +273,8 @@ namespace BirdGame
                 }
                 else
                 {
-                    // 如果没有碰撞器，使用简单的距离检测
-                    // Performance optimization: Use sqrMagnitude instead of Distance
-                    Vector2 diff = worldPosition2D - (Vector2)bird.transform.position;
-                    float sqrDistance = diff.sqrMagnitude;
-                    if (sqrDistance < 0.25f) // 0.5f * 0.5f = 0.25f
+                    Vector2 diff = worldPosition2D - (Vector2)birdData.bird.transform.position;
+                    if (diff.sqrMagnitude < 0.25f)
                     {
                         return false;
                     }
@@ -318,51 +311,39 @@ namespace BirdGame
             Vector3 worldPosition = cachedMainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, -cachedMainCamera.transform.position.z));
             Vector2 worldPosition2D = new Vector2(worldPosition.x, worldPosition.y);
             
-            // Performance optimization: Use IBirdModel.BirdList instead of FindGameObjectsWithTag
-            // This avoids expensive scene traversal every frame
+            // CPU优化：使用Brid.birdCollider（已缓存），避免每帧GetComponent
             foreach (var birdData in birdModel.BirdList)
             {
                 if (birdData?.bird == null || birdData.bird.gameObject == null) continue;
-                
-                GameObject bird = birdData.bird.gameObject;
-                
-                // 获取鸟的Collider2D
-                Collider2D collider2D = bird.GetComponent<Collider2D>();
-                
+
+                Collider2D collider2D = birdData.bird.birdCollider;
+
                 if (collider2D != null)
                 {
-                    // 使用OverlapPoint检测鼠标是否在碰撞器内（适用于触发器）
                     if (collider2D.OverlapPoint(worldPosition2D))
                     {
-                        //Debug.Log($"检测到鸟: {bird.name}");
                         return true;
                     }
                 }
                 else
                 {
-                    // Performance optimization: Use sqrMagnitude instead of Distance to avoid sqrt calculation
-                    Vector2 diff = worldPosition2D - (Vector2)bird.transform.position;
-                    float sqrDistance = diff.sqrMagnitude;
-                    if (sqrDistance < 0.25f) // 0.5f * 0.5f = 0.25f
+                    Vector2 diff = worldPosition2D - (Vector2)birdData.bird.transform.position;
+                    if (diff.sqrMagnitude < 0.25f)
                     {
                         return true;
                     }
                 }
             }
-            
-            // 检查蛋 - Note: Eggs might not be in BirdModel, so we still need FindGameObjectsWithTag
-            // TODO: Consider adding eggs to a model/system for better performance
-            GameObject[] eggs = GameObject.FindGameObjectsWithTag("Egg");
-            foreach (var egg in eggs)
+
+            // CPU优化：使用IBirdModel.EggList代替FindGameObjectsWithTag("Egg")
+            foreach (var egg in birdModel.EggList)
             {
-                if (egg == null) continue;
-                
-                // 获取蛋的Collider2D
+                if (egg == null || egg.gameObject == null) continue;
+
                 Collider2D collider2D = egg.GetComponent<Collider2D>();
-                
+
                 if (collider2D != null)
                 {
-                    // 使用OverlapPoint检测鼠标是否在碰撞器内（适用于触发器）
                     if (collider2D.OverlapPoint(worldPosition2D))
                     {
                         return true;
@@ -370,10 +351,8 @@ namespace BirdGame
                 }
                 else
                 {
-                    // Performance optimization: Use sqrMagnitude instead of Distance
                     Vector2 diff = worldPosition2D - (Vector2)egg.transform.position;
-                    float sqrDistance = diff.sqrMagnitude;
-                    if (sqrDistance < 0.25f) // 0.5f * 0.5f = 0.25f
+                    if (diff.sqrMagnitude < 0.25f)
                     {
                         return true;
                     }

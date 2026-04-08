@@ -113,8 +113,8 @@ namespace BirdGame
         public Vector3 originalScale;
         public float lastPerspectiveScale = 1f;
         
-        // 飞行状态碰撞体调整相关
-        private Collider2D birdCollider;
+        // 飞行状态碰撞体调整相关 — CPU优化：公开collider供外部直接使用，避免GetComponent
+        public Collider2D birdCollider { get; private set; }
         private Vector2 originalColliderSize;
         public bool isFlying = false;
         
@@ -135,7 +135,9 @@ namespace BirdGame
 
         [ReadOnly]
         public float animScale = 1f;
-        
+        private float lastAppliedScale = -1f; // CPU优化：缓存上次应用的scale，避免每帧设置
+        private float lastMoveSpeed = -1f; // CPU优化：缓存上次animator speed，仅变化时SetFloat
+
         public bool isDesktopBird;
         private GameObject heart;
         private int weatherIndex = 0;
@@ -224,11 +226,10 @@ namespace BirdGame
             if (anim != null && anim.runtimeAnimatorController != null && anim.runtimeAnimatorController.animationClips.Length > 3)
             {
                 eatFoodTime = anim.runtimeAnimatorController.animationClips[3].length;
-                Debug.Log($"动态设置吃饭动画时长: {eatFoodTime}秒");
             }
             else
             {
-                Debug.LogWarning("无法获取吃饭动画时长，使用默认值1秒");
+                // 无法获取吃饭动画时长，使用默认值1秒
             }
 
             eatFoodTime = anim.runtimeAnimatorController.animationClips[3].length;
@@ -268,7 +269,7 @@ namespace BirdGame
                 {
                     // 设置跟随鼠标标志
                     //shouldFollowMouse = true;
-                    Debug.Log("连续抚摸超过1秒，准备跟随鼠标！");
+                    // Debug.Log("连续抚摸超过1秒，准备跟随鼠标！");
                 }
                 
                 // 重置连续抚摸计时
@@ -386,19 +387,20 @@ namespace BirdGame
             //     _stateMachine.ChangeState<BirdRunState>();
             // }
             
-            //统一处理鸟的大小
-            transform.localScale = new Vector3(animScale, animScale, 1f);
-            // 统一处理走路动画 - 只要在移动就播放走路动画
+            // CPU优化：仅在animScale实际变化时设置localScale
+            if (animScale != lastAppliedScale)
+            {
+                lastAppliedScale = animScale;
+                transform.localScale = new Vector3(animScale, animScale, 1f);
+            }
+            // CPU优化：仅在移动状态变化时调用SetFloat，避免每帧调用Animator
             if (agent != null && agent.enabled)
             {
-                // 使用 sqrMagnitude 避免开方运算，提升性能
-                if (agent.velocity.sqrMagnitude > 0.0001f) // 0.01f * 0.01f = 0.0001f
+                float newMoveSpeed = agent.velocity.sqrMagnitude > 0.0001f ? 1f : 0f;
+                if (newMoveSpeed != lastMoveSpeed)
                 {
-                    anim.SetFloat(AnimatorHashes.MoveSpeed, 1f);
-                }
-                else
-                {
-                    anim.SetFloat(AnimatorHashes.MoveSpeed, 0f);
+                    lastMoveSpeed = newMoveSpeed;
+                    anim.SetFloat(AnimatorHashes.MoveSpeed, newMoveSpeed);
                 }
             }
 
@@ -476,7 +478,6 @@ namespace BirdGame
         /// Generates income based on bird's size
         private void AddCoins()
         {
-            Debug.Log("Adding coins");
             var birdData = this.GetModel<IBirdModel>().BirdList[birdIndex];
             
             if (!isSmall)

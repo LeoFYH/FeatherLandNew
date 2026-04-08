@@ -167,7 +167,7 @@ namespace BirdGame
                 if(this.GetModel<IConfigModel>().BirdConfig.isDrawPathLine)
                     DrawPath();
                 _brid.sr.flipX = _brid.agent.velocity.x >= 0;
-                _brid.anim.SetFloat(AnimatorHashes.MoveSpeed, 1);
+                // CPU优化：MoveSpeed已在Brid.Update中通过velocity检测统一处理，此处无需重复SetFloat
             }
         }
         

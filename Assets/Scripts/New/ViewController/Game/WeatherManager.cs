@@ -196,6 +196,19 @@ namespace BirdGame
             anim10.Append(groundCover2.DOColor(Color.white, 0.5f));
             
 
+            // CPU优化：仅在天气切换动画期间同步BirdColor，不再每帧Update
+            var animBirdColor = DOTween.Sequence();
+            animBirdColor.AppendCallback(() =>
+            {
+                this.GetModel<IBirdModel>().BirdColor.Value = birdMaterial.color;
+            });
+            animBirdColor.AppendInterval(0.02f).SetLoops(50); // 约1秒内同步50次，覆盖DOTween过渡
+            animBirdColor.OnComplete(() =>
+            {
+                // 确保最终颜色同步
+                this.GetModel<IBirdModel>().BirdColor.Value = birdMaterial.color;
+            });
+
             // 创建一个主序列来协调所有动画
             _currentWeatherSequence = DOTween.Sequence();
             var mainSequence = _currentWeatherSequence;
@@ -212,6 +225,7 @@ namespace BirdGame
             mainSequence.Join(anim8);
             mainSequence.Join(anim9);
             mainSequence.Join(anim10);
+            mainSequence.Join(animBirdColor);
             if (weather.others != null)
             {
                 foreach (var item in weather.others)
@@ -264,10 +278,8 @@ namespace BirdGame
             });
         }
         
-        private void Update()
-        {
-            this.GetModel<IBirdModel>().BirdColor.Value = birdMaterial.color;
-        }
+        // CPU优化：移除每帧Update同步BirdColor
+        // BirdColor现在仅在SwitchWeather的DOTween动画期间通过animBirdColor序列同步
     }
 
     [Serializable]
