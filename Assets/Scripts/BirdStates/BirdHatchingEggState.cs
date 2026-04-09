@@ -77,7 +77,7 @@ namespace BirdGame
                 }
                 else if (!isEnd)
                 {
-                    Debug.Log("End");
+                    // Debug.Log("End");
                     isEnd = true;
                     _brid.agent.isStopped = true;
                     _brid.agent.velocity = Vector3.zero;
@@ -140,7 +140,7 @@ namespace BirdGame
 
         private void ExitTent(int index)
         {
-            Debug.Log("Exit");
+            // Debug.Log("Exit");
             _brid.agent.isStopped = false;
             this.GetModel<IGameModel>().HatchingProgress.Value = 0;
             var target = this.GetModel<IGameModel>().CurrentTent.exitPoses[index].position;

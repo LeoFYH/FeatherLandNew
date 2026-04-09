@@ -20,7 +20,11 @@
       "Bash(powershell -c \"Get-Process | Sort-Object WorkingSet64 -Descending | Select-Object -First 10 Name, Id, @{N=''MemMB'';E={[math]::Round\\($_WorkingSet64/1MB\\)}} | Format-Table -AutoSize\")",
       "Bash(powershell -Command \"Get-Process | Sort-Object WorkingSet64 -Descending | Select-Object -First 10 Name, Id, @{N=''MemMB'';E={[math]::Round\\($_.WorkingSet64/1MB\\)}} | Format-Table -AutoSize\")",
       "Bash(find E:/Unity/Projects/Work/FeatherLandNew -name IFullScreenUtility* -o -name *FullScreenUtility*)",
-      "Bash(systeminfo)"
+      "Bash(systeminfo)",
+      "Skill(update-config)",
+      "Bash(xargs -I {} bash -c \"ls -lh '{}'\")",
+      "Bash(ls:*)",
+      "Bash(find:*)"
     ]
   }
 }

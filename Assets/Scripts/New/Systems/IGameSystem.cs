@@ -39,9 +39,12 @@ namespace BirdGame
         private GameObject currentPlacingDecoration; // 当前正在放置的装饰品
         private int currentPlacingDecorationId; // 当前正在放置的装饰品ID
         private int currentIndex;
-        
+
         // Performance optimization: Cache Camera.main to avoid FindObjectOfType calls
         private Camera cachedMainCamera;
+
+        // Memory optimization: pre-allocate physics buffers to avoid GC allocations
+        private static readonly Collider2D[] _overlapBuffer = new Collider2D[16];
         
         [Header("食物位置偏移")]
         [Tooltip("食物落下位置相对于鼠标的偏移量")]
@@ -80,9 +83,11 @@ namespace BirdGame
 
         public void CreateNum(string s, Vector3 pos)
         {
-            GameObject go = GameObject.Instantiate(numPrefab);
-            go.transform.position = pos;
-            go.GetComponent<NumPanel>().Init(s);
+            this.GetSystem<IObjectPoolSystem>().Get("Num", null, go =>
+            {
+                go.transform.position = pos;
+                go.GetComponent<NumPanel>().Init(s);
+            });
         }
 
         public void CreateFood()
@@ -211,10 +216,8 @@ namespace BirdGame
         public bool TryGetUntargetedFood(Vector3 position, out Food food)
         {
             food = null;
-            float closestDistance = float.MaxValue;
+            float closestSqrDistance = float.MaxValue;
 
-            // Performance optimization: Use sqrMagnitude instead of Distance
-            float closestSqrDistance = closestDistance * closestDistance;
             foreach (var temp in birdModel.Foods)
             {
                 if (!temp.isTargeted && !temp.isDisabling && temp.gameObject.activeSelf)
@@ -224,7 +227,6 @@ namespace BirdGame
                     if (sqrDistance < closestSqrDistance)
                     {
                         closestSqrDistance = sqrDistance;
-                        closestDistance = Mathf.Sqrt(sqrDistance);
                         food = temp;
                     }
                 }
@@ -255,19 +257,15 @@ namespace BirdGame
             Vector3 worldPosition = cachedMainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, -cachedMainCamera.transform.position.z));
             Vector2 worldPosition2D = new Vector2(worldPosition.x, worldPosition.y);
             
-            // Performance optimization: Use IBirdModel.BirdList instead of FindGameObjectsWithTag
-            // 检查是否点击到鸟，如果点击到鸟，则不生成食物
+            // CPU优化：使用Brid.birdCollider（已缓存），避免每帧GetComponent
             foreach (var birdData in birdModel.BirdList)
             {
                 if (birdData?.bird == null || birdData.bird.gameObject == null) continue;
-                
-                GameObject bird = birdData.bird.gameObject;
-                // 获取鸟的Collider2D
-                Collider2D collider2D = bird.GetComponent<Collider2D>();
-                
+
+                Collider2D collider2D = birdData.bird.birdCollider;
+
                 if (collider2D != null)
                 {
-                    // 使用OverlapPoint检测鼠标是否在碰撞器内（适用于触发器）
                     if (collider2D.OverlapPoint(worldPosition2D))
                     {
                         return false;
@@ -275,11 +273,8 @@ namespace BirdGame
                 }
                 else
                 {
-                    // 如果没有碰撞器，使用简单的距离检测
-                    // Performance optimization: Use sqrMagnitude instead of Distance
-                    Vector2 diff = worldPosition2D - (Vector2)bird.transform.position;
-                    float sqrDistance = diff.sqrMagnitude;
-                    if (sqrDistance < 0.25f) // 0.5f * 0.5f = 0.25f
+                    Vector2 diff = worldPosition2D - (Vector2)birdData.bird.transform.position;
+                    if (diff.sqrMagnitude < 0.25f)
                     {
                         return false;
                     }
@@ -316,66 +311,49 @@ namespace BirdGame
             Vector3 worldPosition = cachedMainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, -cachedMainCamera.transform.position.z));
             Vector2 worldPosition2D = new Vector2(worldPosition.x, worldPosition.y);
             
-            // Performance optimization: Use IBirdModel.BirdList instead of FindGameObjectsWithTag
-            // This avoids expensive scene traversal every frame
+            // CPU优化：使用Brid.birdCollider（已缓存），避免每帧GetComponent
             foreach (var birdData in birdModel.BirdList)
             {
                 if (birdData?.bird == null || birdData.bird.gameObject == null) continue;
-                
-                GameObject bird = birdData.bird.gameObject;
-                
-                // 获取鸟的Collider2D
-                Collider2D collider2D = bird.GetComponent<Collider2D>();
-                
+
+                Collider2D collider2D = birdData.bird.birdCollider;
+
                 if (collider2D != null)
                 {
-                    // 使用OverlapPoint检测鼠标是否在碰撞器内（适用于触发器）
                     if (collider2D.OverlapPoint(worldPosition2D))
                     {
-                        //Debug.Log($"检测到鸟: {bird.name}");
                         return true;
                     }
                 }
                 else
                 {
-                    // Performance optimization: Use sqrMagnitude instead of Distance to avoid sqrt calculation
-                    Vector2 diff = worldPosition2D - (Vector2)bird.transform.position;
-                    float sqrDistance = diff.sqrMagnitude;
-                    if (sqrDistance < 0.25f) // 0.5f * 0.5f = 0.25f
+                    Vector2 diff = worldPosition2D - (Vector2)birdData.bird.transform.position;
+                    if (diff.sqrMagnitude < 0.25f)
                     {
-                        Debug.Log($"通过距离检测到鸟: {bird.name}, 距离: {Mathf.Sqrt(sqrDistance)}");
                         return true;
                     }
                 }
             }
-            
-            // 检查蛋 - Note: Eggs might not be in BirdModel, so we still need FindGameObjectsWithTag
-            // TODO: Consider adding eggs to a model/system for better performance
-            GameObject[] eggs = GameObject.FindGameObjectsWithTag("Egg");
-            foreach (var egg in eggs)
+
+            // CPU优化：使用IBirdModel.EggList代替FindGameObjectsWithTag("Egg")
+            foreach (var egg in birdModel.EggList)
             {
-                if (egg == null) continue;
-                
-                // 获取蛋的Collider2D
+                if (egg == null || egg.gameObject == null) continue;
+
                 Collider2D collider2D = egg.GetComponent<Collider2D>();
-                
+
                 if (collider2D != null)
                 {
-                    // 使用OverlapPoint检测鼠标是否在碰撞器内（适用于触发器）
                     if (collider2D.OverlapPoint(worldPosition2D))
                     {
-                        Debug.Log($"检测到蛋: {egg.name}");
                         return true;
                     }
                 }
                 else
                 {
-                    // Performance optimization: Use sqrMagnitude instead of Distance
                     Vector2 diff = worldPosition2D - (Vector2)egg.transform.position;
-                    float sqrDistance = diff.sqrMagnitude;
-                    if (sqrDistance < 0.25f) // 0.5f * 0.5f = 0.25f
+                    if (diff.sqrMagnitude < 0.25f)
                     {
-                        Debug.Log($"通过距离检测到蛋: {egg.name}, 距离: {Mathf.Sqrt(sqrDistance)}");
                         return true;
                     }
                 }
@@ -388,7 +366,7 @@ namespace BirdGame
         {
             // 获取鼠标位置
             Vector2 mousePosition = Input.mousePosition;
-            
+
             // Performance optimization: Use cached camera instead of Camera.main
             if (cachedMainCamera == null)
             {
@@ -398,43 +376,23 @@ namespace BirdGame
             {
                 return false;
             }
-            
+
             // 将鼠标位置转换为世界坐标
             Vector3 worldPosition = cachedMainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, -cachedMainCamera.transform.position.z));
             Vector2 worldPosition2D = new Vector2(worldPosition.x, worldPosition.y);
-            
-            // 使用射线检测查找 tag 为"Decoration"的 2D 对象
-            // 从相机向鼠标位置发射射线（2D 射线检测）
-            Vector2 screenPoint = Input.mousePosition;
-            Vector2 rayOrigin = cachedMainCamera.ScreenToWorldPoint(screenPoint);
-            
-            // 执行 2D 射线检测（沿 Z 轴方向）
-            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.zero, 0f);
-            
-            if (hit.collider != null)
-            {
-                // 检查命中的对象是否有"Decoration"标签
-                if (hit.collider.CompareTag("Decoration"))
-                {
-                    Debug.Log($"检测到装饰品：{hit.collider.gameObject.name}");
-                    return true;
-                }
-            }
-            
-            // 备选方案：如果没有使用 Collider，使用 OverlapCircle 检测
-            // 在鼠标位置周围进行小范围检测
+
+            // Memory optimization: Use NonAlloc to avoid array allocation every call
             float checkRadius = 0.5f;
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(worldPosition2D, checkRadius);
-            
-            foreach (Collider2D collider in colliders)
+            int hitCount = Physics2D.OverlapCircleNonAlloc(worldPosition2D, checkRadius, _overlapBuffer);
+
+            for (int i = 0; i < hitCount; i++)
             {
-                if (collider.CompareTag("Decoration"))
+                if (_overlapBuffer[i].CompareTag("Decoration"))
                 {
-                    Debug.Log($"通过范围检测发现装饰品：{collider.gameObject.name}");
                     return true;
                 }
             }
-            
+
             return false;
         }
 
@@ -447,9 +405,11 @@ namespace BirdGame
         {
             if (NavigationManager.Instance == null)
                 return false;
-                
-            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            
+
+            if (cachedMainCamera == null) cachedMainCamera = Camera.main;
+            if (cachedMainCamera == null) return false;
+            Vector2 mousePosition = cachedMainCamera.ScreenToWorldPoint(Input.mousePosition);
+
             // 检查鼠标位置是否在可导航区域（地面）
             return NavigationManager.Instance.IsPointInNavMeshArea(3, mousePosition);
         }

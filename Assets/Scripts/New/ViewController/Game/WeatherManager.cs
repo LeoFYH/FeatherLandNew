@@ -31,6 +31,7 @@ namespace BirdGame
 
         private int currentIndex = -1;
         private bool isGameStartup = true; // 标记是否是游戏启动时的初始天气设置
+        private Sequence _currentWeatherSequence;
 
         private void Start()
         {
@@ -43,7 +44,7 @@ namespace BirdGame
             this.RegisterEvent<SwitchWeatherEvent>(evt =>
             {
                 int index = evt.index;
-                Debug.Log($"天气：" + index);
+                // Debug.Log($"天气：" + index);
                 SwitchWeather(index);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             SwitchWeather(0);
@@ -78,7 +79,9 @@ namespace BirdGame
         {
             if (currentIndex == index)
                 return;
-            Debug.Log("天气index为" + index);
+            // 杀掉上次未完成的天气切换动画，防止序列堆积
+            _currentWeatherSequence?.Kill();
+            // Debug.Log("天气index为" + index);
             if (currentIndex != -1)
             {
                 var lastWeather = weathers[currentIndex];
@@ -193,8 +196,22 @@ namespace BirdGame
             anim10.Append(groundCover2.DOColor(Color.white, 0.5f));
             
 
+            // CPU优化：仅在天气切换动画期间同步BirdColor，不再每帧Update
+            var animBirdColor = DOTween.Sequence();
+            animBirdColor.AppendCallback(() =>
+            {
+                this.GetModel<IBirdModel>().BirdColor.Value = birdMaterial.color;
+            });
+            animBirdColor.AppendInterval(0.02f).SetLoops(50); // 约1秒内同步50次，覆盖DOTween过渡
+            animBirdColor.OnComplete(() =>
+            {
+                // 确保最终颜色同步
+                this.GetModel<IBirdModel>().BirdColor.Value = birdMaterial.color;
+            });
+
             // 创建一个主序列来协调所有动画
-            var mainSequence = DOTween.Sequence();
+            _currentWeatherSequence = DOTween.Sequence();
+            var mainSequence = _currentWeatherSequence;
             
             // 添加所有背景动画到主序列
             mainSequence.Join(anim0);
@@ -208,6 +225,7 @@ namespace BirdGame
             mainSequence.Join(anim8);
             mainSequence.Join(anim9);
             mainSequence.Join(anim10);
+            mainSequence.Join(animBirdColor);
             if (weather.others != null)
             {
                 foreach (var item in weather.others)
@@ -260,10 +278,8 @@ namespace BirdGame
             });
         }
         
-        private void Update()
-        {
-            this.GetModel<IBirdModel>().BirdColor.Value = birdMaterial.color;
-        }
+        // CPU优化：移除每帧Update同步BirdColor
+        // BirdColor现在仅在SwitchWeather的DOTween动画期间通过animBirdColor序列同步
     }
 
     [Serializable]

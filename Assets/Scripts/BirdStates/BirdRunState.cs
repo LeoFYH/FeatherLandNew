@@ -16,6 +16,7 @@ namespace BirdGame
         private bool isFollowingMouse = false;
         private float followMouseStartTime = 0;
         private float followMouseDuration = 8f; // 跟随时间延长到8秒
+        private Sequence _foodCheckSeq; // Memory optimization: cache to kill on exit
 
         public BirdRunState(StateMachine machine) : base(machine)
         {
@@ -83,7 +84,8 @@ namespace BirdGame
 
             float distance = _brid.agent.remainingDistance;
             float time = distance / _brid.moveSpeed;
-            DOTween.Sequence().AppendCallback(() =>
+            _foodCheckSeq?.Kill();
+            _foodCheckSeq = DOTween.Sequence().AppendCallback(() =>
             {
                 if (_brid.walkArea == 3)
                 {
@@ -165,7 +167,7 @@ namespace BirdGame
                 if(this.GetModel<IConfigModel>().BirdConfig.isDrawPathLine)
                     DrawPath();
                 _brid.sr.flipX = _brid.agent.velocity.x >= 0;
-                _brid.anim.SetFloat(AnimatorHashes.MoveSpeed, 1);
+                // CPU优化：MoveSpeed已在Brid.Update中通过velocity检测统一处理，此处无需重复SetFloat
             }
         }
         
@@ -192,6 +194,8 @@ namespace BirdGame
 
         public override void OnExit()
         {
+            _foodCheckSeq?.Kill();
+            _foodCheckSeq = null;
             _brid.onNearOtherBird = null;
             _brid.lineRenderer.positionCount = 0;
             _brid.anim.SetFloat(AnimatorHashes.MoveSpeed, 0f);

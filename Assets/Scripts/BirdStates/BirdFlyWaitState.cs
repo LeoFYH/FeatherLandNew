@@ -7,6 +7,7 @@ namespace BirdGame
     public class BirdFlyWaitState : StateBase
     {
         private Brid _brid;
+        private Sequence _waitSeq; // Memory optimization: cache to kill on exit
 
         public BirdFlyWaitState(StateMachine machine) : base(machine)
         {
@@ -40,9 +41,10 @@ namespace BirdGame
             float waitTime = Random.Range(3f, 8f);
             
             // 立即播放张望动画，然后等待
-            DOTween.Sequence()
-                .AppendCallback(() => { PlayLookAroundAnimation(); }) 
-                .SetDelay(0.1f) 
+            _waitSeq?.Kill();
+            _waitSeq = DOTween.Sequence()
+                .AppendCallback(() => { PlayLookAroundAnimation(); })
+                .SetDelay(0.1f)
                 .AppendCallback(() => { currMachine.ChangeState<BirdFlyDownState>(); })
                 .SetDelay(waitTime);
         }
@@ -54,6 +56,8 @@ namespace BirdGame
 
         public override void OnExit()
         {
+            _waitSeq?.Kill();
+            _waitSeq = null;
             // 退出飞行状态，恢复原始碰撞体
             _brid.AdjustColliderForFlying(false);
         }

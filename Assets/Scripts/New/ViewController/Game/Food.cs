@@ -8,6 +8,10 @@ namespace BirdGame
 {
     public class Food : ViewControllerBase
     {
+        // Memory optimization: cache WaitForSeconds to avoid repeated allocations
+        private static readonly WaitForSeconds _wait8s = new WaitForSeconds(8f);
+        private static readonly WaitForFixedUpdate _waitFixed = new WaitForFixedUpdate();
+
         public bool isTargeted = false;
         public bool isDisabling = false;
         public int hp = 1;
@@ -16,6 +20,8 @@ namespace BirdGame
         private SpriteRenderer spriteRenderer;
         private float fadeDuration = 4f; // 总淡出时间
         private float timer = 0f; // 淡出计时器
+        // CPU优化：缓存Color避免协程中每帧new Color分配
+        private Color fadeColor = Color.white;
         
 
         void Awake()
@@ -44,7 +50,7 @@ namespace BirdGame
         /// </summary>
         private IEnumerator AutoDestroyIfUntargeted()
         {
-            yield return new WaitForSeconds(8f);
+            yield return _wait8s;
             
             // 8秒后检查是否还被 target
             if (!isTargeted && !isDisabling)
@@ -72,7 +78,6 @@ namespace BirdGame
 
         private IEnumerator DestroyDelay()
         {
-            var frame = new WaitForFixedUpdate();
             timer = 0f;
 
             while (timer < 5)
@@ -80,7 +85,7 @@ namespace BirdGame
                 if (isTargeted)
                     yield break;
                 timer += Time.deltaTime;
-                yield return frame;
+                yield return _waitFixed;
             }
 
             isDisabling = true;
@@ -92,7 +97,8 @@ namespace BirdGame
                     // 如果被目标选中，恢复完全不透明
                     if (spriteRenderer != null)
                     {
-                        spriteRenderer.color = new Color(1f, 1f, 1f, 1f);
+                        fadeColor.a = 1f;
+                        spriteRenderer.color = fadeColor;
                     }
                     isDisabling = false;
 
@@ -100,14 +106,15 @@ namespace BirdGame
                 }
 
                 timer += Time.deltaTime;
-                // 计算当前透明度（从1逐渐变为0）
+                // CPU优化：复用fadeColor，仅修改alpha，避免每帧new Color
                 float alpha = 1f - (timer / fadeDuration);
                 if (spriteRenderer != null)
                 {
-                    spriteRenderer.color = new Color(1f, 1f, 1f, alpha);
+                    fadeColor.a = alpha;
+                    spriteRenderer.color = fadeColor;
                 }
 
-                yield return frame;
+                yield return _waitFixed;
             }
 
             // 完全透明后销毁

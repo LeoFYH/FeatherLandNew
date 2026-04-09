@@ -33,6 +33,14 @@ namespace BirdGame
         public static readonly int FlyFromBranchAnim = Animator.StringToHash("FlyFromBranch");
     }
 
+    /// <summary>
+    /// Memory optimization: static cached Color values to avoid repeated allocations
+    /// </summary>
+    public static class CachedColors
+    {
+        public static readonly Color TransparentGreen = new Color(0, 1, 0, 0);
+    }
+
     /// Controls bird behavior including movement, growth stages, and interactions
     public class Brid : ViewControllerBase
     {
@@ -105,8 +113,8 @@ namespace BirdGame
         public Vector3 originalScale;
         public float lastPerspectiveScale = 1f;
         
-        // 飞行状态碰撞体调整相关
-        private Collider2D birdCollider;
+        // 飞行状态碰撞体调整相关 — CPU优化：公开collider供外部直接使用，避免GetComponent
+        public Collider2D birdCollider { get; private set; }
         private Vector2 originalColliderSize;
         public bool isFlying = false;
         
@@ -116,6 +124,10 @@ namespace BirdGame
         private float originalThickness;
         private bool hasOriginalThickness = false;
         private Material materialNormal;
+
+        // Memory optimization: use MaterialPropertyBlock to avoid material instancing
+        private static MaterialPropertyBlock _sharedMPB;
+        private static readonly int _colorPropertyId = Shader.PropertyToID("_Color");
     
         
         // 静态变量跟踪当前高亮的鸟，避免每次查找所有鸟
@@ -123,7 +135,9 @@ namespace BirdGame
 
         [ReadOnly]
         public float animScale = 1f;
-        
+        private float lastAppliedScale = -1f; // CPU优化：缓存上次应用的scale，避免每帧设置
+        private float lastMoveSpeed = -1f; // CPU优化：缓存上次animator speed，仅变化时SetFloat
+
         public bool isDesktopBird;
         private GameObject heart;
         private int weatherIndex = 0;
@@ -141,8 +155,9 @@ namespace BirdGame
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             
             
-            lineRenderer.startColor = new Color(0, 1, 0, 0); // 绿色，透明度为0
-            lineRenderer.endColor = new Color(0, 1, 0, 0); // 绿色，透明度为0
+            // Memory optimization: use static cached Color to avoid allocation per bird
+            lineRenderer.startColor = CachedColors.TransparentGreen;
+            lineRenderer.endColor = CachedColors.TransparentGreen;
             // Initialize walkable area and basic components
             transform.localRotation = Quaternion.identity;
             agent = GetComponent<NavMeshAgent>();
@@ -167,12 +182,15 @@ namespace BirdGame
             anim = GetComponentInChildren<Animator>();
             anim.speed = 0.8f;
             sr = GetComponentInChildren<SpriteRenderer>();
-            //sr.sharedMaterial = this.GetModel<IBirdModel>().BirdMaterial;
-            //sr.SetMaterials(new List<Material>(){this.GetModel<IBirdModel>().BirdMaterial});
-            sr.material.color = this.GetModel<IBirdModel>().BirdColor.Value;
+            // Memory optimization: use MaterialPropertyBlock to set color without creating material instances
+            if (_sharedMPB == null) _sharedMPB = new MaterialPropertyBlock();
+            _sharedMPB.SetColor(_colorPropertyId, this.GetModel<IBirdModel>().BirdColor.Value);
+            sr.SetPropertyBlock(_sharedMPB);
             this.GetModel<IBirdModel>().BirdColor.Register(v =>
             {
-                sr.material.color = v;
+                if (_sharedMPB == null) _sharedMPB = new MaterialPropertyBlock();
+                _sharedMPB.SetColor(_colorPropertyId, v);
+                sr.SetPropertyBlock(_sharedMPB);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
             // 初始化碰撞体
             birdCollider = GetComponent<Collider2D>();
@@ -181,7 +199,7 @@ namespace BirdGame
                 originalColliderSize = birdCollider.bounds.size;
             }
 
-            materialNormal = sr.material;
+            materialNormal = sr.sharedMaterial;
             if (this.GetModel<IBirdModel>().MaterialHighlight == null)
             {
                 this.GetSystem<IAssetSystem>().LoadAssetAsync<Material>("MaterialHighlight",
@@ -208,11 +226,10 @@ namespace BirdGame
             if (anim != null && anim.runtimeAnimatorController != null && anim.runtimeAnimatorController.animationClips.Length > 3)
             {
                 eatFoodTime = anim.runtimeAnimatorController.animationClips[3].length;
-                Debug.Log($"动态设置吃饭动画时长: {eatFoodTime}秒");
             }
             else
             {
-                Debug.LogWarning("无法获取吃饭动画时长，使用默认值1秒");
+                // 无法获取吃饭动画时长，使用默认值1秒
             }
 
             eatFoodTime = anim.runtimeAnimatorController.animationClips[3].length;
@@ -252,7 +269,7 @@ namespace BirdGame
                 {
                     // 设置跟随鼠标标志
                     //shouldFollowMouse = true;
-                    Debug.Log("连续抚摸超过1秒，准备跟随鼠标！");
+                    // Debug.Log("连续抚摸超过1秒，准备跟随鼠标！");
                 }
                 
                 // 重置连续抚摸计时
@@ -297,7 +314,6 @@ namespace BirdGame
                             if (Time.time - lastClickTime >= clickInterval)
                             {
                                 lastClickTime = Time.time; // 更新最后点击时间
-                                Debug.Log("Feather!");
                                 petTime += 0.1f;
                                 int index = this.GetModel<IBirdModel>().BirdList[birdIndex].birdType;
                                 int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
@@ -371,19 +387,20 @@ namespace BirdGame
             //     _stateMachine.ChangeState<BirdRunState>();
             // }
             
-            //统一处理鸟的大小
-            transform.localScale = new Vector3(animScale, animScale, 1f);
-            // 统一处理走路动画 - 只要在移动就播放走路动画
+            // CPU优化：仅在animScale实际变化时设置localScale
+            if (animScale != lastAppliedScale)
+            {
+                lastAppliedScale = animScale;
+                transform.localScale = new Vector3(animScale, animScale, 1f);
+            }
+            // CPU优化：仅在移动状态变化时调用SetFloat，避免每帧调用Animator
             if (agent != null && agent.enabled)
             {
-                // 使用 sqrMagnitude 避免开方运算，提升性能
-                if (agent.velocity.sqrMagnitude > 0.0001f) // 0.01f * 0.01f = 0.0001f
+                float newMoveSpeed = agent.velocity.sqrMagnitude > 0.0001f ? 1f : 0f;
+                if (newMoveSpeed != lastMoveSpeed)
                 {
-                    anim.SetFloat(AnimatorHashes.MoveSpeed, 1f);
-                }
-                else
-                {
-                    anim.SetFloat(AnimatorHashes.MoveSpeed, 0f);
+                    lastMoveSpeed = newMoveSpeed;
+                    anim.SetFloat(AnimatorHashes.MoveSpeed, newMoveSpeed);
                 }
             }
 
@@ -461,7 +478,6 @@ namespace BirdGame
         /// Generates income based on bird's size
         private void AddCoins()
         {
-            Debug.Log("Adding coins");
             var birdData = this.GetModel<IBirdModel>().BirdList[birdIndex];
             
             if (!isSmall)
@@ -507,9 +523,9 @@ namespace BirdGame
         /// </summary>
         private void SaveOriginalOutlineColor()
         {
-            if (sr == null || sr.material == null) return;
-            
-            sr.material = materialNormal;
+            if (sr == null || sr.sharedMaterial == null) return;
+
+            sr.sharedMaterial = materialNormal;
         }
 
         /// <summary>
@@ -523,7 +539,7 @@ namespace BirdGame
                 return;
             }
 
-            sr.material = this.GetModel<IBirdModel>().MaterialHighlight;
+            sr.sharedMaterial = this.GetModel<IBirdModel>().MaterialHighlight;
 
             // Material currentMaterial = sr.material;
             // if (currentMaterial == null)
@@ -557,9 +573,9 @@ namespace BirdGame
         /// </summary>
         private void RestoreOriginalOutlineColor()
         {
-            if (sr == null || sr.material == null) return;
-            
-            sr.material = materialNormal;
+            if (sr == null || sr.sharedMaterial == null) return;
+
+            sr.sharedMaterial = materialNormal;
             // Material currentMaterial = sr.material;
             
             // // 使用 _SolidOutline 属性（对应 Inspector 中的 "Outline Color Base"）

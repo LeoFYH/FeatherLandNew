@@ -122,8 +122,8 @@ public class WallpaperModeController : MonoBehaviour
     // SetWindowPos标志：显示窗口
     private const uint SWP_SHOWWINDOW = 0x0040;
 
-    // 窗口Z轴顺序：置于最底层
-    private static readonly IntPtr HWND_BOTTOM = new IntPtr(1);
+    // 窗口Z轴顺序
+    private static readonly IntPtr HWND_TOP = IntPtr.Zero;  // 在WorkerW子窗口中置顶（覆盖WallpaperEngine）
 
     // Windows消息常量
     private const uint WM_USER = 0x0400;
@@ -170,6 +170,12 @@ public class WallpaperModeController : MonoBehaviour
     // 修复IL2CPP：使用静态字段来存储查找结果
     private static IntPtr foundWorkerW = IntPtr.Zero;
 
+    /// <summary>
+    /// Z轴刷新间隔（秒）：定期将窗口置顶以覆盖WallpaperEngine
+    /// </summary>
+    private const float Z_ORDER_REFRESH_INTERVAL = 2f;
+    private float zOrderTimer = 0f;
+
     private void Awake()
     {
         ins = this;
@@ -178,7 +184,7 @@ public class WallpaperModeController : MonoBehaviour
     }
 
     /// <summary>
-    /// 每帧更新：处理退出输入
+    /// 每帧更新：处理退出输入 + 定期刷新Z轴顺序
     /// </summary>
     private void Update()
     {
@@ -186,6 +192,18 @@ public class WallpaperModeController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape) && isWallpaperModeActive)
         {
             ExitWallpaperMode();
+        }
+
+        // 定期刷新Z轴顺序，防止WallpaperEngine重新覆盖
+        if (isWallpaperModeActive && unityWindowHandle != IntPtr.Zero)
+        {
+            zOrderTimer += Time.deltaTime;
+            if (zOrderTimer >= Z_ORDER_REFRESH_INTERVAL)
+            {
+                zOrderTimer = 0f;
+                SetWindowPos(unityWindowHandle, HWND_TOP, 0, 0, 0, 0,
+                    0x0002 | 0x0001 | 0x0040); // SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW
+            }
         }
     }
 
@@ -247,7 +265,7 @@ public class WallpaperModeController : MonoBehaviour
 
             // 获取目标显示器工作区并调整窗口大小
             var workingArea = GetScreenWorkingArea(targetDisplay);
-            SetWindowPos(unityWindowHandle, HWND_BOTTOM,
+            SetWindowPos(unityWindowHandle, HWND_TOP,
                 (int)workingArea.x, (int)workingArea.y,
                 (int)workingArea.width, (int)workingArea.height,
                 SWP_FRAMECHANGED | SWP_SHOWWINDOW);

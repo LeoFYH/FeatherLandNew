@@ -8,6 +8,7 @@ namespace BirdGame
     public class BirdFlyDownState : StateBase
     {
         private Brid _brid;
+        private Sequence _flySeq; // Memory optimization: cache to kill on exit
 
         public BirdFlyDownState(StateMachine machine) : base(machine)
         {
@@ -47,7 +48,8 @@ namespace BirdGame
             _brid.sr.flipX = target.x > _brid.transform.position.x;
             float distance = Vector3.Distance(target, _brid.transform.position);
             float time = distance / _brid.flySpeed;
-            DOTween.Sequence().AppendCallback(() =>
+            _flySeq?.Kill();
+            _flySeq = DOTween.Sequence().AppendCallback(() =>
             {
                 //_brid.transform.DOScale(_brid.AdultBirdSize, time).SetEase(Ease.Linear);
                 DOTween.To(v =>
@@ -117,6 +119,8 @@ namespace BirdGame
 
         public override void OnExit()
         {
+            _flySeq?.Kill();
+            _flySeq = null;
             // 退出飞行状态，恢复原始碰撞体
             _brid.AdjustColliderForFlying(false);
         }

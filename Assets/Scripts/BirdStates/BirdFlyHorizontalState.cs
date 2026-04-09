@@ -29,7 +29,6 @@ namespace BirdGame
             if (distanceToTargetY <= REACH_DISTANCE)
             {
                 isInStartPosition = true;
-                Debug.Log("到达目标高度");
                 StartHorizontalFlight();
             }
             else

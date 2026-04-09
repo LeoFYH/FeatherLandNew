@@ -13,6 +13,10 @@ namespace BirdGame
         List<Food> Foods { get; }
         List<Transform> FlyPositions { get; set; }
         List<BirdData> BirdList { get; }
+        /// <summary>
+        /// CPU优化：跟踪场景中活跃的蛋，避免FindGameObjectsWithTag("Egg")
+        /// </summary>
+        List<Egg> EggList { get; }
         void AddBird(int type, Brid bird);
         void RemoveBird(int index);
         Material BirdMaterial { get; set; }
@@ -31,6 +35,7 @@ namespace BirdGame
         public List<Food> Foods { get; } = new List<Food>();
         public List<Transform> FlyPositions { get; set; }
         public List<BirdData> BirdList { get; } = new List<BirdData>();
+        public List<Egg> EggList { get; } = new List<Egg>();
         public Material MaterialHighlight{get;set;}
 
         public void AddBird(int type, Brid bird)

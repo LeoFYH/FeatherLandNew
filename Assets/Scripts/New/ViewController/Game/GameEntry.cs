@@ -266,15 +266,14 @@ namespace BirdGame
                     // 将鼠标位置转换为世界坐标
                     Vector3 worldPosition = cachedMainCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, -cachedMainCamera.transform.position.z));
                     
-                    // Performance optimization: Use IBirdModel.BirdList instead of FindGameObjectsWithTag
+                    // CPU优化：使用Brid.birdCollider（已缓存），避免每帧GetComponent
                     var birdModel = this.GetModel<IBirdModel>();
                     foreach (var birdData in birdModel.BirdList)
                     {
                         if (birdData?.bird == null || birdData.bird.gameObject == null) continue;
-                        
-                        GameObject bird = birdData.bird.gameObject;
-                        Collider2D collider2D = bird.GetComponent<Collider2D>();
-                        
+
+                        Collider2D collider2D = birdData.bird.birdCollider;
+
                         if (collider2D != null)
                         {
                             if (collider2D.OverlapPoint(worldPosition))
@@ -286,10 +285,8 @@ namespace BirdGame
                         }
                         else
                         {
-                            // Performance optimization: Use sqrMagnitude instead of Distance
-                            Vector2 diff = worldPosition - bird.transform.position;
-                            float sqrDistance = diff.sqrMagnitude;
-                            if (sqrDistance < 0.25f) // 0.5f * 0.5f = 0.25f
+                            Vector2 diff = worldPosition - birdData.bird.transform.position;
+                            if (diff.sqrMagnitude < 0.25f)
                             {
                                 clickedOnInteractiveObject = true;
                                 clickedOnBird = true;
@@ -297,18 +294,16 @@ namespace BirdGame
                             }
                         }
                     }
-                    
-                    // 检查蛋 - Note: Eggs might not be in BirdModel, so we still need FindGameObjectsWithTag
-                    // But we can optimize by caching or using a system to track eggs
+
+                    // CPU优化：使用IBirdModel.EggList代替FindGameObjectsWithTag("Egg")
                     if (!clickedOnBird)
                     {
-                        GameObject[] eggs = GameObject.FindGameObjectsWithTag("Egg");
-                        foreach (var egg in eggs)
+                        foreach (var egg in birdModel.EggList)
                         {
-                            if (egg == null) continue;
-                            
+                            if (egg == null || egg.gameObject == null) continue;
+
                             Collider2D collider2D = egg.GetComponent<Collider2D>();
-                            
+
                             if (collider2D != null)
                             {
                                 if (collider2D.OverlapPoint(worldPosition))
@@ -319,10 +314,8 @@ namespace BirdGame
                             }
                             else
                             {
-                                // Performance optimization: Use sqrMagnitude instead of Distance
                                 Vector2 diff = worldPosition - egg.transform.position;
-                                float sqrDistance = diff.sqrMagnitude;
-                                if (sqrDistance < 0.25f) // 0.5f * 0.5f = 0.25f
+                                if (diff.sqrMagnitude < 0.25f)
                                 {
                                     clickedOnInteractiveObject = true;
                                     break;
@@ -403,27 +396,21 @@ namespace BirdGame
             lastCursorCheckMousePos = currentMousePos;
             cursorCheckFrameSkip = 0;
                 
-            // Performance optimization: Use cached system reference
-            bool isCoverUI = cachedGameSystem.IsCoverUI();
-            bool isCoverBird = cachedGameSystem.IsCoverBird();
-            bool isCoverDecoration = cachedGameSystem.IsCoverDecoration();
-            bool isCoverGround = cachedGameSystem.IsCoverGround();
-            
-            // Determine new cursor state
+            // CPU优化：短路求值，命中后跳过后续IsCover检测（每个都遍历大量对象）
             CursorState newState;
-            if (isCoverUI)
+            if (cachedGameSystem.IsCoverUI())
             {
                 newState = CursorState.Click;
             }
-            else if (isCoverBird)
+            else if (cachedGameSystem.IsCoverBird())
             {
                 newState = CursorState.Click;
             }
-            else if (isCoverDecoration)
+            else if (cachedGameSystem.IsCoverDecoration())
             {
                 newState = CursorState.Click;
             }
-            else if (isCoverGround)
+            else if (cachedGameSystem.IsCoverGround())
             {
                 newState = CursorState.Feed1;
             }
