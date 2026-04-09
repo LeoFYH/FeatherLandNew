@@ -33,6 +33,7 @@ namespace BirdGame
         {
             if (EventSystem.current.IsPointerOverGameObject()) return;
             if (this.GetSystem<IGameSystem>().IsPlacingDecoration()) return;
+            if (this.GetSystem<IUISystem>().HasAnyPopupOpen()) return;
 
             bool autoFeedingEnabled = this.GetModel<ISaveModel>().SettingData.autoFeeding;
             bool clicked = Input.GetMouseButtonDown(0) || SimpleMouseForwarder.clickCount > _previousClickCount;
