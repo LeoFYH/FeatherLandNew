@@ -147,6 +147,12 @@ namespace BirdGame
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool GetCursorPos(out POINT lpPoint);
 
+        [DllImport("user32.dll")]
+        private static extern IntPtr WindowFromPoint(POINT point);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern int GetClassName(IntPtr hWnd, System.Text.StringBuilder lpClassName, int nMaxCount);
+
         public bool enableForwarding = true;
         public bool showDebugLog = false;
 
@@ -877,14 +883,15 @@ namespace BirdGame
                     // Trigger click events on mouse up (only if it wasn't a drag)
                     // This includes buttons, input fields, sliders, and other interactable UI elements
                     // Re-validate instance again before Unity API calls
-                    if (!wasDragging && instance != null && instance.enableForwarding && isOnDesktop)
+                    if (!wasDragging && instance != null && instance.enableForwarding && isOnDesktop
+                        && IsDesktopOrGameWindow(hookStruct.pt))
                     {
                         try
                         {
                             clickCount++;
                             Vector2 actualMousePos = GetCurrentMousePositionRealtime();
                             instance.SimulateMouseClick(actualMousePos);
-                            
+
                             if (instance.showDebugLog)
                             {
                                 Debug.Log($"[SimpleMouseForwarder] 转发点击到Unity EventSystem (鼠标抬起): {actualMousePos}");
@@ -1606,6 +1613,27 @@ namespace BirdGame
             }
             // Fallback to the last known position from the hook
             return currentMousePosition;
+        }
+
+        /// <summary>
+        /// 检查屏幕坐标处的窗口是否属于桌面层级（允许点击穿透到游戏）
+        /// </summary>
+        private static bool IsDesktopOrGameWindow(POINT pt)
+        {
+            IntPtr hwnd = WindowFromPoint(pt);
+            if (hwnd == IntPtr.Zero) return true;
+
+            const int nChars = 256;
+            var className = new System.Text.StringBuilder(nChars);
+            GetClassName(hwnd, className, nChars);
+            string cls = className.ToString();
+
+            // 桌面层级窗口类名白名单
+            return cls == "Progman"            // 桌面主窗口
+                || cls == "WorkerW"            // 桌面背景容器（游戏窗口挂在这里）
+                || cls == "SHELLDLL_DefView"   // 桌面图标层
+                || cls == "SysListView32"      // 桌面图标列表
+                || cls == "UnityWndClass";     // Unity游戏窗口自身
         }
 
         private string GetForegroundWindowTitle()
