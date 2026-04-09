@@ -3,10 +3,10 @@
     <type fullname="BirdGame.AddCoinPopup" preserve="all" />
     <type fullname="BirdGame.AlertPopup" preserve="all" />
     <type fullname="BirdGame.AssetReferenceAtlasManager" preserve="all" />
-    <type fullname="BirdGame.BagChecker" preserve="all" />
     <type fullname="BirdGame.BirdConfig" preserve="all" />
     <type fullname="BirdGame.BirdItem" preserve="all" />
     <type fullname="BirdGame.BirdSkin" preserve="all" />
+    <type fullname="BirdGame.BirdVolume" preserve="all" />
     <type fullname="BirdGame.Brid" preserve="all" />
     <type fullname="BirdGame.ButtonAnim" preserve="all" />
     <type fullname="BirdGame.ButtonAnimSp" preserve="all" />
@@ -21,12 +21,15 @@
     <type fullname="BirdGame.DecorationClickHandler" preserve="all" />
     <type fullname="BirdGame.DecorationColorExchange" preserve="all" />
     <type fullname="BirdGame.DecorationContentViewController" preserve="all" />
+    <type fullname="BirdGame.DecorationDrag" preserve="all" />
     <type fullname="BirdGame.DragAspect" preserve="all" />
     <type fullname="BirdGame.DragMove" preserve="all" />
+    <type fullname="BirdGame.EffectVolume" preserve="all" />
     <type fullname="BirdGame.Egg" preserve="all" />
     <type fullname="BirdGame.EggContentViewController" preserve="all" />
     <type fullname="BirdGame.EggMouseChecker" preserve="all" />
     <type fullname="BirdGame.EnvironmentViewController" preserve="all" />
+    <type fullname="BirdGame.EnvironmentVolume" preserve="all" />
     <type fullname="BirdGame.ExitConfirmPopup" preserve="all" />
     <type fullname="BirdGame.FontAssetExchange" preserve="all" />
     <type fullname="BirdGame.Food" preserve="all" />
@@ -35,7 +38,6 @@
     <type fullname="BirdGame.Heart" preserve="all" />
     <type fullname="BirdGame.HoverButton" preserve="all" />
     <type fullname="BirdGame.HoverControl" preserve="all" />
-    <type fullname="BirdGame.HoverScaleControl" preserve="all" />
     <type fullname="BirdGame.IllustratedItem" preserve="all" />
     <type fullname="BirdGame.IllustratedPopup" preserve="all" />
     <type fullname="BirdGame.InfoPopup" preserve="all" />
@@ -46,8 +48,8 @@
     <type fullname="BirdGame.MapInfo" preserve="all" />
     <type fullname="BirdGame.MapItem" preserve="all" />
     <type fullname="BirdGame.MapPopup" preserve="all" />
+    <type fullname="BirdGame.MasterVolume" preserve="all" />
     <type fullname="BirdGame.MediaContent" preserve="all" />
-    <type fullname="BirdGame.MenuButton" preserve="all" />
     <type fullname="BirdGame.MenuPanel" preserve="all" />
     <type fullname="BirdGame.MouseMenu" preserve="all" />
     <type fullname="BirdGame.MusicItem" preserve="all" />
@@ -72,20 +74,24 @@
     <type fullname="BirdGame.ShopPopup" preserve="all" />
     <type fullname="BirdGame.ShopToolItem" preserve="all" />
     <type fullname="BirdGame.ShopToolSelection" preserve="all" />
+    <type fullname="BirdGame.SongVolume" preserve="all" />
     <type fullname="BirdGame.StopWatchViewController" preserve="all" />
     <type fullname="BirdGame.TentViewController" preserve="all" />
     <type fullname="BirdGame.ThanksPopup" preserve="all" />
     <type fullname="BirdGame.TimerViewController" preserve="all" />
     <type fullname="BirdGame.ToggleImage" preserve="all" />
+    <type fullname="BirdGame.TomatoAlertVolume" preserve="all" />
     <type fullname="BirdGame.TomatoViewController" preserve="all" />
     <type fullname="BirdGame.ToolsContentViewController" preserve="all" />
     <type fullname="BirdGame.TutorialPopup" preserve="all" />
     <type fullname="BirdGame.UIElementHover" preserve="all" />
+    <type fullname="BirdGame.UISkinExchange" preserve="all" />
     <type fullname="BirdGame.WeatherItem" preserve="all" />
     <type fullname="BirdGame.WeatherManager" preserve="all" />
     <type fullname="CameraManager" preserve="all" />
     <type fullname="Feather" preserve="all" />
     <type fullname="FullscreenTest" preserve="all" />
+    <type fullname="HiyodoGame.VideoPrepare" preserve="all" />
     <type fullname="HookTMPInputHandler" preserve="all" />
     <type fullname="NavigationManager" preserve="all" />
     <type fullname="NumPanel" preserve="all" />
@@ -107,6 +113,7 @@
     <type fullname="BirdGame.SceneEgg" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.ToolItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.ToolSelection" preserve="nothing" serialized="true" />
+    <type fullname="BirdGame.UIColorItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.AssetReferenceSpriteAtlas" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.DecorationEffect" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.OtherItem" preserve="nothing" serialized="true" />
@@ -136,6 +143,7 @@
   </assembly>
   <assembly fullname="Unity.ResourceManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
     <type fullname="UnityEngine.ResourceManagement.ResourceProviders.AssetBundleProvider" preserve="all" />
+    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.AtlasSpriteProvider" preserve="all" />
     <type fullname="UnityEngine.ResourceManagement.ResourceProviders.BundledAssetProvider" preserve="all" />
     <type fullname="UnityEngine.ResourceManagement.ResourceProviders.InstanceProvider" preserve="all" />
     <type fullname="UnityEngine.ResourceManagement.ResourceProviders.SceneProvider" preserve="all" />
@@ -147,14 +155,12 @@
     <type fullname="TMPro.TMP_InputField" preserve="all" />
     <type fullname="TMPro.FaceInfo_Legacy" preserve="nothing" serialized="true" />
     <type fullname="TMPro.FontAssetCreationSettings" preserve="nothing" serialized="true" />
-    <type fullname="TMPro.GlyphAnchorPoint" preserve="nothing" serialized="true" />
     <type fullname="TMPro.KerningTable" preserve="nothing" serialized="true" />
-    <type fullname="TMPro.MarkPositionAdjustment" preserve="nothing" serialized="true" />
-    <type fullname="TMPro.MarkToBaseAdjustmentRecord" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_Character" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_FontFeatureTable" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_FontWeightPair" preserve="nothing" serialized="true" />
     <type fullname="TMPro.VertexGradient" preserve="nothing" serialized="true" />
+    <type fullname="TMPro.LigatureSubstitutionRecord" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_InputField/OnChangeEvent" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_InputField/SelectionEvent" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_InputField/SubmitEvent" preserve="nothing" serialized="true" />
@@ -189,6 +195,7 @@
     <type fullname="UnityEngine.MonoBehaviour" preserve="all" />
     <type fullname="UnityEngine.Object" preserve="all" />
     <type fullname="UnityEngine.RectTransform" preserve="all" />
+    <type fullname="UnityEngine.RenderTexture" preserve="all" />
     <type fullname="UnityEngine.Shader" preserve="all" />
     <type fullname="UnityEngine.Sprite" preserve="all" />
     <type fullname="UnityEngine.SpriteRenderer" preserve="all" />
@@ -246,6 +253,10 @@
     <type fullname="UnityEngine.Canvas" preserve="all" />
     <type fullname="UnityEngine.CanvasGroup" preserve="all" />
     <type fullname="UnityEngine.CanvasRenderer" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityEngine.VideoModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.Video.VideoClip" preserve="all" />
+    <type fullname="UnityEngine.Video.VideoPlayer" preserve="all" />
   </assembly>
   <assembly fullname="Sirenix.Serialization">
     <type fullname="Sirenix.Serialization.SerializationData" preserve="nothing" serialized="true" />
