@@ -25,16 +25,24 @@ namespace BirdGame
             _brid.anim.SetBool(AnimatorHashes.IsTakeOff, false);
             _brid.anim.Play(AnimatorHashes.FlyFromBranchAnim);
 
-            // 获取降落点
-            int area = Random.Range(3, 9);
+            // 获取降落点：鸟>20且扩展区域已开放时，70%概率优先落到 LeftArea/RightArea
+            int area;
+            if (NavigationManager.Instance.isExpend
+                && this.GetModel<IBirdModel>().BirdList.Count > 20
+                && Random.Range(0f, 1f) < 0.7f)
+            {
+                area = Random.Range(0, 2) == 0 ? 4 : 5;
+            }
+            else
+            {
+                area = Random.Range(3, 9);
+            }
             _brid.walkArea = area;
-            //Vector2 landingPoint = //GetLandingPoint();
             var target = NavigationManager.Instance.GetRandomTarget(area);
             while (target == Vector3.zero)
             {
                 area = Random.Range(3, 9);
                 _brid.walkArea = area;
-                //Vector2 landingPoint = //GetLandingPoint();
                 target = NavigationManager.Instance.GetRandomTarget(area);
             }
 

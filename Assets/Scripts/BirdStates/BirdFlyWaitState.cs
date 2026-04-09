@@ -38,7 +38,7 @@ namespace BirdGame
                 _brid.transform.position = alignedPosition;
             }
 
-            float waitTime = Random.Range(3f, 8f);
+            float waitTime = Random.Range(8f, 20f);
             
             // 立即播放张望动画，然后等待
             _waitSeq?.Kill();
