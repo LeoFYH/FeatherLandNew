@@ -13,7 +13,6 @@ namespace BirdGame
 {
     public class ShopConfig : ScriptableObject
     {
-#if UNITY_EDITOR
         [ShowInInspector, HideLabel, BoxGroup("场景商店配置"), OnValueChanged("OnSelectSceneChanged"), ValueDropdown("GetScenes", DropdownTitle = "选择地图")]
         private int sceneIndex;
         [ShowInInspector, BoxGroup("场景商店配置"), Title("鸟蛋配置"), HideLabel]
@@ -67,7 +66,7 @@ namespace BirdGame
         {
             return sceneIndex;
         }
-#endif
+
 
         [LabelText("能否拖拽"), BoxGroup("信息")]
         public bool canDrag = false;
