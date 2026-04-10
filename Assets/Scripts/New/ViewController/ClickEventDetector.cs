@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+// using System.Linq; // Memory optimization: removed LINQ to avoid GC allocations
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using BirdGame;
@@ -245,7 +245,7 @@ namespace BirdGame
         {
             if (CheckUIClick(out List<RaycastResult> uiHits))
             {
-                string uiNames = string.Join(", ", uiHits.Select(r => r.gameObject.name).Distinct());
+                // Memory optimization: removed LINQ Select/Distinct to avoid GC allocations
                 return;
             }
 
@@ -357,7 +357,7 @@ namespace BirdGame
                     targetName = uiName,
                     onClick = new UnityEvent()
                 });
-                uiClickEvents.Last().onClick.AddListener(action);
+                uiClickEvents[uiClickEvents.Count - 1].onClick.AddListener(action);
             }
         }
 
@@ -396,7 +396,7 @@ namespace BirdGame
                     targetName = objectName,
                     onClick = new UnityEvent()
                 });
-                objectClickEvents.Last().onClick.AddListener(action);
+                objectClickEvents[objectClickEvents.Count - 1].onClick.AddListener(action);
             }
         }
 

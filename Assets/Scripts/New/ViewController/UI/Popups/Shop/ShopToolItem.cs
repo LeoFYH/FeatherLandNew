@@ -648,7 +648,7 @@ namespace BirdGame
                                 this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList.Add(0);
                             }
 
-                            this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList[mapIndex] += 10;
+                            this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList[mapIndex] += 20;
                             //this.GetModel<IBirdModel>().AddedBirdCount += 10;
                             //this.GetModel<ISaveModel>().AccountData.addedMaxBirdValue += selectedTool.addCount;
                             //this.GetSystem<IBirdSystem>().SyncBirdDataToSave();

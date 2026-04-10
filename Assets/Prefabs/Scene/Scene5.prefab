@@ -2067,7 +2067,6 @@ Transform:
   m_Children:
   - {fileID: 7802494506513749191}
   - {fileID: 6573210219341595648}
-  - {fileID: 8687365887154365381}
   - {fileID: 1234636960418712665}
   - {fileID: 8313900908135890018}
   - {fileID: 2286298598753898667}
@@ -2077,6 +2076,9 @@ Transform:
   - {fileID: 211516180558273977}
   - {fileID: 5312548925042217932}
   - {fileID: 506776735078678080}
+  - {fileID: 5284165296557763113}
+  - {fileID: 3423131189294103399}
+  - {fileID: 1859835150585379038}
   m_Father: {fileID: 1487015292255430802}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3048370135654268604
@@ -2094,7 +2096,7 @@ MonoBehaviour:
   flyPositions:
   - {fileID: 7802494506513749191}
   - {fileID: 6573210219341595648}
-  - {fileID: 8687365887154365381}
+  - {fileID: 1859835150585379038}
   - {fileID: 1234636960418712665}
   - {fileID: 8313900908135890018}
   - {fileID: 2286298598753898667}
@@ -2105,7 +2107,10 @@ MonoBehaviour:
   - {fileID: 5312548925042217932}
   - {fileID: 506776735078678080}
   - {fileID: 6573210219341595648}
-  - {fileID: 8687365887154365381}
+  - {fileID: 5284165296557763113}
+  - {fileID: 3423131189294103399}
+  - {fileID: 1859835150585379038}
+  - {fileID: 1859835150585379038}
   createFoodTime: 1
 --- !u!114 &8615925653857304991
 MonoBehaviour:
@@ -2223,7 +2228,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 1
---- !u!1 &5693704768379385909
+--- !u!1 &6009972108564367933
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2231,24 +2236,24 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8687365887154365381}
+  - component: {fileID: 3423131189294103399}
   m_Layer: 0
-  m_Name: FlyTarget (11)
+  m_Name: FlyTarget (12)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4
   m_IsActive: 1
---- !u!4 &8687365887154365381
+--- !u!4 &3423131189294103399
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5693704768379385909}
+  m_GameObject: {fileID: 6009972108564367933}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.84, y: -2.54, z: 0}
+  m_LocalPosition: {x: -5.5, y: -2.45, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2341,6 +2346,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &6460617595435893761
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5284165296557763113}
+  m_Layer: 0
+  m_Name: FlyTarget (11)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4
+  m_IsActive: 1
+--- !u!4 &5284165296557763113
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6460617595435893761}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -5.16, y: -2.55, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5656478578837136683}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6510789723145775840
 GameObject:
   m_ObjectHideFlags: 0
@@ -2901,6 +2937,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 1
+--- !u!1 &7586391775124112820
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1859835150585379038}
+  m_Layer: 0
+  m_Name: FlyTarget (13)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4
+  m_IsActive: 1
+--- !u!4 &1859835150585379038
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7586391775124112820}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -5.81, y: -2.45, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5656478578837136683}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7732163887818482994
 GameObject:
   m_ObjectHideFlags: 0

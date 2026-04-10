@@ -50,6 +50,8 @@ namespace BirdGame
         private Dictionary<int, Coroutine> downButtonHoldCoroutines = new Dictionary<int, Coroutine>();
         private const float holdInitialDelay = 0.5f; // Initial delay before holding starts
         private const float holdRepeatInterval = 0.1f; // Interval between repeats while holding
+        private static readonly WaitForSeconds _waitInitialDelay = new WaitForSeconds(holdInitialDelay);
+        private static readonly WaitForSeconds _waitRepeatInterval = new WaitForSeconds(holdRepeatInterval);
         
         private void Start()
         {
@@ -765,26 +767,26 @@ namespace BirdGame
         private IEnumerator HoldUpButton(int index)
         {
             // Wait for initial delay
-            yield return new WaitForSeconds(holdInitialDelay);
+            yield return _waitInitialDelay;
             
             // Continuously call OnUpClick while held
             while (true)
             {
                 OnUpClick(index);
-                yield return new WaitForSeconds(holdRepeatInterval);
+                yield return _waitRepeatInterval;
             }
         }
 
         private IEnumerator HoldDownButton(int index)
         {
             // Wait for initial delay
-            yield return new WaitForSeconds(holdInitialDelay);
+            yield return _waitInitialDelay;
             
             // Continuously call OnDownClick while held
             while (true)
             {
                 OnDownClick(index);
-                yield return new WaitForSeconds(holdRepeatInterval);
+                yield return _waitRepeatInterval;
             }
         }
 

@@ -90,8 +90,8 @@ namespace BirdGame
         private Dictionary<int, Coroutine> environmentFadeCoroutines = new Dictionary<int, Coroutine>();
         private const float FADE_DURATION = 1.0f; // 淡入淡出持续时间（秒）
         
-        // ✅ 优化：添加音频缓存，避免重复加载
-        private Dictionary<string, AudioClip> audioClipCache = new Dictionary<string, AudioClip>();
+        // 当前播放歌曲的缓存key（只保留当前歌曲，切歌时释放旧的以节省内存）
+        private string currentCachedSongKey;
         
         protected override void OnInit()
         {
@@ -116,32 +116,28 @@ namespace BirdGame
             GameObject.DontDestroyOnLoad(obj);
         }
 
-        /// <summary>
-        /// ✅ 优化：使用缓存避免重复加载音频
-        /// </summary>
         public void PlaySong()
         {
             var item = this.GetModel<IConfigModel>().RadioConfig.musicItems[radioModel.SongIndex];
             radioModel.CurrentTime.Value = 0;
-            
-            // ✅ 优化：先检查缓存
-            if (audioClipCache.TryGetValue(item.songFile.AssetGUID, out AudioClip cachedClip))
+
+            string newKey = item.songFile.AssetGUID;
+
+            // 释放上一首歌的AudioClip（每首5-20MB，不释放会累积）
+            if (currentCachedSongKey != null && currentCachedSongKey != newKey)
             {
-                // 使用缓存的音频
-                PlayCachedSong(cachedClip, item);
+                this.GetSystem<IAssetSystem>().ReleaseAsset(currentCachedSongKey);
             }
-            else
+
+            // 加载新歌曲
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(newKey, clip =>
             {
-                // 加载并缓存音频
-                this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(item.songFile.AssetGUID, clip =>
+                if (clip != null)
                 {
-                    if (clip != null)
-                    {
-                        audioClipCache[item.songFile.AssetGUID] = clip; // 缓存音频
-                        PlayCachedSong(clip, item);
-                    }
-                });
-            }
+                    currentCachedSongKey = newKey;
+                    PlayCachedSong(clip, item);
+                }
+            });
 
             radioModel.PlayingSong.Value = true;
         }

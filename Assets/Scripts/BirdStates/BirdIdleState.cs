@@ -12,6 +12,9 @@ namespace BirdGame
         private Coroutine coroutine;
         private int random;
         private bool isLicking = false; // 标记是否正在舔毛
+        private Sequence _lickingSeq; // Memory optimization: cache DOTween sequence to kill on exit
+        // Memory optimization: cache WaitForSeconds with fixed delay
+        private static readonly WaitForSeconds _waitLicking = new WaitForSeconds(0.7f);
 
         public BirdIdleState(StateMachine machine) : base(machine)
         {
@@ -33,7 +36,8 @@ namespace BirdGame
             coroutine = _brid.StartCoroutine(WaitForNext(time));
             if (!_brid.isSmall)
             {
-                DOTween.Sequence().AppendCallback(() =>
+                _lickingSeq?.Kill();
+                _lickingSeq = DOTween.Sequence().AppendCallback(() =>
                 {
                     isLicking = true; // 标记开始舔毛
                     _brid.anim.SetTrigger(AnimatorHashes.Licking);
@@ -98,6 +102,8 @@ namespace BirdGame
 
         public override void OnExit()
         {
+            _lickingSeq?.Kill();
+            _lickingSeq = null;
             if (coroutine == null)
                 return;
             _brid.StopCoroutine(coroutine);
@@ -276,7 +282,7 @@ namespace BirdGame
             // 等待舔毛动画完成（大约0.7秒）
             if (isLicking)
             {
-                yield return new WaitForSeconds(0.7f);
+                yield return _waitLicking;
                 isLicking = false; // 标记舔毛完成
             }
             

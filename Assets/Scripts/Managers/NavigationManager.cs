@@ -28,7 +28,7 @@ public class NavigationManager : ViewControllerBase
     public GameObject[] decorationWalkableAreas;
     
     private NavMeshSurface surface;
-    private bool isExpend;
+    public bool isExpend { get; private set; }
     private Dictionary<int, WalkableArea> colliderDic = new Dictionary<int, WalkableArea>();
 
     private void Awake()

@@ -49,6 +49,12 @@ public class ScrollRectMouseWheelHandler : MonoBehaviour,
     private CanvasGroup verticalScrollbarCanvasGroup;
     private CanvasGroup horizontalScrollbarCanvasGroup;
 
+    private bool IsWallpaperMode()
+    {
+        return WallpaperModeController.ins != null
+            && WallpaperModeController.ins.isWallpaperModeActive;
+    }
+
     void Start()
     {
         if (scrollRect == null)
@@ -57,9 +63,13 @@ public class ScrollRectMouseWheelHandler : MonoBehaviour,
         // Ensure the ScrollRect has the necessary components
         if (scrollRect != null)
         {
-            scrollRect.movementType = ScrollRect.MovementType.Clamped;
-            scrollRect.inertia = false; // We'll handle our own momentum
-            
+            // 只在壁纸模式下覆盖ScrollRect设置，普通模式保留prefab配置的Elastic+惯性
+            if (IsWallpaperMode())
+            {
+                scrollRect.movementType = ScrollRect.MovementType.Clamped;
+                scrollRect.inertia = false; // We'll handle our own momentum
+            }
+
             // Auto-detect scrollbars if not manually assigned
             if (verticalScrollbar == null && scrollRect.verticalScrollbar != null)
             {
@@ -205,6 +215,8 @@ public class ScrollRectMouseWheelHandler : MonoBehaviour,
     // Drag Handlers
     public void OnBeginDrag(PointerEventData eventData)
     {
+        // 普通模式让ScrollRect原生处理拖拽，避免两者冲突导致抖动
+        if (!IsWallpaperMode()) return;
         if (!enableDragScrolling || scrollRect == null) return;
         
         isDragging = true;
@@ -217,6 +229,7 @@ public class ScrollRectMouseWheelHandler : MonoBehaviour,
 
     public void OnDrag(PointerEventData eventData)
     {
+        if (!IsWallpaperMode()) return;
         if (!isDragging || !enableDragScrolling || scrollRect == null) return;
         
         Vector2 delta = eventData.position - lastMousePosition;
@@ -247,6 +260,7 @@ public class ScrollRectMouseWheelHandler : MonoBehaviour,
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        if (!IsWallpaperMode()) return;
         if (!isDragging || !enableDragScrolling) return;
         
         isDragging = false;
@@ -306,42 +320,37 @@ public class ScrollRectMouseWheelHandler : MonoBehaviour,
     {
         if (pendingWheelDelta == 0f || !isMouseOver || scrollRect == null) return;
 
-        float scrollValue = pendingWheelDelta * mouseWheelSensitivity;
-        
+        // 用ScrollRect.scrollSensitivity计算像素位移，再转为normalizedPosition偏移
+        // 这样壁纸模式的滚轮敏感度和普通模式一致
+        float pixelDelta = pendingWheelDelta * scrollRect.scrollSensitivity;
+
         // Apply inversion if needed
         if (invertScrollDirection)
-            scrollValue = -scrollValue;
+            pixelDelta = -pixelDelta;
 
         // Apply scrolling
         if (isHorizontalWheel && scrollRect.horizontal)
         {
-            // Horizontal wheel directly controls horizontal scrolling
-            scrollRect.horizontalNormalizedPosition += scrollValue;
+            float normalizedDelta = pixelDelta / GetScrollRectWidth();
+            scrollRect.horizontalNormalizedPosition += normalizedDelta;
             scrollRect.horizontalNormalizedPosition = Mathf.Clamp01(scrollRect.horizontalNormalizedPosition);
-            
-            Debug.Log($"[ScrollRectMouseWheel] Horizontal scroll: {scrollValue:F3}, Position: {scrollRect.horizontalNormalizedPosition:F3}");
         }
         else if (!isHorizontalWheel)
         {
-            // Vertical wheel - check if Shift is held for horizontal scrolling
-            bool shouldScrollHorizontal = horizontalScrollWithShift && 
+            bool shouldScrollHorizontal = horizontalScrollWithShift &&
                                         (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
-            
+
             if (shouldScrollHorizontal && scrollRect.horizontal)
             {
-                // Vertical wheel + Shift = horizontal scroll
-                scrollRect.horizontalNormalizedPosition += scrollValue;
+                float normalizedDelta = pixelDelta / GetScrollRectWidth();
+                scrollRect.horizontalNormalizedPosition += normalizedDelta;
                 scrollRect.horizontalNormalizedPosition = Mathf.Clamp01(scrollRect.horizontalNormalizedPosition);
-                
-                Debug.Log($"[ScrollRectMouseWheel] Horizontal scroll (Shift+Wheel): {scrollValue:F3}, Position: {scrollRect.horizontalNormalizedPosition:F3}");
             }
             else if (scrollRect.vertical)
             {
-                // Normal vertical scrolling
-                scrollRect.verticalNormalizedPosition += scrollValue;
+                float normalizedDelta = pixelDelta / GetScrollRectHeight();
+                scrollRect.verticalNormalizedPosition += normalizedDelta;
                 scrollRect.verticalNormalizedPosition = Mathf.Clamp01(scrollRect.verticalNormalizedPosition);
-                
-                Debug.Log($"[ScrollRectMouseWheel] Vertical scroll: {scrollValue:F3}, Position: {scrollRect.verticalNormalizedPosition:F3}");
             }
         }
 

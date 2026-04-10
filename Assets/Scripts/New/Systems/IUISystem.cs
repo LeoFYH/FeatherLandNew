@@ -110,6 +110,7 @@ namespace BirdGame
         void ShowBuyConfirm(string price, Action onConfirm);
         void ShowExitConfirm();
         Canvas GetCanvas();
+        bool HasAnyPopupOpen();
         /// <summary>
         /// 获取当前Panel对象
         /// </summary>
@@ -241,6 +242,11 @@ namespace BirdGame
 
             // 仅播放关闭动画并销毁实例，不释放 Asset，便于再次打开时从缓存加载
             obj.OnHidePanel(null);
+        }
+
+        public bool HasAnyPopupOpen()
+        {
+            return popupDic.Count > 0;
         }
 
         public void HideAllPopups()

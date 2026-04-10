@@ -12,6 +12,7 @@ namespace BirdGame
 
     public class PeriodicCleanupSystem : AbstractSystem, IPeriodicCleanupSystem
     {
+        private static readonly WaitForSeconds _cleanupInterval = new WaitForSeconds(60f);
         private bool isRunning = false;
 
         private IObjectPoolSystem objectPoolSystem;
@@ -43,7 +44,7 @@ namespace BirdGame
             while (isRunning)
             {
                 // 每60秒执行一次轻度清理，减少卡顿
-                yield return new WaitForSeconds(60f);
+                yield return _cleanupInterval;
 
                 PerformCleanup();
             }

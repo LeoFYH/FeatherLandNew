@@ -8,6 +8,7 @@ namespace BirdGame
     public class BirdFlyDownState : StateBase
     {
         private Brid _brid;
+        private Sequence _flySeq; // Memory optimization: cache to kill on exit
 
         public BirdFlyDownState(StateMachine machine) : base(machine)
         {
@@ -24,16 +25,24 @@ namespace BirdGame
             _brid.anim.SetBool(AnimatorHashes.IsTakeOff, false);
             _brid.anim.Play(AnimatorHashes.FlyFromBranchAnim);
 
-            // 获取降落点
-            int area = Random.Range(3, 9);
+            // 获取降落点：鸟>20且扩展区域已开放时，70%概率优先落到 LeftArea/RightArea
+            int area;
+            if (NavigationManager.Instance.isExpend
+                && this.GetModel<IBirdModel>().BirdList.Count > 20
+                && Random.Range(0f, 1f) < 0.7f)
+            {
+                area = Random.Range(0, 2) == 0 ? 4 : 5;
+            }
+            else
+            {
+                area = Random.Range(3, 9);
+            }
             _brid.walkArea = area;
-            //Vector2 landingPoint = //GetLandingPoint();
             var target = NavigationManager.Instance.GetRandomTarget(area);
             while (target == Vector3.zero)
             {
                 area = Random.Range(3, 9);
                 _brid.walkArea = area;
-                //Vector2 landingPoint = //GetLandingPoint();
                 target = NavigationManager.Instance.GetRandomTarget(area);
             }
 
@@ -47,7 +56,8 @@ namespace BirdGame
             _brid.sr.flipX = target.x > _brid.transform.position.x;
             float distance = Vector3.Distance(target, _brid.transform.position);
             float time = distance / _brid.flySpeed;
-            DOTween.Sequence().AppendCallback(() =>
+            _flySeq?.Kill();
+            _flySeq = DOTween.Sequence().AppendCallback(() =>
             {
                 //_brid.transform.DOScale(_brid.AdultBirdSize, time).SetEase(Ease.Linear);
                 DOTween.To(v =>
@@ -117,6 +127,8 @@ namespace BirdGame
 
         public override void OnExit()
         {
+            _flySeq?.Kill();
+            _flySeq = null;
             // 退出飞行状态，恢复原始碰撞体
             _brid.AdjustColliderForFlying(false);
         }

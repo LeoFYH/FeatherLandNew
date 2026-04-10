@@ -63,6 +63,9 @@ namespace BirdGame
 
         private void Start()
         {
+            // CPU优化：注册到EggList，避免FindGameObjectsWithTag("Egg")
+            this.GetModel<IBirdModel>().EggList.Add(this);
+
             this.RegisterEvent<DestroyEggEvent>(evt =>
             {
                 Destroy(gameObject);
@@ -106,6 +109,9 @@ namespace BirdGame
 
         private void OnDestroy()
         {
+            // CPU优化：从EggList注销
+            this.GetModel<IBirdModel>().EggList.Remove(this);
+
             anim?.Kill();
             floatAnim?.Kill(); // 停止浮动动画
             

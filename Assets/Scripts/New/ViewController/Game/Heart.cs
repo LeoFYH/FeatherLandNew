@@ -20,22 +20,22 @@ namespace BirdGame
             transform.localRotation = Quaternion.identity;
             birdSr = transform.parent.parent.GetComponentInChildren<SpriteRenderer>();
             anim.Play("Heart");
-        }
 
-        private void Update()
-        {
-            // 同步鸟的翻转状态
+            // Memory optimization: sync flip state once on enable instead of every frame
             if (heartSr != null && birdSr != null)
             {
-                for(int i=0;i<heartSr.Length;i++)
+                for (int i = 0; i < heartSr.Length; i++)
                 {
                     heartSr[i].flipX = !birdSr.flipX;
                 }
                 float x = heartSr[0].transform.localPosition.x;
                 float y = heartSr[0].transform.localPosition.y;
-                heartSr[0].transform.localPosition = birdSr.flipX ? new Vector2(x,y):new Vector2(-x,y);
+                heartSr[0].transform.localPosition = birdSr.flipX ? new Vector2(x, y) : new Vector2(-x, y);
             }
-            
+        }
+
+        private void Update()
+        {
             // 计时器
             timer += Time.deltaTime;
             if (timer >= lifetime && !isRecycling)

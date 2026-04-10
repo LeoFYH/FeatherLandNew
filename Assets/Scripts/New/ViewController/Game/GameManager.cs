@@ -15,8 +15,13 @@ namespace BirdGame
         int _previousClickCount;
         bool _isAutoFeeding;
 
+        // Memory optimization: pre-allocate raycast buffer to avoid GC allocations
+        private static readonly RaycastHit2D[] _hitBuffer = new RaycastHit2D[16];
+        private Camera _cachedCamera;
+
         void Start()
         {
+            _cachedCamera = Camera.main;
             this.GetModel<IBirdModel>().FlyPositions = flyPositions;
             this.RegisterEvent<OnSettingCloseEvent>(evt =>
             {
@@ -28,6 +33,7 @@ namespace BirdGame
         {
             if (EventSystem.current.IsPointerOverGameObject()) return;
             if (this.GetSystem<IGameSystem>().IsPlacingDecoration()) return;
+            if (this.GetSystem<IUISystem>().HasAnyPopupOpen()) return;
 
             bool autoFeedingEnabled = this.GetModel<ISaveModel>().SettingData.autoFeeding;
             bool clicked = Input.GetMouseButtonDown(0) || SimpleMouseForwarder.clickCount > _previousClickCount;
@@ -68,13 +74,15 @@ namespace BirdGame
         {
             if (!clicked) return false;
 
-            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D[] hits = Physics2D.RaycastAll(mousePosition, Vector2.zero);
+            if (_cachedCamera == null) _cachedCamera = Camera.main;
+            Vector2 mousePosition = _cachedCamera.ScreenToWorldPoint(Input.mousePosition);
+            int hitCount = Physics2D.RaycastNonAlloc(mousePosition, Vector2.zero, _hitBuffer);
 
-            foreach (var hit in hits)
+            for (int i = 0; i < hitCount; i++)
             {
-                var handler = hit.collider.GetComponent<DecorationClickHandler>();
-                var hasDrag = hit.collider.GetComponent<DecorationDrag>() != null;
+                var collider = _hitBuffer[i].collider;
+                var handler = collider.GetComponent<DecorationClickHandler>();
+                var hasDrag = collider.GetComponent<DecorationDrag>() != null;
                 if (handler == null && !hasDrag) continue;
                 return true;
             }

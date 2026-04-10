@@ -35,7 +35,7 @@ namespace BirdGame
                 dirX = _brid.currFood.transform.position.x - _brid.transform.position.x;
             }
 
-            Debug.Log($"Direction: {dirX}");
+            // Debug.Log($"Direction: {dirX}");
             // 计算精确的吃食物位置（鸟嘴对齐食物的位置）
             eatPosition = _brid.currFood.transform.position + new Vector3(
                 dirX >= 0

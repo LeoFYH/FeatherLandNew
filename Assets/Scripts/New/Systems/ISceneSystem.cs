@@ -35,6 +35,8 @@ namespace BirdGame
             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>($"Scene{index}", obj =>
             {
                 HideCurrentScene();
+                // 卸载旧场景遗留的纹理/精灵等原生资源（异步，不阻塞主线程）
+                Resources.UnloadUnusedAssets();
                 currentScene = GameObject.Instantiate(obj);
                 sceneName = $"Scene{index}";
                 Debug.Log("场景加载完成");
