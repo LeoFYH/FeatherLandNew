@@ -96,6 +96,7 @@ namespace BirdGame
             {
                 this.GetSystem<ICursorSystem>().Feed();
                 this.GetSystem<IAudioSystem>().PlayEffect(EffectType.DropFood);
+                this.GetSystem<IAchievementSystem>().OnManualFeed();
 
                 this.GetSystem<IObjectPoolSystem>().Get("Food", null, obj =>
                 {

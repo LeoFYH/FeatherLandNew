@@ -38,6 +38,7 @@ namespace BirdGame
             this.RegisterSystem<ICursorSystem>(new CursorSystem());
             this.RegisterSystem<ILocalizationSystem>(new LocalizationSystem());
             this.RegisterSystem<ISteamSystem>(new SteamSystem());
+            this.RegisterSystem<IAchievementSystem>(new AchievementSystem());
 #if UNITY_STANDALONE_WIN
 
             this.RegisterSystem<IDesktopSystem>(new DesktopSystem());

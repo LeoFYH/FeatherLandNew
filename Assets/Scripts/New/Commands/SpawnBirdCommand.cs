@@ -72,6 +72,7 @@ namespace BirdGame
                 }
             }
             CheckIllustratedUpdate(val);
+            this.GetSystem<IAchievementSystem>().OnEggHatched();
             int eggtype = this.GetModel<IGameModel>().ShopEggSelectIndex.Value;
             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("OpenEggAnim", obj =>
             {
@@ -118,6 +119,7 @@ namespace BirdGame
                 GameObject go = GameObject.Instantiate(obj);
                 this.GetModel<IBirdModel>().AddBird(birdIndex, go.GetComponent<Brid>());
                 this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
+                this.GetSystem<IAchievementSystem>().CheckBirdSlotAchievements();
                 if (this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].eggList.Count > 0)
                     this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].eggList.RemoveAt(0);
                 var agent = go.GetComponent<NavMeshAgent>();
@@ -158,6 +160,7 @@ namespace BirdGame
                 saveModel.IllustratedData.birds.Add(birdIndex);
                 this.GetModel<IGameModel>().HasNewBirdIllustrated.Value = true;
                 this.GetSystem<ISteamSystem>().AddBirdUnlocked(birdIndex);
+                this.GetSystem<IAchievementSystem>().OnBirdSpeciesDiscovered(birdIndex);
             }
         }
 

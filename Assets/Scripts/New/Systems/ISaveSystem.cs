@@ -273,6 +273,7 @@ namespace BirdGame
             _saveModel.NoteData = GetData<NoteData>("NoteData");
             _saveModel.ScheduleData = GetData<ScheduleData>("ScheduleData");
             _saveModel.IllustratedData = GetData<IllustratedData>("IllustratedData");
+            _saveModel.AchievementData = GetData<AchievementData>("AchievementData");
 
             this.GetModel<IRadioModel>().Volume.Value = _saveModel.MusicSettingData.bgmVolume;
             this.GetModel<IRadioModel>().EnvironmentVolume.Value = _saveModel.MusicSettingData.environmentVolume;
@@ -305,6 +306,7 @@ namespace BirdGame
             SaveData("NoteData", _saveModel.NoteData);
             SaveData("ScheduleData", _saveModel.ScheduleData);
             SaveData("IllustratedData", _saveModel.IllustratedData);
+            SaveData("AchievementData", _saveModel.AchievementData);
         }
 
         public void DeleteSave()
@@ -344,7 +346,12 @@ namespace BirdGame
             {
                 File.Delete(path);
             }
-            
+            path = Application.persistentDataPath + "/GameData/AchievementData.save";
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+
             // 清空内存中的数据
             if (_saveModel != null)
             {
@@ -355,6 +362,7 @@ namespace BirdGame
                 _saveModel.NoteData = new NoteData();
                 _saveModel.ScheduleData = new ScheduleData();
                 _saveModel.IllustratedData = new IllustratedData();
+                _saveModel.AchievementData = new AchievementData();
             }
             
             // 清空鸟模型中的数据

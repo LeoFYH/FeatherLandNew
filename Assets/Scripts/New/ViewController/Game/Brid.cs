@@ -469,6 +469,7 @@ namespace BirdGame
                 {
                     //transform.DOScale(AdultBirdSize, 0.2f);
                     isSmall = false;
+                    this.GetSystem<IAchievementSystem>().OnBirdGrewToAdult();
                     // 立即同步状态到存档数据，确保 SaleBirdViewController 显示正确的状态
                     this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
                 }

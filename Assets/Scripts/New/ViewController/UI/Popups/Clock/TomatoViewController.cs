@@ -350,11 +350,8 @@ namespace BirdGame
             {
                 if (item.TimerCoroutine != null)
                 {
-                    int min = (int)(item.WorkTime / 60);
-                    if(min >= 5)
-                    {
-                        item.AddCoins =  (min - 4) * (this.GetModel<IAccountModel>().Coins.Value * 0.01f);
-                    }
+                    item.AddCoins = Mathf.Round(CalcTotalIdleRate() * (item.WorkTime / 60f) * 0.15f * 10f) / 10f;
+                    if (item.WorkTime < 300f) item.AddCoins = 0;
                     this.GetModel<IAccountModel>().Coins.Value += item.AddCoins;
                     this.GetModel<IAccountModel>().AddedCoins = item.AddCoins;
 
@@ -873,11 +870,8 @@ namespace BirdGame
                 }
             }
             
-            min = (int)(item.WorkTime / 60);
-            if(min >= 5)
-            {
-                item.AddCoins = (min - 4) * (this.GetModel<IAccountModel>().Coins.Value * 0.05f);
-            }
+            item.AddCoins = Mathf.Round(CalcTotalIdleRate() * (item.WorkTime / 60f) * 0.15f * 10f) / 10f;
+            if (item.WorkTime < 300f) item.AddCoins = 0;
             this.GetModel<IAccountModel>().Coins.Value += item.AddCoins;
             this.GetModel<IAccountModel>().AddedCoins = item.AddCoins;
 
@@ -891,11 +885,28 @@ namespace BirdGame
                 item.Number.Value = item.TotalNumber;
             }
             this.GetSystem<IMonoSystem>().SendEvent<TomatoOverEvent>();
+            this.GetSystem<IAchievementSystem>().OnPomodoroCompleted();
             this.GetModel<IClockModel>().TimerType = TimerType.None;
             this.GetSystem<IMonoSystem>().SendEvent(new ChangeTimeViewEvent()
             {
                 show = false
             });
+        }
+
+        private float CalcTotalIdleRate()
+        {
+            var saveModel = this.GetModel<ISaveModel>();
+            if (saveModel?.BirdInfoData?.mapBirds == null)
+                return 0f;
+            float total = 0f;
+            for (int i = 0; i < saveModel.BirdInfoData.mapBirds.Count; i++)
+            {
+                var list = saveModel.BirdInfoData.mapBirds[i].birdList;
+                if (list == null) continue;
+                foreach (var bird in list)
+                    total += bird.individualEarningBig;
+            }
+            return total;
         }
 
         private void OnToggleValueChanged(int index, bool isOn)

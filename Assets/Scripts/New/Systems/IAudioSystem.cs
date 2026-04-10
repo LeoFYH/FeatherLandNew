@@ -154,6 +154,7 @@ namespace BirdGame
             radioModel.SongName.Value =
                 this.GetModel<IConfigModel>().RadioConfig.musicItems[radioModel.SongIndex].songName;
             radioAudio.Play();
+            this.GetSystem<IAchievementSystem>().OnMusicPlayed();
             if (musicPlayingCoroutine != null)
                 this.GetSystem<IMonoSystem>().StopCoroutine(musicPlayingCoroutine);
             musicPlayingCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(CheckForSongEnd());

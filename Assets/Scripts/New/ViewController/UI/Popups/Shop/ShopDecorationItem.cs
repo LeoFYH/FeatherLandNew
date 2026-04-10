@@ -150,6 +150,7 @@ namespace BirdGame
                     // 使用找到的索引创建装饰物
                     this.GetSystem<IGameSystem>().CreateFixedDecoration(id, availableIndex);
                     decorationInfo.count++;
+                    this.GetSystem<IAchievementSystem>().OnDecorationBought();
 
                     // 获取位置
                     Vector3 pos = decorationItem.fixedPositions[availableIndex];

@@ -108,6 +108,7 @@ namespace BirdGame
                                 this.GetModel<IConfigModel>().MapConfig.maps[mapIndex].cost;
                             this.GetModel<IAccountModel>().Coins.Value = this.GetModel<ISaveModel>().AccountData.coins;
                             this.GetModel<ISaveModel>().BirdInfoData.mapBirds.Add(new MapBirdList());
+                            this.GetSystem<IAchievementSystem>().OnMapUnlocked(this.GetModel<ISaveModel>().BirdInfoData.mapBirds.Count);
                             this.GetSystem<ISaveSystem>().SaveData();
                             LoadMap();
                         });

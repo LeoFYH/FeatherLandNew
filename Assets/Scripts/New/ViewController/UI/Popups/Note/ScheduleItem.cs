@@ -83,6 +83,7 @@ namespace BirdGame
 
                 var data = this.GetModel<ISaveModel>().ScheduleData.scheduleList[scheduleIndex];
                 data.isCompleted = isOn;
+                this.GetSystem<IAchievementSystem>().OnTodoUsed();
                 // if (!data.isCompleted)
                 // {
                 //     // var sec = (DateTime.Now - data.StartTime).TotalSeconds;

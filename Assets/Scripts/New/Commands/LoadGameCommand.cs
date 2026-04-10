@@ -155,7 +155,10 @@ namespace BirdGame
             this.GetSystem<IBirdSystem>().GenerateBirdsFromSave();
                 
             this.GetSystem<IGameSystem>().CreateDecorations();
-            
+
+            // 成就系统启动检查
+            this.GetSystem<IAchievementSystem>().CheckStartupAchievements();
+
             // ✅ 修复：不再在加载时强制设置天气音量，而是从存档加载用户设置的环境音量
             // 环境音只在场景加载时（LoadGameCommand）或天气变化时（WeatherManager）才会同步
             // 这里的 InitEnvironments 会从 MusicSettingData.environmentVolumes 中读取用户保存的音量

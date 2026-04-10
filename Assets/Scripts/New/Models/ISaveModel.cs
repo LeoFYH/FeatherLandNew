@@ -14,6 +14,7 @@ namespace BirdGame
         NoteData NoteData { get; set; }
         ScheduleData ScheduleData { get; set; }
         IllustratedData IllustratedData { get; set; }
+        AchievementData AchievementData { get; set; }
     }
 
     public class SaveModel : AbstractModel, ISaveModel
@@ -30,6 +31,7 @@ namespace BirdGame
         public NoteData NoteData { get; set; }
         public ScheduleData ScheduleData { get; set; }
         public IllustratedData IllustratedData { get; set; }
+        public AchievementData AchievementData { get; set; }
     }
     
     [Serializable]
@@ -205,5 +207,20 @@ namespace BirdGame
         public string scheduleText;
         public DateTime StartTime = DateTime.Now;
         public bool isCompleted;
+    }
+
+    /// <summary>
+    /// 成就追踪数据
+    /// </summary>
+    [Serializable]
+    public class AchievementData : SavableData
+    {
+        public int totalEggsHatched = 0;
+        public int totalFeedCount = 0;
+        public float totalGoldEarned = 0f;
+        public int consecutiveLoginDays = 0;
+        public string lastLoginDate = "";
+        public int totalDecorationsBought = 0;
+        public List<string> unlockedAchievements = new List<string>();
     }
 }

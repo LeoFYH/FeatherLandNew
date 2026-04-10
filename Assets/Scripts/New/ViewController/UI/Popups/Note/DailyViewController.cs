@@ -56,6 +56,7 @@ namespace BirdGame
                 item.Init(index, group, background, OnCloseNote);
                 items.Add(item);
                 data.bookList.Add(new BookData());
+                this.GetSystem<IAchievementSystem>().OnDiaryCreated();
                 currentNoteIndex = index;
                 item.thisToggle.isOn = true;
                 noteInput.text = data.bookList[currentNoteIndex].noteText;
