@@ -6,7 +6,8 @@ namespace BirdGame
 {
     public interface IGameModel : IModel
     {
-        public BindableProperty<int> WeatherIndex { get; }
+        BindableProperty<bool> ViewUI { get; }
+        BindableProperty<int> WeatherIndex { get; }
         BindableProperty<int> ShopEggSelectIndex { get; }
         Dictionary<int, BindableProperty<int>> SelectedToolDic { get; }
         Coroutine StopWatchCoroutine { get; set; }
@@ -35,6 +36,7 @@ namespace BirdGame
             
         }
 
+        public BindableProperty<bool> ViewUI { get; } = new BindableProperty<bool>(true);
         public BindableProperty<int> WeatherIndex { get; } = new BindableProperty<int>();
         public BindableProperty<int> ShopEggSelectIndex { get; } = new BindableProperty<int>();
 

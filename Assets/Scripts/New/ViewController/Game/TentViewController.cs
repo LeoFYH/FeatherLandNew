@@ -16,6 +16,7 @@ namespace BirdGame
         public TextMeshProUGUI waitingText;
         public Image progressFill;
         public Button finishedButton;
+        public GameObject uiCanvas;
 
         private IGameModel gameModel;
         
@@ -43,6 +44,11 @@ namespace BirdGame
                 //this.GetSystem<IUISystem>().ShowPopup(UIPopup.HatchingBirdPopup);
                 CreateEgg();
             });
+            uiCanvas.SetActive(this.GetModel<IGameModel>().ViewUI.Value);
+            gameModel.ViewUI.Register(v =>
+            {
+                uiCanvas.SetActive(v);
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
         }
 
           private void CreateEgg()

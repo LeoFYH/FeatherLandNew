@@ -336,9 +336,11 @@ namespace BirdGame
             if (!viewGroup.activeSelf)
                 viewGroup.gameObject.SetActive(true);
             viewToggle.isOn = true;
+            this.GetModel<IGameModel>().ViewUI.Value = true;
             
             viewToggle.onValueChanged.AddListener(isOn =>
             {
+                this.GetModel<IGameModel>().ViewUI.Value = isOn;
                 viewGroup.SetActive(isOn);
             });
             
