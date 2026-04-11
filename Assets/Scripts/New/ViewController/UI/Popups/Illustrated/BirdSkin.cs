@@ -25,6 +25,10 @@ namespace BirdGame
             {
                 icon.color = Color.black;
             }
+            else
+            {
+                icon.color = Color.white;
+            }
 
             float scale = 50f / sp.rect.height;
             icon.GetComponent<RectTransform>().sizeDelta = new Vector2(sp.rect.width, sp.rect.height) * scale;

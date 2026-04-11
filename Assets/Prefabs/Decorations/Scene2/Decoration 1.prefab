@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 345647327506789621}
   - component: {fileID: 1706029302268114749}
   - component: {fileID: 2268215730134491352}
+  - component: {fileID: 1248985808817445462}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Decoration
@@ -318,6 +319,48 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enableHookSupport: 1
+--- !u!114 &1248985808817445462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2221285016626137168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScaleOn: 0
+  hoverScale: 1
+  animTime: 0
+  useRectTransform: 0
+  detectionRange: 1
+  autoAdjustDetectionRange: 1
+  showDebugInfo: 0
+  localizationKey: Right Click To Delete
+  useLocalization: 1
+  checkUIRaycast: 1
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onMouseExit:
+    m_PersistentCalls:
+      m_Calls: []
+  textOffset: {x: 0, y: 50}
+  showDelay: 0.5
+  showTooltip: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 20
+  fontStyle: 0
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
+  backgroundPadding: {x: 10, y: 5}
+  cornerRadius: 10
+  isHovering: 0
 --- !u!1 &4463724722352328304
 GameObject:
   m_ObjectHideFlags: 0
@@ -329,7 +372,6 @@ GameObject:
   - component: {fileID: 8791585927301527705}
   - component: {fileID: 3260257077749394965}
   - component: {fileID: 1941383745310756757}
-  - component: {fileID: 489489841158258131}
   m_Layer: 0
   m_Name: Decoration 1
   m_TagString: Untagged
@@ -392,48 +434,6 @@ MonoBehaviour:
   - serializedVersion: 2
     rgba: 4291348680
   sr: {fileID: 7335666988186969635}
---- !u!114 &489489841158258131
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4463724722352328304}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d38a6604dd219c4a9762dc717af16e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isScaleOn: 0
-  hoverScale: 1.1
-  animTime: 0.1
-  useRectTransform: 0
-  detectionRange: 1
-  autoAdjustDetectionRange: 1
-  showDebugInfo: 0
-  localizationKey: OnlyDeleteHint
-  useLocalization: 1
-  checkUIRaycast: 1
-  onClick:
-    m_PersistentCalls:
-      m_Calls: []
-  onMouseEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  onMouseExit:
-    m_PersistentCalls:
-      m_Calls: []
-  textOffset: {x: 0, y: 50}
-  showDelay: 0.5
-  showTooltip: 1
-  textColor: {r: 1, g: 1, b: 1, a: 1}
-  fontSize: 20
-  fontStyle: 0
-  showBackground: 1
-  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8}
-  backgroundPadding: {x: 10, y: 5}
-  cornerRadius: 10
-  isHovering: 0
 --- !u!1 &5899726503973276853
 GameObject:
   m_ObjectHideFlags: 0
