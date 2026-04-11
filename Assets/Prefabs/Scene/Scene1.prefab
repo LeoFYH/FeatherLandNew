@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_OverrideArea: 1
-  m_Area: 8
+  m_Area: 1
   m_IgnoreFromBuild: 0
   m_AffectedAgents: 00000000
 --- !u!60 &5878926639595841841
@@ -801,7 +801,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_OverrideArea: 1
-  m_Area: 8
+  m_Area: 1
   m_IgnoreFromBuild: 0
   m_AffectedAgents: 00000000
 --- !u!60 &544527584945466531
@@ -1512,7 +1512,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_OverrideArea: 1
-  m_Area: 8
+  m_Area: 10
   m_IgnoreFromBuild: 0
   m_AffectedAgents: 00000000
 --- !u!60 &8151819902121633552
@@ -3368,8 +3368,8 @@ MonoBehaviour:
     onWeatherExit:
       m_PersistentCalls:
         m_Calls: []
-  uiGroup: {fileID: 0}
   others: []
+  uiGroup: {fileID: 0}
 --- !u!1 &4594954186482499827
 GameObject:
   m_ObjectHideFlags: 0
