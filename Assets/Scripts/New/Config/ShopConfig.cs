@@ -78,7 +78,7 @@ namespace BirdGame
         [HideInInspector]
         public List<SceneEgg> sceneEggs = new List<SceneEgg>();
         
-        [HideInInspector]
+        [TableList(ShowIndexLabels = true)]
         public List<SceneDecoration> sceneDecorations = new List<SceneDecoration>();
         [TableList(ShowIndexLabels = true), BoxGroup("工具配置")]
         public ToolItem[] tools;
