@@ -87,18 +87,14 @@ namespace BirdGame
             _foodCheckSeq?.Kill();
             _foodCheckSeq = DOTween.Sequence().AppendCallback(() =>
             {
-                if (_brid.walkArea == 3)
+                if (_brid.walkArea == 3 && _brid.isSmall)
                 {
                     Food food;
                     if (this.GetSystem<IGameSystem>().TryGetUntargetedFood(_brid.transform.position, out food))
                     {
-                        // int random = Random.Range(1, 10);
-                        // if(random == 1) // 10个数中随机到1时去吃食物
-                        // {
                         _brid.currFood = food;
                         food.isTargeted = true;
                         currMachine.ChangeState<BirdEatState>();
-                        //}
                     }
                 }
             }).SetDelay(time * 0.5f);

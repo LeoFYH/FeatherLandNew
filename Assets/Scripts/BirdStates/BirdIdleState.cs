@@ -79,22 +79,16 @@ namespace BirdGame
                 }
             }
 
-            if (_brid.walkArea == 3)
+            if (_brid.walkArea == 3 && _brid.isSmall)
             {
                 if (_brid.currFood == null)
                 {
                     Food food;
                     if (this.GetSystem<IGameSystem>().TryGetUntargetedFood(_brid.transform.position, out food))
                     {
-                        // if(random == 1) // 10个数中随机到1时去吃食物
-                        // {
                         _brid.currFood = food;
                         food.isTargeted = true;
-                        if(_brid.isSmall)
-                            currMachine.ChangeState<BirdEatState>();
-                        else
-                            currMachine.ChangeState<BirdRunState>();
-                        //}
+                        currMachine.ChangeState<BirdEatState>();
                     }
                 }
             }
