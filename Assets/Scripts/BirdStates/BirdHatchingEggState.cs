@@ -30,6 +30,18 @@ namespace BirdGame
                 return;
             }
             
+            // 灭绝鸟不能进帐篷孵蛋
+            {
+                int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+                int currentBirdType = this.GetModel<IBirdModel>().BirdList[_brid.birdIndex].birdType;
+                var birdItem = this.GetModel<IConfigModel>().BirdConfig.GetBird(currentBirdType, mapIndex);
+                if (birdItem != null && birdItem.reality == "Extinct")
+                {
+                    DONext();
+                    return;
+                }
+            }
+            
             // 检查品种：如果帐篷里已经有一只鸟，检查是否同种（同种不同配色可交配）
             if (this.GetModel<IGameModel>().HatchingBirds.Count == 1)
             {
