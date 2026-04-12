@@ -412,7 +412,7 @@ MonoBehaviour:
   environments:
   - songName: Wind
     songFile:
-      m_AssetGUID: 148faed9fa3404242ae01b752f0b0429
+      m_AssetGUID: ab032ca6b3da548c184211904285d0bb
       m_SubObjectName: 
       m_SubObjectType: 
       m_SubObjectGUID: 
@@ -421,7 +421,7 @@ MonoBehaviour:
     group: {fileID: -636879658415386977, guid: 5c4d4607342bae344bcb79f16a7989ee, type: 2}
   - songName: Bird
     songFile:
-      m_AssetGUID: a9ad77a7065e7f04e96a5ec5e021d6e3
+      m_AssetGUID: 01b012454b8084decbe0c15902c8fe6a
       m_SubObjectName: 
       m_SubObjectType: 
       m_SubObjectGUID: 
@@ -430,7 +430,7 @@ MonoBehaviour:
     group: {fileID: 2498484835543004518, guid: 5c4d4607342bae344bcb79f16a7989ee, type: 2}
   - songName: Rain
     songFile:
-      m_AssetGUID: f9075b3628c2ba64eb54a3f513363439
+      m_AssetGUID: 7e7fcd5887bae43b39682ee03352a5c8
       m_SubObjectName: 
       m_SubObjectType: 
       m_SubObjectGUID: 
@@ -446,15 +446,15 @@ MonoBehaviour:
       m_EditorAssetChanged: 1
     key: Fire
     group: {fileID: -1384535718090708420, guid: 5c4d4607342bae344bcb79f16a7989ee, type: 2}
-  - songName: Lightning
+  - songName: Insect
     songFile:
       m_AssetGUID: 870a848713fff684da7831ef66ba5805
       m_SubObjectName: 
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 1
-    key: Lightning
-    group: {fileID: 0}
+    key: Insect
+    group: {fileID: -2452007092262678614, guid: 5c4d4607342bae344bcb79f16a7989ee, type: 2}
   - songName: River
     songFile:
       m_AssetGUID: 3fe6fbb04ab1d2844bdfb6204adbcfa2
@@ -464,15 +464,6 @@ MonoBehaviour:
       m_EditorAssetChanged: 1
     key: River
     group: {fileID: -5116879920257595370, guid: 5c4d4607342bae344bcb79f16a7989ee, type: 2}
-  - songName: Snow
-    songFile:
-      m_AssetGUID: 870a848713fff684da7831ef66ba5805
-      m_SubObjectName: 
-      m_SubObjectType: 
-      m_SubObjectGUID: 
-      m_EditorAssetChanged: 1
-    key: Lightning
-    group: {fileID: 0}
   effects:
   - songName: Click
     songFile:
@@ -527,7 +518,7 @@ MonoBehaviour:
       m_SubObjectGUID: 
       m_EditorAssetChanged: 1
     key: Hover
-    group: {fileID: 0}
+    group: {fileID: 6919890029264680565, guid: be329ccde3afcd34485b5a4af5c16ee3, type: 2}
   alertClips:
   - songName: Recorder
     songFile:
