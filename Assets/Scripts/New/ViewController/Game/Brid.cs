@@ -127,6 +127,8 @@ namespace BirdGame
         public bool isDesktopBird;
         private GameObject heart;
         private int weatherIndex = 0;
+        [ShowInInspector, ReadOnly]
+        private BirdBodyType bodyType = BirdBodyType.Small;
 
         void Start()
         {
@@ -139,8 +141,7 @@ namespace BirdGame
                 ani.Append(sr.DOColor(Color.black, 0.5f));
                 ani.Append(sr.DOColor(Color.white, 0.5f));
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
-            
-            
+            InitBodyType();
             lineRenderer.startColor = new Color(0, 1, 0, 0); // 绿色，透明度为0
             lineRenderer.endColor = new Color(0, 1, 0, 0); // 绿色，透明度为0
             // Initialize walkable area and basic components
@@ -233,6 +234,23 @@ namespace BirdGame
 
             animScale = isSmall ? BabyBirdSize : AdultBirdSize;
             //transform.localScale = Vector3.one * BabyBirdSize;
+        }
+
+        private void InitBodyType()
+        {
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            var birdType = this.GetModel<IBirdModel>().BirdList[birdIndex].birdType;
+            foreach (var birdClass in this.GetModel<IConfigModel>().BirdConfig.sceneBirds[mapIndex].birdClasses)
+            {
+                foreach (var bird in birdClass.birds)
+                {
+                    if (bird.id == birdType)
+                    {
+                        bodyType = birdClass.type;
+                        return;
+                    }
+                }
+            }
         }
 
         public void OnMouseEnter()
@@ -340,10 +358,11 @@ namespace BirdGame
                                     _stateMachine.ChangeState<BirdIdleState>();
                                 }
 
-                                this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Stroke);
+                                //this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Stroke);
                                 this.GetSystem<IAudioSystem>().PlayBirdEffect(index);
                                 anim.SetTrigger(AnimatorHashes.StrokeTrigger);
-                                this.GetSystem<IAudioSystem>().RandomPlayPetting();
+                                InitBodyType();
+                                this.GetSystem<IAudioSystem>().RandomPlayPetting(bodyType);
                                 // 使用对象池获取心形特效
                                 if (heart != null && heart.activeSelf)
                                 {

@@ -14,7 +14,6 @@ namespace BirdGame
     {
         Click,
         DropFood,
-        Stroke,
         GrowUp,
         Buy,
         Hatch,
@@ -71,7 +70,7 @@ namespace BirdGame
         /// <param name="useFade">是否使用淡入淡出效果，默认为true</param>
         void SetEnvironmentVolumesByWeather(int weatherIndex, bool useFade = true);
 
-        void RandomPlayPetting();
+        void RandomPlayPetting(BirdBodyType type);
     }
 
     public class AudioSystem : AbstractSystem, IAudioSystem
@@ -287,21 +286,18 @@ namespace BirdGame
                     clip = this.GetModel<IConfigModel>().RadioConfig.effects[1].songFile;
                     group = this.GetModel<IConfigModel>().RadioConfig.effects[1].group;
                     break;
-                case EffectType.Stroke:
+                
+                case EffectType.GrowUp:
                     clip = this.GetModel<IConfigModel>().RadioConfig.effects[2].songFile;
                     group = this.GetModel<IConfigModel>().RadioConfig.effects[2].group;
                     break;
-                case EffectType.GrowUp:
+                case EffectType.Buy:
                     clip = this.GetModel<IConfigModel>().RadioConfig.effects[3].songFile;
                     group = this.GetModel<IConfigModel>().RadioConfig.effects[3].group;
                     break;
-                case EffectType.Buy:
+                case EffectType.Hatch:
                     clip = this.GetModel<IConfigModel>().RadioConfig.effects[4].songFile;
                     group = this.GetModel<IConfigModel>().RadioConfig.effects[4].group;
-                    break;
-                case EffectType.Hatch:
-                    clip = this.GetModel<IConfigModel>().RadioConfig.effects[5].songFile;
-                    group = this.GetModel<IConfigModel>().RadioConfig.effects[5].group;
                     break;
                 // case EffectType.Hover:
                 //     clip = this.GetModel<IConfigModel>().RadioConfig.effects[6].songFile;
@@ -679,10 +675,23 @@ namespace BirdGame
             }
         }
 
-        public void RandomPlayPetting()
+        public void RandomPlayPetting(BirdBodyType type)
         {
             var config = this.GetModel<IConfigModel>().RadioConfig;
-            int index = Random.Range(0, config.pettingClips.Length);
+            int index = 0;
+            if (type == BirdBodyType.Small)
+            {
+                index = Random.Range(0, 3);
+            }
+            // else if (type == BirdBodyType.Middle)
+            // {
+            //     index = Random.Range(3, config.pettingClips.Length);
+            // }
+            else if(type == BirdBodyType.Big)
+            {
+                index = Random.Range(3, config.pettingClips.Length);
+            }
+
             this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(config.pettingClips[index].songFile.AssetGUID, clip =>
             {
                 pettingAudio.clip = clip;

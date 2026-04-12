@@ -154,6 +154,13 @@ namespace BirdGame
         public BirdClassItem[] birdClasses;
     }
 
+    public enum BirdBodyType
+    {
+        Small,
+        //Middle,
+        Big,
+    }
+
     [Serializable]
     public class BirdClassItem
     {
@@ -161,9 +168,10 @@ namespace BirdGame
         public string birdName;
         [LabelText("是否显示"), VerticalGroup("Info")]
         public bool canView= true;
+        [LabelText("体型"), VerticalGroup("Info")]
+        public BirdBodyType type = BirdBodyType.Big;
         [OdinSerialize, TableList(ShowIndexLabels = true), VerticalGroup("Info")]
         public List<BirdItem> birds = new List<BirdItem>();
-        
         [LabelText("选择的鸟"), ValueDropdown("GetBirdList"), BoxGroup("Info/标准信息设置"), ShowInInspector]
         private int birdIndex;
         [Button("同步"), BoxGroup("Info/标准信息设置")]
@@ -195,9 +203,7 @@ namespace BirdGame
                 birds[i].clickEarningForFiveTimes = conf.clickEarningForFiveTimes;
             }
         }
-
-       
-
+        
         private ValueDropdownList<int> GetBirdList()
         {
             var list = new ValueDropdownList<int>();
