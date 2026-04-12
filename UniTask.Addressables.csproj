@@ -852,20 +852,11 @@
     <Reference Include="System.Xml.XPath.XDocument">
       <HintPath>E:\WorkSoftwares\Unity\6000.0.58f2\Editor\Data\UnityReferenceAssemblies\unity-4.8-api\Facades\System.Xml.XPath.XDocument.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.ResourceManager">
-      <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.ResourceManager.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Addressables">
-      <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.Addressables.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Profiling.Core">
-      <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.Profiling.Core.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.TestRunner">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\UnityEditor.TestRunner.dll</HintPath>
@@ -878,6 +869,18 @@
     <ProjectReference Include="UniTask.csproj">
       <Project>{284f92be-a5cf-41c4-cfdb-57c4f72929df}</Project>
       <Name>UniTask</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.ResourceManager.csproj">
+      <Project>{5a27baee-4b8d-2b2f-5a64-01a7f6650652}</Project>
+      <Name>Unity.ResourceManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.Addressables.csproj">
+      <Project>{6f93f8ad-e050-05ae-19c7-9adcfed61603}</Project>
+      <Name>Unity.Addressables</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.Profiling.Core.csproj">
+      <Project>{0fc43273-0a1d-46d4-1383-ccb34e338e7f}</Project>
+      <Name>Unity.Profiling.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

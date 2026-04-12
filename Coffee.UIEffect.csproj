@@ -901,9 +901,6 @@
     <Reference Include="Unity.TextMeshPro">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.TextMeshPro.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Timeline">
-      <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.Timeline.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
     </Reference>
@@ -912,6 +909,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="Unity.Timeline.csproj">
+      <Project>{24ee0643-b911-d6d7-2132-c73fcdf35605}</Project>
+      <Name>Unity.Timeline</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

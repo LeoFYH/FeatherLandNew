@@ -861,20 +861,11 @@
     <Reference Include="System.Xml.XPath.XDocument">
       <HintPath>E:\WorkSoftwares\Unity\6000.0.58f2\Editor\Data\UnityReferenceAssemblies\unity-4.8-api\Facades\System.Xml.XPath.XDocument.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Addressables">
-      <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.Addressables.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Addressables.Editor">
-      <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.Addressables.Editor.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Profiling.Core">
-      <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.Profiling.Core.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.TestRunner">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\UnityEditor.TestRunner.dll</HintPath>
@@ -884,6 +875,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="Unity.Addressables.csproj">
+      <Project>{6f93f8ad-e050-05ae-19c7-9adcfed61603}</Project>
+      <Name>Unity.Addressables</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.Addressables.Editor.csproj">
+      <Project>{f8258853-3503-be27-4089-6d4b7900ffe8}</Project>
+      <Name>Unity.Addressables.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.Profiling.Core.csproj">
+      <Project>{0fc43273-0a1d-46d4-1383-ccb34e338e7f}</Project>
+      <Name>Unity.Profiling.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

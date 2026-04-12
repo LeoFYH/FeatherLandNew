@@ -859,9 +859,6 @@
     <Reference Include="System.Xml.XPath.XDocument">
       <HintPath>E:\WorkSoftwares\Unity\6000.0.58f2\Editor\Data\UnityReferenceAssemblies\unity-4.8-api\Facades\System.Xml.XPath.XDocument.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Mathematics">
-      <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\Unity.Mathematics.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>F:\WorkSpace\Unity_Projects\Outsourcing1\FeatherLandNew\Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
     </Reference>
@@ -876,6 +873,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="Unity.Mathematics.csproj">
+      <Project>{41b5ce05-ed43-12fd-759f-f80e4c065c28}</Project>
+      <Name>Unity.Mathematics</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
