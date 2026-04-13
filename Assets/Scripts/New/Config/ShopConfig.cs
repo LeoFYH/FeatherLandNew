@@ -20,6 +20,7 @@ namespace BirdGame
         [ShowInInspector, BoxGroup("场景商店配置"), Title("饰品配置"), HideLabel]
         private SceneDecoration currentDecoration = null;
 
+#if UNITY_EDITOR
         [OnInspectorInit]
         private void OnInit()
         {
@@ -61,6 +62,7 @@ namespace BirdGame
 
             currentDecoration = sceneDecorations[sceneIndex];
         }
+#endif
 
         public int MapIndex()
         {
