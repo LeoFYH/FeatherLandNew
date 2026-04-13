@@ -359,7 +359,8 @@ namespace BirdGame
                                 //this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Stroke);
                                 //this.GetSystem<IAudioSystem>().PlayBirdEffect(index);
                                 anim.SetTrigger(AnimatorHashes.StrokeTrigger);
-                                this.GetSystem<IAudioSystem>().RandomPlayPetting();
+                                var bodyType = this.GetModel<IConfigModel>().BirdConfig.GetBirdBodyType(index, mapIndex);
+                                this.GetSystem<IAudioSystem>().RandomPlayPetting(bodyType);
                                 // 使用对象池获取心形特效
                                 if (heart != null && heart.activeSelf)
                                 {

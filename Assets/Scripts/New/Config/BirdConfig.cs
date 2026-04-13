@@ -130,6 +130,19 @@ namespace BirdGame
             return null;
         }
 
+        public BirdBodyType GetBirdBodyType(int birdId, int mapIndex)
+        {
+            for (int i = 0; i < sceneBirds[mapIndex].birdClasses.Length; i++)
+            {
+                foreach (var bird in sceneBirds[mapIndex].birdClasses[i].birds)
+                {
+                    if (bird != null && bird.id == birdId)
+                        return sceneBirds[mapIndex].birdClasses[i].type;
+                }
+            }
+            return BirdBodyType.Big;
+        }
+
         public BirdItem GetBird(int birdId, int mapIndex, out int classIndex)
         {
             for (int i = 0; i < sceneBirds[mapIndex].birdClasses.Length; i++)
@@ -178,6 +191,13 @@ namespace BirdGame
         public BirdClassItem[] birdClasses;
     }
 
+    public enum BirdBodyType
+    {
+        Small,
+        //Middle,
+        Big,
+    }
+
     [Serializable]
     public class BirdClassItem
     {
@@ -185,6 +205,8 @@ namespace BirdGame
         public string birdName;
         [LabelText("是否显示"), VerticalGroup("Info")]
         public bool canView= true;
+        [LabelText("体型"), VerticalGroup("Info")]
+        public BirdBodyType type = BirdBodyType.Big;
         [OdinSerialize, TableList(ShowIndexLabels = true), VerticalGroup("Info")]
         public List<BirdItem> birds = new List<BirdItem>();
         

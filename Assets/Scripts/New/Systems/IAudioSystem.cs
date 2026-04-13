@@ -14,7 +14,6 @@ namespace BirdGame
     {
         Click,
         DropFood,
-        Stroke,
         GrowUp,
         Buy,
         Hatch,
@@ -71,7 +70,7 @@ namespace BirdGame
         /// <param name="useFade">是否使用淡入淡出效果，默认为true</param>
         void SetEnvironmentVolumesByWeather(int weatherIndex, bool useFade = true);
 
-        void RandomPlayPetting();
+        void RandomPlayPetting(BirdBodyType type);
         void RefreshMasterVolume();
     }
 
@@ -285,21 +284,17 @@ namespace BirdGame
                     clip = this.GetModel<IConfigModel>().RadioConfig.effects[1].songFile;
                     group = this.GetModel<IConfigModel>().RadioConfig.effects[1].group;
                     break;
-                case EffectType.Stroke:
+                case EffectType.GrowUp:
                     clip = this.GetModel<IConfigModel>().RadioConfig.effects[2].songFile;
                     group = this.GetModel<IConfigModel>().RadioConfig.effects[2].group;
                     break;
-                case EffectType.GrowUp:
+                case EffectType.Buy:
                     clip = this.GetModel<IConfigModel>().RadioConfig.effects[3].songFile;
                     group = this.GetModel<IConfigModel>().RadioConfig.effects[3].group;
                     break;
-                case EffectType.Buy:
+                case EffectType.Hatch:
                     clip = this.GetModel<IConfigModel>().RadioConfig.effects[4].songFile;
                     group = this.GetModel<IConfigModel>().RadioConfig.effects[4].group;
-                    break;
-                case EffectType.Hatch:
-                    clip = this.GetModel<IConfigModel>().RadioConfig.effects[5].songFile;
-                    group = this.GetModel<IConfigModel>().RadioConfig.effects[5].group;
                     break;
                 // case EffectType.Hover:
                 //     clip = this.GetModel<IConfigModel>().RadioConfig.effects[6].songFile;
@@ -398,6 +393,7 @@ namespace BirdGame
                             ? musicSetting.tomatoAlertVolume
                             : clockModel.TimerItem.AudioVolume.Value;
                         alertAudio.clip = clip;
+                        alertAudio.outputAudioMixerGroup = this.GetModel<IConfigModel>().RadioConfig.alertClips[clockModel.TimerItem.AudioSelected.Value].group;
                         alertAudio.volume = alertVolume * GetMasterVolume();
                         alertAudio.Play();
                     });
@@ -415,6 +411,7 @@ namespace BirdGame
                             ? musicSetting.tomatoAlertVolume
                             : clockModel.TomatoItem.AudioVolume.Value;
                         alertAudio.clip = clip;
+                        alertAudio.outputAudioMixerGroup = this.GetModel<IConfigModel>().RadioConfig.alertClips[clockModel.TomatoItem.AudioSelected.Value].group;
                         alertAudio.volume = tomatoAlertVolume * GetMasterVolume();
                         alertAudio.Play();
                     });
@@ -684,7 +681,7 @@ namespace BirdGame
             }
         }
 
-        public void RandomPlayPetting()
+        public void RandomPlayPetting(BirdBodyType type)
         {
             var musicSetting = this.GetModel<ISaveModel>().MusicSettingData;
             float birdVolume = musicSetting.birdVolumeConfigured
@@ -693,11 +690,21 @@ namespace BirdGame
             if (birdVolume <= 0f) return;
 
             var config = this.GetModel<IConfigModel>().RadioConfig;
-            int index = Random.Range(0, config.pettingClips.Length);
-            this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(config.pettingClips[index].AssetGUID, clip =>
+            int index = 0;
+            if (type == BirdBodyType.Small)
+            {
+                index = Random.Range(0, 3);
+            }
+            else if (type == BirdBodyType.Big)
+            {
+                index = Random.Range(3, config.pettingClips.Length);
+            }
+
+            this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(config.pettingClips[index].songFile.AssetGUID, clip =>
             {
                 pettingAudio.clip = clip;
-                pettingAudio.volume = birdVolume * 0.6f * GetMasterVolume();
+                pettingAudio.outputAudioMixerGroup = config.pettingClips[index].group;
+                pettingAudio.volume = birdVolume * 1.00f * GetMasterVolume();
                 pettingAudio.Play();
             });
         }
@@ -715,7 +722,7 @@ namespace BirdGame
             }
 
             float birdVolume = saveModel.birdVolumeConfigured ? saveModel.birdVolume : saveModel.birdVolume;
-            pettingAudio.volume = birdVolume * 0.6f * masterVolume;
+            pettingAudio.volume = birdVolume * 2.00f * masterVolume;
             birdAudio.volume = masterVolume;
 
             foreach (var effectAudio in effectAudios)

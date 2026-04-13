@@ -15,7 +15,7 @@ namespace BirdGame
             if (!musicSetting.birdVolumeConfigured)
             {
                 // 首次进入使用独立默认值，而不是跟随 effectVolume
-                musicSetting.birdVolume = 0.3f;
+                musicSetting.birdVolume = 0.5f;
             }
 
             birdSlider.value = musicSetting.birdVolume;

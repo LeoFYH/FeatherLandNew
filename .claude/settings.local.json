@@ -24,7 +24,9 @@
       "Skill(update-config)",
       "Bash(xargs -I {} bash -c \"ls -lh '{}'\")",
       "Bash(ls:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(del \"E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew\\\\.git\\\\index.lock\")",
+      "Bash(wmic process:*)"
     ]
   }
 }
