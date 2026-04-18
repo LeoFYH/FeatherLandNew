@@ -108,22 +108,22 @@ namespace BirdGame
                 }
                 SwitchScreenMode(defaultScreenMode);
                 
-                // // 清空鸟模型中的数据
-                // var birdModel = this.GetModel<IBirdModel>();
-                // if (birdModel != null)
-                // {
-                //     // 清理所有鸟的监听器
-                //     this.GetSystem<IBirdSystem>().CleanupAllListeners();
-                //     foreach (var birdItem in birdModel.BirdList)
-                //     {
-                //         GameObject.Destroy(birdItem.bird.gameObject);
-                //     }
-                //     // 清空鸟列表
-                //     birdModel.BirdList.Clear();
-                //     birdModel.UnopenEggs = 0;
-                //     
-                //     Debug.Log("鸟模型数据已清空！");
-                // }
+                // 清空鸟模型中的数据
+                var birdModel = this.GetModel<IBirdModel>();
+                if (birdModel != null)
+                {
+                    // 清理所有鸟的监听器
+                    this.GetSystem<IBirdSystem>().CleanupAllListeners();
+                    foreach (var birdItem in birdModel.BirdList)
+                    {
+                        GameObject.Destroy(birdItem.bird.gameObject);
+                    }
+                    // 清空鸟列表
+                    birdModel.BirdList.Clear();
+                    birdModel.UnopenEggs = 0;
+                    
+                    Debug.Log("鸟模型数据已清空！");
+                }
 
                 
                 this.SendCommand(new LoadMapCommand(0));

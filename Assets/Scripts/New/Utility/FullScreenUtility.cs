@@ -790,6 +790,9 @@ namespace BirdGame
 
         public void FullscreenMode()
         {
+#if !UNITY_EDITOR_64
+            
+
             InitializeWindowHandle();
 
              // Reset wallpaper mode flag if coming from wallpaper mode
@@ -836,10 +839,14 @@ namespace BirdGame
             
             // Activate window and set focus
             ActivateWindow();
+#endif
         }
 
         public void WindowedMode()
         {
+#if !UNITY_EDITOR_64
+            
+
             InitializeWindowHandle();
              // Reset wallpaper mode flag if coming from wallpaper mode
             if (isWallpaperMode)
@@ -900,6 +907,7 @@ namespace BirdGame
             
             // Activate window and set focus
             ActivateWindow();
+#endif
         }
 
         public bool IsWallpaperModeActive() => isWallpaperMode;

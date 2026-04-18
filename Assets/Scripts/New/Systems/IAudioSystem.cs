@@ -695,9 +695,13 @@ namespace BirdGame
             {
                 index = Random.Range(0, 3);
             }
+            else if (type == BirdBodyType.Middle)
+            {
+                index = Random.Range(3, 6);
+            }
             else if (type == BirdBodyType.Big)
             {
-                index = Random.Range(3, config.pettingClips.Length);
+                index = Random.Range(6, config.pettingClips.Length);
             }
 
             this.GetSystem<IAssetSystem>().LoadAssetAsync<AudioClip>(config.pettingClips[index].songFile.AssetGUID, clip =>
