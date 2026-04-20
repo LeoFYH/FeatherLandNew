@@ -64,9 +64,9 @@ namespace BirdGame
         void InitEnvironments();
         
         /// <summary>
-        /// 根据天气索引设置环境音音量
+        /// 根据当前场景（currentMap）与天气索引设置环境音音量，按内置 (场景×天气) 查表。
         /// </summary>
-        /// <param name="weatherIndex">天气索引：0=晴天, 1=雨天, 2=夜晚, 3=黄昏, 4=其他</param>
+        /// <param name="weatherIndex">天气索引：0=晴天(白天), 1=雨天(下雨), 2=夜晚, 3=日出(落日), 4=阴天(雾天)</param>
         /// <param name="useFade">是否使用淡入淡出效果，默认为true</param>
         void SetEnvironmentVolumesByWeather(int weatherIndex, bool useFade = true);
 
@@ -88,6 +88,77 @@ namespace BirdGame
         private Coroutine musicPlayingCoroutine = null;
         private Dictionary<int, Coroutine> environmentFadeCoroutines = new Dictionary<int, Coroutine>();
         private const float FADE_DURATION = 1.0f; // 淡入淡出持续时间（秒）
+
+        // 场景 × 天气 → 环境音默认音量查表
+        // 场景索引: 0=Forest森林, 1=Mountain高山, 2=Dessert沙漠, 3=Paddy field麦田, 4=Sea沙滩, 5=Wetland湿地, 6=tundra雪山
+        // 天气索引: 0=晴天(白天), 1=雨天(下雨), 2=夜晚, 3=日出(落日), 4=阴天(雾天)
+        // 环境音索引: 0=风声, 1=鸟鸣, 2=雨声, 3=火声, 4=虫鸣, 5=流水声
+        private static readonly float[][][] sceneWeatherEnvVolumes = new float[][][]
+        {
+            // 0: Forest 森林
+            new float[][]
+            {
+                new float[] { 0.4f, 0.8f, 0.0f, 0.0f, 0.0f, 0.0f }, // 晴天
+                new float[] { 0.0f, 0.1f, 0.8f, 0.0f, 0.0f, 0.0f }, // 雨天
+                new float[] { 0.0f, 0.1f, 0.0f, 0.0f, 0.6f, 0.0f }, // 夜晚
+                new float[] { 0.5f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f }, // 日出
+                new float[] { 0.5f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f }, // 阴天
+            },
+            // 1: Mountain 高山
+            new float[][]
+            {
+                new float[] { 0.5f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f },
+                new float[] { 0.3f, 0.1f, 0.4f, 0.0f, 0.0f, 0.0f },
+                new float[] { 0.3f, 0.0f, 0.0f, 0.0f, 0.3f, 0.0f },
+                new float[] { 0.5f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f },
+                new float[] { 0.6f, 0.2f, 0.0f, 0.0f, 0.0f, 0.0f },
+            },
+            // 2: Dessert 沙漠
+            new float[][]
+            {
+                new float[] { 0.2f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+                new float[] { 0.2f, 0.0f, 0.3f, 0.0f, 0.0f, 0.0f },
+                new float[] { 0.2f, 0.0f, 0.0f, 0.0f, 0.3f, 0.0f },
+                new float[] { 0.2f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f },
+                new float[] { 0.3f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+            },
+            // 3: Paddy field 麦田
+            new float[][]
+            {
+                new float[] { 0.3f, 0.4f, 0.0f, 0.0f, 0.4f, 0.0f },
+                new float[] { 0.3f, 0.0f, 0.5f, 0.0f, 0.1f, 0.0f },
+                new float[] { 0.3f, 0.0f, 0.0f, 0.0f, 0.8f, 0.0f },
+                new float[] { 0.3f, 0.3f, 0.0f, 0.0f, 0.1f, 0.0f },
+                new float[] { 0.4f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+            },
+            // 4: Sea 沙滩
+            new float[][]
+            {
+                new float[] { 0.4f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+                new float[] { 0.4f, 0.0f, 0.4f, 0.0f, 0.0f, 0.0f },
+                new float[] { 0.4f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+                new float[] { 0.2f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+                new float[] { 0.4f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+            },
+            // 5: Wetland 湿地
+            new float[][]
+            {
+                new float[] { 0.2f, 0.3f, 0.0f, 0.0f, 0.2f, 0.3f },
+                new float[] { 0.2f, 0.0f, 0.6f, 0.0f, 0.2f, 0.3f },
+                new float[] { 0.2f, 0.0f, 0.0f, 0.0f, 0.2f, 0.3f },
+                new float[] { 0.2f, 0.4f, 0.0f, 0.0f, 0.2f, 0.3f },
+                new float[] { 0.4f, 0.2f, 0.0f, 0.0f, 0.2f, 0.3f },
+            },
+            // 6: tundra 雪山
+            new float[][]
+            {
+                new float[] { 0.4f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+                new float[] { 0.4f, 0.0f, 0.3f, 0.0f, 0.0f, 0.0f },
+                new float[] { 0.4f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+                new float[] { 0.4f, 0.2f, 0.0f, 0.0f, 0.0f, 0.0f },
+                new float[] { 0.6f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+            },
+        };
         
         // 当前播放歌曲的缓存key（只保留当前歌曲，切歌时释放旧的以节省内存）
         private string currentCachedSongKey;
@@ -571,70 +642,38 @@ namespace BirdGame
             
             // 定义目标音量值
             Dictionary<int, float> targetVolumes = new Dictionary<int, float>();
-            
-            switch (weatherIndex)
+
+            // 按 (当前场景 × 天气) 查表设定默认音量
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            if (mapIndex < 0 || mapIndex >= sceneWeatherEnvVolumes.Length
+                || weatherIndex < 0 || weatherIndex >= sceneWeatherEnvVolumes[mapIndex].Length)
             {
-                case 0: // 晴天
-                    // 先设置所有环境音为0
-                    for (int i = 0; i < environmentCount; i++)
-                    {
-                        targetVolumes[i] = 0.0f;
-                    }
-                    // 然后设置索引1为0.0589
-                    if (environmentCount > 1)
-                    {
-                        targetVolumes[1] = 0.6f;
-                    }
-                    break;
-                    
-                case 1: // 雨天
-                    // 先设置所有环境音为0
-                    for (int i = 0; i < environmentCount; i++)
-                    {
-                        targetVolumes[i] = 0.0f;
-                    }
-                    // 然后设置索引2为0.4578
-                    if (environmentCount > 2)
-                    {
-                        targetVolumes[2] = 0.4578f;
-                    }
-                    break;
-                    
-                case 2: // 夜晚
-                    // 设置所有环境音音量为0
-                    for (int i = 0; i < environmentCount; i++)
-                    {
-                        targetVolumes[i] = 0.0f;
-                    }
-                    break;
-                    
-                case 3: // 黄昏
-                    // 先设置所有环境音为0
-                    for (int i = 0; i < environmentCount; i++)
-                    {
-                        targetVolumes[i] = 0.0f;
-                    }
-                    // 然后设置索引1为0.0674
-                    if (environmentCount > 1)
-                    {
-                        targetVolumes[1] = 0.0674f;
-                    }
-                    break;
-                    
-                case 4: // 天气索引4
-                    // 先设置所有环境音为0
-                    for (int i = 0; i < environmentCount; i++)
-                    {
-                        targetVolumes[i] = 0.0f;
-                    }
-                    // 然后设置索引0为0.2259
-                    if (environmentCount > 0)
-                    {
-                        targetVolumes[0] = 0.2259f;
-                    }
-                    break;
+                // 索引越界：静音兜底
+                for (int i = 0; i < environmentCount; i++)
+                {
+                    targetVolumes[i] = 0.0f;
+                }
+            }
+            else
+            {
+                float[] preset = sceneWeatherEnvVolumes[mapIndex][weatherIndex];
+                for (int i = 0; i < environmentCount; i++)
+                {
+                    targetVolumes[i] = i < preset.Length ? preset[i] : 0.0f;
+                }
             }
             
+            // 显式同步存档：保证 RadioPopup 下次打开时从存档读到最新目标值，UI volume bar 正确
+            var musicSetting = this.GetModel<ISaveModel>().MusicSettingData;
+            if (musicSetting.environmentVolumes == null)
+                musicSetting.environmentVolumes = new List<float>();
+            while (musicSetting.environmentVolumes.Count < environmentCount)
+                musicSetting.environmentVolumes.Add(0f);
+            for (int i = 0; i < environmentCount; i++)
+            {
+                musicSetting.environmentVolumes[i] = targetVolumes.ContainsKey(i) ? targetVolumes[i] : 0.0f;
+            }
+
             // 对每个环境音设置音量
             for (int i = 0; i < environmentCount && i < environmentAudios.Count; i++)
             {
