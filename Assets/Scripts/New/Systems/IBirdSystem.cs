@@ -209,8 +209,16 @@ namespace BirdGame
             if (saveModel.BirdInfoData.mapBirds[mapIndex].eggList == null)
                 saveModel.BirdInfoData.mapBirds[mapIndex].eggList = new List<int>();
             Debug.Log("鸟蛋数量:" + saveModel.BirdInfoData.mapBirds[mapIndex].eggList.Count);
+            // 兼容旧 Demo 存档：Demo 场景1/2/3蛋数量比 Full 多，eggIndex 可能越界，跳过以防崩溃
+            var eggsArr = this.GetModel<IConfigModel>().ShopConfig.sceneEggs[mapIndex].eggs;
             foreach (var eggIndex in saveModel.BirdInfoData.mapBirds[mapIndex].eggList)
             {
+                if (eggIndex < 0 || eggIndex >= eggsArr.Length)
+                {
+                    Debug.LogWarning($"丢弃越界 eggIndex={eggIndex}（可能来自旧版本存档）");
+                    this.GetModel<IBirdModel>().UnopenEggs--;
+                    continue;
+                }
                 int birdIndex = RandomGetBirdIndex(eggIndex);
                 CreateBird(birdIndex);
             }
