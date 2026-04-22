@@ -376,6 +376,7 @@ namespace BirdGame
                 var birdData = birdModel.BirdList[^1];
                 birdData.customName = savedBirdData.customName;
                 birdData.isLiked = savedBirdData.isLiked;
+                birdData.islocked = savedBirdData.isLocked;
 
                 // 恢复保存的个体化数值（如果存档没有这些值，使用刚生成的随机值）
                 if (savedBirdData.individualEarningBig > 0)

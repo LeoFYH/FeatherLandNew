@@ -30,7 +30,8 @@
       "Bash(powershell -ExecutionPolicy Bypass -File \"E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew\\\\fix_audio_meta.ps1\")",
       "Bash(python \"E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew\\\\fix_audio_meta.py\")",
       "Bash(del \"E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew\\\\fix_audio_meta.ps1\")",
-      "Bash(del \"E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew\\\\fix_audio_meta.py\")"
+      "Bash(del \"E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew\\\\fix_audio_meta.py\")",
+      "Bash(grep -i \"\\\\.cs$\")"
     ]
   }
 }
