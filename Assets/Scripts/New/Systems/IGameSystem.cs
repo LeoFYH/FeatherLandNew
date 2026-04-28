@@ -887,12 +887,7 @@ namespace BirdGame
             this.GetModel<IAccountModel>().Coins.Value = accountData.coins;
             this.GetModel<IAccountModel>().Coins.Register(v =>
             {
-                int limit = this.GetModel<IConfigModel>().ShopConfig.coinsLimit;
-                if (v > limit)
-                {
-                    this.GetModel<IAccountModel>().Coins.Value = limit;
-                    return;
-                }
+                // 不再对 coinsLimit 做截断；之前会让 >500000 的金币切地图时被吞，玩家无感知丢失
                 this.GetModel<ISaveModel>().AccountData.coins = v;
             });
         }
