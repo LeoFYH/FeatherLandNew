@@ -507,13 +507,13 @@ namespace BirdGame
         {
             languageDropdown.ClearOptions();
             var languageConfig = this.GetModel<IConfigModel>().LocalizationConfig;
-            // foreach (var language in languageConfig.languageDic)
-            // {
-            //     string value = this.GetSystem<ILocalizationSystem>().GetString(language.Key.ToString());
-            //     languageDropdown.options.Add(new TMP_Dropdown.OptionData(value, itemSprite, Color.white));
-            //     languages.Add(language.Key);
-            //     Debug.Log(value);
-            // }
+            foreach (var language in languageConfig.languageDic)
+            {
+                string value = this.GetSystem<ILocalizationSystem>().GetString(language.Key.ToString());
+                languageDropdown.options.Add(new TMP_Dropdown.OptionData(value, itemSprite, Color.white));
+                languages.Add(language.Key);
+                Debug.Log(value);
+            }
             var currentLanguage = this.GetModel<ISaveModel>().SettingData.gameLanguage;
             if (currentLanguage == SystemLanguage.Unknown)
             {
@@ -525,18 +525,18 @@ namespace BirdGame
                 currentLanguage = SystemLanguage.English;
             }
 
-            string value = this.GetSystem<ILocalizationSystem>().GetString("English");
-            languageDropdown.options.Add(new TMP_Dropdown.OptionData(value,itemSprite, Color.white));
-            value = this.GetSystem<ILocalizationSystem>().GetString("Chinese");
-            if (currentLanguage == SystemLanguage.ChineseSimplified)
-            {
-                value = "中文";
-            }
-            languageDropdown.options.Add(new TMP_Dropdown.OptionData(value, itemSprite, Color.white));
-            languages.Add(SystemLanguage.English);
-            languages.Add(SystemLanguage.ChineseSimplified);
-            Debug.Log($"存档中的语言设置: {currentLanguage}");
-            Debug.Log($"本地化配置支持的语言: {string.Join(", ", languages)}");
+            // string value = this.GetSystem<ILocalizationSystem>().GetString("English");
+            // languageDropdown.options.Add(new TMP_Dropdown.OptionData(value,itemSprite, Color.white));
+            // value = this.GetSystem<ILocalizationSystem>().GetString("Chinese");
+            // if (currentLanguage == SystemLanguage.ChineseSimplified)
+            // {
+            //     value = "中文";
+            // }
+            // languageDropdown.options.Add(new TMP_Dropdown.OptionData(value, itemSprite, Color.white));
+            // languages.Add(SystemLanguage.English);
+            // languages.Add(SystemLanguage.ChineseSimplified);
+            // Debug.Log($"存档中的语言设置: {currentLanguage}");
+            // Debug.Log($"本地化配置支持的语言: {string.Join(", ", languages)}");
             
             if (!languages.Contains(currentLanguage))
             {
