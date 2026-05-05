@@ -57,6 +57,8 @@ namespace BirdGame
             //加载新地图的鸟的信息
             this.GetSystem<IBirdSystem>().GenerateBirdsFromSave();
             this.GetSystem<IGameSystem>().CreateDecorations();
+            // 切场景后应用新场景在默认天气(0=晴天)下的环境音默认音量
+            this.GetSystem<IAudioSystem>().SetEnvironmentVolumesByWeather(0);
             //展示MenuPanel
             this.GetSystem<IUISystem>().ShowPanel(UIPanel.MenuPanel);
             DOTween.Sequence().AppendCallback(() =>

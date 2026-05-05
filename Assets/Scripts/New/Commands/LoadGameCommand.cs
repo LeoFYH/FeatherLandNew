@@ -159,10 +159,9 @@ namespace BirdGame
             // 成就系统启动检查
             this.GetSystem<IAchievementSystem>().CheckStartupAchievements();
 
-            // ✅ 修复：不再在加载时强制设置天气音量，而是从存档加载用户设置的环境音量
-            // 环境音只在场景加载时（LoadGameCommand）或天气变化时（WeatherManager）才会同步
-            // 这里的 InitEnvironments 会从 MusicSettingData.environmentVolumes 中读取用户保存的音量
-            this.GetSystem<IAudioSystem>().InitEnvironments();
+            // 初始进入游戏时按 (当前场景 × 默认天气0=晴天) 应用环境音默认音量表，
+            // 同步 UI volume bar 与存档。SetEnvironmentVolumesByWeather 内部会先调用 InitEnvironments。
+            this.GetSystem<IAudioSystem>().SetEnvironmentVolumesByWeather(0);
             
             // 检查是否是第一次启动游戏，如果是则自动播放第一首歌
             if (!PlayerPrefs.HasKey("PlayedFirstSong"))

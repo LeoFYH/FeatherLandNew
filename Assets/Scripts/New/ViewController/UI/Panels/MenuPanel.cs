@@ -43,6 +43,7 @@ namespace BirdGame
         private float weatherPosX;
         private float mapPosX;
         private float currentCoins;
+        private float originalCoinFontSize = -1f;
         
         private bool isSyncingShopButton = false; // 标志位：正在同步 shopButton 状态，避免重复调用 HidePopup
         private bool isSyncingIllustratedButton = false; // 标志位：正在同步 illustratedButton 状态
@@ -407,13 +408,14 @@ namespace BirdGame
             content.anchoredPosition = new Vector2(400, 0);
             
             var accountModel = this.GetModel<IAccountModel>();
-            coinsNum.text = accountModel.Coins.Value.ToString("F1", CultureInfo.InvariantCulture);
+            if (originalCoinFontSize < 0f) originalCoinFontSize = coinsNum.fontSize;
+            UpdateCoinText(accountModel.Coins.Value);
             currentCoins = accountModel.Coins.Value;
             accountModel.Coins.Register(v =>
             {
                 DOTween.To(n =>
                 {
-                    coinsNum.text = n.ToString("F1", CultureInfo.InvariantCulture);
+                    UpdateCoinText(n);
                 }, currentCoins, v, 0.5f);
                 currentCoins = v;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
@@ -572,6 +574,12 @@ namespace BirdGame
             // 这里可以替换为你想要跳转的网址
             string url = "https://itch.io/"; // 请替换为实际的网址
             this.GetSystem<IGameSystem>().OpenUrl(url);
+        }
+
+        private void UpdateCoinText(float value)
+        {
+            coinsNum.text = value.ToString("F1", CultureInfo.InvariantCulture);
+            coinsNum.fontSize = value >= 1_000_000f ? originalCoinFontSize * 0.8f : originalCoinFontSize;
         }
     }
 }

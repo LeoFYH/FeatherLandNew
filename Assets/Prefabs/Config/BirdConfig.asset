@@ -269,7 +269,7 @@ MonoBehaviour:
   - birdClasses:
     - birdName: Eagle
       canView: 1
-      type: 1
+      type: 2
       birds:
       - {fileID: 11400000, guid: c24722771c489af44866daa898313c43, type: 2}
       - {fileID: 11400000, guid: fd88e42947e30fa4a8a439eab31b3135, type: 2}
@@ -277,7 +277,7 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 9c17f5b17a57d5248b8cdeef944aa453, type: 2}
     - birdName: Vulture
       canView: 1
-      type: 1
+      type: 2
       birds:
       - {fileID: 11400000, guid: a8e2536155dbf1541b3d4f7c4e6fcd77, type: 2}
       - {fileID: 11400000, guid: 94b542aae0043194eb8f551a95c2969a, type: 2}
@@ -301,7 +301,7 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 54efcc259061b1c41940062fe78a92e9, type: 2}
     - birdName: Bearded Vulture
       canView: 1
-      type: 1
+      type: 2
       birds:
       - {fileID: 11400000, guid: 8e1f801452eeff348b046c57f33a175f, type: 2}
       - {fileID: 11400000, guid: b2f5cbd8a73f5f8499b4e5b9d3f7b9e9, type: 2}
@@ -332,7 +332,7 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 58c1f8125a76bab4eadcd79b0f103c23, type: 2}
     - birdName: Golden Eagle
       canView: 1
-      type: 1
+      type: 2
       birds:
       - {fileID: 11400000, guid: 0e59a1c605d3f094a903602b51122838, type: 2}
       - {fileID: 11400000, guid: e0a1a7883e59742498fc54d028d28bb9, type: 2}
@@ -365,7 +365,7 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 588db74c6336a57459079161860b2ad2, type: 2}
     - birdName: ArabianBustard
       canView: 1
-      type: 1
+      type: 2
       birds:
       - {fileID: 11400000, guid: 5dca8bf9e1c656b4783d5963593e8011, type: 2}
       - {fileID: 11400000, guid: c935afb31ed04c44eb8fc4c57c15a718, type: 2}
@@ -404,7 +404,7 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 1b4551e3bfc76ea40aee54870e49b471, type: 2}
     - birdName: EgyptianVulture
       canView: 1
-      type: 1
+      type: 2
       birds:
       - {fileID: 11400000, guid: f9b8a77abe5ac2f478d214452bcd8dd3, type: 2}
       - {fileID: 11400000, guid: 71908a9b72230ce428389ab41038c948, type: 2}
@@ -412,14 +412,14 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 98c7fe78373b2884c835a0b98e6b21dd, type: 2}
     - birdName: African ostrich
       canView: 1
-      type: 1
+      type: 2
       birds:
       - {fileID: 11400000, guid: 77b594f4d5753ac4fbeef1e81f983db4, type: 2}
       - {fileID: 11400000, guid: ec14691d10b587a489b274634b60ae92, type: 2}
   - birdClasses:
     - birdName: Pheasant
       canView: 1
-      type: 1
+      type: 2
       birds:
       - {fileID: 11400000, guid: 72d1a70ffdde66b46bb4b3917f519a7b, type: 2}
       - {fileID: 11400000, guid: a90431c84fe518d47a8fc9f49d828068, type: 2}
@@ -427,7 +427,7 @@ MonoBehaviour:
       - {fileID: 11400000, guid: c582fbea5aec19248959b610a8602f71, type: 2}
     - birdName: Great Bustard
       canView: 1
-      type: 1
+      type: 2
       birds:
       - {fileID: 11400000, guid: 64570372f570e73418567918272d0253, type: 2}
       - {fileID: 11400000, guid: 8a31e72c8f7e5784caa72d2b8a2aa665, type: 2}
@@ -435,7 +435,7 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 9133ea9cbfd3f804bbe1302628a1565b, type: 2}
     - birdName: Passenger Pigeon
       canView: 1
-      type: 0
+      type: 1
       birds:
       - {fileID: 11400000, guid: ec33438aedfdf1743a0af7e6029a93a4, type: 2}
       - {fileID: 11400000, guid: 235d72a8c16813442aa97b8358f927e0, type: 2}
@@ -475,7 +475,7 @@ MonoBehaviour:
       - {fileID: 11400000, guid: b12ffcec43e3604458eaea49451f39d2, type: 2}
     - birdName: Sparrow
       canView: 1
-      type: 1
+      type: 0
       birds:
       - {fileID: 11400000, guid: 2163981a7db32aa48aa1468666a59e57, type: 2}
       - {fileID: 11400000, guid: dbe5bc714c9ea9e46a3373eb16c03b7a, type: 2}
@@ -483,7 +483,7 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 3ecfe97e5087c9849b4bf7d9d66035e2, type: 2}
     - birdName: Swallow
       canView: 1
-      type: 1
+      type: 0
       birds:
       - {fileID: 11400000, guid: 75c4c7663296a2e429b6b26c3da3e551, type: 2}
       - {fileID: 11400000, guid: cbdc30256ed5a8140b8f63848da771cc, type: 2}
@@ -508,7 +508,7 @@ MonoBehaviour:
       - {fileID: 11400000, guid: d3478559d21975c47a94d15ff2275769, type: 2}
     - birdName: Great Auk
       canView: 1
-      type: 1
+      type: 2
       birds:
       - {fileID: 11400000, guid: cba676dc283906746a91fb082a105e9e, type: 2}
       - {fileID: 11400000, guid: 16f8f22da7934f14999361b48488d23a, type: 2}
@@ -556,7 +556,7 @@ MonoBehaviour:
       - {fileID: 11400000, guid: fcfb6acd5ed0def4887522ba28fe32be, type: 2}
     - birdName: Kingfisher
       canView: 1
-      type: 1
+      type: 0
       birds:
       - {fileID: 11400000, guid: bfe3f5707ce9bd24da2ac98a8e7c9706, type: 2}
       - {fileID: 11400000, guid: 76e8371b941f27f4ca76b35bd4ab1ffc, type: 2}
@@ -581,7 +581,7 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 553192dbdd8b7394c812b49f35bd637d, type: 2}
     - birdName: Pelican
       canView: 1
-      type: 0
+      type: 1
       birds:
       - {fileID: 11400000, guid: 3220682be6af8c0469d93c163c23b8d9, type: 2}
       - {fileID: 11400000, guid: 923386b06aef7394a9e6a3dd1beff7f7, type: 2}
@@ -654,7 +654,7 @@ MonoBehaviour:
       - {fileID: 11400000, guid: eff30585ae97f4d4d9097c82b2efb732, type: 2}
     - birdName: Phoenix
       canView: 1
-      type: 1
+      type: 2
       birds:
       - {fileID: 11400000, guid: d35051a69d08d4241903d0c8e56654f7, type: 2}
       - {fileID: 11400000, guid: 7273617b03514314b953ffd26d2531de, type: 2}

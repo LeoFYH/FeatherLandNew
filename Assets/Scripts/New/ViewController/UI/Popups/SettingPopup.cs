@@ -97,6 +97,7 @@ namespace BirdGame
                 
                 // 清空内存中的数据
                 this.GetSystem<ISaveSystem>().InitData();
+                this.GetModel<ISaveModel>().AccountData.hasReceivedStartCoins = true;
                 this.GetModel<IAccountModel>().Coins.Value = this.GetModel<IConfigModel>().ShopConfig.startCoins;
                 this.GetModel<ISaveModel>().SettingData.gameLanguage = this.GetSystem<ISteamSystem>().GetUserLanguage();
                 

@@ -46,6 +46,7 @@ namespace BirdGame
     public class AccountData : SavableData
     {
         public float coins = 600;
+        public bool hasReceivedStartCoins = false;
         public List<SceneDecorationInfo> sceneDecorationInfos = new List<SceneDecorationInfo>();
         public List<SceneToolInfo> sceneTools = new List<SceneToolInfo>();
     }

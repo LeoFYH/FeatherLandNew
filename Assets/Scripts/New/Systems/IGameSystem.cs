@@ -870,15 +870,24 @@ namespace BirdGame
 
         public void InitAccount()
         {
-            this.GetModel<IAccountModel>().Coins.Value = this.GetModel<ISaveModel>().AccountData.coins;
+            var accountData = this.GetModel<ISaveModel>().AccountData;
+            var shopConfig = this.GetModel<IConfigModel>().ShopConfig;
+
+            // 保底：玩家从未领取过初始金币时，确保至少拥有 startCoins。
+            // 覆盖"无存档文件赋值失败"、"旧存档缺字段"等各种意外路径，只触发一次。
+            if (!accountData.hasReceivedStartCoins)
+            {
+                if (accountData.coins < shopConfig.startCoins)
+                {
+                    accountData.coins = shopConfig.startCoins;
+                }
+                accountData.hasReceivedStartCoins = true;
+            }
+
+            this.GetModel<IAccountModel>().Coins.Value = accountData.coins;
             this.GetModel<IAccountModel>().Coins.Register(v =>
             {
-                int limit = this.GetModel<IConfigModel>().ShopConfig.coinsLimit;
-                if (v > limit)
-                {
-                    this.GetModel<IAccountModel>().Coins.Value = limit;
-                    return;
-                }
+                // 不再对 coinsLimit 做截断；之前会让 >500000 的金币切地图时被吞，玩家无感知丢失
                 this.GetModel<ISaveModel>().AccountData.coins = v;
             });
         }
