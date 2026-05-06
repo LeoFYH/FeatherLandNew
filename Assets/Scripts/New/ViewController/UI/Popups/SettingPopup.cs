@@ -405,7 +405,7 @@ namespace BirdGame
             }
 
 
-            moveHeight = (isScreenExpend ? 204 : 0) + (isVloumeExpend? 384 : 0) + (isLanguageExpend ? 105 : 0);
+            moveHeight = (isScreenExpend ? 204 : 0) + (isVloumeExpend? 384 : 0) + (isLanguageExpend ? 530 : 0);
 
             deleteRect.anchoredPosition = new Vector2(0, deleteY - moveHeight); 
             tutorialRect.anchoredPosition = new Vector2(0, tutorailY - moveHeight);
