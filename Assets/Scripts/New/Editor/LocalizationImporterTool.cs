@@ -9,9 +9,9 @@ using BirdGame.Editor;
 namespace BirdGame.EditorTools
 {
     /// <summary>
-    /// 从 xlsx 导入本地化数据，覆盖 LocalizationConfig.asset 里 7 个语言（保留 ChineseTraditional）。
-    /// xlsx 列：key | 英文 | 简体中文 | German | French | Russian | Spanish | Portuguese
-    /// 行为：完全按 xlsx 来——每个语言的 words 字典先清空再按 xlsx 重建；繁中不动。
+    /// 从 xlsx 导入本地化数据，覆盖 LocalizationConfig.asset 里全部 8 种语言。
+    /// xlsx 列：key | 英文 | 简体中文 | 繁体中文 | German | French | Russian | Spanish | Portuguese
+    /// 行为：完全按 xlsx 来——每个语言的 words 字典先清空再按 xlsx 重建。
     /// 重复 key：取第一次出现的；空 key 行：跳过。
     /// </summary>
     public static class LocalizationImporterTool
@@ -23,14 +23,15 @@ namespace BirdGame.EditorTools
         {
             (2, SystemLanguage.English),
             (3, SystemLanguage.ChineseSimplified),
-            (4, SystemLanguage.German),
-            (5, SystemLanguage.French),
-            (6, SystemLanguage.Russian),
-            (7, SystemLanguage.Spanish),
-            (8, SystemLanguage.Portuguese),
+            (4, SystemLanguage.ChineseTraditional),
+            (5, SystemLanguage.German),
+            (6, SystemLanguage.French),
+            (7, SystemLanguage.Russian),
+            (8, SystemLanguage.Spanish),
+            (9, SystemLanguage.Portuguese),
         };
 
-        [MenuItem("Tools/本地化/从xlsx导入(覆盖7语言保留繁中)")]
+        [MenuItem("Tools/本地化/从xlsx导入(覆盖全部8种语言)")]
         public static void ImportFromXlsx()
         {
             string path = EditorUtility.OpenFilePanel("选择本地化 xlsx", "", "xlsx");
@@ -94,7 +95,7 @@ namespace BirdGame.EditorTools
                 }
             }
 
-            // 2) 写回 LocalizationConfig（只动 7 种语言；繁中保持原样）
+            // 2) 写回 LocalizationConfig（覆盖全部 8 种语言）
             int totalWritten = 0;
             var summary = new System.Text.StringBuilder();
             var beforeCount = new Dictionary<SystemLanguage, int>();
