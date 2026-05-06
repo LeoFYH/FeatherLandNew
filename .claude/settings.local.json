@@ -38,7 +38,8 @@
       "Bash(awk '/^  sceneDecorations:/,/^  tools:/')",
       "Bash(awk '/decorations:/{s++; c=0; next} /icon:/{c++} END{print \"total scenes=\"s}')",
       "Bash(awk '/^ - decorations:/{if\\(c\\)print \"s\"s\"=\"c; s++; c=0; next} /^ - icon:/{c++} END{print \"s\"s\"=\"c}')",
-      "Bash(awk '/^  - decorations:/{if\\(c\\)print \"s\"s\"=\"c; s++; c=0; next} /^    - icon:/{c++} END{print \"s\"s\"=\"c}')"
+      "Bash(awk '/^  - decorations:/{if\\(c\\)print \"s\"s\"=\"c; s++; c=0; next} /^    - icon:/{c++} END{print \"s\"s\"=\"c}')",
+      "Bash(git restore *)"
     ]
   }
 }

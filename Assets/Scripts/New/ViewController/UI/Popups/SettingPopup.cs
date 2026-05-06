@@ -520,10 +520,8 @@ namespace BirdGame
                 currentLanguage = this.GetSystem<ISteamSystem>().GetUserLanguage();
             }
 
-            if (currentLanguage != SystemLanguage.ChineseSimplified && currentLanguage != SystemLanguage.English)
-            {
-                currentLanguage = SystemLanguage.English;
-            }
+            // 不再强制踢回英文：本地化配置已扩展到 7 种语言（英中俄法西葡德），
+            // 由下面的 languages.Contains(currentLanguage) 判断兜底。
 
             // string value = this.GetSystem<ILocalizationSystem>().GetString("English");
             // languageDropdown.options.Add(new TMP_Dropdown.OptionData(value,itemSprite, Color.white));
