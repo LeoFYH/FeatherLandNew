@@ -14,11 +14,16 @@ namespace BirdGame
             var saveModel = this.GetModel<ISaveModel>();
             var currentLanguage = saveModel.SettingData.gameLanguage;
             
-            // 支持的语言列表
+            // 支持的语言列表（8 种：英简中繁中俄法西葡德）
             SystemLanguage[] supportedLanguages = {
                 SystemLanguage.English,
                 SystemLanguage.ChineseSimplified,
                 SystemLanguage.ChineseTraditional,
+                SystemLanguage.Russian,
+                SystemLanguage.French,
+                SystemLanguage.Spanish,
+                SystemLanguage.Portuguese,
+                SystemLanguage.German,
             };
             
             // 检查当前语言是否支持

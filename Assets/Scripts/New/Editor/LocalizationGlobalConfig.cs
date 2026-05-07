@@ -489,6 +489,19 @@ namespace BirdGame.Editor
 
             if (languages.Count == 0)
                 return;
+
+            // 防御：若 words/wordKeys 与 languages/dict 不一致，调用 LoadWords 从磁盘重新加载真实数据
+            // （绝对不能用 new LanguageWordItem(wordKeys) 重建，那会把 values 清空）
+            bool stateBroken = wordKeys == null || words == null
+                                                || words.Count != languages.Count
+                                                || (words.Count > 0 && words[0].keys != null && words[0].keys.Count != wordKeys.Count);
+            if (stateBroken)
+            {
+                LoadWords();
+            }
+            if (currentSelectedLanguage < 0 || currentSelectedLanguage >= languages.Count)
+                currentSelectedLanguage = 0;
+
             //语言选项
             GUILayout.BeginHorizontal();
             {
@@ -501,25 +514,13 @@ namespace BirdGame.Editor
                 currentSelectedLanguage = GUILayout.Toolbar(currentSelectedLanguage, texts, GUILayout.Width(600));
             }
             GUILayout.EndHorizontal();
+            // 若 words/languages count 仍然不一致，再次 LoadWords（不要 Clear+空重建！）
             if (words.Count != languages.Count)
             {
-                if (words.Count < languages.Count)
-                {
-                    while (words.Count<languages.Count)
-                    {
-                        int index = words.Count;
-                        words.Add(new LanguageWordItem(wordKeys));
-                    }
-                }
-                else
-                {
-                    words.Clear();
-                    foreach (var vLanguage in languages)
-                    {
-                        words.Add(new LanguageWordItem(wordKeys));
-                    }
-                }
+                LoadWords();
             }
+            if (currentSelectedLanguage < 0 || currentSelectedLanguage >= words.Count)
+                currentSelectedLanguage = 0;
 
             words[currentSelectedLanguage].fontAsset =
                 (TMP_FontAsset)EditorGUILayout.ObjectField(words[currentSelectedLanguage].fontAsset,
@@ -546,9 +547,17 @@ namespace BirdGame.Editor
             GUILayout.EndHorizontal();
             scrollPos = GUILayout.BeginScrollView(scrollPos, false, true);
             {
+                var curWord = words[currentSelectedLanguage];
                 for (int i = 0; i < wordKeys.Count; i++)
                 {
-                    if (!words[currentSelectedLanguage].keys[i].ToLower().Contains(searchingString.ToLower()))
+                    // 防御：某些 lang 的 words.keys/values 可能比 wordKeys 短
+                    if (curWord.keys == null || i >= curWord.keys.Count
+                                             || curWord.values == null || i >= curWord.values.Count)
+                    {
+                        continue;
+                    }
+                    if (curWord.keys[i] == null) continue;
+                    if (!curWord.keys[i].ToLower().Contains(searchingString.ToLower()))
                     {
                         continue;
                     }
@@ -701,6 +710,12 @@ namespace BirdGame.Editor
                     }
                 }
                 index++;
+            }
+
+            // 修剪掉 dict 不再有的多余 words 条目，避免 OnGUI 检测 count 不一致触发空重建
+            while (words.Count > index)
+            {
+                words.RemoveAt(words.Count - 1);
             }
         }
 
@@ -1105,30 +1120,71 @@ namespace BirdGame.Editor
                 Debug.LogError("配置对象为空，无法保存");
                 return;
             }
-            
-            config.languageDic.Clear();
-            int count = words.Count;
-            for (int i = 0; i < count; i++)
+
+            // 安全二次确认：本函数会清空整个 languageDic 并按 GUI 缓存重建，是高危操作
+            if (!EditorUtility.DisplayDialog("确认保存配置",
+                    "这会清空 LocalizationConfig 并按当前编辑器缓存重建所有语言。\n" +
+                    "如果你刚跑过菜单工具（cleanup/import/sync），先关掉本窗口再操作以免覆盖。\n\n" +
+                    "确认要继续吗？", "继续保存", "取消"))
             {
-                config.languageDic.Add(languages[i].Language, new LocalizationLanguage());
-                config.languageDic[languages[i].Language].fontAsset = words[i].fontAsset;
-                int wordCount = words[i].values.Count;
-                for (int j = 0; j < wordCount; j++)
+                return;
+            }
+
+            // 重建：用每种语言自己的 keys[]/values[]，不依赖 master wordKeys；带边界检查、去重、跳空 key。
+            // 任何一组数据为空时直接保留 dict 中现有值，避免覆盖丢数据。
+            int langCount = Mathf.Min(words?.Count ?? 0, languages?.Count ?? 0);
+            if (langCount == 0)
+            {
+                Debug.LogWarning("words 或 languages 为空，跳过保存");
+                return;
+            }
+
+            var newDict = new Dictionary<SystemLanguage, LocalizationLanguage>();
+            for (int i = 0; i < langCount; i++)
+            {
+                var w = words[i];
+                if (w == null) continue;
+                var lang = languages[i].Language;
+                var langData = new LocalizationLanguage
                 {
-                    config.languageDic[languages[i].Language].words.Add(wordKeys[j], new Pattern()
-                    {
-                        //sprite = words[i].spValues[j],
-                        text = words[i].values[j],
-                        //Type = words[i].isImageFlags[j] ? Pattern.PatternType.Image : Pattern.PatternType.Text
-                    });
+                    fontAsset = w.fontAsset,
+                    words = new Dictionary<string, Pattern>()
+                };
+
+                int n = Mathf.Min(w.keys?.Count ?? 0, w.values?.Count ?? 0);
+                // 若该语言完全为空，但原 dict 里有数据，就保留原数据，避免误清
+                if (n == 0 && config.languageDic.TryGetValue(lang, out var existing) && existing != null
+                    && (existing.words?.Count ?? 0) > 0)
+                {
+                    Debug.LogWarning($"[Save] {lang} 编辑器缓存为空，保留原有 {existing.words.Count} 个 key 不动");
+                    newDict[lang] = existing;
+                    continue;
+                }
+
+                for (int j = 0; j < n; j++)
+                {
+                    string k = w.keys[j];
+                    if (string.IsNullOrEmpty(k)) continue;
+                    if (langData.words.ContainsKey(k)) continue; // 去重
+                    langData.words[k] = new Pattern { text = w.values[j] ?? "" };
+                }
+                newDict[lang] = langData;
+            }
+
+            // 兜底：dict 中存在但 GUI 没有的语言，也保留下来（避免误删）
+            foreach (var kv in config.languageDic)
+            {
+                if (!newDict.ContainsKey(kv.Key))
+                {
+                    Debug.LogWarning($"[Save] dict 中的 {kv.Key} 不在 languages 列表里，但保留 ({kv.Value?.words?.Count ?? 0} 个 key)");
+                    newDict[kv.Key] = kv.Value;
                 }
             }
-            
-            if (config != null)
-            {
-                EditorUtility.SetDirty(config);
-            }
+
+            config.languageDic = newDict;
+            EditorUtility.SetDirty(config);
             Save();
+            Debug.Log($"[Save] 完成，写入 {newDict.Count} 个语言");
         }
     }
 
