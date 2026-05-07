@@ -111,6 +111,25 @@ namespace BirdGame.EditorTools
                     "Martín pescador",
                     "Martim-pescador",
                 }},
+            // 9-14: 设置面板音量 dropdown 下的 6 个 label
+            { "VolumeEffect", new [] {
+                "Effect", "音效", "音效",
+                "Effekte", "Effets", "Эффекты", "Efectos", "Efeitos" }},
+            { "VolumeEnvironment", new [] {
+                "Environment", "环境", "環境",
+                "Umgebung", "Environnement", "Окружение", "Ambiente", "Ambiente" }},
+            { "VolumeMusic", new [] {
+                "Music", "音乐", "音樂",
+                "Musik", "Musique", "Музыка", "Música", "Música" }},
+            { "VolumePetting", new [] {
+                "Petting", "抚摸", "撫摸",
+                "Streicheln", "Caresses", "Поглаживание", "Caricias", "Carícias" }},
+            { "VolumeAlarm", new [] {
+                "Alarm", "闹钟", "鬧鐘",
+                "Alarm", "Alarme", "Будильник", "Alarma", "Alarme" }},
+            { "VolumeMaster", new [] {
+                "Master", "主音量", "主音量",
+                "Master", "Principal", "Общая", "Principal", "Principal" }},
         };
 
         [MenuItem("Tools/本地化/补5key缺失翻译")]

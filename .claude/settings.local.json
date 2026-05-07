@@ -44,7 +44,9 @@
       "Bash(rm -f \"Assets/Fonts/Russian/Comfortaa-VariableFont_wght.ttf\" \"Assets/Fonts/Russian/Comfortaa-VariableFont_wght.ttf.meta\" \"Assets/Fonts/Russian/Comfortaa SDF.asset\" \"Assets/Fonts/Russian/Comfortaa SDF.asset.meta\" && cp \"/c/Users/11752/Downloads/Balsamiq_Sans/BalsamiqSans-Regular.ttf\" \"Assets/Fonts/Russian/BalsamiqSans-Regular.ttf\" && ls \"Assets/Fonts/Russian/\")",
       "Bash(mv \"/c/Users/11752/Downloads/featherlandAllLanguage.xlsx.bak\" \"/c/Users/11752/Downloads/featherlandAllLanguage.xlsx\")",
       "Read(//c/Users/11752/Downloads/**)",
-      "Bash(grep -B1 \"Data: EgyptianVulture$\\\\|Data: African ostrich$\\\\|Data: Powdered Head Duck$\\\\|Data: Owl$\" \"Assets/Prefabs/Config/LocalizationConfig.asset\")"
+      "Bash(grep -B1 \"Data: EgyptianVulture$\\\\|Data: African ostrich$\\\\|Data: Powdered Head Duck$\\\\|Data: Owl$\" \"Assets/Prefabs/Config/LocalizationConfig.asset\")",
+      "Bash(grep -B2 -A1 \"m_text:.*\\\\\\(Effect\\\\|Environment\\\\|Petting\\\\|Alarm\\\\|Master\\\\\\)$\" \"Assets/Prefabs/UI/Popups/SettingPopup.prefab\")",
+      "Bash(grep -B5 \"m_text: Effect$\\\\|m_text: Environment$\\\\|m_text: Master$\" \"Assets/Prefabs/UI/Popups/SettingPopup.prefab\")"
     ]
   }
 }
