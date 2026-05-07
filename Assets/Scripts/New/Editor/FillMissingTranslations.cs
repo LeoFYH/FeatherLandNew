@@ -99,6 +99,18 @@ namespace BirdGame.EditorTools
                     "Salir sin más",
                     "Sair direto",
                 }},
+            // 8. Kingfisher
+            { "Kingfisher", new []
+                {
+                    "Kingfisher",
+                    "翠鸟",
+                    "翠鳥",
+                    "Eisvogel",
+                    "Martin-pêcheur",
+                    "Зимородок",
+                    "Martín pescador",
+                    "Martim-pescador",
+                }},
         };
 
         [MenuItem("Tools/本地化/补5key缺失翻译")]
