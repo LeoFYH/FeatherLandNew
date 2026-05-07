@@ -41,7 +41,10 @@
       "Bash(awk '/^  - decorations:/{if\\(c\\)print \"s\"s\"=\"c; s++; c=0; next} /^    - icon:/{c++} END{print \"s\"s\"=\"c}')",
       "Bash(git restore *)",
       "Bash(ls \"/c/Users/11752/Downloads/Balsamiq_Sans/\")",
-      "Bash(rm -f \"Assets/Fonts/Russian/Comfortaa-VariableFont_wght.ttf\" \"Assets/Fonts/Russian/Comfortaa-VariableFont_wght.ttf.meta\" \"Assets/Fonts/Russian/Comfortaa SDF.asset\" \"Assets/Fonts/Russian/Comfortaa SDF.asset.meta\" && cp \"/c/Users/11752/Downloads/Balsamiq_Sans/BalsamiqSans-Regular.ttf\" \"Assets/Fonts/Russian/BalsamiqSans-Regular.ttf\" && ls \"Assets/Fonts/Russian/\")"
+      "Bash(rm -f \"Assets/Fonts/Russian/Comfortaa-VariableFont_wght.ttf\" \"Assets/Fonts/Russian/Comfortaa-VariableFont_wght.ttf.meta\" \"Assets/Fonts/Russian/Comfortaa SDF.asset\" \"Assets/Fonts/Russian/Comfortaa SDF.asset.meta\" && cp \"/c/Users/11752/Downloads/Balsamiq_Sans/BalsamiqSans-Regular.ttf\" \"Assets/Fonts/Russian/BalsamiqSans-Regular.ttf\" && ls \"Assets/Fonts/Russian/\")",
+      "Bash(mv \"/c/Users/11752/Downloads/featherlandAllLanguage.xlsx.bak\" \"/c/Users/11752/Downloads/featherlandAllLanguage.xlsx\")",
+      "Read(//c/Users/11752/Downloads/**)",
+      "Bash(grep -B1 \"Data: EgyptianVulture$\\\\|Data: African ostrich$\\\\|Data: Powdered Head Duck$\\\\|Data: Owl$\" \"Assets/Prefabs/Config/LocalizationConfig.asset\")"
     ]
   }
 }
