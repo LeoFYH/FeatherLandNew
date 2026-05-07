@@ -142,9 +142,9 @@ MonoBehaviour:
   m_fontSize: 55
   m_fontSizeBase: 55
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 5
+  m_fontSizeMax: 55
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -279,9 +279,9 @@ MonoBehaviour:
   m_fontSize: 24
   m_fontSizeBase: 24
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 5
+  m_fontSizeMax: 24
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -497,9 +497,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8898282654598701198}
     m_Modifications:
+    - target: {fileID: 3457096749455358432, guid: 79d0799d9483c114597c92a0d19a833f, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 130.59
+      objectReference: {fileID: 0}
     - target: {fileID: 6408015023252023723, guid: 79d0799d9483c114597c92a0d19a833f, type: 3}
       propertyPath: m_Name
       value: MapInfo
+      objectReference: {fileID: 0}
+    - target: {fileID: 7606928682970067199, guid: 79d0799d9483c114597c92a0d19a833f, type: 3}
+      propertyPath: m_fontSize
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7606928682970067199, guid: 79d0799d9483c114597c92a0d19a833f, type: 3}
       propertyPath: m_fontColor.b
@@ -512,6 +520,18 @@ PrefabInstance:
     - target: {fileID: 7606928682970067199, guid: 79d0799d9483c114597c92a0d19a833f, type: 3}
       propertyPath: m_fontColor.r
       value: 0.18039216
+      objectReference: {fileID: 0}
+    - target: {fileID: 7606928682970067199, guid: 79d0799d9483c114597c92a0d19a833f, type: 3}
+      propertyPath: m_fontSizeMax
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 7606928682970067199, guid: 79d0799d9483c114597c92a0d19a833f, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7606928682970067199, guid: 79d0799d9483c114597c92a0d19a833f, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7606928682970067199, guid: 79d0799d9483c114597c92a0d19a833f, type: 3}
       propertyPath: m_fontColor32.rgba
