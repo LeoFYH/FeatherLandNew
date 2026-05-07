@@ -55,7 +55,10 @@ namespace BirdGame
                 var yesButtonText = yesButton.GetComponentInChildren<TextMeshProUGUI>();
                 if (yesButtonText != null)
                 {
-                    yesButtonText.text = isChinese ? "是的" : "Yes!";
+                    string yesText = this.GetSystem<ILocalizationSystem>().GetString("ExitYesButton");
+                    if (string.IsNullOrEmpty(yesText) || yesText == "ExitYesButton")
+                        yesText = isChinese ? "是的" : "Yes!";
+                    yesButtonText.text = yesText;
                 }
             }
 
@@ -64,7 +67,10 @@ namespace BirdGame
                 var noButtonText = noButton.GetComponentInChildren<TextMeshProUGUI>();
                 if (noButtonText != null)
                 {
-                    noButtonText.text = isChinese ? "直接退出" : "Just Quit";
+                    string noText = this.GetSystem<ILocalizationSystem>().GetString("ExitNoButton");
+                    if (string.IsNullOrEmpty(noText) || noText == "ExitNoButton")
+                        noText = isChinese ? "直接退出" : "Just Quit";
+                    noButtonText.text = noText;
                 }
             }
 
