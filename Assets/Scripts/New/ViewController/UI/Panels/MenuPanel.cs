@@ -37,6 +37,7 @@ namespace BirdGame
         private Tweener timeAnim;
         private bool isShowWeatherItems = false;
         private Tweener contentAnim;
+        private bool showDebugButton;
 
         private float shopPosX;
         private float illustratedPosX;
@@ -95,7 +96,7 @@ namespace BirdGame
             Debug.Log("MenuPanel Start方法开始执行");
             Debug.Log($"MenuPanel GameObject名称: {gameObject.name}");
             Debug.Log($"MenuPanel 激活状态: {gameObject.activeInHierarchy}");
-            debugButton.gameObject.SetActive(SceneManager.sceneCountInBuildSettings > 1);
+            debugButton.gameObject.SetActive(SceneManager.sceneCountInBuildSettings > 1 && showDebugButton);
             debugButton.onClick.AddListener(() =>
             {
                 SceneManager.LoadScene("DebugMode", LoadSceneMode.Additive);
@@ -509,7 +510,16 @@ namespace BirdGame
             
             timeItem.anchoredPosition = new Vector2(0f, 254f);
         }
-        
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                showDebugButton = !showDebugButton;
+                debugButton.gameObject.SetActive(SceneManager.sceneCountInBuildSettings > 1 && showDebugButton);
+            }
+        }
+
         /// <summary>
         /// Helper method to check key press from both Unity Input and Windows Hook
         /// </summary>
