@@ -130,6 +130,10 @@ namespace BirdGame.EditorTools
             { "VolumeMaster", new [] {
                 "Master", "主音量", "主音量",
                 "Master", "Principal", "Общая", "Principal", "Principal" }},
+            // Reward 这个 key 8 种语言统一改为 "Price"
+            { "Reward", new [] {
+                "Price", "Price", "Price",
+                "Price", "Price", "Price", "Price", "Price" }},
         };
 
         [MenuItem("Tools/本地化/补5key缺失翻译")]
