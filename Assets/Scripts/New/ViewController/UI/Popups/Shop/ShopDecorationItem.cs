@@ -75,7 +75,7 @@ namespace BirdGame
                 highlight.enabled = true;
                 buyButton.targetGraphic.color = Color.white;
                 uiButtonHoverScale.enabled = true;
-                uiButtonHoverScale.localizationKey =$"{this.GetSystem<ILocalizationSystem>().GetString("Hold")}: {currentCount}/{totalCount}";
+                uiButtonHoverScale.localizationKey =$"{this.GetSystem<ILocalizationSystem>().GetString("Buy")}?: {currentCount}/{totalCount}";
                 buyButton.GetComponent<HoverButton>().isLessCoin = false;
             }
             else

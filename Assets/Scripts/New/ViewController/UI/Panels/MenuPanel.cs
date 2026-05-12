@@ -509,54 +509,6 @@ namespace BirdGame
             
             timeItem.anchoredPosition = new Vector2(0f, 254f);
         }
-
-        private void Update()
-        {
-            // 所有快捷键处理已移至 GameEntry.HandleKeyboardShortcuts() 统一管理
-            // 这里不再处理任何快捷键，避免冲突
-
-            // if (Input.GetKeyDown(KeyCode.N))
-            // {
-            //     noteToggle.isOn = !noteToggle.isOn;
-            // }
-            //
-            // if (Input.GetKeyDown(KeyCode.R))
-            // {
-            //     radioToggle.isOn = !radioToggle.isOn;
-            // }
-            //
-            // if (Input.GetKeyDown(KeyCode.P))
-            // {
-            //     clockToggle.isOn = !clockToggle.isOn;
-            // }
-            //
-            // if (Input.GetKeyDown(KeyCode.S))
-            // {
-            //     shopButton.isOn = !shopButton.isOn;
-            // }
-            //
-            // if (Input.GetKeyDown(KeyCode.B))
-            // {
-            //     illustratedButton.isOn = !illustratedButton.isOn;
-            // }
-            //
-            // if (Input.GetKeyDown(KeyCode.M))
-            // {
-            //     mapButton.isOn = !mapButton.isOn;
-            // }
-            //
-            // if (Input.GetKeyDown(KeyCode.T))
-            // {
-            //     if (this.GetSystem<IUISystem>().GetPopup<TutorialPopup>(UIPopup.TutorialPopup) == null)
-            //     {
-            //         this.GetSystem<IUISystem>().ShowPopup(UIPopup.TutorialPopup);
-            //     }
-            //     else
-            //     {
-            //         this.GetSystem<IUISystem>().HidePopup(UIPopup.TutorialPopup);
-            //     }
-            // }
-        }
         
         /// <summary>
         /// Helper method to check key press from both Unity Input and Windows Hook
