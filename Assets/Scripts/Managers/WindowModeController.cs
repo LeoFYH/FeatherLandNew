@@ -29,7 +29,9 @@ public class WindowModeController : MonoBehaviour
 
     void Awake()
     {
+#if UNITY_STANDALONE_WIN
         hWnd = GetActiveWindow();
+#endif
     }
 
     void Start()
@@ -40,8 +42,10 @@ public class WindowModeController : MonoBehaviour
     public void SetWindowedMode()
     {
         Screen.fullScreenMode = FullScreenMode.Windowed;
+#if UNITY_STANDALONE_WIN
         SetWindowLong(hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
         SetWindowPos(hWnd, HWND_TOP, 100, 100, 1280, 720, SWP_SHOWWINDOW); // adjust pos/size if needed
+#endif
     }
 
     public void SetExclusiveFullscreenMode()
@@ -51,6 +55,7 @@ public class WindowModeController : MonoBehaviour
 
     public void SetBorderlessMaximizedMode()
     {
+#if UNITY_STANDALONE_WIN
         IntPtr window = GetActiveWindow();
 
         // Remove title bar/border
@@ -62,5 +67,6 @@ public class WindowModeController : MonoBehaviour
         Rect workArea = Screen.safeArea;
 
         SetWindowPos(window, HWND_TOP, 0, 0, (int)workArea.width, (int)workArea.height, SWP_SHOWWINDOW);
+#endif
     }
 }

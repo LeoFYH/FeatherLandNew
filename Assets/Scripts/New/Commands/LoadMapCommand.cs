@@ -18,6 +18,8 @@ namespace BirdGame
 
         protected override void OnExecute()
         {
+            // 切地图时清掉开蛋锁，避免锁残留
+            Egg.IsHatching = false;
             this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
             
             // 切换地图时关闭所有popup界面

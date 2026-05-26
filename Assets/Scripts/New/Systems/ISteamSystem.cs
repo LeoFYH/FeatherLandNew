@@ -1,5 +1,7 @@
 ﻿using QFramework;
+#if STEAMWORKS_NET && (UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX)
 using Steamworks;
+#endif
 using UnityEngine;
 
 namespace BirdGame
@@ -19,6 +21,7 @@ namespace BirdGame
 
         protected override void OnInit()
         {
+#if STEAMWORKS_NET && (UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX)
             try
             {
                 // 尝试初始化 SteamAPI
@@ -41,24 +44,30 @@ namespace BirdGame
             {
                 Debug.LogError("SteamAPI failed to initialize: " + e.Message);
             }
+#endif
 
             timeStart = Time.time;
         }
 
         public void RunCallbacks()
         {
+#if STEAMWORKS_NET && (UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX)
             if (!SteamManager.Initialized) return;
             SteamAPI.RunCallbacks();
+#endif
         }
 
         public void ShutDown()
         {
+#if STEAMWORKS_NET && (UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX)
             if (!SteamManager.Initialized) return;
             SteamAPI.Shutdown();
+#endif
         }
 
         public void AddBirdUnlocked(int birdId)
         {
+#if STEAMWORKS_NET && (UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX)
             if (!SteamManager.Initialized) return;
             var config = this.GetModel<IConfigModel>().BirdConfig;
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
@@ -66,22 +75,29 @@ namespace BirdGame
             if (string.IsNullOrEmpty(key))
                 return;
             SteamUserStats.SetStat(key, 1);
+#endif
         }
 
         public void FirstPlayTime()
         {
+#if STEAMWORKS_NET && (UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX)
             if (!SteamManager.Initialized) return;
             if (PlayerPrefs.HasKey("UserPlayed"))
                 return;
             int time = (int)(Time.time - timeStart);
             SteamUserStats.SetStat("TotalPlayTime", time);
+#endif
         }
 
         public SystemLanguage GetUserLanguage()
         {
+#if STEAMWORKS_NET && (UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX)
             if (!SteamManager.Initialized) return SystemLanguage.English;
             string language = SteamApps.GetCurrentGameLanguage();
             return Convert(language);
+#else
+            return Application.systemLanguage;
+#endif
         }
 
         private SystemLanguage Convert(string steamLanguage)

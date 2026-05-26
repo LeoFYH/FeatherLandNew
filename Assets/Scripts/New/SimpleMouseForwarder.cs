@@ -202,6 +202,7 @@ namespace BirdGame
                 reusablePointerData = new PointerEventData(cachedEventSystem);
             }
 
+#if UNITY_STANDALONE_WIN
             // Install mouse hook
             _hookID = SetHook(_proc);
 
@@ -217,6 +218,10 @@ namespace BirdGame
             {
                 Debug.Log("[SimpleMouseForwarder] 鼠标和键盘钩子安装成功");
             }
+#else
+            _hookID = IntPtr.Zero;
+            _keyboardHookID = IntPtr.Zero;
+#endif
         }
         
         private void OnValidate()
@@ -1665,8 +1670,6 @@ namespace BirdGame
                         Debug.Log("[SimpleMouseForwarder] IME proxy window focused for input (main thread)");
                 }
             }
-#endif
-
             // Performance optimization: Cache GetForegroundWindowTitle() result per frame
             // This expensive Windows API call was being called twice every frame!
             if (Time.frameCount != lastForegroundWindowCheckFrame)
@@ -1876,6 +1879,7 @@ namespace BirdGame
                     _currentHoveredPointerEvent = null;
                 }
             }
+#endif
         }
         
         private void LateUpdate()

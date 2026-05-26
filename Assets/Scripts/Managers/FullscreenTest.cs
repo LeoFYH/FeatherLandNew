@@ -44,12 +44,15 @@ public class FullscreenTest : MonoBehaviour
 
     void Start()
     {
+#if UNITY_STANDALONE_WIN
         windowHandle = GetActiveWindow();
         WallpaperMode();
+#endif
     }
 
     public void WallpaperMode()
     {
+#if UNITY_STANDALONE_WIN
         // Remove title bar/border
         SetWindowLong(windowHandle, GWL_STYLE, WS_POPUP | WS_VISIBLE);
 
@@ -65,10 +68,12 @@ public class FullscreenTest : MonoBehaviour
 
         workAreaWidth = workArea.Right - workArea.Left;
         workAreaHeight = workArea.Bottom - workArea.Top;
+#endif
     }
 
     public void FullscreenMode()
     {
+#if UNITY_STANDALONE_WIN
         // Remove title bar/border
         SetWindowLong(windowHandle, GWL_STYLE, WS_POPUP | WS_VISIBLE);
 
@@ -84,10 +89,12 @@ public class FullscreenTest : MonoBehaviour
 
         workAreaWidth = screenWidth;
         workAreaHeight = screenHeight;
+#endif
     }
 
     public void WindowedMode()
     {
+#if UNITY_STANDALONE_WIN
         // Restore window style
         SetWindowLong(windowHandle, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
 
@@ -109,5 +116,6 @@ public class FullscreenTest : MonoBehaviour
 
         workAreaWidth = windowWidth;
         workAreaHeight = windowHeight;
+#endif
     }
 }

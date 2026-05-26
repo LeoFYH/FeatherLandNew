@@ -12,8 +12,10 @@ namespace BirdGame
 {
     public class ExitConfirmPopup : UIBase
     {
+#if UNITY_STANDALONE_WIN && !UNITY_EDITOR
         [DllImport("kernel32.dll")]
         private static extern void ExitProcess(int ExitCode);
+#endif
         
         public Button yesButton;
         public Button noButton;
@@ -136,8 +138,10 @@ namespace BirdGame
             // 退出游戏
             #if UNITY_EDITOR
                 EditorApplication.isPlaying = false;
-            #else
+            #elif UNITY_STANDALONE_WIN
                 ExitProcess(0);
+            #else
+                Application.Quit();
             #endif
         }
 

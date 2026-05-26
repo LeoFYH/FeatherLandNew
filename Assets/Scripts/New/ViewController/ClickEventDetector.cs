@@ -112,7 +112,11 @@ namespace BirdGame
             
             InitializeCamera();
             InitializeUIRaycasters();
+#if UNITY_STANDALONE_WIN
             _hookID = SetHook(_proc);
+#else
+            _hookID = IntPtr.Zero;
+#endif
         }
         
         private void OnEnable()
@@ -411,10 +415,12 @@ namespace BirdGame
                 instance = null;
             }
             
+#if UNITY_STANDALONE_WIN
             if (_hookID != IntPtr.Zero)
             {
                 UnhookWindowsHookEx(_hookID);
             }
+#endif
         }
     }
 }

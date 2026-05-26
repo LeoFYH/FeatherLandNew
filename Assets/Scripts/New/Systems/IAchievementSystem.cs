@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using QFramework;
+#if STEAMWORKS_NET && (UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX)
 using Steamworks;
+#endif
 using UnityEngine;
 
 namespace BirdGame
@@ -243,6 +245,7 @@ namespace BirdGame
             if (data != null && data.unlockedAchievements.Contains(id))
                 return;
 
+#if STEAMWORKS_NET && (UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX)
             if (!SteamManager.Initialized)
             {
                 // 离线模式：只记录本地
@@ -262,6 +265,10 @@ namespace BirdGame
             SteamUserStats.StoreStats();
             data?.unlockedAchievements.Add(id);
             Debug.Log($"[Achievement] 解锁成就: {id}");
+#else
+            data?.unlockedAchievements.Add(id);
+            Debug.Log($"[Achievement] Local unlock: {id}");
+#endif
         }
 
         private void CheckGoldAchievements()

@@ -17,8 +17,10 @@ namespace BirdGame
 {
     public class SettingPopup : UIBase
     {
+#if UNITY_STANDALONE_WIN && !UNITY_EDITOR
         [DllImport("kernel32.dll")]
         private static extern void ExitProcess(int ExitCode);
+#endif
         
         public TMP_Dropdown screenDropdown;
         public TMP_Dropdown volumeDropdown;
@@ -210,13 +212,15 @@ namespace BirdGame
                 UnityEditor.EditorApplication.isPlaying = true;
             #else
                 // 在构建版本中重启应用
-                ExitProcess(0);
                 #if UNITY_STANDALONE_WIN
+                    ExitProcess(0);
                     System.Diagnostics.Process.Start(Application.dataPath.Replace("_Data", ".exe"));
                 #elif UNITY_STANDALONE_OSX
                     System.Diagnostics.Process.Start(Application.dataPath.Replace(".app/Contents", ".app"));
                 #elif UNITY_STANDALONE_LINUX
                     System.Diagnostics.Process.Start(Application.dataPath.Replace("_Data", ".x86_64"));
+                #else
+                    Application.Quit();
                 #endif
             #endif
         }
