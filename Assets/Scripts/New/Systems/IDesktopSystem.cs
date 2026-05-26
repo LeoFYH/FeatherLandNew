@@ -7,8 +7,6 @@ using UnityEngine.Rendering.Universal;
 
 namespace BirdGame
 {
-#if UNITY_STANDALONE_WIN
-
     /// <summary>
     /// 桌面模式
     /// </summary>
@@ -19,6 +17,8 @@ namespace BirdGame
         void SetClickThrough(bool enabled);
         bool IsClickThroughEnabled();
     }
+
+#if UNITY_STANDALONE_WIN
 
     public class DesktopSystem : AbstractSystem, IDesktopSystem
     {
@@ -359,6 +359,30 @@ namespace BirdGame
             return isEnabled;
         }
     }
-    
+#else
+    public class DesktopSystem : AbstractSystem, IDesktopSystem
+    {
+        protected override void OnInit()
+        {
+        }
+
+        public void EnableDesktopMode()
+        {
+            Debug.Log("[DesktopSystem] Desktop mode is disabled on this platform.");
+        }
+
+        public void DisableDesktopMode()
+        {
+        }
+
+        public void SetClickThrough(bool enabled)
+        {
+        }
+
+        public bool IsClickThroughEnabled()
+        {
+            return false;
+        }
+    }
 #endif
 }

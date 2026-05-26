@@ -12,6 +12,11 @@ namespace BirdGame
     {
         protected override void OnExecute()
         {
+#if !UNITY_STANDALONE_WIN
+            Debug.LogWarning("Desktop mode is disabled on this platform.");
+            this.GetUtility<IFullScreenUtility>().FullscreenMode();
+            return;
+#else
             this.GetModel<IDesktopBirdModel>().DesktopBirds.Clear();
             var birds = this.GetModel<IBirdModel>().BirdList;
             foreach (var birdData in birds)
@@ -32,6 +37,7 @@ namespace BirdGame
             loadingModel.LoadingText.Value = "Enter Desktop";
             loadingModel.Progress.Value = 0;
             this.GetSystem<IMonoSystem>().StartCoroutine(LoadingDesktop());
+#endif
         }
 
         private IEnumerator LoadingDesktop()

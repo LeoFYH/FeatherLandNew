@@ -179,7 +179,9 @@ public class WallpaperModeController : MonoBehaviour
     private void Awake()
     {
         ins = this;
+#if UNITY_STANDALONE_WIN
         SetProcessDpiAwareness(); // 初始化DPI感知
+#endif
         Screen.fullScreen = false;
     }
 
@@ -188,6 +190,9 @@ public class WallpaperModeController : MonoBehaviour
     /// </summary>
     private void Update()
     {
+#if !UNITY_STANDALONE_WIN
+        return;
+#else
         // 壁纸模式下按ESC键退出
         if (Input.GetKeyDown(KeyCode.Escape) && isWallpaperModeActive)
         {
@@ -205,6 +210,7 @@ public class WallpaperModeController : MonoBehaviour
                     0x0002 | 0x0001 | 0x0040); // SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW
             }
         }
+#endif
     }
 
     /// <summary>
@@ -212,6 +218,10 @@ public class WallpaperModeController : MonoBehaviour
     /// </summary>
     public void EnterWallpaperMode()
     {
+#if !UNITY_STANDALONE_WIN
+        Debug.LogWarning("Wallpaper mode is disabled on this platform.");
+        return;
+#else
         // 获取Unity窗口句柄（根据PlayerSettings中的产品名称查找）
         unityWindowHandle = FindWindow(null, Application.productName);
         Debug.Log("当前应用窗口名称：" + Application.productName);
@@ -283,6 +293,7 @@ public class WallpaperModeController : MonoBehaviour
         {
             Debug.LogError($"进入壁纸模式失败: {e.Message}");
         }
+#endif
     }
 
     /// <summary>
@@ -326,6 +337,9 @@ public class WallpaperModeController : MonoBehaviour
     /// </summary>
     public void ExitWallpaperMode()
     {
+#if !UNITY_STANDALONE_WIN
+        return;
+#else
         // 避免重复退出或句柄无效
         if (!isWallpaperModeActive || unityWindowHandle == IntPtr.Zero)
             return;
@@ -351,6 +365,7 @@ public class WallpaperModeController : MonoBehaviour
         {
             Debug.LogError($"退出壁纸模式失败: {e.Message}");
         }
+#endif
     }
 
     /// <summary>

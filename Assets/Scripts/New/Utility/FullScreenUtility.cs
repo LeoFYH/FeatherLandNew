@@ -938,10 +938,35 @@ namespace BirdGame
 #else
         // 非 Windows 平台
         public bool EnableWallpaperMode => false;
-        public bool HasMultipleMonitors => false;
-        public void WallpaperMode() { Debug.LogWarning("桌面模式仅在 Windows 平台支持"); }
-        public void FullscreenMode() { Debug.LogWarning("全屏模式仅在 Windows 平台支持"); }
-        public void WindowedMode() { Debug.LogWarning("窗口模式仅在 Windows 平台支持"); }
+        public bool HasMultipleMonitors => Display.displays != null && Display.displays.Length > 1;
+        public void WallpaperMode()
+        {
+            Debug.LogWarning("Wallpaper mode is disabled on this platform; using fullscreen instead.");
+            FullscreenMode();
+        }
+
+        public void FullscreenMode()
+        {
+            Screen.fullScreenMode = UnityEngine.FullScreenMode.FullScreenWindow;
+            Screen.fullScreen = true;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+            Debug.Log($"[FullscreenMode] Active - {Screen.currentResolution.width}x{Screen.currentResolution.height}");
+        }
+
+        public void WindowedMode()
+        {
+            int screenW = Mathf.Max(1280, Screen.currentResolution.width);
+            int screenH = Mathf.Max(720, Screen.currentResolution.height);
+            int windowW = Mathf.Max(960, Mathf.RoundToInt(screenW * 0.8f));
+            int windowH = Mathf.Max(540, Mathf.RoundToInt(screenH * 0.8f));
+
+            Screen.fullScreenMode = UnityEngine.FullScreenMode.Windowed;
+            Screen.SetResolution(windowW, windowH, false);
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+            Debug.Log($"[WindowedMode] Active - {windowW}x{windowH}");
+        }
         public bool IsWallpaperModeActive() { return false; }
         public bool TryGiveFocusThenSendBackInWallpaper() { return false; }
         public bool IsRunningAsAdministrator() { return false; }

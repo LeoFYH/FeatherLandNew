@@ -50,7 +50,7 @@ namespace BirdGame.Editor
             var uiPopupsGroup = GetOrCreateGroup(settings, "UI_Popups");
             SetGroupSettings(uiPopupsGroup, 
                 BundledAssetGroupSchema.BundlePackingMode.PackSeparately, 
-                BundledAssetGroupSchema.BundleCompressionMode.LZMA,
+                BundledAssetGroupSchema.BundleCompressionMode.LZ4,
                 "弹窗UI（按需加载）");
 
             // 5. Scenes (场景组)
@@ -71,7 +71,7 @@ namespace BirdGame.Editor
             var audioEffectsGroup = GetOrCreateGroup(settings, "Audio_Effects");
             SetGroupSettings(audioEffectsGroup, 
                 BundledAssetGroupSchema.BundlePackingMode.PackTogetherByLabel, 
-                BundledAssetGroupSchema.BundleCompressionMode.LZMA,
+                BundledAssetGroupSchema.BundleCompressionMode.LZ4,
                 "音效文件");
 
             // 8. Prefabs_Common (通用预制体组)
@@ -85,7 +85,7 @@ namespace BirdGame.Editor
             var prefabsSpecialGroup = GetOrCreateGroup(settings, "Prefabs_Special");
             SetGroupSettings(prefabsSpecialGroup, 
                 BundledAssetGroupSchema.BundlePackingMode.PackSeparately, 
-                BundledAssetGroupSchema.BundleCompressionMode.LZMA,
+                BundledAssetGroupSchema.BundleCompressionMode.LZ4,
                 "特殊效果预制体");
 
             // 10. Atlas (图集组)

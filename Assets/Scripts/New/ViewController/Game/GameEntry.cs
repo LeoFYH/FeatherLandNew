@@ -91,6 +91,12 @@ namespace BirdGame
         /// <param name="forceChange">是否强制切换（忽略冷却时间，用于初始化）</param>
         private void SetScreenMode(int mode, bool forceChange = false)
         {
+#if !UNITY_STANDALONE_WIN
+            if (mode == 1)
+            {
+                mode = 2;
+            }
+#endif
             // Check cooldown to prevent rapid mode switching during transitions
             if (!forceChange && Time.time - _lastModeChangeTime < MODE_CHANGE_COOLDOWN)
             {

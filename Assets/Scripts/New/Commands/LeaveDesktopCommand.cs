@@ -23,6 +23,12 @@ namespace BirdGame
             SimpleMouseForwarder.ClearKeyboardState();
             
             int id = this.GetModel<ISaveModel>().SettingData.screenMode;
+#if !UNITY_STANDALONE_WIN
+            if (id == 1)
+            {
+                id = 2;
+            }
+#endif
             if (id == 0)
             {
                 this.GetUtility<IFullScreenUtility>().WindowedMode();

@@ -202,6 +202,7 @@ namespace BirdGame
                 reusablePointerData = new PointerEventData(cachedEventSystem);
             }
 
+#if UNITY_STANDALONE_WIN
             // Install mouse hook
             _hookID = SetHook(_proc);
 
@@ -217,6 +218,11 @@ namespace BirdGame
             {
                 Debug.Log("[SimpleMouseForwarder] 鼠标和键盘钩子安装成功");
             }
+#else
+            _hookID = IntPtr.Zero;
+            _keyboardHookID = IntPtr.Zero;
+            isOnDesktop = false;
+#endif
         }
         
         private void OnValidate()
@@ -1667,6 +1673,7 @@ namespace BirdGame
             }
 #endif
 
+#if UNITY_STANDALONE_WIN
             // Performance optimization: Cache GetForegroundWindowTitle() result per frame
             // This expensive Windows API call was being called twice every frame!
             if (Time.frameCount != lastForegroundWindowCheckFrame)
@@ -1684,6 +1691,9 @@ namespace BirdGame
                 wallpaperModeActive = fullScreen != null && fullScreen.IsWallpaperModeActive();
             }
             isOnDesktop = wallpaperModeActive && (cachedForegroundWindowTitle == "Program Manager" || cachedForegroundWindowTitle == string.Empty);
+#else
+            isOnDesktop = false;
+#endif
             
             // Performance optimization: Update cached values periodically
             if (Time.frameCount % 60 == 0) // Update every 60 frames (~1 second at 60fps)
@@ -2028,6 +2038,7 @@ namespace BirdGame
         {
             Debug.Log("[SimpleMouseForwarder] OnDisable");
             // Unhook all hooks when object is deactivated
+#if UNITY_STANDALONE_WIN
             if (_hookID != IntPtr.Zero)
             {
                 UnhookWindowsHookEx(_hookID);
@@ -2042,6 +2053,7 @@ namespace BirdGame
                 Debug.Log("[SimpleMouseForwarder] 键盘钩子已卸载 (OnDisable)");
             }
 
+#endif
             // Clear held button when component is disabled
             if (_currentHeldButton != null)
             {
@@ -2075,6 +2087,7 @@ namespace BirdGame
 
         private void OnDestroy()
         {
+#if UNITY_STANDALONE_WIN
             if (_hookID != IntPtr.Zero)
             {
                 UnhookWindowsHookEx(_hookID);
@@ -2087,6 +2100,7 @@ namespace BirdGame
                 _keyboardHookID = IntPtr.Zero;
             }
 
+#endif
             // Clear held button when component is destroyed
             if (_currentHeldButton != null)
             {

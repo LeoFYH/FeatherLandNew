@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using DG.Tweening;
 using QFramework;
 using TMPro;
@@ -17,9 +16,6 @@ namespace BirdGame
 {
     public class SettingPopup : UIBase
     {
-        [DllImport("kernel32.dll")]
-        private static extern void ExitProcess(int ExitCode);
-        
         public TMP_Dropdown screenDropdown;
         public TMP_Dropdown volumeDropdown;
         public TMP_Dropdown languageDropdown;
@@ -210,14 +206,15 @@ namespace BirdGame
                 UnityEditor.EditorApplication.isPlaying = true;
             #else
                 // 在构建版本中重启应用
-                ExitProcess(0);
                 #if UNITY_STANDALONE_WIN
                     System.Diagnostics.Process.Start(Application.dataPath.Replace("_Data", ".exe"));
                 #elif UNITY_STANDALONE_OSX
-                    System.Diagnostics.Process.Start(Application.dataPath.Replace(".app/Contents", ".app"));
+                    string appPath = Application.dataPath.Replace(".app/Contents", ".app");
+                    System.Diagnostics.Process.Start("open", $"-n \"{appPath}\"");
                 #elif UNITY_STANDALONE_LINUX
                     System.Diagnostics.Process.Start(Application.dataPath.Replace("_Data", ".x86_64"));
                 #endif
+                Application.Quit();
             #endif
         }
 
@@ -290,7 +287,7 @@ namespace BirdGame
                 if (isChangingMode)
                     return;
                     
-                SwitchScreenMode(id);
+                SwitchScreenMode(DropdownValueToScreenMode(id));
             });
             languageDropdown.onValueChanged.AddListener(index =>
             {
@@ -314,9 +311,7 @@ namespace BirdGame
             {
                 if (autoFeedingToggle != null)
                     RefreshAutoFeedingLabel(autoFeedingToggle.isOn);
-                screenDropdown.options[0].text = this.GetSystem<ILocalizationSystem>().GetString("Windowed");
-                screenDropdown.options[1].text = this.GetSystem<ILocalizationSystem>().GetString("Wallpaper");
-                screenDropdown.options[2].text = this.GetSystem<ILocalizationSystem>().GetString("Full Screen");
+                RefreshScreenDropdownTexts();
                 screenDropdown.RefreshShownValue();
                 int count = languages.Count;
                 var currentLang = this.GetModel<ISaveModel>().SettingData.gameLanguage;
@@ -335,10 +330,11 @@ namespace BirdGame
             // 监听全局屏幕模式切换事件（用于键盘快捷键切换时更新UI）
             this.RegisterEvent<ChangeScreenModeEvent>(evt =>
             {
-                if (screenDropdown != null && screenDropdown.value != evt.mode)
+                int dropdownValue = ScreenModeToDropdownValue(evt.mode);
+                if (screenDropdown != null && screenDropdown.value != dropdownValue)
                 {
                     isChangingMode = true; // 设置标志，防止触发onValueChanged
-                    screenDropdown.value = evt.mode;
+                    screenDropdown.value = dropdownValue;
                     isChangingMode = false; // 重置标志
                 }
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
@@ -413,12 +409,55 @@ namespace BirdGame
             autoFeedRect.anchoredPosition = new Vector2(0, autoFeedY - moveHeight);
         }
 
+        private int DropdownValueToScreenMode(int dropdownValue)
+        {
+#if UNITY_STANDALONE_WIN
+            return dropdownValue;
+#else
+            return dropdownValue <= 0 ? 0 : 2;
+#endif
+        }
+
+        private int ScreenModeToDropdownValue(int screenMode)
+        {
+#if UNITY_STANDALONE_WIN
+            return Mathf.Clamp(screenMode, 0, 2);
+#else
+            return screenMode == 0 ? 0 : 1;
+#endif
+        }
+
+        private void RefreshScreenDropdownTexts()
+        {
+            if (screenDropdown == null || screenDropdown.options.Count == 0)
+                return;
+
+            screenDropdown.options[0].text = this.GetSystem<ILocalizationSystem>().GetString("Windowed");
+
+            if (screenDropdown.options.Count > 1)
+            {
+#if UNITY_STANDALONE_WIN
+                screenDropdown.options[1].text = this.GetSystem<ILocalizationSystem>().GetString("Wallpaper");
+                if (screenDropdown.options.Count > 2)
+                    screenDropdown.options[2].text = this.GetSystem<ILocalizationSystem>().GetString("Full Screen");
+#else
+                screenDropdown.options[1].text = this.GetSystem<ILocalizationSystem>().GetString("Full Screen");
+#endif
+            }
+        }
+
         /// <summary>
         /// 切换屏幕模式（统一方法，供点击和键盘快捷键调用）
         /// </summary>
         /// <param name="mode">模式：0=窗口模式, 1=壁纸模式, 2=全屏模式</param>
         private void SwitchScreenMode(int mode)
         {
+#if !UNITY_STANDALONE_WIN
+            if (mode == 1)
+            {
+                mode = 2;
+            }
+#endif
             // Clear keyboard state before mode change to prevent lingering key states
             SimpleMouseForwarder.ClearKeyboardState();
             
@@ -453,10 +492,11 @@ namespace BirdGame
             this.GetModel<ISaveModel>().SettingData.screenMode = mode;
             
             // 更新下拉菜单显示（如果是通过键盘切换）
-            if (screenDropdown.value != mode)
+            int dropdownValue = ScreenModeToDropdownValue(mode);
+            if (screenDropdown.value != dropdownValue)
             {
                 isChangingMode = true; // 设置标志，防止触发onValueChanged
-                screenDropdown.value = mode;
+                screenDropdown.value = dropdownValue;
                 isChangingMode = false; // 重置标志
             }
         }
@@ -472,12 +512,14 @@ namespace BirdGame
                 image = itemSprite,
                 color = Color.white
             });
+#if UNITY_STANDALONE_WIN
             value = this.GetSystem<ILocalizationSystem>().GetString("Wallpaper");
             screenDropdown.options.Add(new TMPro.TMP_Dropdown.OptionData()
             {
                 text = value,
                 image = itemSprite
             });
+#endif
             value = this.GetSystem<ILocalizationSystem>().GetString("Full Screen");
             screenDropdown.options.Add(new TMPro.TMP_Dropdown.OptionData()
             {
@@ -491,10 +533,16 @@ namespace BirdGame
             {
                 savedScreenMode = 2;
             }
+#if !UNITY_STANDALONE_WIN
+            if (savedScreenMode == 1)
+            {
+                savedScreenMode = 2;
+            }
+#endif
             
             // 设置下拉菜单值（使用标志防止触发onValueChanged）
             isChangingMode = true;
-            screenDropdown.value = savedScreenMode;
+            screenDropdown.value = ScreenModeToDropdownValue(savedScreenMode);
             isChangingMode = false;
             
             // 应用屏幕模式（仅在初始化时应用，避免重复应用）

@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -12,9 +11,6 @@ namespace BirdGame
 {
     public class ExitConfirmPopup : UIBase
     {
-        [DllImport("kernel32.dll")]
-        private static extern void ExitProcess(int ExitCode);
-        
         public Button yesButton;
         public Button noButton;
         public Button closeButton;
@@ -134,11 +130,11 @@ namespace BirdGame
             this.GetSystem<IUISystem>().HidePopup(UIPopup.ExitConfirmPopup);
             
             // 退出游戏
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
                 EditorApplication.isPlaying = false;
-            #else
-                ExitProcess(0);
-            #endif
+#else
+                Application.Quit();
+#endif
         }
 
         private System.Collections.IEnumerator DelayedExit()
