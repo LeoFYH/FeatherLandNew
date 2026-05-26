@@ -8,6 +8,9 @@ namespace BirdGame
 {
     public class Egg : ViewControllerBase
     {
+        // 全局开蛋锁：一次只能孵一个蛋。SpawnBirdCommand 的成功/失败路径都会 reset 这个标志
+        public static bool IsHatching = false;
+
         [ShowInInspector, ReadOnly]
         public int EggItemIndex { get; private set; }
         public int BirdIndex { get; private set; }
@@ -95,7 +98,14 @@ namespace BirdGame
         {
             if(this.GetModel<IGameModel>().IsSettingOpen)
                 return;
-            
+            // 防止快速连点导致并发孵化（旧逻辑会卡死游戏）
+            if (IsHatching)
+            {
+                Debug.Log("[Egg] 已有蛋在孵化中，忽略本次点击");
+                return;
+            }
+            IsHatching = true;
+
             this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Hatch);
             SpawnBird();
 

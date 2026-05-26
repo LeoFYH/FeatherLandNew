@@ -19,6 +19,14 @@ namespace BirdGame
 
     public class CursorSystem : AbstractSystem, ICursorSystem
     {
+        // Mac 上 CursorMode.Auto 会被 Cocoa 按 Retina/HiDPI 放大，导致光标显著变大
+        // 用 ForceSoftware 让 Unity 自己绘制，严格按贴图像素大小显示
+#if UNITY_STANDALONE_OSX
+        private const CursorMode CursorRenderMode = CursorMode.ForceSoftware;
+#else
+        private const CursorMode CursorRenderMode = CursorMode.Auto;
+#endif
+
         private Dictionary<CursorState, CursorItem> cursorItems = new Dictionary<CursorState, CursorItem>();
         private Sequence feedAnim;
         private Sequence strokeAnim;
@@ -70,7 +78,7 @@ namespace BirdGame
                 }
 
                 int index = this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools[6].equipedId;
-                Cursor.SetCursor(item.cursorTextures[index], item.hotspot, CursorMode.Auto);
+                Cursor.SetCursor(item.cursorTextures[index], item.hotspot, CursorRenderMode);
             }
             catch (Exception e)
             {
@@ -94,7 +102,7 @@ namespace BirdGame
                 }
 
                 int index = this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools[6].equipedId;
-                Cursor.SetCursor(item.cursorTextures[index], item.hotspot, CursorMode.Auto);
+                Cursor.SetCursor(item.cursorTextures[index], item.hotspot, CursorRenderMode);
             }
             catch (Exception e)
             {
@@ -121,7 +129,7 @@ namespace BirdGame
                     this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools.Add(new ToolInfo());
                 }
                 int index =this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools[6].equipedId;
-                Cursor.SetCursor(item.cursorTextures[index], item.hotspot, CursorMode.Auto);
+                Cursor.SetCursor(item.cursorTextures[index], item.hotspot, CursorRenderMode);
             }
             catch (Exception e)
             {
@@ -146,7 +154,7 @@ namespace BirdGame
                         this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools.Add(new ToolInfo());
                     }
                     int index =this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools[6].equipedId;
-                    Cursor.SetCursor(item.cursorTextures[index], item.hotspot, CursorMode.Auto);
+                    Cursor.SetCursor(item.cursorTextures[index], item.hotspot, CursorRenderMode);
                 }
                 catch (Exception e)
                 {
@@ -170,7 +178,7 @@ namespace BirdGame
                         this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools.Add(new ToolInfo());
                     }
                     int index =this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools[6].equipedId;
-                    Cursor.SetCursor(item.cursorTextures[index], item.hotspot, CursorMode.Auto);
+                    Cursor.SetCursor(item.cursorTextures[index], item.hotspot, CursorRenderMode);
                 }
                 catch (Exception e)
                 {

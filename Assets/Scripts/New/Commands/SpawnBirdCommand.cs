@@ -76,7 +76,11 @@ namespace BirdGame
             int eggtype = this.GetModel<IGameModel>().ShopEggSelectIndex.Value;
             this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>("OpenEggAnim", obj =>
             {
-                if (obj == null) return;
+                if (obj == null)
+                {
+                    Egg.IsHatching = false;   // 加载失败也要解锁，否则永远卡住
+                    return;
+                }
                 this.SendEvent<HideEggEvent>();
                 var anim = GameObject.Instantiate(obj).GetComponent<OpenEggAnim>();
                 anim.InitBird(val, eggtype, () =>
@@ -114,6 +118,7 @@ namespace BirdGame
                 if (obj == null)
                 {
                     Debug.LogError($"鸟预制体加载失败 birdIndex={birdIndex}");
+                    Egg.IsHatching = false;   // 解锁，允许玩家再点
                     return;
                 }
                 GameObject go = GameObject.Instantiate(obj);
@@ -139,6 +144,7 @@ namespace BirdGame
                     this.GetSystem<IUISystem>().HideMask();
                     this.SendEvent<EnableButtonEvent>();
                 }
+                Egg.IsHatching = false;   // 鸟成功 spawn，解锁允许下一个蛋
             });
             
         }
