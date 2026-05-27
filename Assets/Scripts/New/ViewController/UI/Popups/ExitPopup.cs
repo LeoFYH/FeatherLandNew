@@ -15,7 +15,7 @@ namespace BirdGame
             
             noButton.onClick.AddListener(() =>
             {
-#if !UNITY_EDITOR
+#if UNITY_STANDALONE_WIN && !UNITY_EDITOR
                 this.GetSystem<IDesktopSystem>().SetClickThrough(true);
 #endif
                 gameObject.SetActive(false);
