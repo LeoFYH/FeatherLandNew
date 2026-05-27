@@ -15,8 +15,8 @@ namespace BirdGame
             if (exitPop.activeSelf)
                 exitPop.SetActive(false);
 #if !UNITY_EDITOR
-            this.GetSystem<IDesktopSystem>().EnableDesktopMode();
-            this.GetSystem<IDesktopSystem>().SetClickThrough(true);
+            //this.GetSystem<IDesktopSystem>().EnableDesktopMode();
+            //this.GetSystem<IDesktopSystem>().SetClickThrough(true);
 #endif
             int count = this.GetModel<IDesktopBirdModel>().DesktopBirds.Count;
             for (int i = 0; i < count; i++)

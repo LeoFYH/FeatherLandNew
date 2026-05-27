@@ -132,9 +132,15 @@ namespace BirdGame
             // 退出游戏
 #if UNITY_EDITOR
                 EditorApplication.isPlaying = false;
+<<<<<<< Updated upstream
 #else
                 Application.Quit();
 #endif
+=======
+            #else 
+                Application.Quit();
+            #endif
+>>>>>>> Stashed changes
         }
 
         private System.Collections.IEnumerator DelayedExit()

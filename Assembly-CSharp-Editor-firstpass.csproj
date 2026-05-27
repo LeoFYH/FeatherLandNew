@@ -41,19 +41,19 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="Assets\Plugins\Sirenix\Odin Inspector\Assets\Editor\Hidden\ExtractSpriteShader.shader" />
-    <None Include="Assets\Plugins\Sirenix\Odin Inspector\Assets\Editor\Hidden\GUIUtilShader.shader" />
-    <None Include="Assets\Plugins\Sirenix\Odin Inspector\Assets\Editor\Hidden\SdfIconShader.shader" />
-    <None Include="Assets\Plugins\Sirenix\Odin Inspector\Assets\Editor\Hidden\LazyEditorIconShader.shader" />
-    <None Include="Assets\Plugins\Sirenix\Odin Inspector\Assets\Editor\Bootstrap License.txt" />
+    <None Include="Assets/Plugins/Sirenix/Odin Inspector/Assets/Editor/Hidden/ExtractSpriteShader.shader" />
+    <None Include="Assets/Plugins/Sirenix/Odin Inspector/Assets/Editor/Hidden/GUIUtilShader.shader" />
+    <None Include="Assets/Plugins/Sirenix/Odin Inspector/Assets/Editor/Hidden/SdfIconShader.shader" />
+    <None Include="Assets/Plugins/Sirenix/Odin Inspector/Assets/Editor/Hidden/LazyEditorIconShader.shader" />
+    <None Include="Assets/Plugins/Sirenix/Odin Inspector/Assets/Editor/Bootstrap License.txt" />
     <Reference Include="UnityEngine">
-      <HintPath>E:\WorkSoftwares\Unity\6000.0.58f2\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
+      <HintPath>/Applications/Unity/Unity.app/Contents/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>E:\WorkSoftwares\Unity\6000.0.58f2\Editor\Data\Managed\UnityEngine\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>/Applications/Unity/Unity.app/Contents/Managed/UnityEngine/UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor">
-      <HintPath>E:\WorkSoftwares\Unity\6000.0.58f2\Editor\Data\Managed\UnityEngine\UnityEditor.dll</HintPath>
+      <HintPath>/Applications/Unity/Unity.app/Contents/Managed/UnityEngine/UnityEditor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
