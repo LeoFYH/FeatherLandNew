@@ -144,6 +144,7 @@ namespace BirdGame
 
         void Start()
         {
+            heart.localPosition = new Vector3(Vector3(-0.032, 0.96, 0));
             this.RegisterEvent<SwitchWeatherEvent>(evt =>
             {
                 if(weatherIndex == evt.index)
