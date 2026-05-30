@@ -4,12 +4,14 @@ using UnityEngine;
 using System.Text;
 using TMPro;
 using AOT;
+using BirdGame;
+using QFramework;
 
 /// <summary>
 /// 壁纸模式控制器：负责将Unity窗口嵌入桌面作为动态壁纸，并管理模式切换
 /// 核心功能：通过Windows API修改窗口属性，实现窗口嵌入桌面、样式调整和状态恢复
 /// </summary>
-public class WallpaperModeController : MonoBehaviour
+public class WallpaperModeController : ViewControllerBase
 {
     public static WallpaperModeController ins;
 
@@ -192,7 +194,7 @@ public class WallpaperModeController : MonoBehaviour
     {
         // 壁纸模式下按ESC键退出
 #if UNITY_STANDALONE_WIN
-        if (Input.GetKeyDown(KeyCode.Escape) && isWallpaperModeActive)
+        if (Input.GetKeyDown(KeyCode.Escape) && isWallpaperModeActive && this.GetModel<IGameModel>().IsShortcutKeyOn.Value)
         {
             ExitWallpaperMode();
         }

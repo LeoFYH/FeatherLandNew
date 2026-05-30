@@ -513,7 +513,7 @@ namespace BirdGame
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.A))
+            if (Input.GetKeyDown(KeyCode.A) && this.GetModel<IGameModel>().IsShortcutKeyOn.Value)
             {
                 showDebugButton = !showDebugButton;
                 debugButton.gameObject.SetActive(SceneManager.sceneCountInBuildSettings > 1 && showDebugButton);
@@ -525,7 +525,7 @@ namespace BirdGame
         /// </summary>
         private bool GetKeyDownAny(KeyCode keyCode)
         {
-            return Input.GetKeyDown(keyCode) || SimpleMouseForwarder.GetKeyDown(keyCode);
+            return (Input.GetKeyDown(keyCode) || SimpleMouseForwarder.GetKeyDown(keyCode)) && this.GetModel<IGameModel>().IsShortcutKeyOn.Value;
         }
 
         /// <summary>

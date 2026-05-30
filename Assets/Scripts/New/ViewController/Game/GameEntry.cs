@@ -624,8 +624,8 @@ namespace BirdGame
             // In windowed/fullscreen: Unity Input will work
             // In wallpaper mode: Windows Hook will work (and Unity Input may or may not)
             // Using OR ensures at least one system detects the key
-            bool unityInput = Input.GetKeyDown(keyCode);
-            bool hookInput = SimpleMouseForwarder.GetKeyDown(keyCode);
+            bool unityInput = Input.GetKeyDown(keyCode) && this.GetModel<IGameModel>().IsShortcutKeyOn.Value;
+            bool hookInput = SimpleMouseForwarder.GetKeyDown(keyCode) && this.GetModel<IGameModel>().IsShortcutKeyOn.Value;
             
             return unityInput || hookInput;
         }

@@ -91,10 +91,11 @@ namespace BirdGame
         public SystemLanguage gameLanguage;
         public bool isShowedTutorial;
         public bool autoFeeding = false; // 初次进入为关；true=点一下持续投喂再点停止，false=每次点击撒一次
-
+        public bool isShortcutKeyOn = true;
         public SettingData()
         {
             screenMode = 2;
+            isShortcutKeyOn = true;
             Debug.Log($"当前Windows系统语言: {Application.systemLanguage}");
             gameLanguage = SystemLanguage.Unknown;
         }

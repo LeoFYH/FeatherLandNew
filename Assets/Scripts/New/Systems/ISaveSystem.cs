@@ -33,6 +33,11 @@ namespace BirdGame
 
             _saveModel = this.GetModel<ISaveModel>();
             //InitData();
+            this.GetModel<IGameModel>().IsShortcutKeyOn.Register(v =>
+            {
+                _saveModel.SettingData.isShortcutKeyOn = v;
+                SaveData();
+            });
         }
 
         private void SaveData<T>(string fileName, T data) where T : SavableData
@@ -277,6 +282,7 @@ namespace BirdGame
 
             this.GetModel<IRadioModel>().Volume.Value = _saveModel.MusicSettingData.bgmVolume;
             this.GetModel<IRadioModel>().EnvironmentVolume.Value = _saveModel.MusicSettingData.environmentVolume;
+            this.GetModel<IGameModel>().IsShortcutKeyOn.Value = _saveModel.SettingData.isShortcutKeyOn;
         }
 
         private void EnsureBirdInfoDataValid(BirdInfoData data)

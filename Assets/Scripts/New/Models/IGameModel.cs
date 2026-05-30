@@ -27,6 +27,7 @@ namespace BirdGame
         int OpenEggIndex { get; set; }
         int BuyMapCost { get; set; }
         bool IsSettingOpen { get; set; }
+        BindableProperty<bool> IsShortcutKeyOn { get; }
     }
 
     public class GameModel : AbstractModel, IGameModel
@@ -59,6 +60,7 @@ namespace BirdGame
         public int OpenEggIndex { get; set; } = -1;
         public int BuyMapCost { get; set; }
         public bool IsSettingOpen { get; set; }
+        public BindableProperty<bool> IsShortcutKeyOn { get; } = new BindableProperty<bool>();
         public int EggInfoIndex { get; set; }
     }
 }

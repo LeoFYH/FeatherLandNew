@@ -34,6 +34,8 @@ namespace BirdGame
         [Header("喂食")]
         public Toggle autoFeedingToggle;
         public LocalizationText autoFeedingLabelText;
+        public Button shortcutButton;
+        public TextMeshProUGUI shortcutText;
 
         private List<SystemLanguage> languages = new List<SystemLanguage>();
         private bool isScreenExpend = false;
@@ -46,12 +48,14 @@ namespace BirdGame
         private float languageY;
         private float volumeY;
         private float autoFeedY;
+        private float shortcutY;
         private RectTransform deleteRect;
         private RectTransform tutorialRect;
         private RectTransform quitRect;
         private RectTransform languageRect;
         private RectTransform volumeRect;
         private RectTransform autoFeedRect;
+        private RectTransform shortcutRect;
         private bool isChangingMode = false; // 防止键盘切换时触发onValueChanged导致循环
         private Canvas canvas;
         
@@ -234,6 +238,7 @@ namespace BirdGame
             languageRect = languageDropdown.GetComponent<RectTransform>();
             volumeRect = volumeDropdown.GetComponent<RectTransform>();
             autoFeedRect = autoFeedingToggle.GetComponent<RectTransform>();
+            shortcutRect = shortcutButton.GetComponent<RectTransform>();
 
             deleteY = deleteRect.anchoredPosition.y;
             tutorailY = tutorialRect.anchoredPosition.y;
@@ -241,6 +246,7 @@ namespace BirdGame
             languageY = languageRect.anchoredPosition.y;
             volumeY = volumeRect.anchoredPosition.y;
             autoFeedY = autoFeedRect.anchoredPosition.y;
+            shortcutY = shortcutRect.anchoredPosition.y;
             
             tutorialButton.onClick.AddListener(() =>
             {
@@ -314,10 +320,47 @@ namespace BirdGame
                 RefreshAutoFeedingLabel(autoFeedingToggle.isOn);
             }
 
+            string shortcutLocal = this.GetSystem<ILocalizationSystem>().GetString("ShortcutKeys");
+            if (this.GetModel<IGameModel>().IsShortcutKeyOn.Value)
+            {
+                shortcutText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Disable")}{shortcutLocal}";
+            }
+            else
+            {
+                shortcutText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Enable")}{shortcutLocal}";
+            }
+
+            this.GetModel<IGameModel>().IsShortcutKeyOn.Register(v =>
+            {
+                shortcutLocal = this.GetSystem<ILocalizationSystem>().GetString("ShortcutKeys");
+                if (v)
+                {
+                    shortcutText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Disable")}{shortcutLocal}";
+                }
+                else
+                {
+                    shortcutText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Enable")}{shortcutLocal}";
+                }
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            shortcutButton.onClick.AddListener(() =>
+            {
+                this.GetModel<IGameModel>().IsShortcutKeyOn.Value = !this.GetModel<IGameModel>().IsShortcutKeyOn.Value;
+            });
+
             this.RegisterEvent<ChangeLanguageEvent>(evt =>
             {
                 if (autoFeedingToggle != null)
                     RefreshAutoFeedingLabel(autoFeedingToggle.isOn);
+                
+                shortcutLocal = this.GetSystem<ILocalizationSystem>().GetString("ShortcutKeys");
+                if (this.GetModel<IGameModel>().IsShortcutKeyOn.Value)
+                {
+                    shortcutText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Disable")}{shortcutLocal}";
+                }
+                else
+                {
+                    shortcutText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Enable")}{shortcutLocal}";
+                }
                 screenDropdown.options[0].text = this.GetSystem<ILocalizationSystem>().GetString("Windowed");
                 screenDropdown.options[1].text = this.GetSystem<ILocalizationSystem>().GetString("Wallpaper");
                 screenDropdown.options[2].text = this.GetSystem<ILocalizationSystem>().GetString("Full Screen");
@@ -415,6 +458,7 @@ namespace BirdGame
             tutorialRect.anchoredPosition = new Vector2(0, tutorailY - moveHeight);
             quitRect.anchoredPosition = new Vector2(0, quitY - moveHeight);
             autoFeedRect.anchoredPosition = new Vector2(0, autoFeedY - moveHeight);
+            shortcutRect.anchoredPosition = new Vector2(0, shortcutY - moveHeight);
         }
 
         /// <summary>
