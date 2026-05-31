@@ -315,10 +315,15 @@ namespace BirdGame
                             if (Time.time - lastClickTime >= clickInterval)
                             {
                                 lastClickTime = Time.time; // 更新最后点击时间
-                                petTime += 0.1f;
                                 int index = this.GetModel<IBirdModel>().BirdList[birdIndex].birdType;
                                 int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
                                 var birdConf = this.GetModel<IConfigModel>().BirdConfig.GetBird(index, mapIndex);
+                                if (TryFlyAwayFromClick(birdConf))
+                                {
+                                    return;
+                                }
+
+                                petTime += 0.1f;
                                 this.GetModel<IAccountModel>().Coins.Value += birdConf.clickEarning;
                                 if (currentFavorability.Value < totalFavorability && !isSmall)
                                 {
@@ -454,6 +459,39 @@ namespace BirdGame
             {
                 previousRightClickCount = SimpleMouseForwarder.rightClickCount;
             }
+        }
+
+        private bool TryFlyAwayFromClick(BirdItem birdConf)
+        {
+            if (birdConf == null || isSmall || !birdConf.canFly)
+                return false;
+
+            if (agent != null && agent.enabled)
+            {
+                agent.isStopped = true;
+                agent.velocity = Vector3.zero;
+            }
+
+            if (_stateMachine.CurrentState == typeof(BirdEatState) && currFood != null)
+            {
+                currFood.UntargetFood();
+                currFood = null;
+                anim.SetBool(AnimatorHashes.Eat, false);
+            }
+
+            if (birdConf.canFlyHorizontal)
+            {
+                _stateMachine.ChangeState<BirdFlyHorizontalState>();
+                return true;
+            }
+
+            if (birdConf.canFlyWait && this.GetModel<IBirdModel>().FlyPositions.Count > 0)
+            {
+                _stateMachine.ChangeState<BirdFlyState>();
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>

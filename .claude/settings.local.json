@@ -46,7 +46,14 @@
       "Read(//c/Users/11752/Downloads/**)",
       "Bash(grep -B1 \"Data: EgyptianVulture$\\\\|Data: African ostrich$\\\\|Data: Powdered Head Duck$\\\\|Data: Owl$\" \"Assets/Prefabs/Config/LocalizationConfig.asset\")",
       "Bash(grep -B2 -A1 \"m_text:.*\\\\\\(Effect\\\\|Environment\\\\|Petting\\\\|Alarm\\\\|Master\\\\\\)$\" \"Assets/Prefabs/UI/Popups/SettingPopup.prefab\")",
-      "Bash(grep -B5 \"m_text: Effect$\\\\|m_text: Environment$\\\\|m_text: Master$\" \"Assets/Prefabs/UI/Popups/SettingPopup.prefab\")"
+      "Bash(grep -B5 \"m_text: Effect$\\\\|m_text: Environment$\\\\|m_text: Master$\" \"Assets/Prefabs/UI/Popups/SettingPopup.prefab\")",
+      "Bash(claude mcp *)",
+      "Bash(netstat -ano)",
+      "Bash(findstr :8090)",
+      "Bash(where node *)",
+      "Bash(where npx *)",
+      "PowerShell($p = \"$env:USERPROFILE\\\\.claude.json\"; if \\(Test-Path $p\\) { $j = Get-Content $p -Raw | ConvertFrom-Json; $j.mcpServers | ConvertTo-Json -Depth 6 } else { \"no user .claude.json\" })",
+      "mcp__UnityMCP__read_console"
     ]
   }
 }
