@@ -20,6 +20,7 @@ namespace BirdGame
         public Toggle settingButton;
         public Toggle shopButton;
         public Toggle clockToggle;
+        public Toggle telescopeToggle;
         public Toggle illustratedButton;
         public Toggle mapButton;
         public Button externalLinkButton; // 新增外部链接按钮
@@ -145,6 +146,15 @@ namespace BirdGame
                     uiSystem.HidePopup(UIPopup.ClockPopup);
                 }
             });
+
+            if (telescopeToggle != null)
+            {
+                telescopeToggle.isOn = this.GetModel<IGameModel>().TelescopeEnabled.Value;
+                telescopeToggle.onValueChanged.AddListener(isOn =>
+                {
+                    this.GetModel<IGameModel>().TelescopeEnabled.Value = isOn;
+                });
+            }
 
             settingButton.onValueChanged.AddListener(isOn =>
             {

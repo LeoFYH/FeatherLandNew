@@ -135,6 +135,11 @@ namespace BirdGame
 
         private bool IsBlockedByUI()
         {
+            // 望远镜工具未开启（MenuPanel上的telescopeToggle）→ 禁用滚轮缩放并复位视野
+            var gameModel = this.GetModel<IGameModel>();
+            if (gameModel != null && !gameModel.TelescopeEnabled.Value)
+                return true;
+
             // 任意Popup打开（Shop、Radio、Note、Setting等）→ 禁用望远镜
             var uiSystem = this.GetSystem<IUISystem>();
             if (uiSystem != null && uiSystem.HasAnyPopupOpen())
