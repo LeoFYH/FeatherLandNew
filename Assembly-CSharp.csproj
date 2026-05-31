@@ -138,12 +138,14 @@
     <Compile Include="Assets\Scripts\BirdStates\BirdRunState.cs" />
     <Compile Include="Assets\Scripts\Radio\RadioManager.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\EnvironmentVolume.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\Game\CameraCaptureController.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\ManualEnterHandler.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\LanguageLimitInputField.cs" />
     <Compile Include="Assets\Scripts\Managers\NavigationManager.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\RadioPopup.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Anims\ClickAnim.cs" />
     <Compile Include="Assets\Scripts\Managers\CameraManager.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\PhotoPopup.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\GameManager.cs" />
     <Compile Include="Assets\Scripts\BirdStates\BirdIdleState.cs" />
     <Compile Include="Assets\Scripts\New\Commands\LoadMapCommand.cs" />

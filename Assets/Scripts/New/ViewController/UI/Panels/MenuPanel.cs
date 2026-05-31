@@ -21,6 +21,7 @@ namespace BirdGame
         public Toggle shopButton;
         public Toggle clockToggle;
         public Toggle telescopeToggle;
+        public Toggle cameraToggle;
         public Toggle illustratedButton;
         public Toggle mapButton;
         public Button externalLinkButton; // 新增外部链接按钮
@@ -61,6 +62,22 @@ namespace BirdGame
         {
             Destroy(gameObject);
             onComplete?.Invoke();
+        }
+
+        /// <summary>
+        /// 把其他工具 toggle 视觉状态同步为 off（不触发它们各自的 HidePopup 回调，
+        /// 因为 popup 已经被 HideAllPopups 关掉了）。开启相机模式时调用。
+        /// </summary>
+        private void SyncOtherTogglesOff()
+        {
+            if (shopButton != null) { isSyncingShopButton = true; shopButton.isOn = false; isSyncingShopButton = false; }
+            if (illustratedButton != null) { isSyncingIllustratedButton = true; illustratedButton.isOn = false; isSyncingIllustratedButton = false; }
+            if (mapButton != null) { isSyncingMapButton = true; mapButton.isOn = false; isSyncingMapButton = false; }
+            if (settingButton != null) { isSyncingSettingButton = true; settingButton.isOn = false; isSyncingSettingButton = false; }
+            // 这几个没有sync flag，但其HidePopup回调对已关闭的popup是no-op，安全
+            if (noteToggle != null) noteToggle.isOn = false;
+            if (radioToggle != null) radioToggle.isOn = false;
+            if (clockToggle != null) clockToggle.isOn = false;
         }
 
         /// <summary> 关闭与 Tutorial 互斥的 4 个弹窗并同步 Toggle（打开 Tutorial 前调用） </summary>
@@ -154,6 +171,36 @@ namespace BirdGame
                 {
                     this.GetModel<IGameModel>().TelescopeEnabled.Value = isOn;
                 });
+            }
+
+            if (cameraToggle != null)
+            {
+                cameraToggle.isOn = this.GetModel<IGameModel>().CameraCaptureEnabled.Value;
+                cameraToggle.onValueChanged.AddListener(isOn =>
+                {
+                    if (isOn)
+                    {
+                        // 强制关闭所有popup并同步其他工具toggle的视觉状态，然后开启相机
+                        uiSystem.HideAllPopups();
+                        SyncOtherTogglesOff();
+                    }
+                    this.GetModel<IGameModel>().CameraCaptureEnabled.Value = isOn;
+                });
+                // 拍完照/点击其他UI后CameraCaptureController会把model置false，需要把toggle视觉也同步
+                this.GetModel<IGameModel>().CameraCaptureEnabled.Register(v =>
+                {
+                    if (cameraToggle.isOn != v)
+                        cameraToggle.isOn = v;
+                }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
+                // 让 CameraCaptureController 知道 cameraToggle 的 GameObject，
+                // 这样点击 cameraToggle 时不会被"点UI=关相机"逻辑误伤
+                if (Camera.main != null)
+                {
+                    var cc = Camera.main.GetComponent<CameraCaptureController>();
+                    if (cc != null)
+                        cc.cameraToggleObj = cameraToggle.gameObject;
+                }
             }
 
             settingButton.onValueChanged.AddListener(isOn =>
