@@ -48,14 +48,15 @@ namespace BirdGame
 
         public void SetCursorState(CursorState state)
         {
-            if(currentState == state)
+            if(currentState == state && !isPlayingFeed)
                 return;
 
-            currentState = state;
-            feedAnim?.Kill(true);
-            strokeAnim?.Kill(true);
+            feedAnim?.Kill(false);
+            strokeAnim?.Kill(false);
+            isPlayingFeed = false;
             feedAnim = null;
             strokeAnim = null;
+            currentState = state;
             var item = cursorItems[state];
             try
             {
@@ -215,4 +216,4 @@ namespace BirdGame
         //     });
         // }
     }
-} 
+}

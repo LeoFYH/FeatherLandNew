@@ -404,7 +404,7 @@ namespace BirdGame
             }
             else if (cachedGameSystem.IsCoverBird())
             {
-                newState = CursorState.Click;
+                newState = cachedGameSystem.IsAutoFeeding ? CursorState.Feed1 : CursorState.Click;
             }
             else if (cachedGameSystem.IsCoverDecoration())
             {

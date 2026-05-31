@@ -10,13 +10,14 @@ namespace BirdGame
     public interface IGameSystem : ISystem
     {
         Vector3 FoodDropOffset { get; }
+        bool IsAutoFeeding { get; set; }
 
         void CreateNum(string s, Vector3 pos);
-        void CreateFood();
+        void CreateFood(bool allowBirdOverlap = false);
         void ReduceFood(Food food);
         void RecycleFood(Food food);
         bool TryGetUntargetedFood(Vector3 position, out Food food);
-        bool IsCoverGround();
+        bool IsCoverGround(bool allowBirdOverlap = false);
         bool IsCoverBird();
         bool IsCoverDecoration();
         bool IsCoverUI();
@@ -81,6 +82,8 @@ namespace BirdGame
             }
         }
 
+        public bool IsAutoFeeding { get; set; }
+
         public void CreateNum(string s, Vector3 pos)
         {
             this.GetSystem<IObjectPoolSystem>().Get("Num", null, go =>
@@ -90,9 +93,9 @@ namespace BirdGame
             });
         }
 
-        public void CreateFood()
+        public void CreateFood(bool allowBirdOverlap = false)
         {
-            if (IsCoverGround())
+            if (IsCoverGround(allowBirdOverlap))
             {
                 this.GetSystem<ICursorSystem>().Feed();
                 this.GetSystem<IAudioSystem>().PlayEffect(EffectType.DropFood);
@@ -236,7 +239,7 @@ namespace BirdGame
             return food != null;
         }
 
-        public bool IsCoverGround()
+        public bool IsCoverGround(bool allowBirdOverlap = false)
         {
             if (NavigationManager.Instance == numPrefab)
                 return false;
@@ -259,25 +262,28 @@ namespace BirdGame
             Vector2 worldPosition2D = new Vector2(worldPosition.x, worldPosition.y);
             
             // CPU优化：使用Brid.birdCollider（已缓存），避免每帧GetComponent
-            foreach (var birdData in birdModel.BirdList)
+            if (!allowBirdOverlap)
             {
-                if (birdData?.bird == null || birdData.bird.gameObject == null) continue;
-
-                Collider2D collider2D = birdData.bird.birdCollider;
-
-                if (collider2D != null)
+                foreach (var birdData in birdModel.BirdList)
                 {
-                    if (collider2D.OverlapPoint(worldPosition2D))
+                    if (birdData?.bird == null || birdData.bird.gameObject == null) continue;
+
+                    Collider2D collider2D = birdData.bird.birdCollider;
+
+                    if (collider2D != null)
                     {
-                        return false;
+                        if (collider2D.OverlapPoint(worldPosition2D))
+                        {
+                            return false;
+                        }
                     }
-                }
-                else
-                {
-                    Vector2 diff = worldPosition2D - (Vector2)birdData.bird.transform.position;
-                    if (diff.sqrMagnitude < 0.25f)
+                    else
                     {
-                        return false;
+                        Vector2 diff = worldPosition2D - (Vector2)birdData.bird.transform.position;
+                        if (diff.sqrMagnitude < 0.25f)
+                        {
+                            return false;
+                        }
                     }
                 }
             }

@@ -13,6 +13,7 @@ namespace BirdGame
 
         float _foodTimer;
         int _previousClickCount;
+        int _previousRightClickCount;
         bool _isAutoFeeding;
 
         // Memory optimization: pre-allocate raycast buffer to avoid GC allocations
@@ -26,6 +27,7 @@ namespace BirdGame
             this.RegisterEvent<OnSettingCloseEvent>(evt =>
             {
                 _previousClickCount = SimpleMouseForwarder.clickCount;
+                _previousRightClickCount = SimpleMouseForwarder.rightClickCount;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
         }
 
@@ -33,10 +35,29 @@ namespace BirdGame
         {
             if (EventSystem.current.IsPointerOverGameObject()) return;
             if (this.GetSystem<IGameSystem>().IsPlacingDecoration()) return;
+
+            bool leftClicked = Input.GetMouseButtonDown(0) || SimpleMouseForwarder.clickCount > _previousClickCount;
+            bool rightClicked = Input.GetMouseButtonDown(1) || SimpleMouseForwarder.rightClickCount > _previousRightClickCount;
+            if ((leftClicked || rightClicked) && IsClickingOnBird())
+            {
+                if (leftClicked)
+                    _previousClickCount = SimpleMouseForwarder.clickCount;
+                if (rightClicked)
+                    _previousRightClickCount = SimpleMouseForwarder.rightClickCount;
+
+                StopAutoFeedingForBirdInteraction();
+                return;
+            }
+
             if (this.GetSystem<IUISystem>().HasAnyPopupOpen()) return;
 
             bool autoFeedingEnabled = this.GetModel<ISaveModel>().SettingData.autoFeeding;
-            bool clicked = Input.GetMouseButtonDown(0) || SimpleMouseForwarder.clickCount > _previousClickCount;
+            if (!autoFeedingEnabled && _isAutoFeeding)
+            {
+                SetAutoFeeding(false);
+            }
+
+            bool clicked = leftClicked;
             if (IsClickingOnDecoration(clicked))
             {
                 _previousClickCount = SimpleMouseForwarder.clickCount;
@@ -48,10 +69,10 @@ namespace BirdGame
                 _previousClickCount = SimpleMouseForwarder.clickCount;
                 if (autoFeedingEnabled)
                 {
-                    _isAutoFeeding = !_isAutoFeeding;
+                    SetAutoFeeding(!_isAutoFeeding);
                     _foodTimer = 0f;
                     if (_isAutoFeeding)
-                        this.GetSystem<IGameSystem>().CreateFood();
+                        this.GetSystem<IGameSystem>().CreateFood(true);
                 }
                 else
                 {
@@ -65,7 +86,7 @@ namespace BirdGame
                 if (_foodTimer >= createFoodTime)
                 {
                     _foodTimer = 0f;
-                    this.GetSystem<IGameSystem>().CreateFood();
+                    this.GetSystem<IGameSystem>().CreateFood(true);
                 }
             }
         }
@@ -86,6 +107,54 @@ namespace BirdGame
                 if (handler == null && !hasDrag) continue;
                 return true;
             }
+            return false;
+        }
+
+        void StopAutoFeedingForBirdInteraction()
+        {
+            SetAutoFeeding(false);
+            this.GetSystem<ICursorSystem>().SetCursorState(CursorState.Click);
+        }
+
+        void SetAutoFeeding(bool isAutoFeeding)
+        {
+            _isAutoFeeding = isAutoFeeding;
+            this.GetSystem<IGameSystem>().IsAutoFeeding = isAutoFeeding;
+            if (!isAutoFeeding)
+            {
+                _foodTimer = 0f;
+            }
+        }
+
+        bool IsClickingOnBird()
+        {
+            if (_cachedCamera == null) _cachedCamera = Camera.main;
+            if (_cachedCamera == null) return false;
+
+            Vector2 mousePosition = _cachedCamera.ScreenToWorldPoint(Input.mousePosition);
+            var birdList = this.GetModel<IBirdModel>().BirdList;
+            foreach (var birdData in birdList)
+            {
+                if (birdData?.bird == null || birdData.bird.gameObject == null) continue;
+
+                Collider2D collider2D = birdData.bird.birdCollider;
+                if (collider2D != null)
+                {
+                    if (collider2D.OverlapPoint(mousePosition))
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    Vector2 diff = mousePosition - (Vector2)birdData.bird.transform.position;
+                    if (diff.sqrMagnitude < 0.25f)
+                    {
+                        return true;
+                    }
+                }
+            }
+
             return false;
         }
     }
