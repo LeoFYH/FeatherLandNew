@@ -128,10 +128,11 @@ namespace BirdGame
 
         private void OnSelectFolderClicked()
         {
+            Debug.Log("[PhotoPopup] OnSelectFolderClicked");
             string current = GetSaveFolder();
             string picked = ShowFolderDialog("选择保存文件夹", current);
             if (string.IsNullOrEmpty(picked))
-                return; // 用户取消
+                return; // 用户取消 或 对话框失败
 
             PlayerPrefs.SetString(FOLDER_PREF_KEY, picked);
             PlayerPrefs.Save();
@@ -140,6 +141,7 @@ namespace BirdGame
 
         private void OnSaveClicked()
         {
+            Debug.Log("[PhotoPopup] OnSaveClicked");
             if (_photo == null) return;
 
             // 第一次保存：还没设过储存位置 → 弹文件夹选择
@@ -196,6 +198,7 @@ namespace BirdGame
             img.color = new Color(0.82f, 0.72f, 0.55f, 1f);
 
             var btn = go.AddComponent<Button>();
+            btn.targetGraphic = img;
             var colors = btn.colors;
             colors.normalColor = Color.white;
             colors.highlightedColor = new Color(0.95f, 0.95f, 0.95f, 1f);
@@ -313,7 +316,8 @@ namespace BirdGame
 
         /// <summary>
         /// 弹出系统"选择文件夹"对话框，返回用户选择的文件夹完整路径；取消返回 null。
-        /// 用的是 SHBrowseForFolder（经典Win32 API），不需要COM初始化。
+        /// 用的是 SHBrowseForFolderW（经典Win32 API），不带回调、不带BIF_NEWDIALOGSTYLE，
+        /// 避免 Unity 主线程 COM apartment 状态导致 silent failure。
         /// </summary>
         private static string ShowFolderDialog(string title, string initialDir)
         {
@@ -321,26 +325,24 @@ namespace BirdGame
             IntPtr pidl = IntPtr.Zero;
             try
             {
-                _initialFolderForCallback = initialDir;
-
-                var bi = new BROWSEINFO
+                var bi = new BROWSEINFOW
                 {
-                    hwndOwner = IntPtr.Zero,
+                    hwndOwner = GetActiveWindow(), // 把对话框parent到Unity窗口，保证它能拿焦点（壁纸模式很关键）
                     pidlRoot = IntPtr.Zero,
-                    pszDisplayName = new string('\0', 260),
+                    pszDisplayName = IntPtr.Zero,
                     lpszTitle = title,
-                    ulFlags = BIF_NEWDIALOGSTYLE | BIF_RETURNONLYFSDIRS,
-                    lpfn = string.IsNullOrEmpty(initialDir) ? IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(_browseCallback),
+                    ulFlags = BIF_RETURNONLYFSDIRS,
+                    lpfn = IntPtr.Zero,
                     lParam = IntPtr.Zero,
                     iImage = 0,
                 };
 
-                pidl = SHBrowseForFolder(ref bi);
+                pidl = SHBrowseForFolderW(ref bi);
                 if (pidl == IntPtr.Zero)
-                    return null;
+                    return null; // 用户取消
 
                 var sb = new System.Text.StringBuilder(260);
-                if (SHGetPathFromIDList(pidl, sb))
+                if (SHGetPathFromIDListW(pidl, sb))
                     return sb.ToString();
             }
             catch (Exception e)
@@ -351,7 +353,6 @@ namespace BirdGame
             {
                 if (pidl != IntPtr.Zero)
                     CoTaskMemFree(pidl);
-                _initialFolderForCallback = null;
             }
 #endif
             return null;
@@ -359,31 +360,15 @@ namespace BirdGame
 
 #if UNITY_STANDALONE_WIN
         private const uint BIF_RETURNONLYFSDIRS = 0x00000001;
-        private const uint BIF_NEWDIALOGSTYLE   = 0x00000040;
-        private const uint BFFM_INITIALIZED     = 1;
-        private const uint BFFM_SETSELECTIONW   = 0x400 + 103; // WM_USER + 103
 
-        private delegate int BrowseCallbackProc(IntPtr hwnd, uint uMsg, IntPtr lParam, IntPtr lpData);
-
-        // 必须持有委托引用，防止GC回收导致回调时崩溃
-        private static readonly BrowseCallbackProc _browseCallback = BrowseCallback;
-        private static string _initialFolderForCallback;
-
-        private static int BrowseCallback(IntPtr hwnd, uint uMsg, IntPtr lParam, IntPtr lpData)
-        {
-            if (uMsg == BFFM_INITIALIZED && !string.IsNullOrEmpty(_initialFolderForCallback))
-            {
-                SendMessage(hwnd, BFFM_SETSELECTIONW, new IntPtr(1), _initialFolderForCallback);
-            }
-            return 0;
-        }
-
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        private struct BROWSEINFO
+        // 显式 Unicode 版本，绑死 W 后缀，避免 CharSet.Auto 在某些环境下解析错误
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        private struct BROWSEINFOW
         {
             public IntPtr hwndOwner;
             public IntPtr pidlRoot;
-            public string pszDisplayName;
+            public IntPtr pszDisplayName;          // 不需要回填，置零
+            [MarshalAs(UnmanagedType.LPWStr)]
             public string lpszTitle;
             public uint   ulFlags;
             public IntPtr lpfn;
@@ -391,17 +376,17 @@ namespace BirdGame
             public int    iImage;
         }
 
-        [DllImport("shell32.dll", CharSet = CharSet.Auto)]
-        private static extern IntPtr SHBrowseForFolder(ref BROWSEINFO lpbi);
+        [DllImport("shell32.dll", CharSet = CharSet.Unicode, EntryPoint = "SHBrowseForFolderW")]
+        private static extern IntPtr SHBrowseForFolderW(ref BROWSEINFOW lpbi);
 
-        [DllImport("shell32.dll", CharSet = CharSet.Auto)]
-        private static extern bool SHGetPathFromIDList(IntPtr pidl, [MarshalAs(UnmanagedType.LPTStr)] System.Text.StringBuilder pszPath);
+        [DllImport("shell32.dll", CharSet = CharSet.Unicode, EntryPoint = "SHGetPathFromIDListW")]
+        private static extern bool SHGetPathFromIDListW(IntPtr pidl, [MarshalAs(UnmanagedType.LPWStr)] System.Text.StringBuilder pszPath);
 
         [DllImport("ole32.dll")]
         private static extern void CoTaskMemFree(IntPtr ptr);
 
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, string lParam);
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetActiveWindow();
 #endif
 
         #endregion
