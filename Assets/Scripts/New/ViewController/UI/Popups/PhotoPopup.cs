@@ -59,21 +59,25 @@ namespace BirdGame
             containerRect.sizeDelta = new Vector2(photoW + padding * 2f, photoH + padding * 2f + headerH);
             containerRect.anchoredPosition = Vector2.zero;
 
+            // 本地化：按钮文字与提示走 ILocalizationSystem，字体跟随当前语言
+            var loc = this.GetSystem<ILocalizationSystem>();
+            var locFont = loc.GetFontAsset();
+
             // 顶部按钮区，从右往左：X | 复制 | 选择文件夹 | 保存
             var closeBtn = CreateButton(container.transform, "X", new Vector2(50f, 50f),
-                new Vector2(1f, 1f), new Vector2(-padding, -padding));
+                new Vector2(1f, 1f), new Vector2(-padding, -padding), locFont);
             closeBtn.onClick.AddListener(OnCloseClicked);
 
-            var copyBtn = CreateButton(container.transform, "复制", new Vector2(120f, 50f),
-                new Vector2(1f, 1f), new Vector2(-padding - 60f, -padding));
+            var copyBtn = CreateButton(container.transform, loc.GetString("Copy"), new Vector2(120f, 50f),
+                new Vector2(1f, 1f), new Vector2(-padding - 60f, -padding), locFont);
             copyBtn.onClick.AddListener(OnCopyClicked);
 
-            var pickFolderBtn = CreateButton(container.transform, "选择文件夹", new Vector2(180f, 50f),
-                new Vector2(1f, 1f), new Vector2(-padding - 190f, -padding));
+            var pickFolderBtn = CreateButton(container.transform, loc.GetString("Choose Folder"), new Vector2(180f, 50f),
+                new Vector2(1f, 1f), new Vector2(-padding - 190f, -padding), locFont);
             pickFolderBtn.onClick.AddListener(OnSelectFolderClicked);
 
-            var saveBtn = CreateButton(container.transform, "保存", new Vector2(120f, 50f),
-                new Vector2(1f, 1f), new Vector2(-padding - 380f, -padding));
+            var saveBtn = CreateButton(container.transform, loc.GetString("Save"), new Vector2(120f, 50f),
+                new Vector2(1f, 1f), new Vector2(-padding - 380f, -padding), locFont);
             saveBtn.onClick.AddListener(OnSaveClicked);
 
             // 照片
@@ -100,8 +104,9 @@ namespace BirdGame
         private void OnCopyClicked()
         {
             if (_photo == null) return;
+            var loc = this.GetSystem<ILocalizationSystem>();
             bool success = TryCopyImageToClipboard(_photo);
-            this.GetSystem<IUISystem>().ShowPrompt(success ? "已复制到剪贴板" : "复制失败");
+            this.GetSystem<IUISystem>().ShowPrompt(loc.GetString(success ? "Copied to clipboard" : "Copy failed"));
         }
 
         private const string FOLDER_PREF_KEY = "PhotoSaveFolder";
@@ -129,25 +134,27 @@ namespace BirdGame
         private void OnSelectFolderClicked()
         {
             Debug.Log("[PhotoPopup] OnSelectFolderClicked");
+            var loc = this.GetSystem<ILocalizationSystem>();
             string current = GetSaveFolder();
-            string picked = ShowFolderDialog("选择保存文件夹", current);
+            string picked = ShowFolderDialog(loc.GetString("Choose save folder"), current);
             if (string.IsNullOrEmpty(picked))
                 return; // 用户取消 或 对话框失败
 
             PlayerPrefs.SetString(FOLDER_PREF_KEY, picked);
             PlayerPrefs.Save();
-            this.GetSystem<IUISystem>().ShowPrompt("已变更储存位置");
+            this.GetSystem<IUISystem>().ShowPrompt(loc.GetString("Storage location changed"));
         }
 
         private void OnSaveClicked()
         {
             Debug.Log("[PhotoPopup] OnSaveClicked");
             if (_photo == null) return;
+            var loc = this.GetSystem<ILocalizationSystem>();
 
             // 第一次保存：还没设过储存位置 → 弹文件夹选择
             if (!PlayerPrefs.HasKey(FOLDER_PREF_KEY))
             {
-                string picked = ShowFolderDialog("选择保存文件夹", GetSaveFolder());
+                string picked = ShowFolderDialog(loc.GetString("Choose save folder"), GetSaveFolder());
                 if (string.IsNullOrEmpty(picked))
                     return; // 用户取消，不保存
                 PlayerPrefs.SetString(FOLDER_PREF_KEY, picked);
@@ -164,12 +171,12 @@ namespace BirdGame
                     System.IO.Directory.CreateDirectory(folder);
                 byte[] png = _photo.EncodeToPNG();
                 System.IO.File.WriteAllBytes(fullPath, png);
-                this.GetSystem<IUISystem>().ShowPrompt("已保存");
+                this.GetSystem<IUISystem>().ShowPrompt(loc.GetString("Saved"));
             }
             catch (Exception e)
             {
                 Debug.LogError($"[PhotoPopup] Save failed: {e}");
-                this.GetSystem<IUISystem>().ShowPrompt("保存失败");
+                this.GetSystem<IUISystem>().ShowPrompt(loc.GetString("Save failed"));
             }
         }
 
@@ -189,7 +196,7 @@ namespace BirdGame
         }
 
         private static Button CreateButton(Transform parent, string label, Vector2 size,
-            Vector2 anchor, Vector2 anchoredPos)
+            Vector2 anchor, Vector2 anchoredPos, TMP_FontAsset font = null)
         {
             var go = new GameObject(label + "Button", typeof(RectTransform));
             go.transform.SetParent(parent, false);
@@ -217,8 +224,13 @@ namespace BirdGame
             var text = textGo.AddComponent<TextMeshProUGUI>();
             text.text = label;
             text.alignment = TextAlignmentOptions.Center;
-            text.fontSize = 28;
+            // 自适应字号：不同语言文字长度差异大，避免溢出按钮
+            text.enableAutoSizing = true;
+            text.fontSizeMin = 14f;
+            text.fontSizeMax = 28f;
             text.color = new Color(0.18f, 0.12f, 0.08f, 1f);
+            if (font != null)
+                text.font = font;
             StretchFill(textGo.GetComponent<RectTransform>());
 
             return btn;

@@ -53,7 +53,10 @@
       "Bash(where node *)",
       "Bash(where npx *)",
       "PowerShell($p = \"$env:USERPROFILE\\\\.claude.json\"; if \\(Test-Path $p\\) { $j = Get-Content $p -Raw | ConvertFrom-Json; $j.mcpServers | ConvertTo-Json -Depth 6 } else { \"no user .claude.json\" })",
-      "mcp__UnityMCP__read_console"
+      "mcp__UnityMCP__read_console",
+      "mcp__mcp-unity__recompile_scripts",
+      "mcp__mcp-unity__get_console_logs",
+      "mcp__mcp-unity__execute_menu_item"
     ]
   }
 }
