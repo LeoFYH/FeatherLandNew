@@ -57,7 +57,13 @@ namespace BirdGame
             cachedCursorSystem = this.GetSystem<ICursorSystem>();
             cachedAudioSystem = this.GetSystem<IAudioSystem>();
             cachedMainCamera = Camera.main;
-            
+
+            // 挂载相机工具控制器到主摄像机（运行时构建取景框overlay）
+            if (cachedMainCamera != null && cachedMainCamera.GetComponent<CameraCaptureController>() == null)
+            {
+                cachedMainCamera.gameObject.AddComponent<CameraCaptureController>();
+            }
+
             // Performance optimization: Initialize reusable objects
             if (EventSystem.current != null)
             {

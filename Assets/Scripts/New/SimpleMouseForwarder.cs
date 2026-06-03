@@ -18,7 +18,13 @@ namespace BirdGame
     {
         public static int clickCount = 0;
         public static int rightClickCount = 0;
-        
+
+        /// <summary>
+        /// 壁纸模式下钩子捕获的垂直滚轮事件广播（仅Windows）。
+        /// Mac平台不会触发，CameraController/CameraCaptureController 订阅它以兼容编译。
+        /// </summary>
+        public static event System.Action<float> OnHookVerticalWheel;
+
         // Keyboard state tracking for shortcuts (when not in input fields)
         private static HashSet<KeyCode> pressedKeys = new HashSet<KeyCode>();
         private static HashSet<KeyCode> pressedKeysThisFrame = new HashSet<KeyCode>();
@@ -978,6 +984,13 @@ namespace BirdGame
 
                     // Forward to UI immediately
                     ForwardWheelToUI(wheelMousePosition, wheelDelta, isHorizontalWheel);
+
+                    // 广播垂直滚轮给非UI消费者（如望远镜/相机），Mac不会进这个分支
+                    if (!isHorizontalWheel)
+                    {
+                        try { OnHookVerticalWheel?.Invoke(wheelDelta); }
+                        catch (System.Exception e) { Debug.LogError($"[SimpleMouseForwarder] OnHookVerticalWheel handler failed: {e}"); }
+                    }
 
                     // Reset
                     wheelDelta = 0f;

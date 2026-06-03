@@ -46,7 +46,11 @@
       "Read(//c/Users/11752/Downloads/**)",
       "Bash(grep -B1 \"Data: EgyptianVulture$\\\\|Data: African ostrich$\\\\|Data: Powdered Head Duck$\\\\|Data: Owl$\" \"Assets/Prefabs/Config/LocalizationConfig.asset\")",
       "Bash(grep -B2 -A1 \"m_text:.*\\\\\\(Effect\\\\|Environment\\\\|Petting\\\\|Alarm\\\\|Master\\\\\\)$\" \"Assets/Prefabs/UI/Popups/SettingPopup.prefab\")",
-      "Bash(grep -B5 \"m_text: Effect$\\\\|m_text: Environment$\\\\|m_text: Master$\" \"Assets/Prefabs/UI/Popups/SettingPopup.prefab\")"
+      "Bash(grep -B5 \"m_text: Effect$\\\\|m_text: Environment$\\\\|m_text: Master$\" \"Assets/Prefabs/UI/Popups/SettingPopup.prefab\")",
+      "Bash(git lfs *)",
+      "Bash(git checkout *)",
+      "Bash(xxd Assets/Scripts/New/ViewController/Game/CameraCaptureController.cs.meta)",
+      "Bash(awk 'NR>=380 && NR<=560 {if \\(/#if|#elif|#else|#endif/\\) print NR\": \"$0}' Assets/Scripts/New/SimpleMouseForwarder.cs)"
     ]
   }
 }

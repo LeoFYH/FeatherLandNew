@@ -35,6 +35,7 @@ namespace BirdGame
         BuyFailPopup,
         AddCoinPopup,
         ConfirmPopup,
+        PhotoPopup,
     }
 
     public interface IUISystem : ISystem
@@ -111,6 +112,10 @@ namespace BirdGame
         void ShowExitConfirm();
         Canvas GetCanvas();
         bool HasAnyPopupOpen();
+        /// <summary>
+        /// 显示拍照popup
+        /// </summary>
+        void ShowPhotoPopup(Texture2D photo);
         /// <summary>
         /// 获取当前Panel对象
         /// </summary>
@@ -423,6 +428,21 @@ namespace BirdGame
         public Canvas GetCanvas()
         {
             return popupLayer.GetComponent<Canvas>();
+        }
+
+        public void ShowPhotoPopup(Texture2D photo)
+        {
+            if (popupLayer == null || photo == null)
+                return;
+
+            if (popupDic.ContainsKey(UIPopup.PhotoPopup))
+                HidePopup(UIPopup.PhotoPopup);
+
+            ShowPopup(UIPopup.PhotoPopup, () =>
+            {
+                var popup = popupDic[UIPopup.PhotoPopup] as PhotoPopup;
+                popup.Init(photo);
+            });
         }
 
         public T GetPanel<T>() where T : UIBase

@@ -27,6 +27,8 @@ namespace BirdGame
         int OpenEggIndex { get; set; }
         int BuyMapCost { get; set; }
         bool IsSettingOpen { get; set; }
+        BindableProperty<bool> TelescopeEnabled { get; }
+        BindableProperty<bool> CameraCaptureEnabled { get; }
     }
 
     public class GameModel : AbstractModel, IGameModel
@@ -59,6 +61,8 @@ namespace BirdGame
         public int OpenEggIndex { get; set; } = -1;
         public int BuyMapCost { get; set; }
         public bool IsSettingOpen { get; set; }
+        public BindableProperty<bool> TelescopeEnabled { get; } = new BindableProperty<bool>(false);
+        public BindableProperty<bool> CameraCaptureEnabled { get; } = new BindableProperty<bool>(false);
         public int EggInfoIndex { get; set; }
     }
 }
