@@ -420,34 +420,32 @@ namespace BirdGame
                 byte[] pngData = tex.EncodeToPNG();
                 System.IO.File.WriteAllBytes(tempPath, pngData);
 
-                string tempScriptPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "featherland_copy.scpt");
-                
-                using (var writer = new System.IO.StreamWriter(tempScriptPath))
-                {
-                    writer.WriteLine("set theFile to POSIX file \"" + tempPath.Replace("\"", "\\\"") + "\"");
-                    writer.WriteLine("tell application \"Finder\"");
-                    writer.WriteLine("    set the clipboard to (read theFile as PNG picture)");
-                    writer.WriteLine("end tell");
-                }
+                Debug.Log($"[PhotoPopup] Temp file path: {tempPath}, size: {pngData.Length} bytes");
 
-                var psi = new System.Diagnostics.ProcessStartInfo();
-                psi.FileName = "/usr/bin/osascript";
-                psi.Arguments = "\"" + tempScriptPath.Replace("\"", "\\\"") + "\"";
-                psi.UseShellExecute = false;
-                psi.RedirectStandardOutput = true;
-                psi.RedirectStandardError = true;
-                psi.CreateNoWindow = true;
+                string escapedPath = tempPath.Replace("\\", "\\\\").Replace("\"", "\\\"");
+                string script = "set f to POSIX file \"" + escapedPath + "\"\ntell application \"System Events\" to set the clipboard to (read f as «class PNGf»)";
 
-                using (var process = System.Diagnostics.Process.Start(psi))
-                {
-                    process.WaitForExit();
-                    
-                    System.IO.File.Delete(tempPath);
-                    System.IO.File.Delete(tempScriptPath);
-                    
-                    Debug.Log($"[PhotoPopup] Copy to clipboard exit code: {process.ExitCode}");
-                    return process.ExitCode == 0;
-                }
+                var process = new System.Diagnostics.Process();
+                process.StartInfo.FileName = "/usr/bin/osascript";
+                process.StartInfo.Arguments = "-e '" + script.Replace("'", "'\\''") + "'";
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
+                process.StartInfo.CreateNoWindow = true;
+
+                process.Start();
+                string output = process.StandardOutput.ReadToEnd();
+                string error = process.StandardError.ReadToEnd();
+                process.WaitForExit();
+
+                Debug.Log($"[PhotoPopup] Copy script: '{script}'");
+                Debug.Log($"[PhotoPopup] Copy to clipboard exit code: {process.ExitCode}");
+                Debug.Log($"[PhotoPopup] Copy output: '{output}'");
+                Debug.Log($"[PhotoPopup] Copy error: '{error}'");
+
+                System.IO.File.Delete(tempPath);
+
+                return process.ExitCode == 0;
             }
             catch (Exception e)
             {

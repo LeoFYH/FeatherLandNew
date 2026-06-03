@@ -207,6 +207,9 @@ namespace BirdGame
             float originalUiAlpha = uiGroup != null ? uiGroup.alpha : 1f;
             if (uiGroup != null) uiGroup.alpha = 0f;
 
+            // 隐藏鼠标光标，避免截图中包含鼠标
+            Cursor.visible = false;
+
             // 等到当前帧渲染完成（此时所有UI已被alpha=0排除），再抓帧
             yield return new WaitForEndOfFrame();
 
@@ -225,7 +228,8 @@ namespace BirdGame
 
             Texture2D fullScreen = ScreenCapture.CaptureScreenshotAsTexture();
 
-            // 抓帧完成后立刻恢复UI，PhotoPopup才能正常显示
+            // 抓帧完成后立刻恢复UI和鼠标光标，PhotoPopup才能正常显示
+            Cursor.visible = true;
             if (uiGroup != null) uiGroup.alpha = originalUiAlpha;
 
             try
