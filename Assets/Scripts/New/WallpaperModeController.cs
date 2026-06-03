@@ -178,6 +178,13 @@ public class WallpaperModeController : ViewControllerBase
     private const float Z_ORDER_REFRESH_INTERVAL = 2f;
     private float zOrderTimer = 0f;
 
+#if UNITY_STANDALONE_OSX && !UNITY_EDITOR
+    // macOS 原生桥（实现在 Assets/Plugins/macOS/FLWallpaperBridge.mm）
+    [DllImport("__Internal")] private static extern void _FLWallpaperEnter();
+    [DllImport("__Internal")] private static extern void _FLWallpaperExit();
+    [DllImport("__Internal")] private static extern void _FLWallpaperRefresh();
+#endif
+
     private void Awake()
     {
         ins = this;
@@ -210,6 +217,26 @@ public class WallpaperModeController : ViewControllerBase
                     0x0002 | 0x0001 | 0x0040); // SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW
             }
         }
+#elif UNITY_STANDALONE_OSX
+        // 等价于 Win 端的 ESC 退出
+        if (Input.GetKeyDown(KeyCode.Escape) && isWallpaperModeActive && this.GetModel<IGameModel>().IsShortcutKeyOn.Value)
+        {
+            ExitWallpaperMode();
+        }
+
+        // 等价于 Win 端的 2s 心跳：周期性重新拍下 NSWindow.level，
+        // 防止 Spaces 切换 / Mission Control / 三方桌面工具把我们顶上去。
+        if (isWallpaperModeActive)
+        {
+            zOrderTimer += Time.deltaTime;
+            if (zOrderTimer >= Z_ORDER_REFRESH_INTERVAL)
+            {
+                zOrderTimer = 0f;
+#if !UNITY_EDITOR
+                _FLWallpaperRefresh();
+#endif
+            }
+        }
 #endif
     }
 
@@ -218,9 +245,28 @@ public class WallpaperModeController : ViewControllerBase
     /// </summary>
     public void EnterWallpaperMode()
     {
+#if UNITY_STANDALONE_OSX
+        if (isWallpaperModeActive) return;
+        try
+        {
+#if !UNITY_EDITOR
+            _FLWallpaperEnter();
+#endif
+            isWallpaperModeActive = true;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+            zOrderTimer = 0f;
+            Debug.Log("[WallpaperMode][macOS] 已激活 - NSWindow 降至壁纸层");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[WallpaperMode][macOS] 进入失败: {e.Message}");
+        }
+        return;
+#endif
         // 获取Unity窗口句柄（根据PlayerSettings中的产品名称查找）
 #if !UNITY_STANDALONE_WIN
-        Debug.LogWarning("Wallpaper mode is only supported on Windows.");
+        Debug.LogWarning("Wallpaper mode is only supported on Windows / macOS.");
         return;
 #else
         unityWindowHandle = FindWindow(null, Application.productName);
@@ -337,6 +383,22 @@ public class WallpaperModeController : ViewControllerBase
     /// </summary>
     public void ExitWallpaperMode()
     {
+#if UNITY_STANDALONE_OSX
+        if (!isWallpaperModeActive) return;
+        try
+        {
+#if !UNITY_EDITOR
+            _FLWallpaperExit();
+#endif
+            isWallpaperModeActive = false;
+            Debug.Log("[WallpaperMode][macOS] 已退出 - NSWindow 状态已恢复");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[WallpaperMode][macOS] 退出失败: {e.Message}");
+        }
+        return;
+#endif
         // 避免重复退出或句柄无效
 #if !UNITY_STANDALONE_WIN
         return;

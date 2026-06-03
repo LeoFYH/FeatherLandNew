@@ -935,13 +935,129 @@ namespace BirdGame
 
         public bool IsRunningAsAdministrator() => false;
         public bool RequestAdministratorPrivileges() => false;
+#elif UNITY_STANDALONE_OSX
+        // ===================== macOS 实现 =====================
+        // 原生实现位于 Assets/Plugins/macOS/FLWallpaperBridge.mm，
+        // Unity 会把里面的 C 符号链接进 Player 可执行文件，所以这里用 "__Internal" 导入。
+        //
+        // 设计原则（对应 Windows 版本）：
+        //   * EnterWallpaper  -> 将 NSWindow.level 降到 kCGDesktopIconWindowLevel-1，
+        //                       collectionBehavior 设为 CanJoinAllSpaces|Stationary|IgnoresCycle，
+        //                       styleMask 设为 Borderless，frame 撑满主屏 [NSScreen frame]。
+        //                       这相当于 Windows 上把窗口 SetParent 到 WorkerW。
+        //   * ExitWallpaper   -> 恢复保存的 level / behavior / styleMask / frame。
+        //   * Refresh         -> 定期重新 setLevel，类似 Win 端的 HWND_TOP 2s 刷新，
+        //                       防止 Spaces 切换/三方工具把我们顶出去。
+        //
+        // 编辑器中（UNITY_EDITOR）不调用原生符号 — .mm 只在打包时编译进 Player。
+
+        #if !UNITY_EDITOR
+        [DllImport("__Internal")] private static extern void _FLWallpaperEnter();
+        [DllImport("__Internal")] private static extern void _FLWallpaperExit();
+        [DllImport("__Internal")] private static extern void _FLWallpaperRefresh();
+        [DllImport("__Internal")] private static extern int  _FLWallpaperIsActive();
+        [DllImport("__Internal")] private static extern int  _FLWallpaperGetMainScreenFrame(
+            out double x, out double y, out double w, out double h, int fullFrame);
+        [DllImport("__Internal")] private static extern void _FLWallpaperWindowedReset(double fraction);
+        #endif
+
+        private bool isWallpaperMode = false;
+
+        public bool EnableWallpaperMode => isWallpaperMode;
+
+        // macOS 端用 Unity 的 Display API 判断多屏（Mac 没有 EnumDisplayMonitors）
+        public bool HasMultipleMonitors => Display.displays != null && Display.displays.Length > 1;
+
+        public void WallpaperMode()
+        {
+            if (isWallpaperMode) return;
+#if !UNITY_EDITOR
+            try
+            {
+                _FLWallpaperEnter();
+                isWallpaperMode = true;
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.None;
+                Debug.Log("[WallpaperMode][macOS] 已激活 - NSWindow 降至壁纸层");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[WallpaperMode][macOS] 进入失败: {e.Message}");
+            }
 #else
-        // 非 Windows 平台
+            isWallpaperMode = true;
+            Debug.Log("[WallpaperMode][macOS][Editor] 占位激活 - 原生桥仅在 Player 中可用");
+#endif
+        }
+
+        public void FullscreenMode()
+        {
+#if !UNITY_EDITOR
+            try
+            {
+                if (isWallpaperMode)
+                    _FLWallpaperExit();
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[FullscreenMode][macOS] 退出壁纸层出错: {e.Message}");
+            }
+#endif
+            isWallpaperMode = false;
+
+            // macOS 推荐 FullScreenWindow（即 borderless 全屏），避免 ExclusiveFullScreen 在多版本上不稳。
+            Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
+            Screen.fullScreen = true;
+
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+            Debug.Log("[FullscreenMode][macOS] 已激活");
+        }
+
+        public void WindowedMode()
+        {
+#if !UNITY_EDITOR
+            try
+            {
+                if (isWallpaperMode)
+                    _FLWallpaperExit();
+                // 即使不是壁纸模式,也调用一次 reset 把 styleMask/level 拨回正常
+                _FLWallpaperWindowedReset(0.8);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[WindowedMode][macOS] 重置窗口出错: {e.Message}");
+            }
+#endif
+            isWallpaperMode = false;
+
+            Screen.fullScreenMode = FullScreenMode.Windowed;
+            Screen.fullScreen = false;
+            int screenW = Screen.currentResolution.width;
+            int screenH = Screen.currentResolution.height;
+            int windowW = (int)(screenW * 0.8f);
+            int windowH = (int)(screenH * 0.8f);
+            Screen.SetResolution(windowW, windowH, false);
+
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+            Debug.Log($"[WindowedMode][macOS] 已激活 - 目标 {windowW}x{windowH}");
+        }
+
+        public bool IsWallpaperModeActive() => isWallpaperMode;
+
+        // Mac 端没有 Win 的 SetForegroundWindow/Z-序拖回机制；IME 也不像 Win 那样靠 hWnd
+        public bool TryGiveFocusThenSendBackInWallpaper() => false;
+
+        public bool IsRunningAsAdministrator() => false;
+        public bool RequestAdministratorPrivileges() => false;
+#else
+        // 其它非 Windows / 非 macOS 平台
         public bool EnableWallpaperMode => false;
         public bool HasMultipleMonitors => false;
-        public void WallpaperMode() { Debug.LogWarning("桌面模式仅在 Windows 平台支持"); }
-        public void FullscreenMode() { Debug.LogWarning("全屏模式仅在 Windows 平台支持"); }
-        public void WindowedMode() { Debug.LogWarning("窗口模式仅在 Windows 平台支持"); }
+        public void WallpaperMode() { Debug.LogWarning("壁纸模式仅在 Windows / macOS 平台支持"); }
+        public void FullscreenMode() { Debug.LogWarning("全屏模式仅在 Windows / macOS 平台支持"); }
+        public void WindowedMode() { Debug.LogWarning("窗口模式仅在 Windows / macOS 平台支持"); }
         public bool IsWallpaperModeActive() { return false; }
         public bool TryGiveFocusThenSendBackInWallpaper() { return false; }
         public bool IsRunningAsAdministrator() { return false; }
