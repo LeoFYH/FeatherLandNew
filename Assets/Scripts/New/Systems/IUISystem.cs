@@ -438,19 +438,24 @@ namespace BirdGame
             if (popupDic.ContainsKey(UIPopup.PhotoPopup))
                 HidePopup(UIPopup.PhotoPopup);
 
-            var go = new GameObject("PhotoPopup", typeof(RectTransform));
-            go.transform.SetParent(popupLayer, false);
-            var rt = go.GetComponent<RectTransform>();
-            rt.anchorMin = Vector2.zero;
-            rt.anchorMax = Vector2.one;
-            rt.anchoredPosition = Vector2.zero;
-            rt.sizeDelta = Vector2.zero;
-            rt.localScale = Vector3.one;
-
-            var popup = go.AddComponent<PhotoPopup>();
-            popup.Init(photo);
-            popupDic.Add(UIPopup.PhotoPopup, popup);
-            popup.OnShowPanel();
+            ShowPopup(UIPopup.PhotoPopup, () =>
+            {
+                var popup = popupDic[UIPopup.PhotoPopup] as PhotoPopup;
+                popup.Init(photo);
+            });
+            // var go = new GameObject("PhotoPopup", typeof(RectTransform));
+            // go.transform.SetParent(popupLayer, false);
+            // var rt = go.GetComponent<RectTransform>();
+            // rt.anchorMin = Vector2.zero;
+            // rt.anchorMax = Vector2.one;
+            // rt.anchoredPosition = Vector2.zero;
+            // rt.sizeDelta = Vector2.zero;
+            // rt.localScale = Vector3.one;
+            //
+            // var popup = go.AddComponent<PhotoPopup>();
+            // popup.Init(photo);
+            // popupDic.Add(UIPopup.PhotoPopup, popup);
+            // popup.OnShowPanel();
         }
 
         public T GetPanel<T>() where T : UIBase

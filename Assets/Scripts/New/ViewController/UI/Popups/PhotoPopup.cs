@@ -12,13 +12,30 @@ namespace BirdGame
     /// </summary>
     public class PhotoPopup : UIBase
     {
+        public Image photoImage;
+        public Button closeButton;
+        public Button saveButton;
+        public Button selectFolderButton;
+        public Button copyButton;
         private Texture2D _photo;
         private Sprite _photoSprite;
 
         public void Init(Texture2D photo)
         {
             _photo = photo;
-            BuildUI();
+            _photoSprite = Sprite.Create(_photo,
+                new Rect(0, 0, _photo.width, _photo.height),
+                new Vector2(0.5f, 0.5f), 100f);
+            photoImage.sprite = _photoSprite;
+            //BuildUI();
+        }
+
+        private void Start()
+        {
+            closeButton.onClick.AddListener(OnCloseClicked);
+            saveButton.onClick.AddListener(OnSaveClicked);
+            selectFolderButton.onClick.AddListener(OnSelectFolderClicked);
+            copyButton.onClick.AddListener(OnCopyClicked);
         }
 
         public override void OnHidePanel(Action onComplete = null)
