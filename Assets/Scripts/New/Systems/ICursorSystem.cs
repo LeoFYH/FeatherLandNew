@@ -25,6 +25,10 @@ namespace BirdGame
         private bool isPlayingFeed;
 
         private CursorState currentState;
+
+#if UNITY_STANDALONE_OSX
+        private const float MacCursorScale = 0.65f;
+#endif
         
         protected override void OnInit()
         {
@@ -44,6 +48,16 @@ namespace BirdGame
         public bool IsPlayingAnim()
         {
             return isPlayingFeed;
+        }
+
+        private void SetCustomCursor(Texture2D texture, Vector2 hotspot)
+        {
+#if UNITY_STANDALONE_OSX
+            Vector2 scaledHotspot = hotspot * MacCursorScale;
+            Cursor.SetCursor(texture, scaledHotspot, CursorMode.ForceSoftware);
+#else
+            Cursor.SetCursor(texture, hotspot, CursorMode.Auto);
+#endif
         }
 
         public void SetCursorState(CursorState state)
@@ -71,7 +85,7 @@ namespace BirdGame
                 }
 
                 int index = this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools[6].equipedId;
-                Cursor.SetCursor(item.cursorTextures[index], item.hotspot, CursorMode.Auto);
+                SetCustomCursor(item.cursorTextures[index], item.hotspot);
             }
             catch (Exception e)
             {
@@ -95,7 +109,7 @@ namespace BirdGame
                 }
 
                 int index = this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools[6].equipedId;
-                Cursor.SetCursor(item.cursorTextures[index], item.hotspot, CursorMode.Auto);
+                SetCustomCursor(item.cursorTextures[index], item.hotspot);
             }
             catch (Exception e)
             {
@@ -122,7 +136,7 @@ namespace BirdGame
                     this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools.Add(new ToolInfo());
                 }
                 int index =this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools[6].equipedId;
-                Cursor.SetCursor(item.cursorTextures[index], item.hotspot, CursorMode.Auto);
+                SetCustomCursor(item.cursorTextures[index], item.hotspot);
             }
             catch (Exception e)
             {
@@ -147,7 +161,7 @@ namespace BirdGame
                         this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools.Add(new ToolInfo());
                     }
                     int index =this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools[6].equipedId;
-                    Cursor.SetCursor(item.cursorTextures[index], item.hotspot, CursorMode.Auto);
+                    SetCustomCursor(item.cursorTextures[index], item.hotspot);
                 }
                 catch (Exception e)
                 {
@@ -171,7 +185,7 @@ namespace BirdGame
                         this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools.Add(new ToolInfo());
                     }
                     int index =this.GetModel<ISaveModel>().AccountData.sceneTools[0].tools[6].equipedId;
-                    Cursor.SetCursor(item.cursorTextures[index], item.hotspot, CursorMode.Auto);
+                    SetCustomCursor(item.cursorTextures[index], item.hotspot);
                 }
                 catch (Exception e)
                 {

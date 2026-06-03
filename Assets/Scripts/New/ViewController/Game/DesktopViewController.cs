@@ -14,7 +14,7 @@ namespace BirdGame
         {
             if (exitPop.activeSelf)
                 exitPop.SetActive(false);
-#if !UNITY_EDITOR
+#if !UNITY_EDITOR && !UNITY_STANDALONE_OSX
             this.GetSystem<IDesktopSystem>().EnableDesktopMode();
             this.GetSystem<IDesktopSystem>().SetClickThrough(true);
 #endif
