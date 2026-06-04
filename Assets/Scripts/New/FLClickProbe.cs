@@ -38,6 +38,12 @@ namespace BirdGame
 
         private readonly List<RaycastResult> _raycastBuf = new List<RaycastResult>(16);
 
+        // 兜底:壁纸模式下,部分 popup 的 Button.onClick 没被 Unity 的 BaseInputModule
+        // 派发(PhotoPopup 已确认有此问题, log 显示 raycast 命中 button 但 onClick
+        // 不触发)。我们记下 mouseDown 时 raycast 顶部命中的 GameObject,
+        // 在 mouseUp 时如果它在 PhotoPopup 树下就手动 ExecuteEvents.pointerClickHandler。
+        private GameObject _lastForcedPressTarget;
+
         private void Update()
         {
             // 鼠标按下检测 —— 如果 Unity 这里看到了 down,说明 NSEvent 流通了
@@ -73,6 +79,16 @@ namespace BirdGame
             if (downL || downR)
             {
                 LogRaycastAt(Input.mousePosition, downL ? "LEFT" : "RIGHT");
+                if (downL) RecordPressTargetForPhotoPopupFallback();
+            }
+
+            // mouseUp 兜底:如果按下时记到的目标在 PhotoPopup 树下,
+            // 而 Unity 自己的 BaseInputModule 又没派发 onClick(壁纸模式特殊情况),
+            // 我们手动 dispatch PointerClick。
+            if (upL && _lastForcedPressTarget != null)
+            {
+                TryForcePointerClickInPhotoPopup();
+                _lastForcedPressTarget = null;
             }
 
             // 周期性触发原生 diagnose,保证 log 一直有新鲜状态
@@ -85,6 +101,72 @@ namespace BirdGame
                 catch (System.Exception e) { Debug.LogWarning($"[FLLOG-CS] _FLDiagnose threw {e.Message}"); }
 #endif
             }
+        }
+
+        // mouseDown 时调:如果 raycast 顶部命中 PhotoPopup 子树里的 GameObject,
+        // 记下来供 mouseUp 兜底用。
+        private void RecordPressTargetForPhotoPopupFallback()
+        {
+            _lastForcedPressTarget = null;
+            if (_raycastBuf == null || _raycastBuf.Count == 0) return;
+
+            var top = _raycastBuf[0].gameObject;
+            if (top == null) return;
+
+            // 只对 PhotoPopup 子树启用兜底,其它弹窗(如 SettingPopup)在壁纸模式下
+            // BaseInputModule 已经能正常派发,加兜底反而会双触发。
+            if (IsUnderPhotoPopup(top))
+            {
+                _lastForcedPressTarget = top;
+            }
+        }
+
+        // mouseUp 时调:如果按下时命中了 PhotoPopup 内的 button,手动 ExecuteEvents
+        // dispatch PointerClick,补偿 Unity 在壁纸 NSPanel 模式下漏发的 onClick。
+        private void TryForcePointerClickInPhotoPopup()
+        {
+            if (_lastForcedPressTarget == null) return;
+
+            // 再做一次 raycast,确认 mouseUp 时鼠标还在 PhotoPopup 区域(避免拖出去
+            // 还触发 click)。同时拿到当前的命中目标。
+            var es = EventSystem.current;
+            if (es == null) return;
+
+            var ped = new PointerEventData(es)
+            {
+                position = Input.mousePosition,
+                button = PointerEventData.InputButton.Left,
+            };
+            var buf = new List<RaycastResult>(16);
+            es.RaycastAll(ped, buf);
+            if (buf.Count == 0) return;
+
+            var top = buf[0].gameObject;
+            if (top == null || !IsUnderPhotoPopup(top)) return;
+
+            // 找到第一个能接收 IPointerClickHandler 的祖先(通常就是 Button)
+            var handler = ExecuteEvents.GetEventHandler<IPointerClickHandler>(top);
+            if (handler == null) return;
+
+            ped.pointerPress = _lastForcedPressTarget;
+            ped.rawPointerPress = _lastForcedPressTarget;
+            ped.pointerCurrentRaycast = buf[0];
+            ped.pointerPressRaycast = buf[0];
+
+            Debug.Log($"[FLLOG-CS] FORCING PointerClick on '{handler.name}' (PhotoPopup 兜底,wallpaper NSPanel 漏发 onClick)");
+            ExecuteEvents.Execute(handler, ped, ExecuteEvents.pointerClickHandler);
+        }
+
+        private static bool IsUnderPhotoPopup(GameObject go)
+        {
+            var t = go != null ? go.transform : null;
+            int safety = 0;
+            while (t != null && safety++ < 20)
+            {
+                if (t.name.StartsWith("PhotoPopup")) return true;
+                t = t.parent;
+            }
+            return false;
         }
 
         private void LogRaycastAt(Vector2 screenPos, string btn)
