@@ -962,6 +962,7 @@ namespace BirdGame
         [DllImport("FLWallpaperBridge")] private static extern int  _FLWallpaperGetMainScreenFrame(
             out double x, out double y, out double w, out double h, int fullFrame);
         [DllImport("FLWallpaperBridge")] private static extern void _FLWallpaperWindowedReset(double fraction);
+        [DllImport("FLWallpaperBridge")] private static extern void _FLDiagnose();
         #endif
 
         private bool isWallpaperMode = false;
@@ -977,24 +978,33 @@ namespace BirdGame
 #if !UNITY_EDITOR
             try
             {
+                Debug.Log("[FLLOG-CS] >>>>>> WallpaperMode() ENTER from C# <<<<<<");
                 _FLWallpaperEnter();
                 isWallpaperMode = true;
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
-                
-                // 启用 macOS 鼠标事件转发器
+
+                // 启用 macOS 鼠标事件转发器（如场景里挂了的话）
                 SimpleMouseForwarderMac mouseForwarder = UnityEngine.Object.FindObjectOfType<SimpleMouseForwarderMac>(true);
                 if (mouseForwarder != null)
                 {
                     mouseForwarder.gameObject.SetActive(true);
-                    Debug.Log("[WallpaperMode][macOS] SimpleMouseForwarderMac 已启用");
+                    Debug.Log("[FLLOG-CS] SimpleMouseForwarderMac 已启用");
                 }
-                
-                Debug.Log("[WallpaperMode][macOS] 已激活 - NSWindow 降至壁纸层");
+                else
+                {
+                    Debug.LogWarning("[FLLOG-CS] !!! SimpleMouseForwarderMac 不在场景里 (FindObjectOfType 返回 null)");
+                }
+
+                Debug.Log("[FLLOG-CS] WallpaperMode 已激活 — 立即触发原生层 diagnose");
+                _FLDiagnose();
+
+                // 启动一个 MonoBehaviour 来做 Unity 侧的输入嗅探日志
+                FLClickProbe.Install();
             }
             catch (Exception e)
             {
-                Debug.LogError($"[WallpaperMode][macOS] 进入失败: {e.Message}");
+                Debug.LogError($"[FLLOG-CS] !!! WallpaperMode 进入失败: {e}");
             }
 #else
             isWallpaperMode = true;

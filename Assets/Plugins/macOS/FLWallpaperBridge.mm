@@ -17,6 +17,7 @@
 #import <Cocoa/Cocoa.h>
 #import <CoreGraphics/CoreGraphics.h>
 #import <objc/runtime.h>
+#import <objc/message.h>
 
 // ---------------------------------------------------------------------------
 // Subclass plumbing — enables native click delivery in wallpaper mode.
@@ -38,17 +39,86 @@
 @interface FLWallpaperWindow : NSWindow
 @end
 @implementation FLWallpaperWindow
-- (BOOL)canBecomeKeyWindow  { return YES; }
-- (BOOL)canBecomeMainWindow { return YES; }
+- (BOOL)canBecomeKeyWindow {
+    NSLog(@"[FLLOG][WIN] canBecomeKeyWindow asked -> YES");
+    return YES;
+}
+- (BOOL)canBecomeMainWindow {
+    NSLog(@"[FLLOG][WIN] canBecomeMainWindow asked -> YES");
+    return YES;
+}
+- (void)becomeKeyWindow {
+    NSLog(@"[FLLOG][WIN] >>> becomeKeyWindow");
+    [super becomeKeyWindow];
+    NSLog(@"[FLLOG][WIN] <<< becomeKeyWindow done isKey=%d", [self isKeyWindow]);
+}
+- (void)resignKeyWindow {
+    NSLog(@"[FLLOG][WIN] >>> resignKeyWindow (someone is taking key from us)");
+    [super resignKeyWindow];
+    NSLog(@"[FLLOG][WIN] <<< resignKeyWindow done isKey=%d", [self isKeyWindow]);
+}
+- (void)becomeMainWindow {
+    NSLog(@"[FLLOG][WIN] >>> becomeMainWindow");
+    [super becomeMainWindow];
+}
+- (void)resignMainWindow {
+    NSLog(@"[FLLOG][WIN] >>> resignMainWindow");
+    [super resignMainWindow];
+}
+- (void)makeKeyAndOrderFront:(id)sender {
+    NSLog(@"[FLLOG][WIN] makeKeyAndOrderFront: called by %@", sender);
+    [super makeKeyAndOrderFront:sender];
+}
+- (void)sendEvent:(NSEvent *)event {
+    NSEventType t = [event type];
+    if (t == NSEventTypeLeftMouseDown  || t == NSEventTypeLeftMouseUp
+     || t == NSEventTypeRightMouseDown || t == NSEventTypeRightMouseUp
+     || t == NSEventTypeOtherMouseDown || t == NSEventTypeOtherMouseUp
+     || t == NSEventTypeKeyDown        || t == NSEventTypeKeyUp
+     || t == NSEventTypeScrollWheel)
+    {
+        NSLog(@"[FLLOG][WIN] sendEvent type=%lu loc=%@ isKey=%d isMain=%d",
+              (unsigned long)t,
+              NSStringFromPoint([event locationInWindow]),
+              [self isKeyWindow], [self isMainWindow]);
+    }
+    [super sendEvent:event];
+}
 @end
 
 static BOOL FLAcceptsFirstMouseImpl(id self, SEL _cmd, NSEvent *event) {
+    NSLog(@"[FLLOG][VIEW] acceptsFirstMouse called self=%@ event.type=%lu -> YES",
+          self, event ? (unsigned long)[event type] : 0);
     return YES;
+}
+
+// Hook mouseDown so we know if Cocoa is actually delivering clicks to the view.
+// We just log and forward to super so Unity still handles it.
+static void FLMouseDownImpl(id self, SEL _cmd, NSEvent *event) {
+    NSLog(@"[FLLOG][VIEW] *** mouseDown DELIVERED *** self=%@ loc=%@",
+          self, NSStringFromPoint([event locationInWindow]));
+    struct objc_super sup = { self, class_getSuperclass(object_getClass(self)) };
+    ((void (*)(struct objc_super *, SEL, NSEvent *))objc_msgSendSuper)(&sup, _cmd, event);
+}
+static void FLMouseUpImpl(id self, SEL _cmd, NSEvent *event) {
+    NSLog(@"[FLLOG][VIEW] *** mouseUp DELIVERED *** self=%@", self);
+    struct objc_super sup = { self, class_getSuperclass(object_getClass(self)) };
+    ((void (*)(struct objc_super *, SEL, NSEvent *))objc_msgSendSuper)(&sup, _cmd, event);
+}
+static void FLRightMouseDownImpl(id self, SEL _cmd, NSEvent *event) {
+    NSLog(@"[FLLOG][VIEW] *** rightMouseDown DELIVERED *** self=%@", self);
+    struct objc_super sup = { self, class_getSuperclass(object_getClass(self)) };
+    ((void (*)(struct objc_super *, SEL, NSEvent *))objc_msgSendSuper)(&sup, _cmd, event);
 }
 
 static __strong Class g_savedWindowClass      = nil;
 static __strong Class g_savedContentViewClass = nil;
 static Class          g_wallpaperViewSubclass = nil;
+
+// NSEvent monitors so we can see EVERY mouse event the app receives
+// (regardless of which window targets it).
+static __strong id    g_localMonitor          = nil;
+static __strong id    g_globalMonitor         = nil;
 
 // Cached Unity window reference; survives losing main-window status after we
 // drop our level (since we are no longer the front-most window).
@@ -83,6 +153,98 @@ static volatile BOOL         g_ctrlPressed   = NO;
 static volatile BOOL         g_altPressed    = NO;
 static volatile uint32_t     g_lastKeyCode   = 0;
 static volatile BOOL         g_keyDown       = NO;
+
+#pragma mark - Diagnostic Logging
+
+static void FLLogWindow(NSString *tag, NSWindow *w) {
+    if (w == nil) {
+        NSLog(@"[FLLOG][%@] window=nil", tag);
+        return;
+    }
+    NSLog(@"[FLLOG][%@] win=%p class=%s level=%ld style=0x%lx coll=0x%lx "
+          @"isKey=%d isMain=%d isVisible=%d canBecomeKey=%d canBecomeMain=%d "
+          @"ignoresMouse=%d acceptsMoved=%d frame=%@ contentView=%s",
+          tag, w,
+          class_getName([w class]),
+          (long)[w level],
+          (unsigned long)[w styleMask],
+          (unsigned long)[w collectionBehavior],
+          [w isKeyWindow], [w isMainWindow], [w isVisible],
+          [w canBecomeKeyWindow], [w canBecomeMainWindow],
+          [w ignoresMouseEvents], [w acceptsMouseMovedEvents],
+          NSStringFromRect([w frame]),
+          [w contentView] ? class_getName([[w contentView] class]) : "nil");
+}
+
+static void FLLogAllWindows(NSString *tag) {
+    NSArray *windows = [NSApp windows];
+    NSLog(@"[FLLOG][%@] ==== all NSWindows count=%lu keyWindow=%p mainWindow=%p ====",
+          tag, (unsigned long)[windows count], [NSApp keyWindow], [NSApp mainWindow]);
+    NSInteger i = 0;
+    for (NSWindow *w in windows) {
+        NSLog(@"[FLLOG][%@][#%ld] win=%p class=%s level=%ld style=0x%lx "
+              @"isKey=%d isMain=%d isVisible=%d frame=%@",
+              tag, (long)i++, w,
+              class_getName([w class]),
+              (long)[w level],
+              (unsigned long)[w styleMask],
+              [w isKeyWindow], [w isMainWindow], [w isVisible],
+              NSStringFromRect([w frame]));
+    }
+    NSRunningApplication *front = [[NSWorkspace sharedWorkspace] frontmostApplication];
+    NSLog(@"[FLLOG][%@] frontmostApp=%@ bundleID=%@ isActive=%d",
+          tag, [front localizedName], [front bundleIdentifier], [front isActive]);
+    NSLog(@"[FLLOG][%@] NSApp.isActive=%d activationPolicy=%ld",
+          tag, [NSApp isActive], (long)[NSApp activationPolicy]);
+}
+
+static void FLInstallEventMonitors(void) {
+    if (g_localMonitor != nil) return;
+
+    NSEventMask mask = NSEventMaskLeftMouseDown  | NSEventMaskLeftMouseUp
+                     | NSEventMaskRightMouseDown | NSEventMaskRightMouseUp
+                     | NSEventMaskOtherMouseDown | NSEventMaskOtherMouseUp
+                     | NSEventMaskScrollWheel
+                     | NSEventMaskKeyDown        | NSEventMaskKeyUp;
+
+    // Local monitor: events targeted at OUR app. We see them BEFORE the window
+    // chain. Return event = pass through; nil = swallow.
+    g_localMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:mask
+                                                           handler:^NSEvent *(NSEvent *event) {
+        NSWindow *w = [event window];
+        NSLog(@"[FLLOG][LOCAL] type=%lu loc=%@ window=%p winClass=%s winLevel=%ld",
+              (unsigned long)[event type],
+              NSStringFromPoint([event locationInWindow]),
+              w,
+              w ? class_getName([w class]) : "nil",
+              w ? (long)[w level] : 0);
+        return event;
+    }];
+
+    // Global monitor: events targeted at OTHER apps. Tells us if clicks are
+    // being delivered somewhere else when our app should be receiving them.
+    g_globalMonitor = [NSEvent addGlobalMonitorForEventsMatchingMask:mask
+                                                             handler:^(NSEvent *event) {
+        NSLog(@"[FLLOG][GLOBAL] type=%lu mouseLoc=%@ — event went to ANOTHER app",
+              (unsigned long)[event type],
+              NSStringFromPoint([NSEvent mouseLocation]));
+    }];
+
+    NSLog(@"[FLLOG] installed local + global event monitors (local=%p global=%p)",
+          g_localMonitor, g_globalMonitor);
+}
+
+static void FLRemoveEventMonitors(void) {
+    if (g_localMonitor != nil) {
+        [NSEvent removeMonitor:g_localMonitor];
+        g_localMonitor = nil;
+    }
+    if (g_globalMonitor != nil) {
+        [NSEvent removeMonitor:g_globalMonitor];
+        g_globalMonitor = nil;
+    }
+    NSLog(@"[FLLOG] removed event monitors");
+}
 
 #pragma mark - Helpers
 
@@ -137,7 +299,12 @@ static void FLConvertToUnityCoordinates(CGPoint screenPoint, double *outX, doubl
 #pragma mark - Class Swap (enables click delivery to borderless window)
 
 static void FLEnableNativeClickDelivery(NSWindow *window) {
-    if (window == nil) return;
+    if (window == nil) {
+        NSLog(@"[FLLOG][SWAP] window=nil — abort enable");
+        return;
+    }
+    NSLog(@"[FLLOG][SWAP] === FLEnableNativeClickDelivery BEGIN ===");
+    FLLogWindow(@"SWAP-BEFORE", window);
 
     // 1) Swap NSWindow class so canBecomeKeyWindow returns YES.
     Class wndClass = [window class];
@@ -146,24 +313,36 @@ static void FLEnableNativeClickDelivery(NSWindow *window) {
             g_savedWindowClass = wndClass;
         }
         object_setClass(window, [FLWallpaperWindow class]);
-        NSLog(@"[FLWallpaper] Window class %s -> FLWallpaperWindow", class_getName(wndClass));
+        NSLog(@"[FLLOG][SWAP] Window class %s -> FLWallpaperWindow",
+              class_getName(wndClass));
+    } else {
+        NSLog(@"[FLLOG][SWAP] Window already FLWallpaperWindow — skip");
     }
+
+    // Sanity check after window swap.
+    NSLog(@"[FLLOG][SWAP] post-window-swap canBecomeKey=%d canBecomeMain=%d",
+          [window canBecomeKeyWindow], [window canBecomeMainWindow]);
 
     // 2) Swap contentView class so acceptsFirstMouse: returns YES.
     NSView *cv = [window contentView];
-    if (cv == nil) return;
+    if (cv == nil) {
+        NSLog(@"[FLLOG][SWAP] contentView=nil — view swap skipped");
+        return;
+    }
+    NSLog(@"[FLLOG][SWAP] contentView=%p class=%s superclass=%s",
+          cv, class_getName([cv class]),
+          class_getName(class_getSuperclass([cv class])));
 
     Class viewClass = [cv class];
-    // Already swapped on this view? Done.
-    if (g_wallpaperViewSubclass != nil && viewClass == g_wallpaperViewSubclass) return;
+    if (g_wallpaperViewSubclass != nil && viewClass == g_wallpaperViewSubclass) {
+        NSLog(@"[FLLOG][SWAP] contentView already swapped — skip");
+        return;
+    }
 
     if (g_savedContentViewClass == nil) {
         g_savedContentViewClass = viewClass;
     }
 
-    // Lazily create (or refresh) a dynamic subclass of the *current* view class.
-    // We use a per-parent-class name so we can reuse across enter/exit cycles
-    // but recreate if Unity ever swaps its view class out from under us.
     if (g_wallpaperViewSubclass == nil
         || class_getSuperclass(g_wallpaperViewSubclass) != viewClass)
     {
@@ -173,22 +352,41 @@ static void FLEnableNativeClickDelivery(NSWindow *window) {
         Class existing = objc_getClass(cName);
         if (existing != nil) {
             g_wallpaperViewSubclass = existing;
+            NSLog(@"[FLLOG][SWAP] reusing existing view subclass %s", cName);
         } else {
             Class sub = objc_allocateClassPair(viewClass, cName, 0);
             if (sub != nil) {
+                // acceptsFirstMouse: → YES (lets clicks through when window isn't key)
                 class_addMethod(sub, @selector(acceptsFirstMouse:),
                                 (IMP)FLAcceptsFirstMouseImpl, "B@:@");
+                // mouseDown:/Up:/rightMouseDown: → log + call super
+                // Tells us if AppKit actually reaches the view with the click.
+                class_addMethod(sub, @selector(mouseDown:),
+                                (IMP)FLMouseDownImpl, "v@:@");
+                class_addMethod(sub, @selector(mouseUp:),
+                                (IMP)FLMouseUpImpl, "v@:@");
+                class_addMethod(sub, @selector(rightMouseDown:),
+                                (IMP)FLRightMouseDownImpl, "v@:@");
                 objc_registerClassPair(sub);
                 g_wallpaperViewSubclass = sub;
+                NSLog(@"[FLLOG][SWAP] created dynamic view subclass %s "
+                      @"(injected acceptsFirstMouse:, mouseDown:, mouseUp:, rightMouseDown:)",
+                      cName);
+            } else {
+                NSLog(@"[FLLOG][SWAP] !!! objc_allocateClassPair FAILED for %s", cName);
             }
         }
     }
 
     if (g_wallpaperViewSubclass != nil) {
         object_setClass(cv, g_wallpaperViewSubclass);
-        NSLog(@"[FLWallpaper] ContentView class %s -> %s",
-              class_getName(viewClass), class_getName(g_wallpaperViewSubclass));
+        NSLog(@"[FLLOG][SWAP] ContentView class %s -> %s",
+              class_getName(viewClass),
+              class_getName(g_wallpaperViewSubclass));
     }
+
+    FLLogWindow(@"SWAP-AFTER", window);
+    NSLog(@"[FLLOG][SWAP] === FLEnableNativeClickDelivery END ===");
 }
 
 static void FLDisableNativeClickDelivery(NSWindow *window) {
@@ -231,11 +429,17 @@ static void FLWaitForFullScreenExit(NSWindow *window) {
 }
 
 static void FLApplyWallpaper(void) {
+    NSLog(@"[FLLOG] ============================================");
+    NSLog(@"[FLLOG] ====== FLApplyWallpaper ENTER ==============");
+    NSLog(@"[FLLOG] ============================================");
+    FLLogAllWindows(@"APPLY-IN");
+
     NSWindow *window = FLLocateUnityWindow();
     if (window == nil) {
-        NSLog(@"[FLWallpaper] Apply skipped: no Unity NSWindow located.");
+        NSLog(@"[FLLOG][APPLY] !!! no Unity NSWindow located — abort");
         return;
     }
+    FLLogWindow(@"APPLY-INITIAL", window);
 
     // 首先检查是否处于全屏模式，如果是，先退出全屏
     if ([window styleMask] & NSWindowStyleMaskFullScreen) {
@@ -262,40 +466,56 @@ static void FLApplyWallpaper(void) {
         g_savedValid    = YES;
     }
 
+    NSLog(@"[FLLOG][APPLY] setLevel(%ld)", (long)FLDesiredWallpaperLevel());
     [window setLevel:FLDesiredWallpaperLevel()];
+    NSLog(@"[FLLOG][APPLY] setCollectionBehavior(0x%lx)", (unsigned long)FLDesiredWallpaperBehavior());
     [window setCollectionBehavior:FLDesiredWallpaperBehavior()];
 
     NSWindowStyleMask desiredMask = NSWindowStyleMaskBorderless;
     if ([window styleMask] != desiredMask) {
+        NSLog(@"[FLLOG][APPLY] setStyleMask 0x%lx -> 0x%lx (borderless)",
+              (unsigned long)[window styleMask], (unsigned long)desiredMask);
         [window setStyleMask:desiredMask];
     }
 
     NSScreen *screen = [NSScreen mainScreen];
     if (screen != nil) {
+        NSLog(@"[FLLOG][APPLY] setFrame=%@", NSStringFromRect([screen frame]));
         [window setFrame:[screen frame] display:YES];
     }
 
-    // Enable mouse events for the window
     [window setAcceptsMouseMovedEvents:YES];
+    NSLog(@"[FLLOG][APPLY] setAcceptsMouseMovedEvents:YES");
 
     // Critical: enable native mouseDown delivery on a borderless / desktop-level
     // window via runtime class swap (canBecomeKey + acceptsFirstMouse).
     FLEnableNativeClickDelivery(window);
 
-    // Don't make us key — we want to stay behind any real app.
+    // Install NSEvent monitors so we see every mouse event from now on.
+    FLInstallEventMonitors();
+
+    NSLog(@"[FLLOG][APPLY] orderBack:nil — pushing window to back of its level");
     [window orderBack:nil];
+    FLLogWindow(@"APPLY-AFTER-ORDERBACK", window);
 
     g_wallpaperOn = YES;
-    NSLog(@"[FLWallpaper] Applied wallpaper layer: level=%ld frame=%@",
-          (long)[window level], NSStringFromRect([window frame]));
+    NSLog(@"[FLLOG][APPLY] g_wallpaperOn=YES");
+    FLLogAllWindows(@"APPLY-DONE");
+    NSLog(@"[FLLOG] ====== FLApplyWallpaper EXIT ===============");
 }
 
 static void FLRestoreWindow(void) {
+    NSLog(@"[FLLOG] ====== FLRestoreWindow ENTER ===============");
     NSWindow *window = FLLocateUnityWindow();
     if (window == nil) {
+        NSLog(@"[FLLOG][RESTORE] no window — abort");
         g_wallpaperOn = NO;
         return;
     }
+    FLLogWindow(@"RESTORE-BEFORE", window);
+
+    // Remove NSEvent monitors first so we stop logging on the way out.
+    FLRemoveEventMonitors();
 
     // Revert class swap BEFORE restoring style mask/frame so we don't leave
     // the swapped classes attached to a window that has been put back in a
@@ -316,8 +536,8 @@ static void FLRestoreWindow(void) {
 
     g_wallpaperOn = NO;
     g_savedValid  = NO;
-    NSLog(@"[FLWallpaper] Restored window: level=%ld frame=%@",
-          (long)[window level], NSStringFromRect([window frame]));
+    FLLogWindow(@"RESTORE-AFTER", window);
+    NSLog(@"[FLLOG] ====== FLRestoreWindow EXIT ================");
 }
 
 #pragma mark - Event Tap Handling
@@ -567,12 +787,62 @@ void _FLWallpaperRefresh(void) {
 
         NSInteger desiredLevel = FLDesiredWallpaperLevel();
         if ([window level] != desiredLevel) {
+            NSLog(@"[FLLOG][REFRESH] level drifted %ld -> resetting to %ld",
+                  (long)[window level], (long)desiredLevel);
             [window setLevel:desiredLevel];
         }
         NSWindowCollectionBehavior desiredBehavior = FLDesiredWallpaperBehavior();
         if ([window collectionBehavior] != desiredBehavior) {
+            NSLog(@"[FLLOG][REFRESH] collectionBehavior drifted 0x%lx -> 0x%lx",
+                  (unsigned long)[window collectionBehavior],
+                  (unsigned long)desiredBehavior);
             [window setCollectionBehavior:desiredBehavior];
         }
+        // Periodic heartbeat with current key/main + class.
+        NSLog(@"[FLLOG][REFRESH] heartbeat winClass=%s level=%ld isKey=%d "
+              @"isMain=%d frontApp=%@ activeApp=%d",
+              class_getName([window class]),
+              (long)[window level], [window isKeyWindow], [window isMainWindow],
+              [[[NSWorkspace sharedWorkspace] frontmostApplication] localizedName],
+              [NSApp isActive]);
+    });
+}
+
+// On-demand full diagnostic dump. C# calls this when it wants a snapshot
+// of the native state in Player.log.
+__attribute__((visibility("default")))
+void _FLDiagnose(void) {
+    FLRunOnMain(^{
+        NSLog(@"[FLLOG] @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        NSLog(@"[FLLOG] @@@@@@@@ _FLDiagnose snapshot @@@@@@@@@@@@@@");
+        NSLog(@"[FLLOG] @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        NSLog(@"[FLLOG][DIAG] g_wallpaperOn=%d g_savedValid=%d g_savedLevel=%ld "
+              @"savedWindowClass=%s savedContentViewClass=%s viewSubclass=%s",
+              g_wallpaperOn, g_savedValid, (long)g_savedLevel,
+              g_savedWindowClass ? class_getName(g_savedWindowClass) : "nil",
+              g_savedContentViewClass ? class_getName(g_savedContentViewClass) : "nil",
+              g_wallpaperViewSubclass ? class_getName(g_wallpaperViewSubclass) : "nil");
+        NSLog(@"[FLLOG][DIAG] g_eventTap=%p g_tapEnabled=%d g_localMonitor=%p g_globalMonitor=%p",
+              g_eventTap, g_tapEnabled, g_localMonitor, g_globalMonitor);
+        NSLog(@"[FLLOG][DIAG] mouseLocation=%@",
+              NSStringFromPoint([NSEvent mouseLocation]));
+        FLLogAllWindows(@"DIAG");
+        NSWindow *uw = FLLocateUnityWindow();
+        if (uw != nil) {
+            FLLogWindow(@"DIAG-UNITY-WIN", uw);
+            NSView *cv = [uw contentView];
+            if (cv != nil) {
+                NSLog(@"[FLLOG][DIAG-VIEW] view=%p class=%s superclass=%s "
+                      @"frame=%@ window=%p",
+                      cv, class_getName([cv class]),
+                      class_getName(class_getSuperclass([cv class])),
+                      NSStringFromRect([cv frame]), [cv window]);
+                // Probe acceptsFirstMouse: result without an event
+                BOOL afm = [cv acceptsFirstMouse:nil];
+                NSLog(@"[FLLOG][DIAG-VIEW] probe acceptsFirstMouse:nil -> %d", afm);
+            }
+        }
+        NSLog(@"[FLLOG] @@@@@@@@ end snapshot @@@@@@@@@@@@@@@@@@@@@@");
     });
 }
 
