@@ -472,23 +472,36 @@ static void FLApplyWallpaper(void) {
         g_savedValid    = YES;
     }
 
-    // *** ORDER MATTERS *** —— 必须先 class swap 让窗口变 NSPanel,然后才能
-    // setStyleMask 加 NonactivatingPanel flag。普通 NSWindow 不接受这个 flag,
-    // 会被静默丢弃,导致桌面层 click 仍然到不了。
+    // *** ORDER MATTERS *** —— 三步:
+    //   (a) 在原 PlayerWindow class 上先 setStyleMask(Borderless),让 AppKit 在
+    //       正确的类身份下清理掉 titlebar 和 NSTitlebarView 的 KVO observer。
+    //       如果先 swap class 再去 titled,unregister observer 时 KVO 因为类变了
+    //       识别不到 observer,会抛 NSRangeException 导致 app 崩。
+    //   (b) class swap 到 FLWallpaperPanel (NSPanel)
+    //   (c) setStyleMask 再加上 NonactivatingPanel flag (NSPanel-only,普通
+    //       NSWindow 不接受这个 flag,会被静默丢弃)
 
-    // 1) 先 swap class 到 FLWallpaperPanel (NSPanel),并把 contentView swap 成
-    //    有 acceptsFirstMouse: 的子类。
+    // (a) 在原 class 上先去掉 titled,触发 AppKit 自己清理 titlebar 子视图
+    NSWindowStyleMask preSwapMask = NSWindowStyleMaskBorderless;
+    if ([window styleMask] != preSwapMask) {
+        NSLog(@"[FLLOG][APPLY] (a) pre-swap setStyleMask 0x%lx -> 0x%lx (Borderless,在原 class 上)",
+              (unsigned long)[window styleMask], (unsigned long)preSwapMask);
+        [window setStyleMask:preSwapMask];
+        NSLog(@"[FLLOG][APPLY] (a) after pre-swap styleMask=0x%lx",
+              (unsigned long)[window styleMask]);
+    }
+
+    // (b) class swap 到 FLWallpaperPanel + 给 contentView 注入 acceptsFirstMouse:
     FLEnableNativeClickDelivery(window);
 
-    // 2) 用 panel-only 的 NonactivatingPanel + Borderless. 这是让 macOS 在
-    //    桌面层把点击路由到我们窗口的关键 —— 没有 NonactivatingPanel,
-    //    WindowServer 会把 click 当成 "点击壁纸" 转给 Finder/Desktop。
-    NSWindowStyleMask desiredMask = NSWindowStyleMaskBorderless | NSWindowStyleMaskNonactivatingPanel;
-    if ([window styleMask] != desiredMask) {
-        NSLog(@"[FLLOG][APPLY] setStyleMask 0x%lx -> 0x%lx (Borderless|NonactivatingPanel)",
-              (unsigned long)[window styleMask], (unsigned long)desiredMask);
-        [window setStyleMask:desiredMask];
-        NSLog(@"[FLLOG][APPLY] styleMask after set = 0x%lx", (unsigned long)[window styleMask]);
+    // (c) NSPanel-only 的 NonactivatingPanel —— 这是让 macOS 在桌面层把
+    //     点击路由到我们窗口的关键。
+    NSWindowStyleMask finalMask = NSWindowStyleMaskBorderless | NSWindowStyleMaskNonactivatingPanel;
+    if ([window styleMask] != finalMask) {
+        NSLog(@"[FLLOG][APPLY] (c) post-swap setStyleMask 0x%lx -> 0x%lx (+NonactivatingPanel)",
+              (unsigned long)[window styleMask], (unsigned long)finalMask);
+        [window setStyleMask:finalMask];
+        NSLog(@"[FLLOG][APPLY] (c) final styleMask = 0x%lx", (unsigned long)[window styleMask]);
     }
 
     // 3) NSPanel-only: becomesKeyOnlyIfNeeded 让窗口只在真的需要键盘输入时才抢 key,
@@ -543,15 +556,30 @@ static void FLRestoreWindow(void) {
     // Remove NSEvent monitors first so we stop logging on the way out.
     FLRemoveEventMonitors();
 
-    // Revert class swap BEFORE restoring style mask/frame so we don't leave
-    // the swapped classes attached to a window that has been put back in a
-    // normal-window state.
+    // *** ORDER MATTERS (反过来) *** —— Apply 是 borderless -> swap -> +NonactivatingPanel
+    // Restore 必须是 -NonactivatingPanel -> swap back -> 恢复原 styleMask
+    // 不然如果直接在 NSPanel 上恢复成 Titled,AppKit 加 titlebar 时 KVO 又会和
+    // FLWallpaperPanel 类 mismatch 崩.
+    //
+    // (c-reverse) 先在 NSPanel 类上 setStyleMask(Borderless),去掉 NonactivatingPanel
+    NSWindowStyleMask plainBorderless = NSWindowStyleMaskBorderless;
+    if ([window styleMask] != plainBorderless) {
+        NSLog(@"[FLLOG][RESTORE] (c-rev) setStyleMask 0x%lx -> 0x%lx (Borderless,在 NSPanel 上去掉 NonactivatingPanel)",
+              (unsigned long)[window styleMask], (unsigned long)plainBorderless);
+        [window setStyleMask:plainBorderless];
+    }
+
+    // (b-reverse) swap class back to PlayerWindow + 还 contentView
     FLDisableNativeClickDelivery(window);
 
     if (g_savedValid) {
         [window setLevel:g_savedLevel];
         [window setCollectionBehavior:g_savedBehavior];
+
+        // (a-reverse) 现在 class 已经回到原 PlayerWindow,可以安全地恢复 titled styleMask
         if ([window styleMask] != g_savedStyle) {
+            NSLog(@"[FLLOG][RESTORE] (a-rev) setStyleMask 0x%lx -> 0x%lx (恢复原 styleMask)",
+                  (unsigned long)[window styleMask], (unsigned long)g_savedStyle);
             [window setStyleMask:g_savedStyle];
         }
         [window setFrame:g_savedFrame display:YES];
@@ -839,7 +867,7 @@ void _FLWallpaperRefresh(void) {
 // If C# can't find this symbol the bundle is stale.
 __attribute__((visibility("default")))
 const char *_FLWallpaperBuildStamp(void) {
-    return "FLWallpaperBridge rev=8-NSPanel-nonactivating " __DATE__ " " __TIME__;
+    return "FLWallpaperBridge rev=9-fix-titlebar-KVO-crash " __DATE__ " " __TIME__;
 }
 
 // On-demand full diagnostic dump. C# calls this when it wants a snapshot
