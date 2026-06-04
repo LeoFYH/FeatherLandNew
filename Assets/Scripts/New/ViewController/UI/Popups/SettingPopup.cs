@@ -468,7 +468,7 @@ namespace BirdGame
         private void SwitchScreenMode(int mode)
         {
             // Clear keyboard state before mode change to prevent lingering key states
-            SimpleMouseForwarder.ClearKeyboardState();
+            MouseForwarder.ClearKeyboardState();
             
             switch (mode)
             {
@@ -495,7 +495,7 @@ namespace BirdGame
             }
             
             // Clear keyboard state after mode change as well
-            SimpleMouseForwarder.ClearKeyboardState();
+            MouseForwarder.ClearKeyboardState();
 
             // 保存设置
             this.GetModel<ISaveModel>().SettingData.screenMode = mode;

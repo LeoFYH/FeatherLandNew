@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using QFramework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -20,7 +20,7 @@ namespace BirdGame
 #endif
             
             // Clear keyboard state before mode change
-            SimpleMouseForwarder.ClearKeyboardState();
+            MouseForwarder.ClearKeyboardState();
             
             int id = this.GetModel<ISaveModel>().SettingData.screenMode;
             if (id == 0)
@@ -40,7 +40,7 @@ namespace BirdGame
             }
             
             // Clear keyboard state after mode change
-            SimpleMouseForwarder.ClearKeyboardState();
+            MouseForwarder.ClearKeyboardState();
             
             this.GetSystem<IMonoSystem>().StartCoroutine(LoadMapDelay());
         }

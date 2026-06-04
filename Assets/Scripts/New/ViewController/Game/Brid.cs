@@ -287,9 +287,9 @@ namespace BirdGame
             {
                 if (isEnter)
                 {
-                    if (Input.GetMouseButtonDown(1) || SimpleMouseForwarder.rightClickCount > previousRightClickCount)
+                    if (Input.GetMouseButtonDown(1) || MouseForwarder.rightClickCount > previousRightClickCount)
                     {
-                        previousRightClickCount = SimpleMouseForwarder.rightClickCount;
+                        previousRightClickCount = MouseForwarder.rightClickCount;
                         if (!isSmall)
                         {
                             title = "Adult bird";
@@ -304,9 +304,9 @@ namespace BirdGame
                         SetBirdOutlineToWhite();
                     }
 
-                    if (Input.GetMouseButtonDown(0) || SimpleMouseForwarder.clickCount > previousClickCount)
+                    if (Input.GetMouseButtonDown(0) || MouseForwarder.clickCount > previousClickCount)
                     {
-                        previousClickCount = SimpleMouseForwarder.clickCount;
+                        previousClickCount = MouseForwarder.clickCount;
                         if (_stateMachine.CurrentState == typeof(BirdIdleState) ||
                             _stateMachine.CurrentState == typeof(BirdRunState) ||
                             _stateMachine.CurrentState == typeof(BirdEatState))
@@ -450,14 +450,14 @@ namespace BirdGame
             }
             // }
 
-            if (SimpleMouseForwarder.clickCount > previousClickCount)
+            if (MouseForwarder.clickCount > previousClickCount)
             {
-                previousClickCount = SimpleMouseForwarder.clickCount;
+                previousClickCount = MouseForwarder.clickCount;
             }
 
-            if (SimpleMouseForwarder.rightClickCount > previousRightClickCount)
+            if (MouseForwarder.rightClickCount > previousRightClickCount)
             {
-                previousRightClickCount = SimpleMouseForwarder.rightClickCount;
+                previousRightClickCount = MouseForwarder.rightClickCount;
             }
         }
 

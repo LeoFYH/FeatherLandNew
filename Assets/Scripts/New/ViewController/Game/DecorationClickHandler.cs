@@ -101,15 +101,15 @@ namespace BirdGame
             }
         
             // 右键直接销毁装饰品
-            // 检查标准Unity输入或SimpleMouseForwarder的钩子输入
-            bool rightClickDetected = Input.GetMouseButtonDown(1) || SimpleMouseForwarder.rightButtonDown;
+            // 检查标准Unity输入或MouseForwarder的钩子输入
+            bool rightClickDetected = Input.GetMouseButtonDown(1) || MouseForwarder.rightButtonDown;
             
             if (rightClickDetected)
             {
                 // 重置钩子的右键状态（如果使用了钩子）
-                if (SimpleMouseForwarder.rightButtonDown)
+                if (MouseForwarder.rightButtonDown)
                 {
-                    SimpleMouseForwarder.rightButtonDown = false;
+                    MouseForwarder.rightButtonDown = false;
                 }
 
                 // 装饰 Collider 范围内有 Bird 时不弹出菜单（避免鸟站在装饰上时被删）

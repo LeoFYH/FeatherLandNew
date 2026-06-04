@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using QFramework;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,7 +25,7 @@ namespace BirdGame
         public override void OnShowPanel()
         {
             // Initialize with current click count to avoid false positive on first frame
-            lastClickCount = SimpleMouseForwarder.clickCount;
+            lastClickCount = MouseForwarder.clickCount;
         }
 
         public override void OnHidePanel(Action onComplete = null)
@@ -60,14 +60,14 @@ namespace BirdGame
             // For Unity input: use Input.GetMouseButtonDown(0)
             // For hook input: check if click count has increased
             bool unityClickDetected = Input.GetMouseButtonDown(0);
-            bool hookClickDetected = SimpleMouseForwarder.clickCount > lastClickCount;
+            bool hookClickDetected = MouseForwarder.clickCount > lastClickCount;
             
             if (unityClickDetected || hookClickDetected)
             {
                 // Update last click count for next frame
                 if (hookClickDetected)
                 {
-                    lastClickCount = SimpleMouseForwarder.clickCount;
+                    lastClickCount = MouseForwarder.clickCount;
                 }
                 
                 // 检查是否点击在UI元素上

@@ -59,8 +59,8 @@ namespace BirdGame
                 {
                     _currentFrameWidth = defaultFrameWidth;
                     // 开启时同步钩子点击计数器基线，避免历史click数被当成新click误触发
-                    _previousClickCount = SimpleMouseForwarder.clickCount;
-                    _previousRightClickCount = SimpleMouseForwarder.rightClickCount;
+                    _previousClickCount = MouseForwarder.clickCount;
+                    _previousRightClickCount = MouseForwarder.rightClickCount;
                     _pendingWheelDelta = 0f;
                 }
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
@@ -68,12 +68,12 @@ namespace BirdGame
 
         private void OnEnable()
         {
-            SimpleMouseForwarder.OnHookVerticalWheel += HandleHookWheel;
+            MouseForwarder.OnHookVerticalWheel += HandleHookWheel;
         }
 
         private void OnDisable()
         {
-            SimpleMouseForwarder.OnHookVerticalWheel -= HandleHookWheel;
+            MouseForwarder.OnHookVerticalWheel -= HandleHookWheel;
         }
 
         private void HandleHookWheel(float delta)
@@ -96,19 +96,19 @@ namespace BirdGame
             if (anyPopupOpen)
             {
                 // 同步钩子计数器/wheel，避免popup关闭后被积压的点击误触发
-                _previousClickCount = SimpleMouseForwarder.clickCount;
-                _previousRightClickCount = SimpleMouseForwarder.rightClickCount;
+                _previousClickCount = MouseForwarder.clickCount;
+                _previousRightClickCount = MouseForwarder.rightClickCount;
                 _pendingWheelDelta = 0f;
                 return;
             }
 
-            // 综合两个来源检测点击（Unity Input + Win32 钩子转发的clickCount差值，兼容壁纸模式）
+            // 综合两个来源检测点击（Unity Input + 钩子转发的clickCount差值，兼容壁纸模式）
             bool leftClicked = Input.GetMouseButtonDown(0) ||
-                               SimpleMouseForwarder.clickCount > _previousClickCount;
+                               MouseForwarder.clickCount > _previousClickCount;
             bool rightClicked = Input.GetMouseButtonDown(1) ||
-                                SimpleMouseForwarder.rightClickCount > _previousRightClickCount;
-            _previousClickCount = SimpleMouseForwarder.clickCount;
-            _previousRightClickCount = SimpleMouseForwarder.rightClickCount;
+                                MouseForwarder.rightClickCount > _previousRightClickCount;
+            _previousClickCount = MouseForwarder.clickCount;
+            _previousRightClickCount = MouseForwarder.rightClickCount;
 
             // 滚轮：合并Unity input和钩子转发的delta（钩子delta来自OnHookVerticalWheel，壁纸模式必需）
             float wheel = Input.mouseScrollDelta.y + _pendingWheelDelta;

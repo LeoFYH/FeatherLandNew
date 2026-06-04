@@ -115,7 +115,7 @@ namespace BirdGame
             Debug.Log($"SetScreenMode 被调用，模式: {mode}");
             
             // Clear keyboard state before mode change to prevent lingering key states
-            SimpleMouseForwarder.ClearKeyboardState();
+            MouseForwarder.ClearKeyboardState();
             
             switch (mode)
             {
@@ -153,7 +153,7 @@ namespace BirdGame
             }
             
             // Clear keyboard state after mode change as well
-            SimpleMouseForwarder.ClearKeyboardState();
+            MouseForwarder.ClearKeyboardState();
             
             // Update cooldown timer
             _lastModeChangeTime = Time.time;
@@ -177,22 +177,22 @@ namespace BirdGame
             // 检测快捷键（仅在非输入状态下）
             HandleKeyboardShortcuts();
             
-            // Check for mouse clicks from both Unity Input and SimpleMouseForwarder (for wallpaper mode)
-            bool leftClickDetected = Input.GetMouseButtonDown(0) || SimpleMouseForwarder.clickCount > previousClickCount;
-            bool rightClickDetected = Input.GetMouseButtonDown(1) || SimpleMouseForwarder.rightClickCount > previousRightClickCount;
+            // Check for mouse clicks from both Unity Input and MouseForwarder (for wallpaper mode)
+            bool leftClickDetected = Input.GetMouseButtonDown(0) || MouseForwarder.clickCount > previousClickCount;
+            bool rightClickDetected = Input.GetMouseButtonDown(1) || MouseForwarder.rightClickCount > previousRightClickCount;
             
             if (leftClickDetected || rightClickDetected)
             {
                 // Update click count tracking
                 bool clickFromForwarder = false;
-                if (SimpleMouseForwarder.clickCount > previousClickCount)
+                if (MouseForwarder.clickCount > previousClickCount)
                 {
-                    previousClickCount = SimpleMouseForwarder.clickCount;
+                    previousClickCount = MouseForwarder.clickCount;
                     clickFromForwarder = true;
                 }
-                if (SimpleMouseForwarder.rightClickCount > previousRightClickCount)
+                if (MouseForwarder.rightClickCount > previousRightClickCount)
                 {
-                    previousRightClickCount = SimpleMouseForwarder.rightClickCount;
+                    previousRightClickCount = MouseForwarder.rightClickCount;
                     clickFromForwarder = true;
                 }
                 
@@ -628,10 +628,10 @@ namespace BirdGame
         {
             // Check both input systems
             // In windowed/fullscreen: Unity Input will work
-            // In wallpaper mode: Windows Hook will work (and Unity Input may or may not)
+            // In wallpaper mode: Hook will work (and Unity Input may or may not)
             // Using OR ensures at least one system detects the key
             bool unityInput = Input.GetKeyDown(keyCode) && this.GetModel<IGameModel>().IsShortcutKeyOn.Value;
-            bool hookInput = SimpleMouseForwarder.GetKeyDown(keyCode) && this.GetModel<IGameModel>().IsShortcutKeyOn.Value;
+            bool hookInput = MouseForwarder.GetKeyDown(keyCode) && this.GetModel<IGameModel>().IsShortcutKeyOn.Value;
             
             return unityInput || hookInput;
         }

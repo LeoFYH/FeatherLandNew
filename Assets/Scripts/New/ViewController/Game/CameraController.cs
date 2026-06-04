@@ -42,12 +42,12 @@ namespace BirdGame
 
         private void OnEnable()
         {
-            SimpleMouseForwarder.OnHookVerticalWheel += HandleHookWheel;
+            MouseForwarder.OnHookVerticalWheel += HandleHookWheel;
         }
 
         private void OnDisable()
         {
-            SimpleMouseForwarder.OnHookVerticalWheel -= HandleHookWheel;
+            MouseForwarder.OnHookVerticalWheel -= HandleHookWheel;
         }
 
         private void HandleHookWheel(float delta)

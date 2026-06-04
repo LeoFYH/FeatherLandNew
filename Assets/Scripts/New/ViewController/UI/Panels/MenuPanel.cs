@@ -582,7 +582,7 @@ namespace BirdGame
         /// </summary>
         private bool GetKeyDownAny(KeyCode keyCode)
         {
-            return (Input.GetKeyDown(keyCode) || SimpleMouseForwarder.GetKeyDown(keyCode)) && this.GetModel<IGameModel>().IsShortcutKeyOn.Value;
+            return (Input.GetKeyDown(keyCode) || MouseForwarder.GetKeyDown(keyCode)) && this.GetModel<IGameModel>().IsShortcutKeyOn.Value;
         }
 
         /// <summary>

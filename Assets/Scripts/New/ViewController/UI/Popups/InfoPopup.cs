@@ -42,15 +42,15 @@ namespace BirdGame
             if (enableClickOutsideToClose)
             {
                 // 检测鼠标点击
-                if (Input.GetMouseButtonDown(0) || SimpleMouseForwarder.clickCount > previousClickCount)
+                if (Input.GetMouseButtonDown(0) || MouseForwarder.clickCount > previousClickCount)
                 {
                     CheckClickOutside();
                 }
             }
 
-            if (SimpleMouseForwarder.clickCount > previousClickCount)
+            if (MouseForwarder.clickCount > previousClickCount)
             {
-                previousClickCount = SimpleMouseForwarder.clickCount;
+                previousClickCount = MouseForwarder.clickCount;
             }
         }
         
@@ -299,7 +299,7 @@ namespace BirdGame
         public override void OnShowPanel()
         {
             // 初始化点击计数，防止刚显示时立即关闭（因为打开弹窗的点击已经被计数）
-            previousClickCount = SimpleMouseForwarder.clickCount;
+            previousClickCount = MouseForwarder.clickCount;
             
             var rect = transform as RectTransform;
             rect.anchoredPosition = new Vector2(rect.sizeDelta.x * transform.localScale.x * 0.5f, rect.anchoredPosition.y);

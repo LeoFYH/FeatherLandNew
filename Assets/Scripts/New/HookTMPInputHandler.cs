@@ -142,7 +142,7 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
             ImeProxyWindow.DrainPendingTo(this);
         }
         // Fallback: if focus trick was used in wallpaper (no proxy), read Input.inputString
-        else if (isFocused && inputField != null && SimpleMouseForwarder.AttemptedFocusWhileWallpaper && GameApp.Interface != null)
+        else if (isFocused && inputField != null && MouseForwarder.AttemptedFocusWhileWallpaper && GameApp.Interface != null)
         {
             var fullScreen = GameApp.Interface.GetUtility<IFullScreenUtility>();
             if (fullScreen != null && fullScreen.IsWallpaperModeActive())

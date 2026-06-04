@@ -981,6 +981,15 @@ namespace BirdGame
                 isWallpaperMode = true;
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
+                
+                // 启用 macOS 鼠标事件转发器
+                SimpleMouseForwarderMac mouseForwarder = UnityEngine.Object.FindObjectOfType<SimpleMouseForwarderMac>(true);
+                if (mouseForwarder != null)
+                {
+                    mouseForwarder.gameObject.SetActive(true);
+                    Debug.Log("[WallpaperMode][macOS] SimpleMouseForwarderMac 已启用");
+                }
+                
                 Debug.Log("[WallpaperMode][macOS] 已激活 - NSWindow 降至壁纸层");
             }
             catch (Exception e)
@@ -1004,6 +1013,14 @@ namespace BirdGame
             catch (Exception e)
             {
                 Debug.LogWarning($"[FullscreenMode][macOS] 退出壁纸层出错: {e.Message}");
+            }
+            
+            // 禁用 macOS 鼠标事件转发器
+            SimpleMouseForwarderMac mouseForwarder = UnityEngine.Object.FindObjectOfType<SimpleMouseForwarderMac>(true);
+            if (mouseForwarder != null)
+            {
+                mouseForwarder.gameObject.SetActive(false);
+                Debug.Log("[FullscreenMode][macOS] SimpleMouseForwarderMac 已禁用");
             }
 #endif
             isWallpaperMode = false;
@@ -1030,6 +1047,14 @@ namespace BirdGame
             catch (Exception e)
             {
                 Debug.LogWarning($"[WindowedMode][macOS] 重置窗口出错: {e.Message}");
+            }
+            
+            // 禁用 macOS 鼠标事件转发器
+            SimpleMouseForwarderMac mouseForwarder = UnityEngine.Object.FindObjectOfType<SimpleMouseForwarderMac>(true);
+            if (mouseForwarder != null)
+            {
+                mouseForwarder.gameObject.SetActive(false);
+                Debug.Log("[WindowedMode][macOS] SimpleMouseForwarderMac 已禁用");
             }
 #endif
             isWallpaperMode = false;

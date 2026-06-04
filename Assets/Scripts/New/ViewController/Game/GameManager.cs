@@ -26,8 +26,8 @@ namespace BirdGame
             this.GetModel<IBirdModel>().FlyPositions = flyPositions;
             this.RegisterEvent<OnSettingCloseEvent>(evt =>
             {
-                _previousClickCount = SimpleMouseForwarder.clickCount;
-                _previousRightClickCount = SimpleMouseForwarder.rightClickCount;
+                _previousClickCount = MouseForwarder.clickCount;
+                _previousRightClickCount = MouseForwarder.rightClickCount;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
         }
 
@@ -36,14 +36,14 @@ namespace BirdGame
             if (EventSystem.current.IsPointerOverGameObject()) return;
             if (this.GetSystem<IGameSystem>().IsPlacingDecoration()) return;
 
-            bool leftClicked = Input.GetMouseButtonDown(0) || SimpleMouseForwarder.clickCount > _previousClickCount;
-            bool rightClicked = Input.GetMouseButtonDown(1) || SimpleMouseForwarder.rightClickCount > _previousRightClickCount;
+            bool leftClicked = Input.GetMouseButtonDown(0) || MouseForwarder.clickCount > _previousClickCount;
+            bool rightClicked = Input.GetMouseButtonDown(1) || MouseForwarder.rightClickCount > _previousRightClickCount;
             if ((leftClicked || rightClicked) && IsClickingOnBird())
             {
                 if (leftClicked)
-                    _previousClickCount = SimpleMouseForwarder.clickCount;
+                    _previousClickCount = MouseForwarder.clickCount;
                 if (rightClicked)
-                    _previousRightClickCount = SimpleMouseForwarder.rightClickCount;
+                    _previousRightClickCount = MouseForwarder.rightClickCount;
 
                 StopAutoFeedingForBirdInteraction();
                 return;
@@ -60,13 +60,13 @@ namespace BirdGame
             bool clicked = leftClicked;
             if (IsClickingOnDecoration(clicked))
             {
-                _previousClickCount = SimpleMouseForwarder.clickCount;
+                _previousClickCount = MouseForwarder.clickCount;
                 return;
             }
 
             if (clicked)
             {
-                _previousClickCount = SimpleMouseForwarder.clickCount;
+                _previousClickCount = MouseForwarder.clickCount;
                 if (autoFeedingEnabled)
                 {
                     SetAutoFeeding(!_isAutoFeeding);
