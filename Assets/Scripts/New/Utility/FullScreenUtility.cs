@@ -937,8 +937,11 @@ namespace BirdGame
         public bool RequestAdministratorPrivileges() => false;
 #elif UNITY_STANDALONE_OSX
         // ===================== macOS 实现 =====================
-        // 原生实现位于 Assets/Plugins/macOS/FLWallpaperBridge.mm，
-        // Unity 会把里面的 C 符号链接进 Player 可执行文件，所以这里用 "__Internal" 导入。
+        // 原生实现位于 Assets/Plugins/macOS/FLWallpaperBridge.mm。
+        // macOS standalone 不会自动编译 .mm 源文件，所以 Editor 端的
+        // FLWallpaperBuildPostprocessor 在构建 .app 时用 clang 把它编成
+        // FLWallpaperBridge.bundle 放到 .app/Contents/Plugins/,
+        // 这里通过 [DllImport("FLWallpaperBridge")] 加载。
         //
         // 设计原则（对应 Windows 版本）：
         //   * EnterWallpaper  -> 将 NSWindow.level 降到 kCGDesktopIconWindowLevel-1，
@@ -952,13 +955,13 @@ namespace BirdGame
         // 编辑器中（UNITY_EDITOR）不调用原生符号 — .mm 只在打包时编译进 Player。
 
         #if !UNITY_EDITOR
-        [DllImport("__Internal")] private static extern void _FLWallpaperEnter();
-        [DllImport("__Internal")] private static extern void _FLWallpaperExit();
-        [DllImport("__Internal")] private static extern void _FLWallpaperRefresh();
-        [DllImport("__Internal")] private static extern int  _FLWallpaperIsActive();
-        [DllImport("__Internal")] private static extern int  _FLWallpaperGetMainScreenFrame(
+        [DllImport("FLWallpaperBridge")] private static extern void _FLWallpaperEnter();
+        [DllImport("FLWallpaperBridge")] private static extern void _FLWallpaperExit();
+        [DllImport("FLWallpaperBridge")] private static extern void _FLWallpaperRefresh();
+        [DllImport("FLWallpaperBridge")] private static extern int  _FLWallpaperIsActive();
+        [DllImport("FLWallpaperBridge")] private static extern int  _FLWallpaperGetMainScreenFrame(
             out double x, out double y, out double w, out double h, int fullFrame);
-        [DllImport("__Internal")] private static extern void _FLWallpaperWindowedReset(double fraction);
+        [DllImport("FLWallpaperBridge")] private static extern void _FLWallpaperWindowedReset(double fraction);
         #endif
 
         private bool isWallpaperMode = false;

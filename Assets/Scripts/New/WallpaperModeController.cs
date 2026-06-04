@@ -180,9 +180,9 @@ public class WallpaperModeController : ViewControllerBase
 
 #if UNITY_STANDALONE_OSX && !UNITY_EDITOR
     // macOS 原生桥（实现在 Assets/Plugins/macOS/FLWallpaperBridge.mm）
-    [DllImport("__Internal")] private static extern void _FLWallpaperEnter();
-    [DllImport("__Internal")] private static extern void _FLWallpaperExit();
-    [DllImport("__Internal")] private static extern void _FLWallpaperRefresh();
+    [DllImport("FLWallpaperBridge")] private static extern void _FLWallpaperEnter();
+    [DllImport("FLWallpaperBridge")] private static extern void _FLWallpaperExit();
+    [DllImport("FLWallpaperBridge")] private static extern void _FLWallpaperRefresh();
 #endif
 
     private void Awake()

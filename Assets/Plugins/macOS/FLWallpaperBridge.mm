@@ -12,9 +12,12 @@
 //   * On Exit, restore the saved level / collection behavior / style mask /
 //     frame.
 //
-// Build: this file is auto-compiled by Unity when building for macOS because
-// it sits under Assets/Plugins/macOS. C# calls the exported `_FL...` functions
-// through [DllImport("__Internal")].
+// Build: macOS standalone players do NOT auto-compile .mm sources (unlike
+// iOS), so Assets/Editor/FLWallpaperBuildPostprocessor.cs invokes
+// /usr/bin/clang during the macOS build to compile this file into
+// FLWallpaperBridge.bundle (universal binary x86_64 + arm64) and drops it
+// into <YourApp>.app/Contents/Plugins/.
+// C# loads via [DllImport("FLWallpaperBridge")].
 
 #import <Cocoa/Cocoa.h>
 
