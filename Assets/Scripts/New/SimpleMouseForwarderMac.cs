@@ -195,28 +195,34 @@ namespace BirdGame
                 Debug.Log($"[SimpleMouseForwarderMac] 检测到点击: left={currentClickCount}(prev={previousClickCount}), right={currentRightClickCount}(prev={previousRightClickCount})");
             }
             
-            // 检测左键点击
+            // 检测左键点击 —— 只累加计数，不再调用 SimulateMouseClick。
+            //
+            // 原生层（FLWallpaperBridge.mm）的 NSWindow / NSView 子类替换让
+            // borderless 窗口可以成为 key window 并接受 acceptsFirstMouse,
+            // 真实的 NSEvent 会自然流到 Unity (Input.GetMouseButton* 与 EventSystem
+            // 都能直接收到点击)。这里再调一次 ExecuteEvents 会让按钮被双击。
+            //
+            // 保留 clickCount 累加是因为 MouseForwarder.clickCount 被 Brid.cs /
+            // GameEntry.cs / GameManager.cs / InfoPopup.cs 等多处当作 "壁纸模式下
+            // 有点击" 的旁路信号读，删掉会破坏 Win 端共用接口的语义。
             if (currentClickCount > previousClickCount)
             {
                 int clicks = currentClickCount - previousClickCount;
                 for (int i = 0; i < clicks; i++)
                 {
                     clickCount++;
-                    SimulateMouseClick(mousePosition);
-                    
-                    Debug.Log($"[SimpleMouseForwarderMac] 左键点击 #{clickCount} at {mousePosition}");
+                    Debug.Log($"[SimpleMouseForwarderMac] 左键点击 #{clickCount} at {mousePosition} (native flow handles UI)");
                 }
             }
-            
-            // 检测右键点击
+
+            // 右键同理 —— 只累加计数。
             if (currentRightClickCount > previousRightClickCount)
             {
                 int clicks = currentRightClickCount - previousRightClickCount;
                 for (int i = 0; i < clicks; i++)
                 {
                     rightClickCount++;
-                    
-                    Debug.Log($"[SimpleMouseForwarderMac] 右键点击 #{rightClickCount} at {mousePosition}");
+                    Debug.Log($"[SimpleMouseForwarderMac] 右键点击 #{rightClickCount} at {mousePosition} (native flow handles UI)");
                 }
             }
             

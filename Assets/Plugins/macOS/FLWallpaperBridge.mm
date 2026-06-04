@@ -16,6 +16,39 @@
 
 #import <Cocoa/Cocoa.h>
 #import <CoreGraphics/CoreGraphics.h>
+#import <objc/runtime.h>
+
+// ---------------------------------------------------------------------------
+// Subclass plumbing — enables native click delivery in wallpaper mode.
+//
+// macOS only delivers mouseDown to a window if EITHER:
+//   (a) the window is already key, OR
+//   (b) the view under the cursor returns YES from `acceptsFirstMouse:`.
+// A borderless NSWindow returns NO from `canBecomeKeyWindow` by default, so
+// AppKit consumes the first click trying to make it key (which fails) and
+// the click never reaches Unity. That's why hover (mouse position polling)
+// works but clicks don't.
+//
+// Fix: swap the runtime class of the NSWindow to a subclass that overrides
+// canBecomeKeyWindow / canBecomeMainWindow to return YES, and swap the
+// contentView's class to a dynamic subclass that overrides acceptsFirstMouse:
+// to return YES. Both swaps are reverted on exit.
+// ---------------------------------------------------------------------------
+
+@interface FLWallpaperWindow : NSWindow
+@end
+@implementation FLWallpaperWindow
+- (BOOL)canBecomeKeyWindow  { return YES; }
+- (BOOL)canBecomeMainWindow { return YES; }
+@end
+
+static BOOL FLAcceptsFirstMouseImpl(id self, SEL _cmd, NSEvent *event) {
+    return YES;
+}
+
+static __strong Class g_savedWindowClass      = nil;
+static __strong Class g_savedContentViewClass = nil;
+static Class          g_wallpaperViewSubclass = nil;
 
 // Cached Unity window reference; survives losing main-window status after we
 // drop our level (since we are no longer the front-most window).
@@ -101,6 +134,80 @@ static void FLConvertToUnityCoordinates(CGPoint screenPoint, double *outX, doubl
     *outY = screenFrame.size.height - screenPoint.y;
 }
 
+#pragma mark - Class Swap (enables click delivery to borderless window)
+
+static void FLEnableNativeClickDelivery(NSWindow *window) {
+    if (window == nil) return;
+
+    // 1) Swap NSWindow class so canBecomeKeyWindow returns YES.
+    Class wndClass = [window class];
+    if (wndClass != [FLWallpaperWindow class]) {
+        if (g_savedWindowClass == nil) {
+            g_savedWindowClass = wndClass;
+        }
+        object_setClass(window, [FLWallpaperWindow class]);
+        NSLog(@"[FLWallpaper] Window class %s -> FLWallpaperWindow", class_getName(wndClass));
+    }
+
+    // 2) Swap contentView class so acceptsFirstMouse: returns YES.
+    NSView *cv = [window contentView];
+    if (cv == nil) return;
+
+    Class viewClass = [cv class];
+    // Already swapped on this view? Done.
+    if (g_wallpaperViewSubclass != nil && viewClass == g_wallpaperViewSubclass) return;
+
+    if (g_savedContentViewClass == nil) {
+        g_savedContentViewClass = viewClass;
+    }
+
+    // Lazily create (or refresh) a dynamic subclass of the *current* view class.
+    // We use a per-parent-class name so we can reuse across enter/exit cycles
+    // but recreate if Unity ever swaps its view class out from under us.
+    if (g_wallpaperViewSubclass == nil
+        || class_getSuperclass(g_wallpaperViewSubclass) != viewClass)
+    {
+        NSString *name = [NSString stringWithFormat:@"FLWallpaperContentView_%s",
+                          class_getName(viewClass)];
+        const char *cName = [name UTF8String];
+        Class existing = objc_getClass(cName);
+        if (existing != nil) {
+            g_wallpaperViewSubclass = existing;
+        } else {
+            Class sub = objc_allocateClassPair(viewClass, cName, 0);
+            if (sub != nil) {
+                class_addMethod(sub, @selector(acceptsFirstMouse:),
+                                (IMP)FLAcceptsFirstMouseImpl, "B@:@");
+                objc_registerClassPair(sub);
+                g_wallpaperViewSubclass = sub;
+            }
+        }
+    }
+
+    if (g_wallpaperViewSubclass != nil) {
+        object_setClass(cv, g_wallpaperViewSubclass);
+        NSLog(@"[FLWallpaper] ContentView class %s -> %s",
+              class_getName(viewClass), class_getName(g_wallpaperViewSubclass));
+    }
+}
+
+static void FLDisableNativeClickDelivery(NSWindow *window) {
+    if (window == nil) return;
+
+    NSView *cv = [window contentView];
+    if (cv != nil && g_savedContentViewClass != nil
+        && [cv class] == g_wallpaperViewSubclass)
+    {
+        object_setClass(cv, g_savedContentViewClass);
+    }
+    g_savedContentViewClass = nil;
+
+    if (g_savedWindowClass != nil && [window class] == [FLWallpaperWindow class]) {
+        object_setClass(window, g_savedWindowClass);
+    }
+    g_savedWindowClass = nil;
+}
+
 #pragma mark - Wallpaper Window Management
 
 // 等待全屏退出完成
@@ -170,7 +277,11 @@ static void FLApplyWallpaper(void) {
 
     // Enable mouse events for the window
     [window setAcceptsMouseMovedEvents:YES];
-    
+
+    // Critical: enable native mouseDown delivery on a borderless / desktop-level
+    // window via runtime class swap (canBecomeKey + acceptsFirstMouse).
+    FLEnableNativeClickDelivery(window);
+
     // Don't make us key — we want to stay behind any real app.
     [window orderBack:nil];
 
@@ -185,6 +296,11 @@ static void FLRestoreWindow(void) {
         g_wallpaperOn = NO;
         return;
     }
+
+    // Revert class swap BEFORE restoring style mask/frame so we don't leave
+    // the swapped classes attached to a window that has been put back in a
+    // normal-window state.
+    FLDisableNativeClickDelivery(window);
 
     if (g_savedValid) {
         [window setLevel:g_savedLevel];
@@ -253,63 +369,52 @@ static CGEventRef FLMouseEventCallback(CGEventTapProxy proxy, CGEventType type,
     g_mouseX = unityX;
     g_mouseY = unityY;
 
+    // IMPORTANT: we return `event` (not NULL) for every case below. Consuming
+    // the event at HID level was the original cause of clicks not reaching
+    // Unity — without consumption the NSEvent flows normally, AppKit hands it
+    // to FLWallpaperWindow (which can now become key), the click is delivered
+    // to the contentView (which now returns YES from acceptsFirstMouse:), and
+    // Unity's Input.GetMouseButton* / EventSystem see the click natively.
+    //
+    // We still update the counters so legacy code that reads
+    // MouseForwarder.clickCount keeps working as a redundant signal.
     switch (type) {
         case kCGEventLeftMouseDown:
             g_leftButtonDown = YES;
             g_clickCount++;
-            NSLog(@"[FLWallpaper] Left mouse down at (%f, %f)", unityX, unityY);
-            // 消费点击事件，防止macOS的"点按墙纸以显示桌面"功能拦截
-            return NULL;
-            
+            break;
+
         case kCGEventLeftMouseUp:
             g_leftButtonDown = NO;
-            NSLog(@"[FLWallpaper] Left mouse up at (%f, %f)", unityX, unityY);
-            // 消费点击事件，防止macOS处理
-            return NULL;
-            
+            break;
+
         case kCGEventRightMouseDown:
             g_rightButtonDown = YES;
             g_rightClickCount++;
-            NSLog(@"[FLWallpaper] Right mouse down at (%f, %f)", unityX, unityY);
-            // 消费右键事件
-            return NULL;
-            
+            break;
+
         case kCGEventRightMouseUp:
             g_rightButtonDown = NO;
-            NSLog(@"[FLWallpaper] Right mouse up at (%f, %f)", unityX, unityY);
-            // 消费右键事件
-            return NULL;
-            
+            break;
+
         case kCGEventScrollWheel: {
-            // Get scroll wheel delta (z-axis is vertical on macOS)
             CGFloat deltaX = CGEventGetIntegerValueField(event, kCGScrollWheelEventDeltaAxis1);
             CGFloat deltaY = CGEventGetIntegerValueField(event, kCGScrollWheelEventDeltaAxis2);
-            
-            // macOS uses different coordinate system - normalize to Unity units
             if (deltaX != 0) {
                 g_isHorizontalWheel = YES;
                 g_wheelDelta = deltaX / 120.0f;
             } else {
                 g_isHorizontalWheel = NO;
-                g_wheelDelta = -deltaY / 120.0f; // Invert for Unity's coordinate system
+                g_wheelDelta = -deltaY / 120.0f;
             }
-            
-            NSLog(@"[FLWallpaper] Scroll wheel: delta=%f, horizontal=%d", 
-                  g_wheelDelta, (int)g_isHorizontalWheel);
-            // 消费滚轮事件
-            return NULL;
+            break;
         }
-            
+
         case kCGEventMouseMoved:
-            NSLog(@"[FLWallpaper] Mouse moved to (%f, %f)", unityX, unityY);
-            // 消费鼠标移动事件
-            return NULL;
-            
         default:
             break;
     }
 
-    // Allow the event to pass through to other applications
     return event;
 }
 
