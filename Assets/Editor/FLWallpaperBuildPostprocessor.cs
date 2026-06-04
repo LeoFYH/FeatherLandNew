@@ -30,34 +30,44 @@ namespace BirdGame.EditorTools
             if (target != BuildTarget.StandaloneOSX)
                 return;
 
-            // 首先检查项目中是否存在预编译的 bundle，如果有就直接复制
+            string sourcePath = Path.Combine(Application.dataPath, "Plugins", "macOS", BUNDLE_NAME + ".mm");
             string precompiledBundlePath = Path.Combine(Application.dataPath, "Plugins", "macOS", BUNDLE_NAME + ".bundle");
-            
+            bool onMac = Application.platform == RuntimePlatform.OSXEditor;
+            bool hasClang = onMac && File.Exists("/usr/bin/clang++");
+
+            Debug.Log($"[FLWallpaperBuild] === START === editor={Application.platform} " +
+                      $"hasClang={hasClang} hasSource={File.Exists(sourcePath)} " +
+                      $"hasPrecompiledBundle={Directory.Exists(precompiledBundlePath)}");
+
+            // 优先级一: 在 Mac 上且有 clang -> 总是从 .mm 重新编译.
+            // 这样用户改了 .mm 就一定生效, 不会被仓库里 stale 的预编译 bundle 顶替.
+            if (hasClang && File.Exists(sourcePath))
+            {
+                Debug.Log("[FLWallpaperBuild] 在 Mac 上且有 clang++ —— 从 .mm 强制重新编译");
+                CompileAndInstallBundle(pathToBuiltProject, sourcePath);
+                return;
+            }
+
+            // 优先级二: 没法 clang 但仓库里有预编译 bundle -> 作为回退使用.
+            // 仅在 Windows/Linux 编辑器 build Mac target 时走这条路.
             if (Directory.Exists(precompiledBundlePath))
             {
-                Debug.Log("[FLWallpaperBuild] 发现项目中的预编译 bundle，直接复制");
+                Debug.LogWarning(
+                    "[FLWallpaperBuild] 没法用 clang++ 重编 (编辑器不在 Mac 上或没装 Xcode CLI)。" +
+                    "回退到仓库里预编译的 bundle —— 注意这个 bundle 可能跟最新的 .mm 不同步!");
                 CopyPrecompiledBundle(pathToBuiltProject, precompiledBundlePath);
                 return;
             }
-            
-            // 如果没有预编译的 bundle，检查是否有源文件
-            string sourcePath = Path.Combine(Application.dataPath, "Plugins", "macOS", BUNDLE_NAME + ".mm");
+
+            // 优先级三: 都没有, 报错.
             if (!File.Exists(sourcePath))
-            {
                 Debug.LogError($"[FLWallpaperBuild] 找不到源文件: {sourcePath}");
-                return;
-            }
-
-            // 检查是否在 macOS 上，并且有编译器
-            if (Application.platform != RuntimePlatform.OSXEditor)
-            {
-                Debug.LogWarning(
-                    "[FLWallpaperBuild] 目标是 macOS 但编辑器不在 Mac 上 —— 跳过 clang++ 编译。\n" +
-                    $"请在 Mac 上重新 build，或手动把编好的 {BUNDLE_NAME}.bundle 放入项目的 Plugins/macOS/ 目录");
-                return;
-            }
-
-            CompileAndInstallBundle(pathToBuiltProject, sourcePath);
+            else if (!onMac)
+                Debug.LogError(
+                    "[FLWallpaperBuild] 当前编辑器不在 Mac 上且没有预编译 bundle —— " +
+                    $"请在 Mac 上 build, 或手动把编好的 {BUNDLE_NAME}.bundle 放入 Assets/Plugins/macOS/");
+            else
+                Debug.LogError("[FLWallpaperBuild] /usr/bin/clang++ 不存在,请运行: xcode-select --install");
         }
 
         /// <summary>

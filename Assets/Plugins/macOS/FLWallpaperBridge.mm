@@ -36,37 +36,43 @@
 // to return YES. Both swaps are reverted on exit.
 // ---------------------------------------------------------------------------
 
-@interface FLWallpaperWindow : NSWindow
+// FLWallpaperPanel: 继承自 NSPanel (不是 NSWindow)。
+// 这是 Plash / WallpaperEngine 等开源 Mac 壁纸应用的核心做法 —— 桌面层
+// (kCGDesktopIconWindowLevel-1) 上的普通 NSWindow 拿不到 click 事件,
+// macOS WindowServer 直接当作 "点击壁纸" 处理. 只有 NSPanel 加
+// NSWindowStyleMaskNonactivatingPanel 才能在低层级被路由 mouseDown.
+//
+// 用 object_setClass 把 Unity 的 NSWindow 实例换成 FLWallpaperPanel:
+//   - NSPanel 是 NSWindow 子类, 没有新 ivar, 替换安全
+//   - canBecomeKeyWindow 重写返回 YES (NSPanel 也默认对 borderless 返回 NO)
+//   - canBecomeMainWindow 返回 NO (panel 不该成 main)
+//   - 切完类后才能 setStyleMask 加 NonactivatingPanel flag —— 普通 NSWindow
+//     不接受这个 flag
+@interface FLWallpaperPanel : NSPanel
 @end
-@implementation FLWallpaperWindow
+@implementation FLWallpaperPanel
 - (BOOL)canBecomeKeyWindow {
-    NSLog(@"[FLLOG][WIN] canBecomeKeyWindow asked -> YES");
+    NSLog(@"[FLLOG][PANEL] canBecomeKeyWindow asked -> YES");
     return YES;
 }
 - (BOOL)canBecomeMainWindow {
-    NSLog(@"[FLLOG][WIN] canBecomeMainWindow asked -> YES");
+    NSLog(@"[FLLOG][PANEL] canBecomeMainWindow asked -> NO (panel)");
+    return NO;
+}
+- (BOOL)acceptsFirstResponder {
     return YES;
 }
 - (void)becomeKeyWindow {
-    NSLog(@"[FLLOG][WIN] >>> becomeKeyWindow");
+    NSLog(@"[FLLOG][PANEL] >>> becomeKeyWindow");
     [super becomeKeyWindow];
-    NSLog(@"[FLLOG][WIN] <<< becomeKeyWindow done isKey=%d", [self isKeyWindow]);
+    NSLog(@"[FLLOG][PANEL] <<< becomeKeyWindow done isKey=%d", [self isKeyWindow]);
 }
 - (void)resignKeyWindow {
-    NSLog(@"[FLLOG][WIN] >>> resignKeyWindow (someone is taking key from us)");
+    NSLog(@"[FLLOG][PANEL] >>> resignKeyWindow");
     [super resignKeyWindow];
-    NSLog(@"[FLLOG][WIN] <<< resignKeyWindow done isKey=%d", [self isKeyWindow]);
-}
-- (void)becomeMainWindow {
-    NSLog(@"[FLLOG][WIN] >>> becomeMainWindow");
-    [super becomeMainWindow];
-}
-- (void)resignMainWindow {
-    NSLog(@"[FLLOG][WIN] >>> resignMainWindow");
-    [super resignMainWindow];
 }
 - (void)makeKeyAndOrderFront:(id)sender {
-    NSLog(@"[FLLOG][WIN] makeKeyAndOrderFront: called by %@", sender);
+    NSLog(@"[FLLOG][PANEL] makeKeyAndOrderFront: called by %@", sender);
     [super makeKeyAndOrderFront:sender];
 }
 - (void)sendEvent:(NSEvent *)event {
@@ -77,10 +83,10 @@
      || t == NSEventTypeKeyDown        || t == NSEventTypeKeyUp
      || t == NSEventTypeScrollWheel)
     {
-        NSLog(@"[FLLOG][WIN] sendEvent type=%lu loc=%@ isKey=%d isMain=%d",
+        NSLog(@"[FLLOG][PANEL] sendEvent type=%lu loc=%@ isKey=%d",
               (unsigned long)t,
               NSStringFromPoint([event locationInWindow]),
-              [self isKeyWindow], [self isMainWindow]);
+              [self isKeyWindow]);
     }
     [super sendEvent:event];
 }
@@ -308,15 +314,15 @@ static void FLEnableNativeClickDelivery(NSWindow *window) {
 
     // 1) Swap NSWindow class so canBecomeKeyWindow returns YES.
     Class wndClass = [window class];
-    if (wndClass != [FLWallpaperWindow class]) {
+    if (wndClass != [FLWallpaperPanel class]) {
         if (g_savedWindowClass == nil) {
             g_savedWindowClass = wndClass;
         }
-        object_setClass(window, [FLWallpaperWindow class]);
-        NSLog(@"[FLLOG][SWAP] Window class %s -> FLWallpaperWindow",
+        object_setClass(window, [FLWallpaperPanel class]);
+        NSLog(@"[FLLOG][SWAP] Window class %s -> FLWallpaperPanel (NSPanel subclass)",
               class_getName(wndClass));
     } else {
-        NSLog(@"[FLLOG][SWAP] Window already FLWallpaperWindow — skip");
+        NSLog(@"[FLLOG][SWAP] Window already FLWallpaperPanel — skip");
     }
 
     // Sanity check after window swap.
@@ -400,7 +406,7 @@ static void FLDisableNativeClickDelivery(NSWindow *window) {
     }
     g_savedContentViewClass = nil;
 
-    if (g_savedWindowClass != nil && [window class] == [FLWallpaperWindow class]) {
+    if (g_savedWindowClass != nil && [window class] == [FLWallpaperPanel class]) {
         object_setClass(window, g_savedWindowClass);
     }
     g_savedWindowClass = nil;
@@ -466,17 +472,38 @@ static void FLApplyWallpaper(void) {
         g_savedValid    = YES;
     }
 
+    // *** ORDER MATTERS *** —— 必须先 class swap 让窗口变 NSPanel,然后才能
+    // setStyleMask 加 NonactivatingPanel flag。普通 NSWindow 不接受这个 flag,
+    // 会被静默丢弃,导致桌面层 click 仍然到不了。
+
+    // 1) 先 swap class 到 FLWallpaperPanel (NSPanel),并把 contentView swap 成
+    //    有 acceptsFirstMouse: 的子类。
+    FLEnableNativeClickDelivery(window);
+
+    // 2) 用 panel-only 的 NonactivatingPanel + Borderless. 这是让 macOS 在
+    //    桌面层把点击路由到我们窗口的关键 —— 没有 NonactivatingPanel,
+    //    WindowServer 会把 click 当成 "点击壁纸" 转给 Finder/Desktop。
+    NSWindowStyleMask desiredMask = NSWindowStyleMaskBorderless | NSWindowStyleMaskNonactivatingPanel;
+    if ([window styleMask] != desiredMask) {
+        NSLog(@"[FLLOG][APPLY] setStyleMask 0x%lx -> 0x%lx (Borderless|NonactivatingPanel)",
+              (unsigned long)[window styleMask], (unsigned long)desiredMask);
+        [window setStyleMask:desiredMask];
+        NSLog(@"[FLLOG][APPLY] styleMask after set = 0x%lx", (unsigned long)[window styleMask]);
+    }
+
+    // 3) NSPanel-only: becomesKeyOnlyIfNeeded 让窗口只在真的需要键盘输入时才抢 key,
+    //    不抢 menubar / 应用焦点。
+    if ([window respondsToSelector:@selector(setBecomesKeyOnlyIfNeeded:)]) {
+        NSLog(@"[FLLOG][APPLY] setBecomesKeyOnlyIfNeeded:YES");
+        [(NSPanel *)window setBecomesKeyOnlyIfNeeded:YES];
+    }
+
+    // 4) 现在才设 level / collection / frame —— 这些不影响 click routing,
+    //    放后面避免和 class swap 互相干扰。
     NSLog(@"[FLLOG][APPLY] setLevel(%ld)", (long)FLDesiredWallpaperLevel());
     [window setLevel:FLDesiredWallpaperLevel()];
     NSLog(@"[FLLOG][APPLY] setCollectionBehavior(0x%lx)", (unsigned long)FLDesiredWallpaperBehavior());
     [window setCollectionBehavior:FLDesiredWallpaperBehavior()];
-
-    NSWindowStyleMask desiredMask = NSWindowStyleMaskBorderless;
-    if ([window styleMask] != desiredMask) {
-        NSLog(@"[FLLOG][APPLY] setStyleMask 0x%lx -> 0x%lx (borderless)",
-              (unsigned long)[window styleMask], (unsigned long)desiredMask);
-        [window setStyleMask:desiredMask];
-    }
 
     NSScreen *screen = [NSScreen mainScreen];
     if (screen != nil) {
@@ -485,16 +512,15 @@ static void FLApplyWallpaper(void) {
     }
 
     [window setAcceptsMouseMovedEvents:YES];
-    NSLog(@"[FLLOG][APPLY] setAcceptsMouseMovedEvents:YES");
+    [window setIgnoresMouseEvents:NO];  // 确保接收鼠标事件(默认就是 NO,显式写出来防意外)
+    NSLog(@"[FLLOG][APPLY] setAcceptsMouseMovedEvents:YES setIgnoresMouseEvents:NO");
 
-    // Critical: enable native mouseDown delivery on a borderless / desktop-level
-    // window via runtime class swap (canBecomeKey + acceptsFirstMouse).
-    FLEnableNativeClickDelivery(window);
-
-    // Install NSEvent monitors so we see every mouse event from now on.
+    // 5) 装事件监视器
     FLInstallEventMonitors();
 
-    NSLog(@"[FLLOG][APPLY] orderBack:nil — pushing window to back of its level");
+    // 6) orderBack 不会改变 click routing(NonactivatingPanel 让我们仍然能收到 click),
+    //    只是 z-order 上往后排,避免遮其他窗口。
+    NSLog(@"[FLLOG][APPLY] orderBack:nil");
     [window orderBack:nil];
     FLLogWindow(@"APPLY-AFTER-ORDERBACK", window);
 
@@ -592,9 +618,10 @@ static CGEventRef FLMouseEventCallback(CGEventTapProxy proxy, CGEventType type,
     // IMPORTANT: we return `event` (not NULL) for every case below. Consuming
     // the event at HID level was the original cause of clicks not reaching
     // Unity — without consumption the NSEvent flows normally, AppKit hands it
-    // to FLWallpaperWindow (which can now become key), the click is delivered
-    // to the contentView (which now returns YES from acceptsFirstMouse:), and
-    // Unity's Input.GetMouseButton* / EventSystem see the click natively.
+    // to FLWallpaperPanel (which can now become key + has NonactivatingPanel),
+    // the click is delivered to the contentView (which now returns YES from
+    // acceptsFirstMouse:), and Unity's Input.GetMouseButton* / EventSystem see
+    // the click natively.
     //
     // We still update the counters so legacy code that reads
     // MouseForwarder.clickCount keeps working as a redundant signal.
@@ -806,6 +833,13 @@ void _FLWallpaperRefresh(void) {
               [[[NSWorkspace sharedWorkspace] frontmostApplication] localizedName],
               [NSApp isActive]);
     });
+}
+
+// Compile-time stamp so C# can verify the bundle is freshly built.
+// If C# can't find this symbol the bundle is stale.
+__attribute__((visibility("default")))
+const char *_FLWallpaperBuildStamp(void) {
+    return "FLWallpaperBridge rev=8-NSPanel-nonactivating " __DATE__ " " __TIME__;
 }
 
 // On-demand full diagnostic dump. C# calls this when it wants a snapshot

@@ -963,7 +963,22 @@ namespace BirdGame
             out double x, out double y, out double w, out double h, int fullFrame);
         [DllImport("FLWallpaperBridge")] private static extern void _FLWallpaperWindowedReset(double fraction);
         [DllImport("FLWallpaperBridge")] private static extern void _FLDiagnose();
+        [DllImport("FLWallpaperBridge")] private static extern System.IntPtr _FLWallpaperBuildStamp();
         #endif
+
+        // 每个原生符号单独 try/catch,旧 bundle 里缺新符号时不会把整个 WallpaperMode 流程炸断。
+        private static void SafeCall(System.Action action, string tag)
+        {
+            try { action(); }
+            catch (System.EntryPointNotFoundException)
+            {
+                Debug.LogError($"[FLLOG-CS] !!! 原生符号 {tag} 不存在 —— .bundle 是旧的!!! 必须在 Mac 上 rebuild 让 PostProcessBuild 重编 .bundle (或先删掉 Assets/Plugins/macOS/FLWallpaperBridge.bundle 让仓库不再覆盖)");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[FLLOG-CS] !!! 原生符号 {tag} 抛异常: {e.Message}");
+            }
+        }
 
         private bool isWallpaperMode = false;
 
@@ -976,15 +991,41 @@ namespace BirdGame
         {
             if (isWallpaperMode) return;
 #if !UNITY_EDITOR
+            Debug.Log("[FLLOG-CS] >>>>>> WallpaperMode() ENTER from C# <<<<<<");
+
+            // 步骤 0: 探测 bundle 是不是新版 —— 老 bundle 缺这个符号会进 SafeCall 的提示分支
             try
             {
-                Debug.Log("[FLLOG-CS] >>>>>> WallpaperMode() ENTER from C# <<<<<<");
-                _FLWallpaperEnter();
-                isWallpaperMode = true;
-                Cursor.visible = true;
-                Cursor.lockState = CursorLockMode.None;
+                System.IntPtr p = _FLWallpaperBuildStamp();
+                string stamp = p != System.IntPtr.Zero
+                    ? System.Runtime.InteropServices.Marshal.PtrToStringAnsi(p)
+                    : "(null)";
+                Debug.Log($"[FLLOG-CS] BUNDLE BUILD STAMP = {stamp}");
+            }
+            catch (System.EntryPointNotFoundException)
+            {
+                Debug.LogError("[FLLOG-CS] !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                Debug.LogError("[FLLOG-CS] !!!  BUNDLE 是旧的 (_FLWallpaperBuildStamp 不存在) !!!");
+                Debug.LogError("[FLLOG-CS] !!!  必须先在 Mac 上 rebuild!                       !!!");
+                Debug.LogError("[FLLOG-CS] !!!  rebuild 之前先删掉 .app, 并检查 Editor.log     !!!");
+                Debug.LogError("[FLLOG-CS] !!!  里有没有 [FLWallpaperBuild] 行                  !!!");
+                Debug.LogError("[FLLOG-CS] !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            }
 
-                // 启用 macOS 鼠标事件转发器（如场景里挂了的话）
+            // 步骤 1: 先无条件安装 Unity 侧探针 —— 即使原生层全炸,C# 这边的输入日志也能用
+            try { FLClickProbe.Install(); }
+            catch (System.Exception e) { Debug.LogError($"[FLLOG-CS] FLClickProbe.Install 失败: {e}"); }
+
+            // 步骤 2: 进入壁纸层(原生)
+            SafeCall(() => _FLWallpaperEnter(), "_FLWallpaperEnter");
+
+            isWallpaperMode = true;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+
+            // 步骤 3: 老的转发器(场景里挂了才有)
+            try
+            {
                 SimpleMouseForwarderMac mouseForwarder = UnityEngine.Object.FindObjectOfType<SimpleMouseForwarderMac>(true);
                 if (mouseForwarder != null)
                 {
@@ -993,19 +1034,15 @@ namespace BirdGame
                 }
                 else
                 {
-                    Debug.LogWarning("[FLLOG-CS] !!! SimpleMouseForwarderMac 不在场景里 (FindObjectOfType 返回 null)");
+                    Debug.LogWarning("[FLLOG-CS] SimpleMouseForwarderMac 不在场景里(可选,不影响原生流)");
                 }
-
-                Debug.Log("[FLLOG-CS] WallpaperMode 已激活 — 立即触发原生层 diagnose");
-                _FLDiagnose();
-
-                // 启动一个 MonoBehaviour 来做 Unity 侧的输入嗅探日志
-                FLClickProbe.Install();
             }
-            catch (Exception e)
-            {
-                Debug.LogError($"[FLLOG-CS] !!! WallpaperMode 进入失败: {e}");
-            }
+            catch (System.Exception e) { Debug.LogError($"[FLLOG-CS] forwarder 启用失败: {e}"); }
+
+            // 步骤 4: 触发一次原生 diagnose 快照(失败也无所谓,SafeCall 会提示)
+            SafeCall(() => _FLDiagnose(), "_FLDiagnose");
+
+            Debug.Log("[FLLOG-CS] WallpaperMode() return — 等 FLClickProbe 的逐帧日志");
 #else
             isWallpaperMode = true;
             Debug.Log("[WallpaperMode][macOS][Editor] 占位激活 - 原生桥仅在 Player 中可用");
