@@ -586,11 +586,21 @@ static void FLRestoreWindow(void) {
         [window setLevel:g_savedLevel];
         [window setCollectionBehavior:g_savedBehavior];
 
-        // (a-reverse) 现在 class 已经回到原 PlayerWindow,可以安全地恢复 titled styleMask
-        if ([window styleMask] != g_savedStyle) {
-            NSLog(@"[FLLOG][RESTORE] (a-rev) setStyleMask 0x%lx -> 0x%lx (恢复原 styleMask)",
-                  (unsigned long)[window styleMask], (unsigned long)g_savedStyle);
-            [window setStyleMask:g_savedStyle];
+        // (a-reverse) 现在 class 已经回到原 PlayerWindow,可以恢复 styleMask。
+        // 注意:必须 *去掉* NSWindowStyleMaskFullScreen 这位。macOS 不允许
+        // 直接 setStyleMask 把这一位写回去 ("set on a window outside of a
+        // full screen transition")。如果之前是 fullscreen,C# 层调
+        // _FLWallpaperExit() 之后会立即 Screen.fullScreenMode =
+        // FullScreenWindow / Screen.fullScreen=true,Unity 会通过正常的
+        // toggleFullScreen: 路径重新进 fullscreen。
+        NSWindowStyleMask safeStyle = g_savedStyle & ~NSWindowStyleMaskFullScreen;
+        if ([window styleMask] != safeStyle) {
+            NSLog(@"[FLLOG][RESTORE] (a-rev) setStyleMask 0x%lx -> 0x%lx "
+                  @"(savedStyle=0x%lx, 已去掉 FullScreen flag 防 NSGenericException)",
+                  (unsigned long)[window styleMask],
+                  (unsigned long)safeStyle,
+                  (unsigned long)g_savedStyle);
+            [window setStyleMask:safeStyle];
         }
         [window setFrame:g_savedFrame display:YES];
     } else {
@@ -877,7 +887,7 @@ void _FLWallpaperRefresh(void) {
 // If C# can't find this symbol the bundle is stale.
 __attribute__((visibility("default")))
 const char *_FLWallpaperBuildStamp(void) {
-    return "FLWallpaperBridge rev=10-level-icon-plus-1 " __DATE__ " " __TIME__;
+    return "FLWallpaperBridge rev=11-fix-fullscreen-restore " __DATE__ " " __TIME__;
 }
 
 // On-demand full diagnostic dump. C# calls this when it wants a snapshot

@@ -28,10 +28,23 @@ namespace BirdGame
 
         private void Start()
         {
-            closeButton.onClick.AddListener(OnCloseClicked);
-            saveButton.onClick.AddListener(OnSaveClicked);
-            selectFolderButton.onClick.AddListener(OnSelectFolderClicked);
-            copyButton.onClick.AddListener(OnCopyClicked);
+            // 每个 AddListener 独立 try/catch,防止某个 button 引用为 null 导致
+            // NullReferenceException 让后面的 AddListener 都不执行。
+            // (之前 Mac 壁纸模式下用户报告 "选择文件夹/复制" 无反应,根因疑似就是
+            //  其中一个 button 字段未连线, Start() 抛 NRE 导致后续 listener 没装上)
+            if (closeButton != null) closeButton.onClick.AddListener(OnCloseClicked);
+            else Debug.LogError("[PhotoPopup] closeButton 字段未连线");
+
+            if (saveButton != null) saveButton.onClick.AddListener(OnSaveClicked);
+            else Debug.LogError("[PhotoPopup] saveButton 字段未连线");
+
+            if (selectFolderButton != null) selectFolderButton.onClick.AddListener(OnSelectFolderClicked);
+            else Debug.LogError("[PhotoPopup] selectFolderButton 字段未连线");
+
+            if (copyButton != null) copyButton.onClick.AddListener(OnCopyClicked);
+            else Debug.LogError("[PhotoPopup] copyButton 字段未连线");
+
+            Debug.Log($"[PhotoPopup] Start done. close={closeButton} save={saveButton} folder={selectFolderButton} copy={copyButton}");
         }
 
         public override void OnHidePanel(Action onComplete = null)
@@ -48,14 +61,17 @@ namespace BirdGame
 
         private void OnCloseClicked()
         {
+            Debug.Log("[PhotoPopup] OnCloseClicked");
             this.GetSystem<IUISystem>().HidePopup(UIPopup.PhotoPopup);
         }
 
         private void OnCopyClicked()
         {
+            Debug.Log($"[PhotoPopup] OnCopyClicked, _photo={(_photo != null ? _photo.width + "x" + _photo.height : "null")}");
             if (_photo == null) return;
             var loc = this.GetSystem<ILocalizationSystem>();
             bool success = TryCopyImageToClipboard(_photo);
+            Debug.Log($"[PhotoPopup] OnCopyClicked done, success={success}");
             this.GetSystem<IUISystem>().ShowPrompt(loc.GetString(success ? "Copied to clipboard" : "Copy failed"));
         }
 
