@@ -276,9 +276,19 @@ static NSWindow *FLLocateUnityWindow(void) {
 }
 
 static NSInteger FLDesiredWallpaperLevel(void) {
-    // Just under the desktop-icon layer: above the wallpaper image, below the
-    // icons / menu bar. This mirrors the Windows "WorkerW child" placement.
-    return CGWindowLevelForKey(kCGDesktopIconWindowLevelKey) - 1;
+    // *** 之前用 kCGDesktopIconWindowLevel - 1 (桌面图标下方),希望保留 Mac
+    //     桌面图标可见。 实测 macOS 在这一层不路由 click:
+    //     Finder 在 kCGDesktopIconWindowLevel 有一个覆盖全屏的桌面窗口,
+    //     WindowServer 优先把 click 给 Finder, 我们永远收不到 mouseDown,
+    //     log 里全是 [FLLOG][GLOBAL] event went to ANOTHER app.
+    //
+    // *** 现在用 kCGDesktopIconWindowLevel + 1 —— 把窗口放到 Finder 桌面窗口
+    //     之上, click 直接路由进来, 不需要 Accessibility 权限。代价是
+    //     Mac 桌面图标会被游戏窗口遮住 (用户在产品决策里选择了这条路)。
+    //
+    // *** 仍然在 kCGNormalWindowLevel (= 0) 下方很多, 所以正常 app 窗口
+    //     一开就在我们上面, 仍然有 "壁纸" 的视觉效果。
+    return CGWindowLevelForKey(kCGDesktopIconWindowLevelKey) + 1;
 }
 
 static NSWindowCollectionBehavior FLDesiredWallpaperBehavior(void) {
@@ -867,7 +877,7 @@ void _FLWallpaperRefresh(void) {
 // If C# can't find this symbol the bundle is stale.
 __attribute__((visibility("default")))
 const char *_FLWallpaperBuildStamp(void) {
-    return "FLWallpaperBridge rev=9-fix-titlebar-KVO-crash " __DATE__ " " __TIME__;
+    return "FLWallpaperBridge rev=10-level-icon-plus-1 " __DATE__ " " __TIME__;
 }
 
 // On-demand full diagnostic dump. C# calls this when it wants a snapshot
