@@ -85,6 +85,7 @@
     <Compile Include="Assets\Scripts\New\Utility\FullScreenUtility.cs" />
     <Compile Include="Assets\Scripts\New\Systems\ILocalizationSystem.cs" />
     <Compile Include="Assets\Scripts\New\Events\RefreshNoteIndexEvent.cs" />
+    <Compile Include="Assets\Scripts\New\FLClickProbe.cs" />
     <Compile Include="Assets\Scripts\New\Events\ChangeScreenModeEvent.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Debug\EggBirdEditor.cs" />
     <Compile Include="Assets\Scripts\New\Systems\AssetPreloadSystem.cs" />
@@ -111,6 +112,7 @@
     <Compile Include="Assets\Scripts\BirdStates\BirdFlyHorizontalState.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\TentViewController.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\ShopPopup.cs" />
+    <Compile Include="Assets\Scripts\New\MouseForwarder.cs" />
     <Compile Include="Assets\Scripts\Nest.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Shop\ShopDecorationItem.cs" />
     <Compile Include="Assets\Scripts\New\Systems\IBirdSystem.cs" />
@@ -121,6 +123,7 @@
     <Compile Include="Assets\Scripts\BirdStates\BirdRunState.cs" />
     <Compile Include="Assets\Scripts\Radio\RadioManager.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\EnvironmentVolume.cs" />
+    <Compile Include="Assets\Scripts\New\SimpleMouseForwarderMac.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\Game\CameraCaptureController.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\ManualEnterHandler.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\LanguageLimitInputField.cs" />
