@@ -213,16 +213,33 @@ namespace BirdGame
 #if UNITY_STANDALONE_WIN
         private static string ShowWindowsFolderDialog(string title, string initialDir)
         {
+            // BIF_NEWDIALOGSTYLE（带"新建文件夹"按钮、可调整大小）要求调用线程是 OLE 初始化的
+            // 单线程套间(STA)，而 Unity 主线程不是，直接在主线程调会让"新建文件夹"按钮失效。
+            // 所以放到独立的 STA 线程里跑对话框。
+            string result = null;
+            var t = new System.Threading.Thread(() => { result = BrowseForFolderSTA(title); });
+            t.SetApartmentState(System.Threading.ApartmentState.STA);
+            t.IsBackground = true;
+            t.Start();
+            t.Join(); // 模态对话框，阻塞等用户选完/取消（与原来的同步行为一致）
+            return result;
+        }
+
+        private static string BrowseForFolderSTA(string title)
+        {
             IntPtr pidl = IntPtr.Zero;
+            int hr = OleInitialize(IntPtr.Zero); // 在 STA 线程上初始化 OLE，启用新对话框样式
             try
             {
                 var bi = new BROWSEINFOW
                 {
-                    hwndOwner = GetActiveWindow(),
+                    // 不设跨线程 owner：若拿主线程窗口当 owner，模态会对主线程 EnableWindow 发同步消息，
+                    // 而主线程正卡在 Join → 互相阻塞死锁。无 owner 时对话框独立运行，安全。
+                    hwndOwner = IntPtr.Zero,
                     pidlRoot = IntPtr.Zero,
                     pszDisplayName = IntPtr.Zero,
                     lpszTitle = title,
-                    ulFlags = BIF_RETURNONLYFSDIRS,
+                    ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE,
                     lpfn = IntPtr.Zero,
                     lParam = IntPtr.Zero,
                     iImage = 0,
@@ -230,7 +247,7 @@ namespace BirdGame
 
                 pidl = SHBrowseForFolderW(ref bi);
                 if (pidl == IntPtr.Zero)
-                    return null;
+                    return null; // 用户取消
 
                 var sb = new System.Text.StringBuilder(260);
                 if (SHGetPathFromIDListW(pidl, sb))
@@ -244,11 +261,14 @@ namespace BirdGame
             {
                 if (pidl != IntPtr.Zero)
                     CoTaskMemFree(pidl);
+                if (hr >= 0) // OleInitialize 成功(S_OK/S_FALSE)才配对 Uninitialize
+                    OleUninitialize();
             }
             return null;
         }
 
         private const uint BIF_RETURNONLYFSDIRS = 0x00000001;
+        private const uint BIF_NEWDIALOGSTYLE = 0x00000040;
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         private struct BROWSEINFOW
@@ -273,8 +293,11 @@ namespace BirdGame
         [DllImport("ole32.dll")]
         private static extern void CoTaskMemFree(IntPtr ptr);
 
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetActiveWindow();
+        [DllImport("ole32.dll")]
+        private static extern int OleInitialize(IntPtr pvReserved);
+
+        [DllImport("ole32.dll")]
+        private static extern void OleUninitialize();
 #endif
 
 #if UNITY_STANDALONE_OSX

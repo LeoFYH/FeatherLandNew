@@ -30,6 +30,7 @@ namespace BirdGame
         void CreateDecorations();
         void OpenUrl(string url);
         void InitAccount();
+        void QuitGame();
     }
 
     public class GameSystem : AbstractSystem, IGameSystem
@@ -864,7 +865,7 @@ namespace BirdGame
             try
             {
                 Debug.Log($"正在打开外部链接: {url}");
-                
+
                 // 使用系统默认浏览器打开链接
                 Application.OpenURL(url);
             }
@@ -872,6 +873,31 @@ namespace BirdGame
             {
                 Debug.LogError($"打开外部链接失败: {ex.Message}");
             }
+        }
+
+#if UNITY_STANDALONE_WIN && !UNITY_EDITOR
+        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
+        private static extern void ExitProcess(int ExitCode);
+#endif
+
+        /// <summary>
+        /// 统一退出游戏：退出前恢复窗口模式、保存鸟数据、记录Steam游玩时间，然后结束进程。
+        /// 不弹任何确认/问卷弹窗——设置里的"退出"按钮直接调用它。
+        /// </summary>
+        public void QuitGame()
+        {
+            // 退出前清理（与原 ExitConfirmPopup.ExitGame 一致）
+            this.SendEvent(new RequestSetScreenModeEvent { mode = 0, forceChange = true });
+            this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
+            this.GetSystem<ISteamSystem>().FirstPlayTime();
+
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#elif UNITY_STANDALONE_WIN
+            ExitProcess(0);
+#else
+            Application.Quit();
+#endif
         }
 
         public void InitAccount()

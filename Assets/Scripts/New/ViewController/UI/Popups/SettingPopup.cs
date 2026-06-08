@@ -255,8 +255,8 @@ namespace BirdGame
             });
             quitButton.onClick.AddListener(() =>
             {
-                // 显示退出确认弹窗，询问是否填写问卷
-                this.GetSystem<IUISystem>().ShowExitConfirm();
+                // 直接退出游戏，不再弹出退出确认/问卷弹窗
+                this.GetSystem<IGameSystem>().QuitGame();
             });
             
             closeButton.onClick.AddListener(() =>

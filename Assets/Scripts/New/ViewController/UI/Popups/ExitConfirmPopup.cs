@@ -1,22 +1,13 @@
 using System;
-using System.Runtime.InteropServices;
 using QFramework;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 namespace BirdGame
 {
     public class ExitConfirmPopup : UIBase
     {
-#if UNITY_STANDALONE_WIN && !UNITY_EDITOR
-        [DllImport("kernel32.dll")]
-        private static extern void ExitProcess(int ExitCode);
-#endif
-        
         public Button yesButton;
         public Button noButton;
         public Button closeButton;
@@ -127,22 +118,9 @@ namespace BirdGame
 
         private void ExitGame()
         {
-            // 通过 SetScreenMode 统一逻辑：切到窗口模式、清键盘状态、保存设置（退出前恢复窗口）
-            this.GetSystem<IMonoSystem>().SendEvent(new RequestSetScreenModeEvent { mode = 0, forceChange = true });
-            this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
-            this.GetSystem<ISteamSystem>().FirstPlayTime();
-            
-            // 关闭弹窗
+            // 关闭弹窗后走统一退出逻辑（GameSystem.QuitGame：恢复窗口、存档、Steam、结束进程）
             this.GetSystem<IUISystem>().HidePopup(UIPopup.ExitConfirmPopup);
-            
-            // 退出游戏
-            #if UNITY_EDITOR
-                EditorApplication.isPlaying = false;
-            #elif UNITY_STANDALONE_WIN
-                ExitProcess(0);
-            #else
-                Application.Quit();
-            #endif
+            this.GetSystem<IGameSystem>().QuitGame();
         }
 
         private System.Collections.IEnumerator DelayedExit()

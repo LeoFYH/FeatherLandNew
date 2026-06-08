@@ -596,6 +596,19 @@ namespace BirdGame
             }
             else if (GetKeyDownAny(KeyCode.T))
             {
+                // Telescope - 望远镜工具
+                if (menuPanel.telescopeToggle != null)
+                    menuPanel.telescopeToggle.isOn = !menuPanel.telescopeToggle.isOn;
+            }
+            else if (GetKeyDownAny(KeyCode.C))
+            {
+                // Camera - 相机工具
+                if (menuPanel.cameraToggle != null)
+                    menuPanel.cameraToggle.isOn = !menuPanel.cameraToggle.isOn;
+            }
+            else if (GetKeyDownAny(KeyCode.H))
+            {
+                // Help / Tutorial - TutorialPopup（原 T 键功能搬到 H）
                 var uiSystem = this.GetSystem<IUISystem>();
                 if (uiSystem.GetPopup<UIBase>(UIPopup.TutorialPopup) != null)
                     uiSystem.HidePopup(UIPopup.TutorialPopup);
@@ -605,9 +618,9 @@ namespace BirdGame
                     uiSystem.ShowPopup(UIPopup.TutorialPopup);
                 }
             }
-            else if (GetKeyDownAny(KeyCode.C))
+            else if (GetKeyDownAny(KeyCode.Tab))
             {
-                // View Toggle - toggle viewGroup visibility
+                // View Toggle - 显示/隐藏UI（原 C 键功能搬到 Tab）
                 menuPanel.viewToggle.isOn = !menuPanel.viewToggle.isOn;
             }
             else if (GetKeyDownAny(KeyCode.W))
