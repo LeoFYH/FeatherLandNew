@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using QFramework;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -20,10 +21,10 @@ namespace BirdGame
 
         private Camera camera;
         private float baseOrthoSize;         // 屏幕适配后的原始Size（zoomFactor=1时使用）
-        private Vector3 baseCameraPosition;  // 摄像机原始位置
-        private Vector3 anchorWorld;         // 望远镜焦点（在"基础视野"下的世界坐标）
-        private float zoomFactor = 1f;
-        private float targetZoomFactor = 1f;
+        private Vector3 baseCameraPosition;  // 摄像机原始位置（满屏视野中心）
+        private float zoomFactor = 1f;       // 当前缩放（平滑值）
+        private float targetZoomFactor = 1f; // 目标缩放
+        private Vector3 targetCameraPosition; // 目标摄像机位置（zoom-to-cursor算出，已夹紧在世界范围内）
         private float pendingWheelDelta;     // 壁纸模式下从SimpleMouseForwarder钩子累积的滚轮delta
 
         // CPU优化：缓存上次屏幕尺寸，仅在分辨率变化时重新计算
@@ -36,18 +37,18 @@ namespace BirdGame
             cachedScreenWidth = Screen.width;
             cachedScreenHeight = Screen.height;
             baseCameraPosition = transform.position;
-            anchorWorld = baseCameraPosition;
+            targetCameraPosition = baseCameraPosition;
             ChangeSize();
         }
 
         private void OnEnable()
         {
-            MouseForwarder.OnHookVerticalWheel += HandleHookWheel;
+            SimpleMouseForwarder.OnHookVerticalWheel += HandleHookWheel;
         }
 
         private void OnDisable()
         {
-            MouseForwarder.OnHookVerticalWheel -= HandleHookWheel;
+            SimpleMouseForwarder.OnHookVerticalWheel -= HandleHookWheel;
         }
 
         private void HandleHookWheel(float delta)
@@ -84,8 +85,9 @@ namespace BirdGame
 
             if (ShouldResetZoom())
             {
-                // 望远镜关闭或重要popup打开时复位，丢弃任何积压的滚轮输入
+                // 望远镜关闭或重要popup打开时复位到满屏视野，丢弃任何积压的滚轮输入
                 targetZoomFactor = maxZoom;
+                targetCameraPosition = baseCameraPosition;
                 pendingWheelDelta = 0f;
             }
             else if (!ShouldBlockScrollInput())
@@ -94,65 +96,102 @@ namespace BirdGame
                 float wheel = Input.mouseScrollDelta.y + pendingWheelDelta;
                 pendingWheelDelta = 0f;
                 if (Mathf.Abs(wheel) > 0.01f)
-                {
-                    // 仅在缩放方向为放大（拉近）时更新焦点，避免缩小过程中相机抖动
-                    if (wheel > 0f)
-                        UpdateAnchorFromCursor();
-
-                    targetZoomFactor = Mathf.Clamp(targetZoomFactor - wheel * zoomStep, minZoom, maxZoom);
-                }
+                    ApplyZoomAtCursor(wheel);
             }
             else
             {
-                // 输入被阻断（如相机工具开启）但不复位zoom；同样丢弃积压的滚轮，避免相机工具关闭后误触发
+                // 输入被阻断（如相机工具开启/指针在UI上）但不复位zoom；丢弃积压的滚轮，避免误触发
                 pendingWheelDelta = 0f;
             }
 
             // zoom和位置都已稳定则跳过，节省CPU
-            if (Mathf.Approximately(zoomFactor, targetZoomFactor))
+            bool zoomStable = Mathf.Approximately(zoomFactor, targetZoomFactor);
+            bool posStable = (transform.position - targetCameraPosition).sqrMagnitude < 1e-8f;
+            if (zoomStable && posStable)
                 return;
 
-            // 平滑插值zoomFactor
-            zoomFactor = Mathf.Lerp(zoomFactor, targetZoomFactor, Time.deltaTime * zoomLerpSpeed);
-            // 临近目标时直接吸附，避免无限渐近
+            float t = Time.deltaTime * zoomLerpSpeed;
+
+            // 平滑插值zoomFactor，临近目标时吸附
+            zoomFactor = Mathf.Lerp(zoomFactor, targetZoomFactor, t);
             if (Mathf.Abs(zoomFactor - targetZoomFactor) < 0.0005f)
                 zoomFactor = targetZoomFactor;
-
-            ApplyCameraTransform();
-
-            // 完全复位时清理状态
-            if (Mathf.Approximately(zoomFactor, maxZoom))
-            {
-                anchorWorld = baseCameraPosition;
-            }
-        }
-
-        /// <summary>
-        /// 根据光标当前屏幕位置算出"基础视野下对应的世界坐标"，作为望远镜焦点。
-        /// 这样无论当前zoomFactor为多少，公式 P(z) = base + (anchor - base) * (1 - z)
-        /// 都能保证：z=1 时 P = baseCameraPosition（不跳屏），z = minZoom 时光标仍指向同一世界点。
-        /// </summary>
-        private void UpdateAnchorFromCursor()
-        {
-            Vector3 cursorWorld = camera.ScreenToWorldPoint(Input.mousePosition);
-            float safeZoom = Mathf.Max(zoomFactor, 0.0001f);
-            Vector3 offsetInBaseView = (cursorWorld - transform.position) / safeZoom;
-            anchorWorld = baseCameraPosition + new Vector3(offsetInBaseView.x, offsetInBaseView.y, 0f);
-        }
-
-        /// <summary>
-        /// 应用当前zoomFactor对应的orthographicSize和摄像机位置。
-        /// 使用线性混合公式确保 zoomFactor=1 时位置恰好等于 baseCameraPosition，
-        /// 不依赖任何"接近时snap"，所以缩小复位过程没有最后一帧的跳屏。
-        /// </summary>
-        private void ApplyCameraTransform()
-        {
             camera.orthographicSize = baseOrthoSize * zoomFactor;
 
-            float blend = 1f - zoomFactor; // z=1 -> 0(base), z=minZoom -> 1-minZoom(anchor方向)
-            Vector3 desiredPos = baseCameraPosition + (anchorWorld - baseCameraPosition) * blend;
-            desiredPos.z = baseCameraPosition.z;
-            transform.position = desiredPos;
+            // 平滑插值位置；每帧按当前zoom夹紧：缩小时边界连续收缩到0，
+            // 自然把相机拉回base，没有黑边、也没有最后一帧的跳屏
+            Vector3 pos = Vector3.Lerp(transform.position, targetCameraPosition, t);
+            pos = ClampToWorldBounds(pos, zoomFactor);
+            pos.z = baseCameraPosition.z;
+            if ((pos - targetCameraPosition).sqrMagnitude < 1e-8f)
+                pos = targetCameraPosition;
+            transform.position = pos;
+        }
+
+        /// <summary>
+        /// 标准 zoom-to-cursor：以光标当前指向的世界点为锚，缩放后让该点仍停在光标下。
+        /// 数学作用在 target 状态上，所以连续快速滚动能正确叠加；结果夹紧在世界范围内防黑边。
+        /// 放大、缩小都基于"当前(已放大)视野 + 当前光标位置"，不再依赖一次性的全局锚点，故不会跳屏。
+        /// </summary>
+        private void ApplyZoomAtCursor(float wheel)
+        {
+            float oldZoom = targetZoomFactor;
+            float newZoom = Mathf.Clamp(oldZoom - wheel * zoomStep, minZoom, maxZoom);
+            if (Mathf.Approximately(newZoom, oldZoom))
+                return;
+
+            // 用 target 视图把光标像素坐标换算成世界点
+            Vector3 cursorWorld = ScreenToWorldAt(GetCursorScreenPosition(),
+                targetCameraPosition, baseOrthoSize * oldZoom);
+
+            // newPos 使 cursorWorld 在缩放后仍落在光标处：P' = C + (P - C) * (newSize/oldSize)
+            float ratio = newZoom / oldZoom;
+            Vector3 newPos = cursorWorld + (targetCameraPosition - cursorWorld) * ratio;
+            newPos = ClampToWorldBounds(newPos, newZoom);
+            newPos.z = baseCameraPosition.z;
+
+            targetZoomFactor = newZoom;
+            targetCameraPosition = newPos;
+        }
+
+        /// <summary>
+        /// 用给定的相机位置与正交Size把屏幕像素坐标换算成世界坐标（正交相机）。
+        /// 不依赖 camera 当前的实际 position/size，从而能基于 target 状态计算，避免平滑过程中的反馈抖动。
+        /// </summary>
+        private Vector3 ScreenToWorldAt(Vector2 screenPos, Vector3 camPos, float orthoSize)
+        {
+            float halfHeight = orthoSize;
+            float halfWidth = orthoSize * camera.aspect;
+            float nx = (screenPos.x / camera.pixelWidth) * 2f - 1f;
+            float ny = (screenPos.y / camera.pixelHeight) * 2f - 1f;
+            return new Vector3(camPos.x + nx * halfWidth, camPos.y + ny * halfHeight, camPos.z);
+        }
+
+        /// <summary>
+        /// 把相机位置夹紧在世界可视范围内。zoom=1(满屏)时允许偏移为0 → 相机必须在base，无黑边；
+        /// zoom越小(越放大)允许偏移越大，可自由平移看特写。这条边界同时保证缩小时平滑回到满屏。
+        /// </summary>
+        private Vector3 ClampToWorldBounds(Vector3 pos, float zoom)
+        {
+            float maxOffsetX = Mathf.Max(0f, baseOrthoSize * camera.aspect * (1f - zoom));
+            float maxOffsetY = Mathf.Max(0f, baseOrthoSize * (1f - zoom));
+            float x = Mathf.Clamp(pos.x, baseCameraPosition.x - maxOffsetX, baseCameraPosition.x + maxOffsetX);
+            float y = Mathf.Clamp(pos.y, baseCameraPosition.y - maxOffsetY, baseCameraPosition.y + maxOffsetY);
+            return new Vector3(x, y, pos.z);
+        }
+
+        /// <summary>
+        /// 取光标屏幕坐标（Unity左下原点）。壁纸模式下 Input.mousePosition 不可靠，
+        /// 改用 Win32 GetCursorPos 读 OS 全局光标（壁纸窗口铺满全屏，全局坐标==窗口坐标）。
+        /// 仅读取光标，不触碰 SimpleMouseForwarder 的钩子/转发链路。
+        /// </summary>
+        private Vector2 GetCursorScreenPosition()
+        {
+#if UNITY_STANDALONE_WIN
+            if (SimpleMouseForwarder.isOnDesktop && GetCursorPos(out POINT p))
+                return new Vector2(p.x, Screen.height - p.y);
+#endif
+            return Input.mousePosition;
         }
 
         /// <summary>
@@ -210,9 +249,20 @@ namespace BirdGame
                 cachedScreenWidth = w;
                 cachedScreenHeight = h;
                 ChangeSize();
-                // 分辨率变化后重新应用一次缩放，避免视野错乱
-                ApplyCameraTransform();
+                // 分辨率变化后重新夹紧目标与当前位置并立即套用，避免视野错乱
+                targetCameraPosition = ClampToWorldBounds(targetCameraPosition, targetZoomFactor);
+                Vector3 p = ClampToWorldBounds(transform.position, zoomFactor);
+                p.z = baseCameraPosition.z;
+                transform.position = p;
             }
         }
+
+#if UNITY_STANDALONE_WIN
+        [StructLayout(LayoutKind.Sequential)]
+        private struct POINT { public int x; public int y; }
+
+        [DllImport("user32.dll")]
+        private static extern bool GetCursorPos(out POINT lpPoint);
+#endif
     }
 }
