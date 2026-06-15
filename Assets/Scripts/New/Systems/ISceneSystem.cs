@@ -10,6 +10,10 @@ namespace BirdGame
     public interface ISceneSystem : ISystem
     {
         /// <summary>
+        /// 是否正在换图（含场景与鸟的异步加载）。期间禁止再次切图、禁止覆盖写存档。
+        /// </summary>
+        bool IsLoading { get; set; }
+        /// <summary>
         /// 加载场景
         /// </summary>
         /// <param name="index"></param>
@@ -24,7 +28,9 @@ namespace BirdGame
     {
         private GameObject currentScene = null;
         private string sceneName;
-        
+
+        public bool IsLoading { get; set; }
+
         protected override void OnInit()
         {
             

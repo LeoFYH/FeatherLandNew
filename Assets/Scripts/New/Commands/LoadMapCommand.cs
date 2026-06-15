@@ -18,10 +18,22 @@ namespace BirdGame
 
         protected override void OnExecute()
         {
+            var sceneSystem = this.GetSystem<ISceneSystem>();
+            // 上一次换图（含鸟的异步加载）尚未完成时，忽略本次切图请求，
+            // 避免在内存鸟列表还没装满时触发存档覆盖，导致鸟丢失
+            if (sceneSystem.IsLoading)
+            {
+                Debug.LogWarning("地图加载中，忽略重复切图请求");
+                return;
+            }
+
             // 切地图时清掉开蛋锁，避免锁残留
             Egg.IsHatching = false;
+            // 先把旧地图的鸟存档（此时 IsLoading 仍为 false，不会被守卫拦截）
             this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
-            
+            // 进入加载状态：直到新地图的鸟全部异步加载完成才解除（见 BirdSystem.GenerateBirdsFromSave）
+            sceneSystem.IsLoading = true;
+
             // 切换地图时关闭所有popup界面
             this.GetSystem<IUISystem>().HideAllPopups();
             foreach (var select in this.GetModel<IGameModel>().SelectedToolDic)

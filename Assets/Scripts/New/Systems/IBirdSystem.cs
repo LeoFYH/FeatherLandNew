@@ -24,6 +24,10 @@ namespace BirdGame
         private ISaveModel saveModel;
         private ISaveSystem saveSystem;
         private Dictionary<int, List<IUnRegister>> birdListeners = new Dictionary<int, List<IUnRegister>>();
+        // 正在异步加载中的鸟数量；归零时解除换图加载锁（ISceneSystem.IsLoading）
+        private int pendingBirdLoads = 0;
+        // 换图/清鸟的世代号；每次 ClearAllBirds 自增，使旧地图迟到的异步回调失效，避免鸟串图或残留
+        private int loadGeneration = 0;
 
         protected override void OnInit()
         {
@@ -74,6 +78,8 @@ namespace BirdGame
 
         public void SyncBirdDataToSave()
         {
+            // 换图加载期间，内存鸟列表可能还没装满，此时写入会用残缺数据覆盖存档导致鸟丢失，直接跳过
+            if (this.GetSystem<ISceneSystem>().IsLoading) return;
             if (saveModel?.BirdInfoData == null) return;
             if (saveModel.BirdInfoData.mapBirds == null)
                 saveModel.BirdInfoData.mapBirds = new List<MapBirdList>();
@@ -171,6 +177,8 @@ namespace BirdGame
 
         public void ClearAllBirds()
         {
+            // 自增世代号：作废所有在途的鸟加载回调，迟到的回调会在世代校验处被丢弃，避免串图/残留
+            loadGeneration++;
             for (int i = birdModel.BirdList.Count - 1; i >= 0; i--)
             {
                 birdModel.RemoveBird(i);
@@ -183,54 +191,80 @@ namespace BirdGame
         public void GenerateBirdsFromSave()
         {
             Debug.Log("加载鸟");
-            if (saveModel?.BirdInfoData == null) return;
-            if (saveModel.BirdInfoData.mapBirds == null)
-                saveModel.BirdInfoData.mapBirds = new List<MapBirdList>();
-            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
-            if (mapIndex < 0 || mapIndex >= saveModel.BirdInfoData.mapBirds.Count)
+            // 进入加载状态：禁止再次切图、禁止 SyncBirdDataToSave 覆盖存档。
+            // pendingBirdLoads 起始置 1 作为哨兵，避免预制体命中缓存时回调同步执行导致计数提前归零；
+            // 待所有加载发起完成后，由下方 finally 的 OnOneBirdLoadFinished() 移除哨兵。
+            this.GetSystem<ISceneSystem>().IsLoading = true;
+            pendingBirdLoads = 1;
+            try
             {
-                if (mapIndex != 0)
-                    Debug.LogWarning($"GenerateBirdsFromSave: currentMap={mapIndex} 越界，已修正为 0");
-                mapIndex = 0;
-                this.GetModel<ISaveModel>().BirdInfoData.currentMap = 0;
-            }
-            while (saveModel.BirdInfoData.mapBirds.Count <= mapIndex)
-                saveModel.BirdInfoData.mapBirds.Add(new MapBirdList());
-            if (saveModel.BirdInfoData.mapBirds[mapIndex].birdList == null)
-                saveModel.BirdInfoData.mapBirds[mapIndex].birdList = new List<SerializableBirdData>();
-
-            // 根据存档生成鸟
-            foreach (var savedBirdData in saveModel.BirdInfoData.mapBirds[mapIndex].birdList)
-            {
-                GenerateBirdFromSaveData(savedBirdData);
-            }
-            
-            //根据鸟蛋生成鸟
-            if (saveModel.BirdInfoData.mapBirds[mapIndex].eggList == null)
-                saveModel.BirdInfoData.mapBirds[mapIndex].eggList = new List<int>();
-            Debug.Log("鸟蛋数量:" + saveModel.BirdInfoData.mapBirds[mapIndex].eggList.Count);
-            // 兼容旧 Demo 存档：Demo 场景1/2/3蛋数量比 Full 多，eggIndex 可能越界，跳过以防崩溃
-            var eggsArr = this.GetModel<IConfigModel>().ShopConfig.sceneEggs[mapIndex].eggs;
-            foreach (var eggIndex in saveModel.BirdInfoData.mapBirds[mapIndex].eggList)
-            {
-                if (eggIndex < 0 || eggIndex >= eggsArr.Length)
+                if (saveModel?.BirdInfoData == null) return;
+                if (saveModel.BirdInfoData.mapBirds == null)
+                    saveModel.BirdInfoData.mapBirds = new List<MapBirdList>();
+                int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+                if (mapIndex < 0 || mapIndex >= saveModel.BirdInfoData.mapBirds.Count)
                 {
-                    Debug.LogWarning($"丢弃越界 eggIndex={eggIndex}（可能来自旧版本存档）");
-                    this.GetModel<IBirdModel>().UnopenEggs--;
-                    continue;
+                    if (mapIndex != 0)
+                        Debug.LogWarning($"GenerateBirdsFromSave: currentMap={mapIndex} 越界，已修正为 0");
+                    mapIndex = 0;
+                    this.GetModel<ISaveModel>().BirdInfoData.currentMap = 0;
                 }
-                int birdIndex = RandomGetBirdIndex(eggIndex);
-                CreateBird(birdIndex);
+                while (saveModel.BirdInfoData.mapBirds.Count <= mapIndex)
+                    saveModel.BirdInfoData.mapBirds.Add(new MapBirdList());
+                if (saveModel.BirdInfoData.mapBirds[mapIndex].birdList == null)
+                    saveModel.BirdInfoData.mapBirds[mapIndex].birdList = new List<SerializableBirdData>();
+
+                // 根据存档生成鸟
+                foreach (var savedBirdData in saveModel.BirdInfoData.mapBirds[mapIndex].birdList)
+                {
+                    GenerateBirdFromSaveData(savedBirdData);
+                }
+
+                //根据鸟蛋生成鸟
+                if (saveModel.BirdInfoData.mapBirds[mapIndex].eggList == null)
+                    saveModel.BirdInfoData.mapBirds[mapIndex].eggList = new List<int>();
+                Debug.Log("鸟蛋数量:" + saveModel.BirdInfoData.mapBirds[mapIndex].eggList.Count);
+                // 兼容旧 Demo 存档：Demo 场景1/2/3蛋数量比 Full 多，eggIndex 可能越界，跳过以防崩溃
+                var eggsArr = this.GetModel<IConfigModel>().ShopConfig.sceneEggs[mapIndex].eggs;
+                foreach (var eggIndex in saveModel.BirdInfoData.mapBirds[mapIndex].eggList)
+                {
+                    if (eggIndex < 0 || eggIndex >= eggsArr.Length)
+                    {
+                        Debug.LogWarning($"丢弃越界 eggIndex={eggIndex}（可能来自旧版本存档）");
+                        this.GetModel<IBirdModel>().UnopenEggs--;
+                        continue;
+                    }
+                    int birdIndex = RandomGetBirdIndex(eggIndex);
+                    CreateBird(birdIndex);
+                }
+
+                saveModel.BirdInfoData.mapBirds[mapIndex].eggList.Clear();
+                // 同步图鉴数据 - 确保所有已拥有的鸟都在图鉴中
+                SyncIllustratedDataFromBirds();
+
+                // 注意：这里不应该再次同步数据，因为刚从存档加载完数据
+                // SyncBirdDataToSave() 会清空当前内存中的鸟数据并用存档数据覆盖
+                // 现在数据已经在内存中，只需要确保图鉴等其他数据同步即可
             }
-            
-            saveModel.BirdInfoData.mapBirds[mapIndex].eggList.Clear();
-            // 同步图鉴数据 - 确保所有已拥有的鸟都在图鉴中
-            SyncIllustratedDataFromBirds();
-            
-            // 注意：这里不应该再次同步数据，因为刚从存档加载完数据
-            // SyncBirdDataToSave() 会清空当前内存中的鸟数据并用存档数据覆盖
-            // 现在数据已经在内存中，只需要确保图鉴等其他数据同步即可
-            
+            finally
+            {
+                // 移除哨兵：若此时没有待加载的鸟（如该图无鸟、或中途异常未发起加载），立即解锁；
+                // 否则由最后一只鸟的回调解锁。保证 IsLoading 一定会被复位，不会卡死无法切图。
+                OnOneBirdLoadFinished();
+            }
+        }
+
+        /// <summary>
+        /// 一只鸟（或哨兵）的加载流程结束时调用；计数归零时解除换图加载锁。
+        /// </summary>
+        private void OnOneBirdLoadFinished()
+        {
+            pendingBirdLoads--;
+            if (pendingBirdLoads <= 0)
+            {
+                pendingBirdLoads = 0;
+                this.GetSystem<ISceneSystem>().IsLoading = false;
+            }
         }
         
         private void CreateBird(int birdIndex)
@@ -243,26 +277,47 @@ namespace BirdGame
                 Debug.LogError($"鸟配置 prefab 未分配 birdIndex={birdIndex}");
                 return;
             }
+            int gen = loadGeneration; // 捕获本次加载的世代，回调时用于判断是否已过期
+            pendingBirdLoads++; // 即将发起一次异步加载，计入换图加载锁
             this.GetSystem<IAssetSystem>().LoadPrefabAsync(birdConfig.prefab, obj =>
             {
-                if (obj == null)
+                try
                 {
-                    Debug.LogError($"鸟预制体加载失败 birdIndex={birdIndex}");
-                    return;
+                    if (obj == null)
+                    {
+                        Debug.LogError($"鸟预制体加载失败 birdIndex={birdIndex}");
+                        return;
+                    }
+                    // 世代校验：加载期间若已切图/清鸟，丢弃这只过期蛋鸟，但仍推进开蛋计数避免遮罩卡住
+                    if (gen != loadGeneration)
+                    {
+                        Debug.Log("丢弃过期的蛋鸟加载（地图已切换）");
+                        this.GetModel<IBirdModel>().UnopenEggs--;
+                        if (this.GetModel<IBirdModel>().UnopenEggs <= 0)
+                        {
+                            this.GetSystem<IUISystem>().HideMask();
+                            this.SendEvent<EnableButtonEvent>();
+                        }
+                        return;
+                    }
+                    GameObject go = GameObject.Instantiate(obj);
+                    this.GetModel<IBirdModel>().AddBird(birdIndex, go.GetComponent<Brid>());
+                    var agent = go.GetComponent<NavMeshAgent>();
+                    agent.enabled = false;
+                    var point = NavigationManager.Instance.GetRandomTarget(3);
+                    go.transform.position = new Vector3(point.x, point.y, 0);
+                    // 更新 GameManager 的未开启蛋数量
+                    this.GetModel<IBirdModel>().UnopenEggs--;
+                    agent.enabled = true;
+                    if (this.GetModel<IBirdModel>().UnopenEggs <= 0)
+                    {
+                        this.GetSystem<IUISystem>().HideMask();
+                        this.SendEvent<EnableButtonEvent>();
+                    }
                 }
-                GameObject go = GameObject.Instantiate(obj);
-                this.GetModel<IBirdModel>().AddBird(birdIndex, go.GetComponent<Brid>());
-                var agent = go.GetComponent<NavMeshAgent>();
-                agent.enabled = false;
-                var point = NavigationManager.Instance.GetRandomTarget(3);
-                go.transform.position = new Vector3(point.x, point.y, 0);
-                // 更新 GameManager 的未开启蛋数量
-                this.GetModel<IBirdModel>().UnopenEggs--;
-                agent.enabled = true;
-                if (this.GetModel<IBirdModel>().UnopenEggs <= 0)
+                finally
                 {
-                    this.GetSystem<IUISystem>().HideMask();
-                    this.SendEvent<EnableButtonEvent>();
+                    OnOneBirdLoadFinished(); // 无论成功/失败/异常都减计数，确保加载锁能被解除
                 }
             });
         }
@@ -333,74 +388,89 @@ namespace BirdGame
                 return;
             }
 
+            int gen = loadGeneration; // 捕获本次加载的世代，回调时用于判断是否已过期
+            pendingBirdLoads++; // 即将发起一次异步加载，计入换图加载锁
             this.GetSystem<IAssetSystem>().LoadPrefabAsync(birdItem.prefab, obj =>
             {
-                if (obj == null)
+                try
                 {
-                    Debug.LogError($"鸟预制体加载失败 birdType={savedBirdData.birdType}");
-                    return;
+                    if (obj == null)
+                    {
+                        Debug.LogError($"鸟预制体加载失败 birdType={savedBirdData.birdType}");
+                        return;
+                    }
+                    // 世代校验：加载期间若已切图/清鸟，这只鸟属于旧地图，丢弃以免串图或残留
+                    if (gen != loadGeneration)
+                    {
+                        Debug.Log($"丢弃过期的鸟加载 birdType={savedBirdData.birdType}（地图已切换）");
+                        return;
+                    }
+                    GameObject birdObject = GameObject.Instantiate(obj);
+
+                    Brid bird = birdObject.GetComponent<Brid>();
+                    var agent = birdObject.GetComponent<NavMeshAgent>();
+                    agent.enabled = false;
+
+                    var point = NavigationManager.Instance.GetRandomTarget(3);
+                    birdObject.transform.position = new Vector3(point.x, point.y, 0);
+
+                    if (bird == null)
+                    {
+                        GameObject.Destroy(birdObject);
+                        return;
+                    }
+
+                    // 设置鸟的数据
+                    bird.isSmall = savedBirdData.isSmall;
+                    bird.currentExp.Value = savedBirdData.currentExp;
+                    bird.currentFavorability.Value = savedBirdData.currentFavorability;
+                    bird.totalFavorability = savedBirdData.totalFavorability;
+                    // petTime是私有字段，无法直接设置
+
+                    // 根据isSmall设置鸟的大小
+                    if (savedBirdData.currentExp <= birdItem.totalExp)
+                    {
+                        birdObject.transform.localScale = Vector3.one * bird.BabyBirdSize;
+                        savedBirdData.isSmall = true;
+                        bird.isSmall = true;
+                    }
+                    else
+                    {
+                        savedBirdData.isSmall = false;
+                        bird.isSmall = false;
+                        // 成鸟：保持原始大小
+                        birdObject.transform.localScale = Vector3.one * bird.AdultBirdSize;
+                    }
+
+                    // 添加到BirdModel
+                    birdModel.AddBird(savedBirdData.birdType, bird);
+
+                    // 设置自定义名称和个体化数值（从存档恢复）
+                    var birdData = birdModel.BirdList[^1];
+                    birdData.customName = savedBirdData.customName;
+                    birdData.isLiked = savedBirdData.isLiked;
+                    birdData.islocked = savedBirdData.isLocked;
+
+                    // 恢复保存的个体化数值（如果存档没有这些值，使用刚生成的随机值）
+                    if (savedBirdData.individualEarningBig > 0)
+                    {
+                        birdData.individualEarningSmall = savedBirdData.individualEarningSmall;
+                        birdData.individualEarningBig = savedBirdData.individualEarningBig;
+                        birdData.individualPriceSmall = savedBirdData.individualPriceSmall;
+                        birdData.individualPriceBig = savedBirdData.individualPriceBig;
+                        Debug.Log($"从存档恢复个体化数值 - 成鸟收入:{birdData.individualEarningBig:F2}");
+                    }
+                    else
+                    {
+                        Debug.Log($"旧存档无个体化数值，使用新生成的随机值");
+                    }
+
+                    agent.enabled = true;
                 }
-                GameObject birdObject = GameObject.Instantiate(obj);
-
-                Brid bird = birdObject.GetComponent<Brid>();
-                var agent = birdObject.GetComponent<NavMeshAgent>();
-                agent.enabled = false;
-
-                var point = NavigationManager.Instance.GetRandomTarget(3);
-                birdObject.transform.position = new Vector3(point.x, point.y, 0);
-
-                if (bird == null)
+                finally
                 {
-                    GameObject.Destroy(birdObject);
-                    return;
+                    OnOneBirdLoadFinished(); // 无论成功/失败/异常都减计数，确保加载锁能被解除
                 }
-
-                // 设置鸟的数据
-                bird.isSmall = savedBirdData.isSmall;
-                bird.currentExp.Value = savedBirdData.currentExp;
-                bird.currentFavorability.Value = savedBirdData.currentFavorability;
-                bird.totalFavorability = savedBirdData.totalFavorability;
-                // petTime是私有字段，无法直接设置
-
-                // 根据isSmall设置鸟的大小
-                if (savedBirdData.currentExp <= birdItem.totalExp)
-                {
-                    birdObject.transform.localScale = Vector3.one * bird.BabyBirdSize;
-                    savedBirdData.isSmall = true;
-                    bird.isSmall = true;
-                }
-                else
-                {
-                    savedBirdData.isSmall = false;
-                    bird.isSmall = false;
-                    // 成鸟：保持原始大小
-                    birdObject.transform.localScale = Vector3.one * bird.AdultBirdSize;
-                }
-
-                // 添加到BirdModel
-                birdModel.AddBird(savedBirdData.birdType, bird);
-
-                // 设置自定义名称和个体化数值（从存档恢复）
-                var birdData = birdModel.BirdList[^1];
-                birdData.customName = savedBirdData.customName;
-                birdData.isLiked = savedBirdData.isLiked;
-                birdData.islocked = savedBirdData.isLocked;
-
-                // 恢复保存的个体化数值（如果存档没有这些值，使用刚生成的随机值）
-                if (savedBirdData.individualEarningBig > 0)
-                {
-                    birdData.individualEarningSmall = savedBirdData.individualEarningSmall;
-                    birdData.individualEarningBig = savedBirdData.individualEarningBig;
-                    birdData.individualPriceSmall = savedBirdData.individualPriceSmall;
-                    birdData.individualPriceBig = savedBirdData.individualPriceBig;
-                    Debug.Log($"从存档恢复个体化数值 - 成鸟收入:{birdData.individualEarningBig:F2}");
-                }
-                else
-                {
-                    Debug.Log($"旧存档无个体化数值，使用新生成的随机值");
-                }
-
-                agent.enabled = true;
             });
         }
 
