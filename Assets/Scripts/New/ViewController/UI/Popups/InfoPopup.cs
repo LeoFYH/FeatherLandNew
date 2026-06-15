@@ -375,6 +375,7 @@ namespace BirdGame
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             var birdConf = this.GetModel<IConfigModel>().BirdConfig.GetBird(data.birdType, mapIndex);
             icon.sprite = birdConf.preview;
+            icon.GetComponent<RectTransform>().sizeDelta = icon.sprite.rect.size * 0.5f;
             addtoDesktop.onClick.AddListener(() =>
             {
                 if (!data.isAddedToDesktop)

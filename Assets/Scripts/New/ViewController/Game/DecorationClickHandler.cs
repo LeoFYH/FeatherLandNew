@@ -22,7 +22,7 @@ namespace BirdGame
 
         private SpriteRenderer sr;
 
-        public void Initialize(int id, int index)
+        public void Initialize(int id, int index, Vector3? savedPosition = null)
         {
             decorationId = id;
             decorationIndex = index;
@@ -38,9 +38,15 @@ namespace BirdGame
                     decorationId >= 0 && decorationId < sceneDecoration.decorations.Length)
                 {
                     var decoration = sceneDecoration.decorations[decorationId];
-                    if (decoration?.fixedPositions != null && 
+                    if (savedPosition.HasValue)
+                    {
+                        // 从存档加载：使用存档位置，不覆盖
+                        transform.parent.position = savedPosition.Value;
+                    }
+                    else if (decoration?.fixedPositions != null && 
                         decorationIndex >= 0 && decorationIndex < decoration.fixedPositions.Length)
                     {
+                        // 新创建/首次放置：使用配置中的固定位置
                         transform.parent.position = decoration.fixedPositions[decorationIndex];
                     }
                     else

@@ -86,6 +86,7 @@ namespace BirdGame
             else
                 lastValidPosition = transform.parent.position;
             SetVisualFeedback(true);
+            SavePositionToAccount();
         }
         
         private void OnMouseDrag()
@@ -127,6 +128,7 @@ namespace BirdGame
             else
                 lastValidPosition = transform.parent.position;
             SetVisualFeedback(true);
+            SavePositionToAccount();
         }
         
         private bool IsOnGround(Vector3 position)
@@ -181,6 +183,32 @@ namespace BirdGame
             position.y = Mathf.Clamp(position.y, -screenBounds.y + spriteHeight, screenBounds.y - spriteHeight);
             
             return position;
+        }
+
+        /// <summary>
+        /// 将当前装饰的位置保存到存档，确保拖拽后的位置在切换地图后不会丢失
+        /// </summary>
+        private void SavePositionToAccount()
+        {
+            var clickHandler = GetComponent<DecorationClickHandler>();
+            if (clickHandler == null) return;
+            
+            int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+            var accountData = this.GetModel<ISaveModel>().AccountData;
+            
+            int decId = clickHandler.decorationId;
+            int decIndex = clickHandler.decorationIndex;
+            
+            if (mapIndex >= 0 && mapIndex < accountData.sceneDecorationInfos.Count)
+            {
+                var sceneDecorations = accountData.sceneDecorationInfos[mapIndex].decorations;
+                if (decId >= 0 && decId < sceneDecorations.Count &&
+                    decIndex >= 0 && decIndex < sceneDecorations[decId].position.Count)
+                {
+                    sceneDecorations[decId].position[decIndex] = transform.parent.position;
+                    this.GetSystem<ISaveSystem>().SaveData();
+                }
+            }
         }
     }
 } 
