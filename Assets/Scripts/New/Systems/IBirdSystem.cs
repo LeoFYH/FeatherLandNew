@@ -183,6 +183,11 @@ namespace BirdGame
         public void GenerateBirdsFromSave()
         {
             Debug.Log("加载鸟");
+            // 确保 NavMesh 已构建：换图回来时鸟 prefab 已缓存，LoadPrefabAsync 会同步回调，
+            // 此刻场景 NavigationManager.Start()(下一帧才构建 NavMesh) 还没执行，
+            // GetRandomTarget 会因找不到三角形返回 Vector3.zero，导致所有鸟堆叠在原点且卡死。
+            if (NavigationManager.Instance != null)
+                NavigationManager.Instance.EnsureNavMeshBuilt();
             if (saveModel?.BirdInfoData == null) return;
             if (saveModel.BirdInfoData.mapBirds == null)
                 saveModel.BirdInfoData.mapBirds = new List<MapBirdList>();

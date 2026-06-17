@@ -29,6 +29,7 @@ public class NavigationManager : ViewControllerBase
     
     private NavMeshSurface surface;
     public bool isExpend { get; private set; }
+    private bool navMeshBuilt = false;
     private Dictionary<int, WalkableArea> colliderDic = new Dictionary<int, WalkableArea>();
 
     private void Awake()
@@ -51,7 +52,7 @@ public class NavigationManager : ViewControllerBase
 
     private void Start()
     {
-        RefreshArea();
+        EnsureNavMeshBuilt();
     }
 
     private void Update()
@@ -71,10 +72,22 @@ public class NavigationManager : ViewControllerBase
         }
     }
 
+    /// <summary>
+    /// 确保 NavMesh 至少构建过一次（避免与 Start 重复构建）。
+    /// 场景 prefab 刚 Instantiate 时 Awake 已执行，但 Start() 要等下一帧才构建 NavMesh；
+    /// 若此时有缓存的鸟 prefab 同步生成，需要先构建好 NavMesh，否则 GetRandomTarget 会返回 Vector3.zero。
+    /// </summary>
+    public void EnsureNavMeshBuilt()
+    {
+        if (navMeshBuilt) return;
+        RefreshArea();
+    }
+
     public void RefreshArea()
     {
         surface.RemoveData();
         surface.BuildNavMesh();
+        navMeshBuilt = true;
         Debug.Log("Build");
     }
 
