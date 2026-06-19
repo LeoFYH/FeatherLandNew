@@ -752,7 +752,7 @@ namespace BirdGame
                 
                 // 添加点击检测组件
                 DecorationClickHandler clickHandler = currentPlacingDecoration.AddComponent<DecorationClickHandler>();
-                clickHandler.Initialize(currentPlacingDecorationId, currentIndex);
+                clickHandler.Initialize(currentPlacingDecorationId, currentIndex, currentPlacingDecoration.transform.position);
                 int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
                 // 更新已购买的装饰品数量
                 var accountData = this.GetModel<ISaveModel>().AccountData;
@@ -849,7 +849,7 @@ namespace BirdGame
                             DecorationClickHandler clickHandler = decoration.GetComponentInChildren<DecorationClickHandler>();
                             if (clickHandler != null)
                             {
-                                clickHandler.Initialize(finalId, j);
+                                clickHandler.Initialize(finalId, j, decorationInfo.position[j]);
                             }
                             else
                             {
