@@ -32,7 +32,8 @@ namespace BirdGame
             salePrice = birdPrice;
             var bird = this.GetModel<IConfigModel>().BirdConfig.GetBird(id, mapIndex);
             icon.sprite = bird.preview;
-            icon.GetComponent<RectTransform>().sizeDelta = icon.sprite.rect.size * 0.5f;
+            float scale = 115f / icon.sprite.rect.size.y; 
+            icon.GetComponent<RectTransform>().sizeDelta = icon.sprite.rect.size * scale;
             coinText.text = $"{this.GetSystem<ILocalizationSystem>().GetString("Reward")}: ${salePrice.ToString("F1", CultureInfo.InvariantCulture)}";
             rarityText.text = $"<color=#ddcdba>{this.GetSystem<ILocalizationSystem>().GetString(bird.reality)}</color>";
             outputText.text = $"<color=#ddcdba>${(data.isSmall ? data.individualEarningSmall : data.individualEarningBig).ToString("F1", CultureInfo.InvariantCulture)}/{this.GetSystem<ILocalizationSystem>().GetString("min")}</color>";
