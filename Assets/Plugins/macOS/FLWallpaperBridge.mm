@@ -887,7 +887,7 @@ void _FLWallpaperRefresh(void) {
 // If C# can't find this symbol the bundle is stale.
 __attribute__((visibility("default")))
 const char *_FLWallpaperBuildStamp(void) {
-    return "FLWallpaperBridge rev=11-fix-fullscreen-restore " __DATE__ " " __TIME__;
+    return "FLWallpaperBridge rev=12-activate-on-exit " __DATE__ " " __TIME__;
 }
 
 // On-demand full diagnostic dump. C# calls this when it wants a snapshot
@@ -990,6 +990,37 @@ void _FLWallpaperWindowedReset(double fraction) {
         [window setCollectionBehavior:NSWindowCollectionBehaviorDefault];
         [window setFrame:NSMakeRect(x, y, w, h) display:YES];
     });
+}
+
+// Re-activate the Unity window and make it key window.
+//
+// 切回全屏/窗口模式时调用。壁纸模式用的是 NonactivatingPanel(故意不抢焦点),
+// 退出壁纸后窗口一直不是 key window —— Unity 收不到原生 mouseDown,
+// Input.GetMouseButtonDown(0) 永远 false,同时 event tap 已销毁、转发器已禁用,
+// 于是撒食物等所有点击交互全部失效(表现:看到系统光标而非游戏自定义光标,
+// 点击无反应,重启才恢复)。这是 Windows 端 FullscreenMode() 结尾 ActivateWindow()
+// 的 macOS 等价物。
+//
+// 立即激活一次,并在 0.3s 后再补一次 —— 因为 C# 紧接着会设
+// Screen.fullScreen = true,Unity 的全屏切换是异步的,可能把 key 状态盖掉,
+// 延迟再 assert 一次保证落地后窗口仍是 key。
+__attribute__((visibility("default")))
+void _FLWallpaperActivateWindow(void) {
+    dispatch_block_t activate = ^{
+        NSWindow *window = FLLocateUnityWindow();
+        [NSApp activateIgnoringOtherApps:YES];
+        if (window != nil) {
+            [window makeKeyAndOrderFront:nil];
+            NSLog(@"[FLLOG][ACTIVATE] activated app + makeKeyAndOrderFront isKey=%d isMain=%d",
+                  [window isKeyWindow], [window isMainWindow]);
+        } else {
+            NSLog(@"[FLLOG][ACTIVATE] no Unity window to activate");
+        }
+    };
+    FLRunOnMain(activate);
+    // 异步全屏切换落地后再补一次
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)),
+                   dispatch_get_main_queue(), activate);
 }
 
 // Mouse event forwarding API - similar to Windows SimpleMouseForwarder

@@ -962,6 +962,7 @@ namespace BirdGame
         [DllImport("FLWallpaperBridge")] private static extern int  _FLWallpaperGetMainScreenFrame(
             out double x, out double y, out double w, out double h, int fullFrame);
         [DllImport("FLWallpaperBridge")] private static extern void _FLWallpaperWindowedReset(double fraction);
+        [DllImport("FLWallpaperBridge")] private static extern void _FLWallpaperActivateWindow();
         [DllImport("FLWallpaperBridge")] private static extern void _FLDiagnose();
         [DllImport("FLWallpaperBridge")] private static extern System.IntPtr _FLWallpaperBuildStamp();
         #endif
@@ -1078,6 +1079,13 @@ namespace BirdGame
 
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
+
+            // 关键：从壁纸模式(NonactivatingPanel,从不抢焦点)切回来后窗口不是 key window，
+            // Unity 收不到原生 mouseDown，撒食物等点击全部失效(表现为系统光标、点击无反应、
+            // 重启才好)。这里重新激活窗口，等价于 Windows 端 FullscreenMode() 的 ActivateWindow()。
+#if !UNITY_EDITOR
+            SafeCall(() => _FLWallpaperActivateWindow(), "_FLWallpaperActivateWindow");
+#endif
             Debug.Log("[FullscreenMode][macOS] 已激活");
         }
 
@@ -1116,6 +1124,12 @@ namespace BirdGame
 
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
+
+            // 同 FullscreenMode：壁纸 NonactivatingPanel 退出后窗口不是 key window，
+            // 不重新激活的话点击交互失效。
+#if !UNITY_EDITOR
+            SafeCall(() => _FLWallpaperActivateWindow(), "_FLWallpaperActivateWindow");
+#endif
             Debug.Log($"[WindowedMode][macOS] 已激活 - 目标 {windowW}x{windowH}");
         }
 
