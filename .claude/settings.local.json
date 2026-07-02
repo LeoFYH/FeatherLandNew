@@ -59,7 +59,13 @@
       "mcp__mcp-unity__execute_menu_item",
       "Bash(git check-ignore *)",
       "Bash(echo \"[exit $?]\")",
-      "Bash(git lfs *)"
+      "Bash(git lfs *)",
+      "Bash(python -c \"import json;json.load\\(open\\('Packages/manifest.json'\\)\\);print\\('manifest.json OK'\\)\")",
+      "Bash(py -c \"import json;json.load\\(open\\('Packages/manifest.json'\\)\\);print\\('manifest.json OK'\\)\")",
+      "Bash(python -c \"import json;json.load\\(open\\('Packages/packages-lock.json'\\)\\);print\\('packages-lock.json OK'\\)\")",
+      "Bash(py -c \"import json;json.load\\(open\\('Packages/packages-lock.json'\\)\\);print\\('packages-lock.json OK'\\)\")",
+      "Bash(python -c \"import json;json.load\\(open\\('Packages/manifest.json'\\)\\);json.load\\(open\\('Packages/packages-lock.json'\\)\\);print\\('两个 JSON 都 OK'\\)\")",
+      "Bash(py -c \"import json;json.load\\(open\\('Packages/manifest.json'\\)\\);json.load\\(open\\('Packages/packages-lock.json'\\)\\);print\\('两个 JSON 都 OK'\\)\")"
     ]
   }
 }
