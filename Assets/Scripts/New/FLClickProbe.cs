@@ -26,9 +26,24 @@ namespace BirdGame
             Debug.Log("[FLLOG-CS] FLClickProbe installed");
         }
 
+        /// <summary>
+        /// 壁纸模式开关, 由 FullScreenUtility 的 WallpaperMode(true) /
+        /// FullscreenMode / WindowedMode(false) 维护。两个用途:
+        /// 1. PhotoPopup 强制 onClick 兜底只在壁纸(NSPanel)下启用 —— 全屏/窗口
+        ///    模式 BaseInputModule 正常派发 onClick, 再兜底会双触发(评审确认)。
+        /// 2. 壁纸层级 2s 心跳(_FLWallpaperRefresh)的驱动开关 —— 原设想由
+        ///    WallpaperModeController 驱动, 但该组件不在任何场景里(死代码),
+        ///    心跳从没跑过; 搬到这里防 Spaces 切换把壁纸窗口顶回普通层。
+        /// </summary>
+        public static bool WallpaperModeActive = false;
+
 #if UNITY_STANDALONE_OSX && !UNITY_EDITOR
         [DllImport("FLWallpaperBridge")] private static extern void _FLDiagnose();
+        [DllImport("FLWallpaperBridge")] private static extern void _FLWallpaperRefresh();
 #endif
+
+        private float _nextWallpaperRefreshAt = 0f;
+        private const float WALLPAPER_REFRESH_INTERVAL = 2f;
 
         private float _nextDiagnoseAt = 0f;
         private const float DIAGNOSE_INTERVAL = 5f;
@@ -91,6 +106,17 @@ namespace BirdGame
                 _lastForcedPressTarget = null;
             }
 
+            // 壁纸层级心跳: 每 2s 重新拍一次 NSWindow.level(原生侧带 g_wallpaperOn
+            // 守卫, 壁纸没开时是 no-op), 防 Spaces 切换/Mission Control 顶层级。
+            if (WallpaperModeActive && Time.time >= _nextWallpaperRefreshAt)
+            {
+                _nextWallpaperRefreshAt = Time.time + WALLPAPER_REFRESH_INTERVAL;
+#if UNITY_STANDALONE_OSX && !UNITY_EDITOR
+                try { _FLWallpaperRefresh(); }
+                catch (System.Exception e) { Debug.LogWarning($"[FLLOG-CS] _FLWallpaperRefresh threw {e.Message}"); }
+#endif
+            }
+
             // 周期性触发原生 diagnose,保证 log 一直有新鲜状态
             if (Time.time >= _nextDiagnoseAt)
             {
@@ -108,6 +134,11 @@ namespace BirdGame
         private void RecordPressTargetForPhotoPopupFallback()
         {
             _lastForcedPressTarget = null;
+
+            // 壁纸门: 兜底只补偿壁纸 NSPanel 下漏发的 onClick。全屏/窗口模式
+            // BaseInputModule 正常派发, 再兜底会让 PhotoPopup 按钮双触发。
+            if (!WallpaperModeActive) return;
+
             if (_raycastBuf == null || _raycastBuf.Count == 0) return;
 
             var top = _raycastBuf[0].gameObject;
@@ -126,6 +157,7 @@ namespace BirdGame
         private void TryForcePointerClickInPhotoPopup()
         {
             if (_lastForcedPressTarget == null) return;
+            if (!WallpaperModeActive) return; // 壁纸门(双保险): 模式切换瞬间也不许兜底
 
             // 再做一次 raycast,确认 mouseUp 时鼠标还在 PhotoPopup 区域(避免拖出去
             // 还触发 click)。同时拿到当前的命中目标。

@@ -92,6 +92,29 @@
 }
 @end
 
+// FLBorderlessWindow: 无边框全屏模式用的 NSWindow 子类(不是 NSPanel!)。
+//
+// rev=14/15 实测日志证明: 壁纸往返之后再走 Unity 的 Screen.fullScreen=true
+// (toggleFullScreen 建原生全屏 Space), 新 Space 不给窗口路由任何 mouseDown ——
+// 窗口 isKey=1/isMain=1/app active/位置在更新, 点击就是进不来, 连翻转
+// ignoresMouseEvents 强制重建路由都救不回。所以全屏模式改为无边框全屏窗
+// (等价 Win 端 WS_POPUP + HWND_TOP), 彻底绕开 fullscreen Space。
+//
+// 为什么必须换类: PlayerWindow 变 Borderless 后 canBecomeKeyWindow 返回 NO
+// (rev=14 日志 SWAP-BEFORE 实测 canBecomeKey=0), 键盘/点击都会失效。
+// 用 NSWindow 子类而不是复用 FLWallpaperPanel, 是避免 NSPanel 的 onClick
+// 漏发怪癖(见 FLClickProbe 的 PhotoPopup 兜底)污染全屏模式。
+@interface FLBorderlessWindow : NSWindow
+@end
+@implementation FLBorderlessWindow
+- (BOOL)canBecomeKeyWindow  { return YES; }
+- (BOOL)canBecomeMainWindow { return YES; }
+// 不让 AppKit 把全屏 frame 往菜单栏下面压
+- (NSRect)constrainFrameRect:(NSRect)frameRect toScreen:(NSScreen *)screen {
+    return frameRect;
+}
+@end
+
 static BOOL FLAcceptsFirstMouseImpl(id self, SEL _cmd, NSEvent *event) {
     NSLog(@"[FLLOG][VIEW] acceptsFirstMouse called self=%@ event.type=%lu -> YES",
           self, event ? (unsigned long)[event type] : 0);
@@ -137,6 +160,10 @@ static NSWindowStyleMask     g_savedStyle    = 0;
 static NSRect                g_savedFrame    = {{0, 0}, {0, 0}};
 static BOOL                  g_savedValid    = NO;
 static BOOL                  g_wallpaperOn   = NO;
+
+// 无边框全屏(rev=16)状态: 进入时保存原窗口类(PlayerWindow), 退出时换回。
+static __strong Class        g_fsSavedWindowClass = nil;
+static BOOL                  g_borderlessFsOn     = NO;
 
 // Mouse event forwarding state
 static CFMachPortRef         g_eventTap      = NULL;
@@ -444,6 +471,106 @@ static void FLWaitForFullScreenExit(NSWindow *window) {
     }
 }
 
+#pragma mark - Borderless Fullscreen (rev=16, 绕开 macOS 原生全屏 Space)
+
+// 退出无边框全屏: 恢复菜单栏/Dock + 把窗口类换回 PlayerWindow。
+// 幂等; 不动 styleMask/frame(交给后续的 windowedReset / wallpaperApply)。
+// 必须在任何 "titled styleMask 恢复" 之前调用 —— titled 位只能在原始
+// PlayerWindow 类上动, 否则 titlebar 的 KVO 会因类不匹配崩(同壁纸路径的教训)。
+static void FLExitBorderlessFullscreenInternal(void) {
+    if (!g_borderlessFsOn) return;
+
+    [NSApp setPresentationOptions:NSApplicationPresentationDefault];
+
+    NSWindow *window = FLLocateUnityWindow();
+    if (window != nil && [window class] == [FLBorderlessWindow class]
+        && g_fsSavedWindowClass != nil)
+    {
+        object_setClass(window, g_fsSavedWindowClass);
+        NSLog(@"[FLLOG][BFS-EXIT] window class FLBorderlessWindow -> %s",
+              class_getName(g_fsSavedWindowClass));
+    }
+    g_fsSavedWindowClass = nil;
+    g_borderlessFsOn = NO;
+
+    FLRemoveEventMonitors();
+    NSLog(@"[FLLOG][BFS-EXIT] borderless fullscreen OFF, presentationOptions restored");
+}
+
+// 进入无边框全屏: Borderless + 撑满 [NSScreen frame] + 普通层级 +
+// 自动隐藏菜单栏/Dock。等价 Windows 端 FullscreenMode 的 WS_POPUP + HWND_TOP。
+// 不创建 fullscreen Space, 所以不受 "壁纸往返后 Space 不路由点击" 影响。
+static void FLEnterBorderlessFullscreenInternal(void) {
+    if (g_wallpaperOn) {
+        NSLog(@"[FLLOG][BFS] skipped — wallpaper is ON (safe guard)");
+        return;
+    }
+    NSWindow *window = FLLocateUnityWindow();
+    if (window == nil) {
+        NSLog(@"[FLLOG][BFS] no Unity window — abort");
+        return;
+    }
+    FLLogWindow(@"BFS-BEFORE", window);
+
+    // 还在原生全屏 Space 里(比如启动即全屏)就先退出来, 复用壁纸入口的等待逻辑
+    if ([window styleMask] & NSWindowStyleMaskFullScreen) {
+        NSLog(@"[FLLOG][BFS] window in native fullscreen — toggling out first");
+        [window toggleFullScreen:nil];
+        FLWaitForFullScreenExit(window);
+    }
+
+    // *** 超时守卫(评审确认的 critical) ***: 全屏过渡进行中时 toggleFullScreen
+    // 会被 AppKit 忽略, FLWaitForFullScreenExit 2s 超时后 FullScreen 位仍置位。
+    // 此时绝不能 setStyleMask —— 在全屏过渡之外增删 FullScreen 位会抛
+    // NSGenericException(FLRestoreWindow 注释里就是这个异常), ObjC 异常穿过
+    // IL2CPP 边界没人接, 直接崩 app。放弃本次(不设任何状态), 用户再切一次即可。
+    if ([window styleMask] & NSWindowStyleMaskFullScreen) {
+        NSLog(@"[FLLOG][BFS] !!! still in native fullscreen after wait — abort, retry later");
+        return;
+    }
+
+    if (!g_borderlessFsOn) {
+        // titled -> borderless 必须在原始类上做(KVO titlebar 教训), 再换类
+        if ([window styleMask] != NSWindowStyleMaskBorderless) {
+            NSLog(@"[FLLOG][BFS] setStyleMask 0x%lx -> Borderless (在原 class 上)",
+                  (unsigned long)[window styleMask]);
+            [window setStyleMask:NSWindowStyleMaskBorderless];
+        }
+        Class c = [window class];
+        if (c != [FLBorderlessWindow class]) {
+            g_fsSavedWindowClass = c;
+            object_setClass(window, [FLBorderlessWindow class]);
+            NSLog(@"[FLLOG][BFS] window class %s -> FLBorderlessWindow",
+                  class_getName(c));
+        }
+    }
+
+    // 自动隐藏菜单栏 + Dock(macOS 要求两个 flag 必须成对)
+    [NSApp setPresentationOptions:
+        (NSApplicationPresentationAutoHideMenuBar | NSApplicationPresentationAutoHideDock)];
+
+    [window setLevel:NSNormalWindowLevel];
+    [window setCollectionBehavior:NSWindowCollectionBehaviorDefault];
+
+    NSScreen *screen = [NSScreen mainScreen];
+    if (screen != nil) {
+        [window setFrame:[screen frame] display:YES];
+    }
+
+    [window setAcceptsMouseMovedEvents:YES];
+    [window setIgnoresMouseEvents:NO];
+
+    // 诊断监视器留着: 如果还有点击问题, 下一份日志能直接看到每次点击去了哪
+    FLInstallEventMonitors();
+
+    [NSApp activateIgnoringOtherApps:YES];
+    [window makeKeyAndOrderFront:nil];
+
+    g_borderlessFsOn = YES;
+    FLLogWindow(@"BFS-AFTER", window);
+    NSLog(@"[FLLOG][BFS] borderless fullscreen ON");
+}
+
 static void FLApplyWallpaper(void) {
     NSLog(@"[FLLOG] ============================================");
     NSLog(@"[FLLOG] ====== FLApplyWallpaper ENTER ==============");
@@ -456,6 +583,10 @@ static void FLApplyWallpaper(void) {
         return;
     }
     FLLogWindow(@"APPLY-INITIAL", window);
+
+    // rev=16: 如果当前在无边框全屏, 先退出来(类换回 PlayerWindow + 恢复菜单栏),
+    // 保证壁纸机器永远从原始 PlayerWindow 状态出发, class swap 保存/恢复不会串。
+    FLExitBorderlessFullscreenInternal();
 
     // 首先检查是否处于全屏模式，如果是，先退出全屏
     if ([window styleMask] & NSWindowStyleMaskFullScreen) {
@@ -472,6 +603,15 @@ static void FLApplyWallpaper(void) {
         [window toggleFullScreen:nil];
         FLWaitForFullScreenExit(window);
         NSLog(@"[FLWallpaper] 已退出全屏模式");
+    }
+
+    // *** 超时守卫(同 BFS, 评审确认的 critical) ***: 等待超时后 FullScreen 位
+    // 仍置位的话, 下面的 setStyleMask(Borderless) 会在全屏过渡外清 FullScreen 位
+    // → NSGenericException → 崩 app。放弃本次进入(g_wallpaperOn 保持 NO,
+    // C# 侧会据此回退到全屏模式)。
+    if ([window styleMask] & NSWindowStyleMaskFullScreen) {
+        NSLog(@"[FLLOG][APPLY] !!! still in native fullscreen after wait — abort wallpaper enter");
+        return;
     }
 
     if (!g_savedValid) {
@@ -895,7 +1035,7 @@ void _FLWallpaperRefresh(void) {
 // If C# can't find this symbol the bundle is stale.
 __attribute__((visibility("default")))
 const char *_FLWallpaperBuildStamp(void) {
-    return "FLWallpaperBridge rev=15-fullscreen-nudge " __DATE__ " " __TIME__;
+    return "FLWallpaperBridge rev=17-borderless-guards " __DATE__ " " __TIME__;
 }
 
 // On-demand full diagnostic dump. C# calls this when it wants a snapshot
@@ -906,9 +1046,9 @@ void _FLDiagnose(void) {
         NSLog(@"[FLLOG] @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         NSLog(@"[FLLOG] @@@@@@@@ _FLDiagnose snapshot @@@@@@@@@@@@@@");
         NSLog(@"[FLLOG] @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        NSLog(@"[FLLOG][DIAG] g_wallpaperOn=%d g_savedValid=%d g_savedLevel=%ld "
+        NSLog(@"[FLLOG][DIAG] g_wallpaperOn=%d g_borderlessFsOn=%d g_savedValid=%d g_savedLevel=%ld "
               @"savedWindowClass=%s savedContentViewClass=%s viewSubclass=%s",
-              g_wallpaperOn, g_savedValid, (long)g_savedLevel,
+              g_wallpaperOn, g_borderlessFsOn, g_savedValid, (long)g_savedLevel,
               g_savedWindowClass ? class_getName(g_savedWindowClass) : "nil",
               g_savedContentViewClass ? class_getName(g_savedContentViewClass) : "nil",
               g_wallpaperViewSubclass ? class_getName(g_wallpaperViewSubclass) : "nil");
@@ -1008,6 +1148,20 @@ void _FLWallpaperWindowedReset(double fraction) {
 // 这两个会强抢焦点把窗口拉到前台，是壁纸模式(NonactivatingPanel,绝不抢焦点)
 // 绝对不能做的。FLApplyWallpaper / FLRestoreWindow 都在主线程改 g_wallpaperOn，
 // 这个 block 也在主线程跑，串行执行，所以守卫是原子的：不可能在壁纸激活期间触发。
+// rev=16: 进入无边框全屏(替代 Screen.fullScreen=true 的原生 Space 全屏)。
+// C# FullscreenMode 调用。带 g_wallpaperOn 铁闸, 壁纸开着时绝不执行。
+__attribute__((visibility("default")))
+void _FLEnterBorderlessFullscreen(void) {
+    FLRunOnMain(^{ FLEnterBorderlessFullscreenInternal(); });
+}
+
+// rev=16: 退出无边框全屏(恢复窗口类 + 菜单栏/Dock)。C# WindowedMode 调用;
+// 进壁纸时 FLApplyWallpaper 内部会自动调, C# 无需管。幂等。
+__attribute__((visibility("default")))
+void _FLExitBorderlessFullscreen(void) {
+    FLRunOnMain(^{ FLExitBorderlessFullscreenInternal(); });
+}
+
 __attribute__((visibility("default")))
 void _FLWallpaperActivateWindow(void) {
     dispatch_block_t activate = ^{

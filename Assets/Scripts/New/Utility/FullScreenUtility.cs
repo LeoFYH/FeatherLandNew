@@ -963,6 +963,8 @@ namespace BirdGame
             out double x, out double y, out double w, out double h, int fullFrame);
         [DllImport("FLWallpaperBridge")] private static extern void _FLWallpaperWindowedReset(double fraction);
         [DllImport("FLWallpaperBridge")] private static extern void _FLWallpaperActivateWindow();
+        [DllImport("FLWallpaperBridge")] private static extern void _FLEnterBorderlessFullscreen();
+        [DllImport("FLWallpaperBridge")] private static extern void _FLExitBorderlessFullscreen();
         [DllImport("FLWallpaperBridge")] private static extern void _FLDiagnose();
         [DllImport("FLWallpaperBridge")] private static extern System.IntPtr _FLWallpaperBuildStamp();
         #endif
@@ -1020,7 +1022,14 @@ namespace BirdGame
             // 步骤 2: 进入壁纸层(原生)
             SafeCall(() => _FLWallpaperEnter(), "_FLWallpaperEnter");
 
-            isWallpaperMode = true;
+            // 以原生真实状态为准: 原生侧在"全屏退出超时"等情况会放弃进入
+            // (g_wallpaperOn 保持 NO), 这里如实上报, GameEntry 现成的
+            // "壁纸挂载失败回退全屏" 检查才能真正生效。旧 bundle 缺符号时维持旧行为(true)。
+            bool nativeOn = true;
+            try { nativeOn = _FLWallpaperIsActive() != 0; }
+            catch (System.Exception) { /* 旧 bundle: 无法探测 */ }
+            isWallpaperMode = nativeOn;
+            FLClickProbe.WallpaperModeActive = nativeOn; // PhotoPopup 兜底 + 2s 层级心跳开关
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
 
@@ -1073,19 +1082,45 @@ namespace BirdGame
 #endif
             isWallpaperMode = false;
 
-            // macOS 推荐 FullScreenWindow（即 borderless 全屏），避免 ExclusiveFullScreen 在多版本上不稳。
+#if !UNITY_EDITOR
+            // rev=16: 不再走 Screen.fullScreen=true —— 那会 toggleFullScreen 建
+            // macOS 原生全屏 Space。rev=14/15 实测日志证明: 壁纸往返后重建的
+            // Space 不给窗口路由 mouseDown(窗口 isKey=1 也没用, nudge 也救不回),
+            // 这就是"退出壁纸后撒食物失效"的根因。
+            // 改为原生无边框全屏窗(Borderless + 撑满屏幕 + 自动隐藏菜单栏/Dock),
+            // 等价 Windows 端 FullscreenMode 的 WS_POPUP + HWND_TOP, 完全绕开 Space。
+            try
+            {
+                _FLEnterBorderlessFullscreen();
+            }
+            catch (System.EntryPointNotFoundException)
+            {
+                // 旧 bundle 缺该符号: 回退 rev<=15 的 Unity 原生全屏, 保证全屏模式
+                // 至少可用(否则用户永久失去全屏且无自愈)。需在 Mac rebuild 才有新符号。
+                Debug.LogError("[FLLOG-CS] !!! _FLEnterBorderlessFullscreen 不存在 — bundle 是旧的, 回退 Screen.fullScreen (请在 Mac 上 rebuild)");
+                Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
+                Screen.fullScreen = true;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[FLLOG-CS] _FLEnterBorderlessFullscreen 异常: {e.Message}");
+            }
+
+            FLClickProbe.WallpaperModeActive = false; // 关掉 PhotoPopup 兜底, 防双触发
+#else
+            // 编辑器里没有原生桥, 保留 Unity 全屏做 Play Mode 占位
             Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
             Screen.fullScreen = true;
+#endif
 
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
 
-            // 退出壁纸后窗口不是 key window → Unity 收不到原生 mouseDown → 撒食物失效。
-            // 这里重新激活窗口。原生层带 g_wallpaperOn 守卫：壁纸开着时绝不执行，不会搞坏壁纸。
+            // 补一手激活 + 延迟 nudge(幂等, 带壁纸铁闸), 覆盖启动等场景
 #if !UNITY_EDITOR
             SafeCall(() => _FLWallpaperActivateWindow(), "_FLWallpaperActivateWindow");
 #endif
-            Debug.Log("[FullscreenMode][macOS] 已激活");
+            Debug.Log("[FullscreenMode][macOS] 已激活 (borderless)");
         }
 
         public void WindowedMode()
@@ -1095,6 +1130,20 @@ namespace BirdGame
             {
                 if (isWallpaperMode)
                     _FLWallpaperExit();
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[WindowedMode][macOS] 退出壁纸层出错: {e.Message}");
+            }
+
+            // rev=16: 若在无边框全屏, 先退出(类换回 PlayerWindow + 恢复菜单栏)。
+            // 必须在 windowedReset 恢复 titled 之前 —— titled 位只能在原始类上动。
+            SafeCall(() => _FLExitBorderlessFullscreen(), "_FLExitBorderlessFullscreen");
+
+            FLClickProbe.WallpaperModeActive = false; // 关掉 PhotoPopup 兜底, 防双触发
+
+            try
+            {
                 // 即使不是壁纸模式,也调用一次 reset 把 styleMask/level 拨回正常
                 _FLWallpaperWindowedReset(0.8);
             }
