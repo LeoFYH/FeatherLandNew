@@ -579,6 +579,14 @@ static void FLRestoreWindow(void) {
         [window setStyleMask:plainBorderless];
     }
 
+    // NSPanel-only 残留清理: 进壁纸时设了 becomesKeyOnlyIfNeeded:YES,
+    // 这个 flag 存在 window 实例上,换回 PlayerWindow 类之前拨回 NO,
+    // 避免残留影响退出壁纸后点击/成 key 的行为。
+    if ([window respondsToSelector:@selector(setBecomesKeyOnlyIfNeeded:)]) {
+        [(NSPanel *)window setBecomesKeyOnlyIfNeeded:NO];
+        NSLog(@"[FLLOG][RESTORE] setBecomesKeyOnlyIfNeeded:NO (清 NSPanel 残留)");
+    }
+
     // (b-reverse) swap class back to PlayerWindow + 还 contentView
     FLDisableNativeClickDelivery(window);
 
@@ -887,7 +895,7 @@ void _FLWallpaperRefresh(void) {
 // If C# can't find this symbol the bundle is stale.
 __attribute__((visibility("default")))
 const char *_FLWallpaperBuildStamp(void) {
-    return "FLWallpaperBridge rev=14-activate-guarded " __DATE__ " " __TIME__;
+    return "FLWallpaperBridge rev=15-fullscreen-nudge " __DATE__ " " __TIME__;
 }
 
 // On-demand full diagnostic dump. C# calls this when it wants a snapshot
@@ -1017,11 +1025,48 @@ void _FLWallpaperActivateWindow(void) {
             NSLog(@"[FLLOG][ACTIVATE] no Unity window to activate");
         }
     };
+
+    // 鼠标路由 nudge —— rev=14 实测日志证明: 退出壁纸重进全屏后窗口
+    // isKey=1 / isMain=1 / app active, Input.mousePosition 也在更新,
+    // 但 mouseDown 一律收不到(用户看到系统光标)。窗口自身状态全部正常,
+    // 说明是 WindowServer 侧该窗口的鼠标事件路由记录没跟上(此窗口经历了
+    // NSPanel class swap + NonactivatingPanel + toggleFullScreen 往返)。
+    // 翻转 ignoresMouseEvents 强制 WindowServer 重建这个窗口的鼠标路由,
+    // 再补 makeKey + 光标区域刷新。幂等,带壁纸铁闸。
+    dispatch_block_t nudge = ^{
+        if (g_wallpaperOn) {
+            NSLog(@"[FLLOG][NUDGE] skipped — wallpaper is ON (safe guard)");
+            return;
+        }
+        NSWindow *window = FLLocateUnityWindow();
+        if (window == nil) return;
+        [window setIgnoresMouseEvents:YES];
+        [window setIgnoresMouseEvents:NO];
+        [window setAcceptsMouseMovedEvents:YES];
+        if (![window isKeyWindow]) {
+            [NSApp activateIgnoringOtherApps:YES];
+            [window makeKeyAndOrderFront:nil];
+        }
+        NSView *cv = [window contentView];
+        if (cv != nil) {
+            [window invalidateCursorRectsForView:cv];
+        }
+        NSLog(@"[FLLOG][NUDGE] mouse-routing nudge done: class=%s style=0x%lx "
+              @"level=%ld isKey=%d isMain=%d ignoresMouse=%d",
+              class_getName([window class]),
+              (unsigned long)[window styleMask], (long)[window level],
+              [window isKeyWindow], [window isMainWindow],
+              [window ignoresMouseEvents]);
+    };
+
     FLRunOnMain(activate);
-    // Unity 的 Screen.fullScreen 切换是异步的，0.3s 后再补一次(同样带守卫，
-    // 若这期间进了壁纸则自动跳过)，保证全屏落地后窗口仍是 key。
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)),
-                   dispatch_get_main_queue(), activate);
+    // 不再在 0.3s(全屏过渡动画中途)抢 makeKeyAndOrderFront —— 过渡中抢 key
+    // 有干扰 fullscreen Space 建立的风险。改为过渡结束后(动画约 1s)的
+    // 1.2s / 2.8s 两拍 nudge,覆盖慢机器,幂等且带铁闸。
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.2 * NSEC_PER_SEC)),
+                   dispatch_get_main_queue(), nudge);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.8 * NSEC_PER_SEC)),
+                   dispatch_get_main_queue(), nudge);
 }
 
 // Mouse event forwarding API - similar to Windows SimpleMouseForwarder
