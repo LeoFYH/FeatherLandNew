@@ -67,7 +67,11 @@
       "Bash(python -c \"import json;json.load\\(open\\('Packages/manifest.json'\\)\\);json.load\\(open\\('Packages/packages-lock.json'\\)\\);print\\('两个 JSON 都 OK'\\)\")",
       "Bash(py -c \"import json;json.load\\(open\\('Packages/manifest.json'\\)\\);json.load\\(open\\('Packages/packages-lock.json'\\)\\);print\\('两个 JSON 都 OK'\\)\")",
       "Bash(python -)",
-      "Bash(unzip -o -q /c/Users/11752/Downloads/GameData.zip -d GameData)"
+      "Bash(unzip -o -q /c/Users/11752/Downloads/GameData.zip -d GameData)",
+      "Bash(grep -nE '^场景加载完成|^加载鸟$|^鸟蛋数量|^Loading|丢弃过期|预制体加载失败|prefab 未分配|找不到类型|地图加载中' '/c/Users/11752/Downloads/Player \\(1\\).log')",
+      "Bash(awk 'NR>=2764 && NR<=5893' '/c/Users/11752/Downloads/Player \\(1\\).log')",
+      "Bash(awk -F: '{print $NF}')",
+      "Bash(PYTHONIOENCODING=utf-8 python -)"
     ]
   }
 }

@@ -122,7 +122,10 @@ namespace BirdGame
                     return;
                 }
                 GameObject go = GameObject.Instantiate(obj);
-                this.GetModel<IBirdModel>().AddBird(birdIndex, go.GetComponent<Brid>());
+                var brid = go.GetComponent<Brid>();
+                // 出生必须在地面：幼鸟只有 walkArea==3 时才会检测食物，出生在非地面会卡死无法长大
+                brid.walkArea = 3;
+                this.GetModel<IBirdModel>().AddBird(birdIndex, brid);
                 this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
                 this.GetSystem<IAchievementSystem>().CheckBirdSlotAchievements();
                 if (this.GetModel<ISaveModel>().BirdInfoData.mapBirds[mapIndex].eggList.Count > 0)
@@ -130,10 +133,11 @@ namespace BirdGame
                 var agent = go.GetComponent<NavMeshAgent>();
                 agent.enabled = false;
 
-                var point = NavigationManager.Instance.GetRandomTarget(3);
-                while (!IsPointInScreen2D(point))
+                var point = NavigationManager.Instance.GetRandomGroundSpawnPoint();
+                int screenTries = 0;
+                while (!IsPointInScreen2D(point) && screenTries++ < 30)
                 {
-                    point = NavigationManager.Instance.GetRandomTarget(3);
+                    point = NavigationManager.Instance.GetRandomGroundSpawnPoint();
                 }
                 go.transform.position = new Vector3(point.x, point.y, 0);
                 // 更新 GameManager 的未开启蛋数量

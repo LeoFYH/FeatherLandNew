@@ -320,6 +320,8 @@ namespace BirdGame
                                 var birdConf = this.GetModel<IConfigModel>().BirdConfig.GetBird(index, mapIndex);
                                 if (TryFlyAwayFromClick(birdConf))
                                 {
+                                    // 成鸟被摸起飞时同样给抚摸反馈：音效 + 爱心特效
+                                    PlayPettingFeedback(index, mapIndex);
                                     return;
                                 }
 
@@ -365,16 +367,7 @@ namespace BirdGame
                                 //this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Stroke);
                                 //this.GetSystem<IAudioSystem>().PlayBirdEffect(index);
                                 anim.SetTrigger(AnimatorHashes.StrokeTrigger);
-                                var bodyType = this.GetModel<IConfigModel>().BirdConfig.GetBirdBodyType(index, mapIndex);
-                                this.GetSystem<IAudioSystem>().RandomPlayPetting(bodyType);
-                                // 使用对象池获取心形特效
-                                if (heart != null && heart.activeSelf)
-                                {
-                                    this.GetSystem<IObjectPoolSystem>().Recycle("Heart", heart);
-                                    heart = null;
-                                }
-
-                                this.GetSystem<IObjectPoolSystem>().Get("Heart", heartPos, obj => { heart = obj; });
+                                PlayPettingFeedback(index, mapIndex);
                                 if (petTime > 0.5)
                                 {
                                     this.GetModel<IAccountModel>().Coins.Value += birdConf.clickEarningForFiveTimes;
@@ -459,6 +452,23 @@ namespace BirdGame
             {
                 previousRightClickCount = MouseForwarder.rightClickCount;
             }
+        }
+
+        /// <summary>
+        /// 抚摸反馈：播放抚摸音效 + 爱心特效
+        /// </summary>
+        private void PlayPettingFeedback(int index, int mapIndex)
+        {
+            var bodyType = this.GetModel<IConfigModel>().BirdConfig.GetBirdBodyType(index, mapIndex);
+            this.GetSystem<IAudioSystem>().RandomPlayPetting(bodyType);
+            // 使用对象池获取心形特效
+            if (heart != null && heart.activeSelf)
+            {
+                this.GetSystem<IObjectPoolSystem>().Recycle("Heart", heart);
+                heart = null;
+            }
+
+            this.GetSystem<IObjectPoolSystem>().Get("Heart", heartPos, obj => { heart = obj; });
         }
 
         private bool TryFlyAwayFromClick(BirdItem birdConf)

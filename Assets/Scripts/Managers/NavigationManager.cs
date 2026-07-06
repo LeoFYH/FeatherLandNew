@@ -231,6 +231,46 @@ public class NavigationManager : ViewControllerBase
         return point;
     }
     
+    /// <summary>
+    /// 获取鸟的出生点：保证落在 Ground(3) 的 NavMesh 上，且位于地面 WalkableArea 多边形内。
+    /// GetRandomTarget 按区域号取三角形，但标为 3 的三角形可能溢出到非地面区域（或返回 zero）；
+    /// 出生在非地面会导致幼鸟检测不到食物、无法长大卡死，这里做多重校验。
+    /// </summary>
+    public Vector3 GetRandomGroundSpawnPoint()
+    {
+        const int groundArea = 3;
+        var walkable = GetWalkableArea(groundArea);
+        Vector3 firstValid = Vector3.zero;
+        for (int i = 0; i < maxTries; i++)
+        {
+            var point = GetRandomTarget(groundArea);
+            if (point == Vector3.zero) continue;
+            if (firstValid == Vector3.zero) firstValid = point;
+            if (walkable != null && !walkable.IsPointInside(point)) continue;
+            return point;
+        }
+
+        // 兜底1：在地面多边形包围盒内随机取点，要求同时在多边形内且在 Ground NavMesh 上
+        if (walkable != null)
+        {
+            var polygon = walkable.GetComponent<PolygonCollider2D>();
+            if (polygon != null)
+            {
+                var bounds = polygon.bounds;
+                for (int i = 0; i < maxTries; i++)
+                {
+                    var point = new Vector3(Random.Range(bounds.min.x, bounds.max.x),
+                        Random.Range(bounds.min.y, bounds.max.y), 0);
+                    if (polygon.OverlapPoint(point) && IsPointInNavMeshArea(groundArea, point))
+                        return point;
+                }
+            }
+        }
+
+        // 兜底2：退回旧行为（NavMesh 上任意 Ground 三角形内的点），至少不比原来差
+        return firstValid != Vector3.zero ? firstValid : GetRandomTarget(groundArea);
+    }
+
     private Vector3 RandomPointInTriangle(Vector3 a, Vector3 b, Vector3 c)
     {
         float r1 = Random.value;
