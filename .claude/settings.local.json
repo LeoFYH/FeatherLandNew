@@ -65,7 +65,9 @@
       "Bash(python -c \"import json;json.load\\(open\\('Packages/packages-lock.json'\\)\\);print\\('packages-lock.json OK'\\)\")",
       "Bash(py -c \"import json;json.load\\(open\\('Packages/packages-lock.json'\\)\\);print\\('packages-lock.json OK'\\)\")",
       "Bash(python -c \"import json;json.load\\(open\\('Packages/manifest.json'\\)\\);json.load\\(open\\('Packages/packages-lock.json'\\)\\);print\\('两个 JSON 都 OK'\\)\")",
-      "Bash(py -c \"import json;json.load\\(open\\('Packages/manifest.json'\\)\\);json.load\\(open\\('Packages/packages-lock.json'\\)\\);print\\('两个 JSON 都 OK'\\)\")"
+      "Bash(py -c \"import json;json.load\\(open\\('Packages/manifest.json'\\)\\);json.load\\(open\\('Packages/packages-lock.json'\\)\\);print\\('两个 JSON 都 OK'\\)\")",
+      "Bash(python -)",
+      "Bash(unzip -o -q /c/Users/11752/Downloads/GameData.zip -d GameData)"
     ]
   }
 }

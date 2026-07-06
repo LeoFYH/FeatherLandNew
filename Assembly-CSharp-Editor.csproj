@@ -1272,10 +1272,6 @@
       <HintPath>Library\ScriptAssemblies\Unity.Rider.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="NavMeshPlus">
-      <HintPath>Library\ScriptAssemblies\NavMeshPlus.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="PsdPlugin">
       <HintPath>Library\ScriptAssemblies\PsdPlugin.dll</HintPath>
       <Private>False</Private>
@@ -1306,10 +1302,6 @@
     </Reference>
     <Reference Include="Unity.2D.IK.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.2D.IK.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="NavMeshPlusEditor">
-      <HintPath>Library\ScriptAssemblies\NavMeshPlusEditor.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.ResourceManager">
@@ -1588,7 +1580,9 @@
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp-firstpass.csproj" />
     <ProjectReference Include="Assembly-CSharp.csproj" />
+    <ProjectReference Include="NavMeshPlus.csproj" />
     <ProjectReference Include="UniTask.Linq.csproj" />
+    <ProjectReference Include="NavMeshPlusEditor.csproj" />
     <ProjectReference Include="Sirenix.OdinInspector.Modules.Unity.Addressables.csproj" />
     <ProjectReference Include="UniTask.csproj" />
     <ProjectReference Include="Sirenix.OdinInspector.Modules.UnityMathematics.csproj" />
