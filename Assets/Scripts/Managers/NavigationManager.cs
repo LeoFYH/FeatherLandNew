@@ -64,7 +64,9 @@ public class NavigationManager : ViewControllerBase
         {
             foreach (var area in expendAreas)
             {
-                area.SetActive(true);
+                // 部分场景 prefab 的 expendAreas 存在未赋值槽位，跳过避免 UnassignedReferenceException
+                if (area != null)
+                    area.SetActive(true);
             }
 
             isExpend = true;

@@ -71,7 +71,22 @@
       "Bash(grep -nE '^场景加载完成|^加载鸟$|^鸟蛋数量|^Loading|丢弃过期|预制体加载失败|prefab 未分配|找不到类型|地图加载中' '/c/Users/11752/Downloads/Player \\(1\\).log')",
       "Bash(awk 'NR>=2764 && NR<=5893' '/c/Users/11752/Downloads/Player \\(1\\).log')",
       "Bash(awk -F: '{print $NF}')",
-      "Bash(PYTHONIOENCODING=utf-8 python -)"
+      "Bash(PYTHONIOENCODING=utf-8 python -)",
+      "Bash(cd /E:/Unity/Projects/Work/FeatherLandNew && find . -type f -name \"*.cs\" | head -20)",
+      "Bash(xargs -I {} sh -c 'echo \"=== File: {} ===\" && cat \"{}\" | head -50')",
+      "Bash(git log *)",
+      "Bash(grep -v \"Comment\\\\|Debug\\\\|//.*1\")",
+      "Bash(xargs -I {} sh -c 'grep \"id:\" {} || true')",
+      "Bash(git -C \"E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew\" log --oneline --all -i --grep=\"图鉴\" --grep=\"Illustrated\" --grep=\"dex\")",
+      "Bash(git -C \"E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew\" log --oneline --follow -15 -- \"Assets/Scripts/New/ViewController/UI/Popups/IllustratedPopup.cs\")",
+      "Bash(git -C \"E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew\" show 1000c498e --stat)",
+      "Bash(git -C \"E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew\" show 1000c498e -- \"Assets/Scripts/New/ViewController/UI/Popups/IllustratedPopup.cs\")",
+      "Bash(git -C \"E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew\" show 396e4e8fc --stat)",
+      "Bash(git -C \"E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew\" show 396e4e8fc -- \"Assets/Scripts/New/ViewController/UI/Popups/Illustrated/IllustratedItem.cs\" \"Assets/Scripts/New/ViewController/UI/Popups/IllustratedPopup.cs\" \"Assets/Scripts/New/ViewController/UI/Popups/Illustrated/BirdSkin.cs\")",
+      "Bash(git -C \"E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew\" show 396e4e8fc -- \"Assets/Scripts/New/ViewController/UI/Popups/Illustrated/IllustratedItem.cs\" \"Assets/Scripts/New/ViewController/UI/Popups/IllustratedPopup.cs\")",
+      "Bash(git -C \"E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew\" log --oneline -S \"reuseIndex\" -- \"Assets/Scripts/New/ViewController/UI/Popups/IllustratedPopup.cs\")",
+      "Bash(git -C \"E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew\" log --oneline --format=\"%h %ad %s\" --date=short -S \"icon.color = Color.white\" -- \"Assets/Scripts/New/ViewController/UI/Popups/Illustrated/BirdSkin.cs\")",
+      "Bash(git -C \"E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew\" show -s --format=\"%h %ad %s\" --date=short 4ae1776e3 1000c498e 396e4e8fc)"
     ]
   }
 }
