@@ -86,7 +86,15 @@
       "Bash(git -C \"E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew\" show 396e4e8fc -- \"Assets/Scripts/New/ViewController/UI/Popups/Illustrated/IllustratedItem.cs\" \"Assets/Scripts/New/ViewController/UI/Popups/IllustratedPopup.cs\")",
       "Bash(git -C \"E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew\" log --oneline -S \"reuseIndex\" -- \"Assets/Scripts/New/ViewController/UI/Popups/IllustratedPopup.cs\")",
       "Bash(git -C \"E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew\" log --oneline --format=\"%h %ad %s\" --date=short -S \"icon.color = Color.white\" -- \"Assets/Scripts/New/ViewController/UI/Popups/Illustrated/BirdSkin.cs\")",
-      "Bash(git -C \"E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew\" show -s --format=\"%h %ad %s\" --date=short 4ae1776e3 1000c498e 396e4e8fc)"
+      "Bash(git -C \"E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew\" show -s --format=\"%h %ad %s\" --date=short 4ae1776e3 1000c498e 396e4e8fc)",
+      "Bash(python -c ' *)",
+      "Bash(PYTHONIOENCODING=utf-8 python -c ' *)",
+      "Bash(PYTHONIOENCODING=utf-8 python patch_config.py)",
+      "Bash(PYTHONIOENCODING=utf-8 python patch_config.py --apply)",
+      "Bash(git -c core.safecrlf=false diff --stat -- \"Assets/Prefabs/Config\")",
+      "Bash(git -c core.safecrlf=false diff -- \"Assets/Prefabs/Config/BirdItems/高山/59_Secretarybird 2.asset\")",
+      "Bash(git -c core.safecrlf=false diff -- \"Assets/Prefabs/Config/ShopConfig.asset\")",
+      "Read(//c/ProgramData/Unity/**)"
     ]
   }
 }
