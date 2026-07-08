@@ -80,6 +80,20 @@ namespace BirdGame
         
         private int previousClickCount = 0;
         private int previousRightClickCount = 0;
+
+        // ---- 拖拽驱动状态(对齐 Windows 端 SimpleMouseForwarder 的钩子拖拽) ----
+        // Mac 壁纸窗口是 NonactivatingPanel、应用无焦点,EventSystem 的
+        // OnBeginDrag/OnDrag 链路收不到连续按住+移动,必须像 Windows 一样
+        // 用全局鼠标状态(CGEventTap)轮询驱动 ReceiveDrag* 这组钩子方法。
+        // 各拖拽组件自带 isDraggingFromHook 防重入,与原生事件流不会双触发。
+        private bool wasLeftButtonDown = false;
+        private bool isLeftMouseDragging = false;
+        private Vector2 dragStartPosition;
+        private Vector2 lastDragPosition;
+        private float dragStartTime;
+        private GameObject currentDragTarget;
+        private const float DRAG_TIME_THRESHOLD = 0.1f;    // 与 Windows 端一致
+        private const float DRAG_DISTANCE_THRESHOLD = 5f;  // 与 Windows 端一致
         
         private void Awake()
         {
@@ -106,9 +120,16 @@ namespace BirdGame
 #endif
             previousClickCount = 0;
             previousRightClickCount = 0;
+            // 拖拽状态复位,防止跨模式切换残留
+            wasLeftButtonDown = false;
+            isLeftMouseDragging = false;
+            currentDragTarget = null;
+            // HUD 让出菜单栏/Dock 区域;MenuPanel 可能尚未实例化,失败则 Update 里重试
+            _uiInsetRetryTimer = 0f;
+            MacWallpaperUIInset.TryApply();
             Debug.Log("[SimpleMouseForwarderMac] 已启用");
         }
-        
+
         private void OnDisable()
         {
             isOnDesktop = false;
@@ -116,19 +137,211 @@ namespace BirdGame
             _FLMouseResetCounters();
             _FLKeyboardClearState();
 #endif
+            // 拖拽进行中被禁用(切模式):补发结束事件,防止目标卡在拖拽态
+            if (currentDragTarget != null)
+            {
+#if UNITY_STANDALONE_OSX && !UNITY_EDITOR
+                try { NotifyDragEnd(currentDragTarget); } catch (Exception) { }
+#endif
+                currentDragTarget = null;
+            }
+            isLeftMouseDragging = false;
+            wasLeftButtonDown = false;
+            MacWallpaperUIInset.Restore();
             Debug.Log("[SimpleMouseForwarderMac] 已禁用");
         }
-        
+
+        private float _uiInsetRetryTimer;
+
         private void Update()
         {
             if (!enableForwarding || !isOnDesktop)
                 return;
-            
+
+            // MenuPanel 晚于壁纸模式生成时,低频重试直到让位成功(成功后零开销)
+            if (!MacWallpaperUIInset.Applied)
+            {
+                _uiInsetRetryTimer += Time.deltaTime;
+                if (_uiInsetRetryTimer >= 1f)
+                {
+                    _uiInsetRetryTimer = 0f;
+                    MacWallpaperUIInset.TryApply();
+                }
+            }
+
             UpdateMouseState();
             UpdateKeyboardState();
             HandleMouseClicks();
+            HandleMouseDrag();
             HandleMouseWheel();
         }
+
+        /// <summary>
+        /// 轮询左键按住状态驱动拖拽(壁纸模式下 EventSystem 拖拽链路不工作)。
+        /// 目标查找优先级与 Windows 端一致:DragAspect > DragMove > SliderBarClickHandler > 场景装饰。
+        /// 只驱动 ReceiveDrag* 钩子族,不合成 pointer 事件,避免与原生点击流双触发。
+        /// </summary>
+        private void HandleMouseDrag()
+        {
+#if UNITY_STANDALONE_OSX && !UNITY_EDITOR
+            bool leftDown = leftButtonDown;
+
+            // 按下沿:记录起点并预找目标(此刻鼠标正压在目标上,最准)
+            if (leftDown && !wasLeftButtonDown)
+            {
+                dragStartPosition = mousePosition;
+                lastDragPosition = mousePosition;
+                dragStartTime = Time.time;
+                isLeftMouseDragging = false;
+                currentDragTarget = FindDragTarget(mousePosition);
+            }
+            // 按住中
+            else if (leftDown && wasLeftButtonDown)
+            {
+                if (!isLeftMouseDragging)
+                {
+                    // 与 Windows 端相同的启动阈值:防止快速点击/手抖误判为拖拽
+                    float timeSinceDown = Time.time - dragStartTime;
+                    float distanceMoved = Vector2.Distance(mousePosition, dragStartPosition);
+                    if (timeSinceDown >= DRAG_TIME_THRESHOLD && distanceMoved > DRAG_DISTANCE_THRESHOLD)
+                    {
+                        if (currentDragTarget == null)
+                            currentDragTarget = FindDragTarget(dragStartPosition);
+
+                        if (currentDragTarget != null)
+                        {
+                            isLeftMouseDragging = true;
+                            // 用按下时的位置开始拖拽,保证抓取点不跳变
+                            NotifyDragBegin(currentDragTarget, dragStartPosition);
+                            if (showDebugLog)
+                                Debug.Log($"[SimpleMouseForwarderMac] 开始拖动: {currentDragTarget.name}");
+                        }
+                    }
+                }
+
+                if (isLeftMouseDragging && currentDragTarget != null && mousePosition != lastDragPosition)
+                {
+                    NotifyDrag(currentDragTarget, mousePosition);
+                    lastDragPosition = mousePosition;
+                }
+            }
+            // 抬起沿
+            else if (!leftDown && wasLeftButtonDown)
+            {
+                if (currentDragTarget != null)
+                {
+                    // 目标可能在拖拽期间被销毁(如关闭弹窗),防御式访问
+                    try { NotifyDragEnd(currentDragTarget); }
+                    catch (Exception) { }
+                }
+                isLeftMouseDragging = false;
+                currentDragTarget = null;
+            }
+
+            wasLeftButtonDown = leftDown;
+#endif
+        }
+
+#if UNITY_STANDALONE_OSX && !UNITY_EDITOR
+        private static void NotifyDragBegin(GameObject target, Vector2 pos)
+        {
+            var dragAspect = target.GetComponent<DragAspect>();
+            if (dragAspect != null && dragAspect.enableHookSupport) { dragAspect.ReceiveDragBegin(pos); return; }
+
+            var dragMove = target.GetComponent<DragMove>();
+            if (dragMove != null && dragMove.enableHookSupport) { dragMove.ReceiveDragBegin(pos); return; }
+
+            var slider = target.GetComponent<SliderBarClickHandler>();
+            if (slider != null) { slider.ReceiveDragBegin(pos); return; }
+
+            var decoration = target.GetComponent<DecorationDrag>();
+            if (decoration != null && decoration.enableHookSupport) decoration.ReceiveDragBegin(pos);
+        }
+
+        private static void NotifyDrag(GameObject target, Vector2 pos)
+        {
+            var dragAspect = target.GetComponent<DragAspect>();
+            if (dragAspect != null && dragAspect.enableHookSupport) { dragAspect.ReceiveDrag(pos); return; }
+
+            var dragMove = target.GetComponent<DragMove>();
+            if (dragMove != null && dragMove.enableHookSupport) { dragMove.ReceiveDrag(pos); return; }
+
+            var slider = target.GetComponent<SliderBarClickHandler>();
+            if (slider != null) { slider.ReceiveHookMousePosition(pos); return; }
+
+            var decoration = target.GetComponent<DecorationDrag>();
+            if (decoration != null && decoration.enableHookSupport) decoration.ReceiveDrag(pos);
+        }
+
+        private static void NotifyDragEnd(GameObject target)
+        {
+            var dragAspect = target.GetComponent<DragAspect>();
+            if (dragAspect != null && dragAspect.enableHookSupport) { dragAspect.ReceiveDragEnd(); return; }
+
+            var dragMove = target.GetComponent<DragMove>();
+            if (dragMove != null && dragMove.enableHookSupport) { dragMove.ReceiveDragEnd(); return; }
+
+            var slider = target.GetComponent<SliderBarClickHandler>();
+            if (slider != null) { slider.ReceiveDragEnd(); return; }
+
+            var decoration = target.GetComponent<DecorationDrag>();
+            if (decoration != null && decoration.enableHookSupport) decoration.ReceiveDragEnd();
+        }
+
+        /// <summary>
+        /// 与 Windows 端 FindDragTarget 相同的优先级;UI 未命中时用 Physics2D 找场景装饰。
+        /// 复用类内缓存的 EventSystem/PointerEventData/结果列表,不改动任何现有 raycast 逻辑。
+        /// </summary>
+        private static GameObject FindDragTarget(Vector2 screenPosition)
+        {
+            if (cachedEventSystem == null)
+            {
+                cachedEventSystem = EventSystem.current;
+                if (cachedEventSystem == null) return null;
+            }
+            if (reusablePointerData == null)
+                reusablePointerData = new PointerEventData(cachedEventSystem);
+
+            reusablePointerData.position = screenPosition;
+            reusablePointerData.button = PointerEventData.InputButton.Left;
+
+            reusableRaycastResults.Clear();
+            cachedEventSystem.RaycastAll(reusablePointerData, reusableRaycastResults);
+
+            foreach (var result in reusableRaycastResults)
+            {
+                var dragAspect = result.gameObject.GetComponent<DragAspect>();
+                if (dragAspect != null && dragAspect.enableHookSupport)
+                    return result.gameObject;
+
+                var dragMove = result.gameObject.GetComponent<DragMove>();
+                if (dragMove != null && dragMove.enableHookSupport)
+                    return result.gameObject;
+
+                // Fill/Handle 命中时也能找到父级滑条,与 Windows 端一致
+                var slider = result.gameObject.GetComponent<SliderBarClickHandler>()
+                             ?? result.gameObject.GetComponentInParent<SliderBarClickHandler>();
+                if (slider != null)
+                    return slider.gameObject;
+            }
+
+            // UI 未命中:Physics2D 检测场景装饰(与 Windows 端 FindDecorationDragTarget 一致)
+            Camera cam = Camera.main;
+            if (cam != null)
+            {
+                Vector3 world = cam.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, 0f));
+                Collider2D hit = Physics2D.OverlapPoint(new Vector2(world.x, world.y));
+                if (hit != null)
+                {
+                    var drag = hit.GetComponentInParent<DecorationDrag>();
+                    if (drag != null && drag.enableHookSupport)
+                        return drag.gameObject;
+                }
+            }
+
+            return null;
+        }
+#endif
         
         private void UpdateMouseState()
         {

@@ -94,7 +94,15 @@
       "Bash(git -c core.safecrlf=false diff --stat -- \"Assets/Prefabs/Config\")",
       "Bash(git -c core.safecrlf=false diff -- \"Assets/Prefabs/Config/BirdItems/高山/59_Secretarybird 2.asset\")",
       "Bash(git -c core.safecrlf=false diff -- \"Assets/Prefabs/Config/ShopConfig.asset\")",
-      "Read(//c/ProgramData/Unity/**)"
+      "Read(//c/ProgramData/Unity/**)",
+      "Bash(grep -c \"_FLWallpaperGetMainScreenFrame\\\\|_FLWallpaperSetWindowFrame\\\\|_FLWallpaperFitVisible\" \"Assets/Plugins/macOS/FLWallpaperBridge.bundle/Contents/MacOS/FLWallpaperBridge\")",
+      "Bash(ls \"C:\\\\ProgramData\\\\Unity\" 2>/dev/null; ls \"C:\\\\ProgramData\\\\Unity\\\\licenses\" 2>/dev/null; echo ===licensing-client===; ls \"C:\\\\Program Files\\\\Unity Hub\\\\UnityLicensingClient_V1\" 2>/dev/null | head; echo ===editorlog-license===; grep -a -i -n \"LICENSE SYSTEM\\\\|license type\\\\|Pro License\\\\|Trial\\\\|entitlement\" \"C:\\\\Users\\\\11752\\\\AppData\\\\Local\\\\Unity\\\\Editor\\\\Editor.log\" 2>/dev/null | head -30)",
+      "Bash(ls -dt /e/Unity/Projects/Work/FeatherLandNew/Build* /e/Unity/Projects/Work/Build* /e/Unity/Builds* 2>/dev/null | head; find /e/Unity/Projects/Work/FeatherLandNew -maxdepth 2 -name \"*.exe\" -newer /e/Unity/Projects/Work/FeatherLandNew/Assets 2>/dev/null | grep -vi editor | head; echo ===search-wide===; ls /e/Unity/Projects/Work/ 2>/dev/null)",
+      "Bash(ls -la /e/Unity/Projects/Work/FeatherLandNew/Build/featherlandunit_Data/ | head -15; stat -c \"%y %n\" /e/Unity/Projects/Work/FeatherLandNew/Build/featherlandunit.exe 2>/dev/null)",
+      "Bash(grep -a -o \"[A-Za-z]:[/\\\\\\\\\\\\\\\\][^\\\\\"']*featherland[^\\\\\"']*\\\\.exe\" \"C:\\\\Users\\\\11752\\\\AppData\\\\Local\\\\Unity\\\\Editor\\\\Editor.log\")",
+      "Bash(grep -a -o \"[A-Za-z]:[/\\\\\\\\\\\\\\\\][^\\\\\"']*_Data\" \"C:\\\\Users\\\\11752\\\\AppData\\\\Local\\\\Unity\\\\Editor\\\\Editor.log\")",
+      "Read(//c/Users/11752/AppData/Local/Unity/**)",
+      "PowerShell(Get-Process -Name \"Unity\",\"Unity Hub\",\"Unity.Licensing.Client\",\"UnityHub\" -ErrorAction SilentlyContinue)"
     ]
   }
 }
