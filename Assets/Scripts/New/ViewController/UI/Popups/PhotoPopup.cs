@@ -285,7 +285,12 @@ namespace BirdGame
                 // 玩家必须手动点任务栏才能看到。BFFM_INITIALIZED 回调里拿到对话框句柄后
                 // 把它设为 TOPMOST(顺带躲开壁纸窗口的周期性置顶刷新)并用 Alt 键戏法夺前台。
                 // 只操作对话框自己的 HWND，不碰游戏窗口，壁纸层级不受影响。
-                var callback = new BrowseCallback(BringDialogToFront);
+                // 回调指针创建失败（如平台/后端限制）时退回无回调模式：
+                // 对话框至少还能在任务栏里出现，绝不能因为置前失败而整个不弹
+                IntPtr lpfnPtr = IntPtr.Zero;
+                try { lpfnPtr = Marshal.GetFunctionPointerForDelegate(s_bringToFrontCallback); }
+                catch (Exception e) { Debug.LogWarning($"[PhotoPopup] 回调指针创建失败,退回普通对话框: {e.Message}"); }
+
                 var bi = new BROWSEINFOW
                 {
                     // 不设跨线程 owner：若拿主线程窗口当 owner，模态会对主线程 EnableWindow 发同步消息，
@@ -295,13 +300,12 @@ namespace BirdGame
                     pszDisplayName = IntPtr.Zero,
                     lpszTitle = title,
                     ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE,
-                    lpfn = Marshal.GetFunctionPointerForDelegate(callback),
+                    lpfn = lpfnPtr,
                     lParam = IntPtr.Zero,
                     iImage = 0,
                 };
 
                 pidl = SHBrowseForFolderW(ref bi);
-                GC.KeepAlive(callback); // 模态期间防止委托被 GC 回收
                 if (pidl == IntPtr.Zero)
                     return null; // 用户取消
 
@@ -336,18 +340,29 @@ namespace BirdGame
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate int BrowseCallback(IntPtr hwnd, uint uMsg, IntPtr lParam, IntPtr lpData);
 
+        // 静态字段常驻引用：委托指针在整个模态期间有效，且无 GC 风险
+        private static readonly BrowseCallback s_bringToFrontCallback = BringDialogToFront;
+
+        // IL2CPP(本项目 Standalone 后端)下托管方法作原生回调必须挂此特性，
+        // 否则 GetFunctionPointerForDelegate 抛 NotSupportedException
+        [AOT.MonoPInvokeCallback(typeof(BrowseCallback))]
         private static int BringDialogToFront(IntPtr hwnd, uint uMsg, IntPtr lParam, IntPtr lpData)
         {
-            if (uMsg == BFFM_INITIALIZED)
+            // 回调里任何异常都不能逃回原生层（IL2CPP 下会直接崩），全部吞掉
+            try
             {
-                // TOPMOST：既保证首次弹出可见，也不会被壁纸窗口的周期性置顶刷新盖回去
-                SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
-                // Alt 键按下状态下 SetForegroundWindow 不受前台锁限制（经典夺前台手法），
-                // 让对话框直接获得键盘焦点而不是在任务栏闪烁
-                keybd_event(VK_MENU, 0, 0, UIntPtr.Zero);
-                SetForegroundWindow(hwnd);
-                keybd_event(VK_MENU, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+                if (uMsg == BFFM_INITIALIZED)
+                {
+                    // TOPMOST：既保证首次弹出可见，也不会被壁纸窗口的周期性置顶刷新盖回去
+                    SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+                    // Alt 键按下状态下 SetForegroundWindow 不受前台锁限制（经典夺前台手法），
+                    // 让对话框直接获得键盘焦点而不是在任务栏闪烁
+                    keybd_event(VK_MENU, 0, 0, UIntPtr.Zero);
+                    SetForegroundWindow(hwnd);
+                    keybd_event(VK_MENU, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+                }
             }
+            catch { }
             return 0;
         }
 
