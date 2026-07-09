@@ -282,9 +282,12 @@ public class ScrollRectMouseWheelHandler : MonoBehaviour,
     {
         if (isMouseOver)
         {
-            pendingWheelDelta = wheelDelta;
+            // 累加而不是覆盖:鼠标滚轮一格只来一个事件,但精密触控板两指滑动
+            // 一帧内会来多个小增量事件(每个 ±0.1~0.3),覆盖会把前面的全丢掉,
+            // 表现为触控板"滑不动"。Update 里处理完会归零。
+            pendingWheelDelta += wheelDelta;
             isHorizontalWheel = isHorizontal;
-            
+
             Debug.Log($"[ScrollRectMouseWheel] Received wheel delta: {wheelDelta}, Horizontal: {isHorizontal}");
         }
     }

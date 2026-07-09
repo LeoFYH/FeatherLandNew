@@ -18,6 +18,7 @@
 #import <CoreGraphics/CoreGraphics.h>
 #import <objc/runtime.h>
 #import <objc/message.h>
+#include <unistd.h>   // getpid(窗口覆盖检测)
 
 // ---------------------------------------------------------------------------
 // Subclass plumbing — enables native click delivery in wallpaper mode.
@@ -177,6 +178,10 @@ static volatile float        g_wheelDelta    = 0.0f;
 static volatile BOOL         g_isHorizontalWheel = NO;
 static volatile double       g_mouseX        = 0.0;
 static volatile double       g_mouseY        = 0.0;
+// 原始 CG 屏幕坐标(左上原点,点单位),供窗口覆盖检测用 —— 与 CGWindowList 的
+// kCGWindowBounds 同一坐标系,避免 C# 侧来回换算
+static volatile double       g_rawMouseX     = 0.0;
+static volatile double       g_rawMouseY     = 0.0;
 static volatile BOOL         g_leftButtonDown = NO;
 static volatile BOOL         g_rightButtonDown = NO;
 
@@ -806,10 +811,12 @@ static CGEventRef FLMouseEventCallback(CGEventTapProxy proxy, CGEventType type,
     CGPoint location = CGEventGetLocation(event);
     double unityX, unityY;
     FLConvertToUnityCoordinates(location, &unityX, &unityY);
-    
+
     // Update mouse position
     g_mouseX = unityX;
     g_mouseY = unityY;
+    g_rawMouseX = location.x;
+    g_rawMouseY = location.y;
 
     // IMPORTANT: we return `event` (not NULL) for every case below. Consuming
     // the event at HID level was the original cause of clicks not reaching
@@ -841,14 +848,35 @@ static CGEventRef FLMouseEventCallback(CGEventTapProxy proxy, CGEventType type,
             break;
 
         case kCGEventScrollWheel: {
-            CGFloat deltaX = CGEventGetIntegerValueField(event, kCGScrollWheelEventDeltaAxis1);
-            CGFloat deltaY = CGEventGetIntegerValueField(event, kCGScrollWheelEventDeltaAxis2);
-            if (deltaX != 0) {
-                g_isHorizontalWheel = YES;
-                g_wheelDelta = deltaX / 120.0f;
+            // rev=18 修复三处(此前壁纸模式滚轮/触控板滚动完全不可用):
+            // 1) 轴向写反 —— CG 滚轮事件 Axis1 是【垂直】、Axis2 才是水平,
+            //    旧代码把垂直滚动当水平转发;
+            // 2) 触控板两指滑动是 continuous 事件,整数行增量(IntegerField)
+            //    绝大多数为 0 —— 必须按 IsContinuous 区分:触控板读像素增量,
+            //    传统滚轮读 FixedPt 行增量;
+            // 3) 旧代码 /120 把 ±1~3/格 的行增量缩到近乎 0(120 是 Windows 的
+            //    WHEEL_DELTA,CG 没有这个概念),且 = 赋值会丢同帧内的多个事件
+            //    —— 改为累加,读取端 _FLMouseGetWheelDelta 本就是取后清零。
+            int64_t isContinuous = CGEventGetIntegerValueField(event, kCGScrollWheelEventIsContinuous);
+            double dy, dx;
+            if (isContinuous) {
+                // 触控板/妙控鼠标:像素增量,约 50px 折算 1 行,手感与滚轮一格相近
+                dy = CGEventGetDoubleValueField(event, kCGScrollWheelEventPointDeltaAxis1) / 50.0;
+                dx = CGEventGetDoubleValueField(event, kCGScrollWheelEventPointDeltaAxis2) / 50.0;
             } else {
+                // 传统滚轮:FixedPt 行增量,一格约 ±1
+                dy = CGEventGetDoubleValueField(event, kCGScrollWheelEventFixedPtDeltaAxis1);
+                dx = CGEventGetDoubleValueField(event, kCGScrollWheelEventFixedPtDeltaAxis2);
+            }
+            // 单增量+方向标志的 API 保持不变(C# ABI 不动):取主导轴,方向跟随最近事件。
+            // 增量符号原样透传 —— CGEventTap 拿到的已是用户"自然滚动"偏好换算后的值,
+            // 若实测方向反了,把下面两处 += 改成 -= 即可。
+            if (fabs(dx) > fabs(dy)) {
+                g_isHorizontalWheel = YES;
+                g_wheelDelta += (float)dx;
+            } else if (dy != 0.0) {
                 g_isHorizontalWheel = NO;
-                g_wheelDelta = -deltaY / 120.0f;
+                g_wheelDelta += (float)dy;
             }
             break;
         }
@@ -1035,7 +1063,7 @@ void _FLWallpaperRefresh(void) {
 // If C# can't find this symbol the bundle is stale.
 __attribute__((visibility("default")))
 const char *_FLWallpaperBuildStamp(void) {
-    return "FLWallpaperBridge rev=17-borderless-guards " __DATE__ " " __TIME__;
+    return "FLWallpaperBridge rev=18-scroll-dragguard " __DATE__ " " __TIME__;
 }
 
 // On-demand full diagnostic dump. C# calls this when it wants a snapshot
@@ -1254,6 +1282,55 @@ int _FLMouseGetLeftButtonDown(void) {
 __attribute__((visibility("default")))
 int _FLMouseGetRightButtonDown(void) {
     return g_rightButtonDown ? 1 : 0;
+}
+
+// rev=18: 光标上方是否被其他应用的可见窗口覆盖(即光标不在"裸桌面"上)。
+// 返回 1 = 有普通层级(layer>=0:应用窗口/Dock/菜单栏)的非本进程窗口盖住光标点;
+// 返回 0 = 光标下只有桌面/图标层,点击拖拽理应属于壁纸游戏。
+// 供 C# 侧做闸门:桌面上开着浏览器等窗口时,玩家在那些窗口里按住拖动/滚动,
+// 壁纸层不得误拖番茄钟等组件、误滚商店列表(CGEventTap 是全局的,不挡会误触)。
+// 只在拖拽起点判定与滚轮事件时调用,CGWindowListCopyWindowInfo 开销可接受。
+__attribute__((visibility("default")))
+int _FLIsCursorCoveredByOtherWindow(void) {
+    CGPoint p = CGPointMake(g_rawMouseX, g_rawMouseY);
+    pid_t myPid = getpid();
+    CFArrayRef list = CGWindowListCopyWindowInfo(
+        kCGWindowListOptionOnScreenOnly | kCGWindowListExcludeDesktopElements,
+        kCGNullWindowID);
+    if (list == NULL) return 0;
+    int covered = 0;
+    CFIndex count = CFArrayGetCount(list);
+    for (CFIndex i = 0; i < count; i++) {
+        CFDictionaryRef info = (CFDictionaryRef)CFArrayGetValueAtIndex(list, i);
+
+        // 桌面/壁纸层(layer<0)不算覆盖;应用窗口 layer==0,Dock/菜单栏 layer>0 均算
+        int layer = 0;
+        CFNumberRef layerRef = (CFNumberRef)CFDictionaryGetValue(info, kCGWindowLayer);
+        if (layerRef != NULL) CFNumberGetValue(layerRef, kCFNumberIntType, &layer);
+        if (layer < 0) continue;
+
+        // 本进程的窗口(壁纸窗口自身等)不算覆盖
+        int ownerPid = 0;
+        CFNumberRef pidRef = (CFNumberRef)CFDictionaryGetValue(info, kCGWindowOwnerPID);
+        if (pidRef != NULL) CFNumberGetValue(pidRef, kCFNumberIntType, &ownerPid);
+        if (ownerPid == (int)myPid) continue;
+
+        // 全透明窗口不算(部分后台辅助窗口 alpha=0 但常驻)
+        double alpha = 1.0;
+        CFNumberRef alphaRef = (CFNumberRef)CFDictionaryGetValue(info, kCGWindowAlpha);
+        if (alphaRef != NULL) CFNumberGetValue(alphaRef, kCFNumberDoubleType, &alpha);
+        if (alpha < 0.05) continue;
+
+        CGRect bounds = CGRectZero;
+        CFDictionaryRef boundsRef = (CFDictionaryRef)CFDictionaryGetValue(info, kCGWindowBounds);
+        if (boundsRef == NULL ||
+            !CGRectMakeWithDictionaryRepresentation(boundsRef, &bounds)) continue;
+        if (bounds.size.width < 2.0 || bounds.size.height < 2.0) continue;
+
+        if (CGRectContainsPoint(bounds, p)) { covered = 1; break; }
+    }
+    CFRelease(list);
+    return covered;
 }
 
 // Get wheel delta (clears after reading)

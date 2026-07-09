@@ -73,9 +73,28 @@ namespace BirdGame
         
         [DllImport("FLWallpaperBridge")]
         private static extern int _FLKeyboardGetKeyDown();
-        
+
         [DllImport("FLWallpaperBridge")]
         private static extern void _FLKeyboardClearState();
+
+        [DllImport("FLWallpaperBridge")]
+        private static extern int _FLIsCursorCoveredByOtherWindow();
+
+        // 光标是否被其他应用窗口(浏览器等)盖住。旧 bundle 缺该符号时返回 false,
+        // 维持修复前行为(不拦截),绝不让缺符号把输入整个炸掉。
+        private static bool _coverCheckUnavailable;
+        private static bool IsCursorCoveredByOtherWindow()
+        {
+            if (_coverCheckUnavailable) return false;
+            try { return _FLIsCursorCoveredByOtherWindow() != 0; }
+            catch (EntryPointNotFoundException)
+            {
+                _coverCheckUnavailable = true;
+                Debug.LogWarning("[SimpleMouseForwarderMac] _FLIsCursorCoveredByOtherWindow 不存在(旧 bundle),窗口覆盖闸门停用");
+                return false;
+            }
+            catch (Exception) { return false; }
+        }
 #endif
         
         private int previousClickCount = 0;
@@ -88,6 +107,7 @@ namespace BirdGame
         // 各拖拽组件自带 isDraggingFromHook 防重入,与原生事件流不会双触发。
         private bool wasLeftButtonDown = false;
         private bool isLeftMouseDragging = false;
+        private bool pressStartedOverOtherWindow = false;
         private Vector2 dragStartPosition;
         private Vector2 lastDragPosition;
         private float dragStartTime;
@@ -193,7 +213,11 @@ namespace BirdGame
                 lastDragPosition = mousePosition;
                 dragStartTime = Time.time;
                 isLeftMouseDragging = false;
-                currentDragTarget = FindDragTarget(mousePosition);
+                // 覆盖闸门:光标被浏览器等其他窗口盖住时,这次按下属于那个窗口,
+                // 壁纸层不得抢拖(CGEventTap 是全局的,不判会把浏览器里的拖动
+                // 误转发成拖番茄钟)。整个按住周期沿用这个判定。
+                pressStartedOverOtherWindow = IsCursorCoveredByOtherWindow();
+                currentDragTarget = pressStartedOverOtherWindow ? null : FindDragTarget(mousePosition);
             }
             // 按住中
             else if (leftDown && wasLeftButtonDown)
@@ -205,7 +229,7 @@ namespace BirdGame
                     float distanceMoved = Vector2.Distance(mousePosition, dragStartPosition);
                     if (timeSinceDown >= DRAG_TIME_THRESHOLD && distanceMoved > DRAG_DISTANCE_THRESHOLD)
                     {
-                        if (currentDragTarget == null)
+                        if (currentDragTarget == null && !pressStartedOverOtherWindow)
                             currentDragTarget = FindDragTarget(dragStartPosition);
 
                         if (currentDragTarget != null)
@@ -452,9 +476,14 @@ namespace BirdGame
 #if UNITY_STANDALONE_OSX && !UNITY_EDITOR
             int isHorizontal = 0;
             float delta = _FLMouseGetWheelDelta(out isHorizontal);
-            
+
             if (delta != 0)
             {
+                // 覆盖闸门:光标在浏览器等其他窗口上时,滚动属于那个窗口,
+                // 丢弃本帧增量(取值已清零),不得误滚壁纸里的商店/列表
+                if (IsCursorCoveredByOtherWindow())
+                    return;
+
                 if (!isHorizontal.Equals(1))
                 {
                     // 垂直滚轮 - 广播事件
