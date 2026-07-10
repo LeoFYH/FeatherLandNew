@@ -102,7 +102,8 @@
       "Bash(grep -a -o \"[A-Za-z]:[/\\\\\\\\\\\\\\\\][^\\\\\"']*featherland[^\\\\\"']*\\\\.exe\" \"C:\\\\Users\\\\11752\\\\AppData\\\\Local\\\\Unity\\\\Editor\\\\Editor.log\")",
       "Bash(grep -a -o \"[A-Za-z]:[/\\\\\\\\\\\\\\\\][^\\\\\"']*_Data\" \"C:\\\\Users\\\\11752\\\\AppData\\\\Local\\\\Unity\\\\Editor\\\\Editor.log\")",
       "Read(//c/Users/11752/AppData/Local/Unity/**)",
-      "PowerShell(Get-Process -Name \"Unity\",\"Unity Hub\",\"Unity.Licensing.Client\",\"UnityHub\" -ErrorAction SilentlyContinue)"
+      "PowerShell(Get-Process -Name \"Unity\",\"Unity Hub\",\"Unity.Licensing.Client\",\"UnityHub\" -ErrorAction SilentlyContinue)",
+      "Bash(PYTHONIOENCODING=utf-8 python)"
     ]
   }
 }
