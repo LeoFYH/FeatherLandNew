@@ -80,6 +80,9 @@ namespace BirdGame
         [DllImport("FLWallpaperBridge")]
         private static extern int _FLIsCursorCoveredByOtherWindow();
 
+        [DllImport("FLWallpaperBridge")]
+        private static extern double _FLSecondsSinceNativeMouseDown();
+
         // 光标是否被其他应用窗口(浏览器等)盖住。旧 bundle 缺该符号时返回 false,
         // 维持修复前行为(不拦截),绝不让缺符号把输入整个炸掉。
         private static bool _coverCheckUnavailable;
@@ -91,6 +94,21 @@ namespace BirdGame
             {
                 _coverCheckUnavailable = true;
                 Debug.LogWarning("[SimpleMouseForwarderMac] _FLIsCursorCoveredByOtherWindow 不存在(旧 bundle),窗口覆盖闸门停用");
+                return false;
+            }
+            catch (Exception) { return false; }
+        }
+
+        // 第二信号:本进程窗口刚刚真实收到过 NSEvent 左键按下(窗口服务器的路由
+        // 结果,权威判定"这次点击属于壁纸")。命中测试误报覆盖时用它兜底放行。
+        private static bool _downSignalUnavailable;
+        private static bool NativeMouseDownWithin(float seconds)
+        {
+            if (_downSignalUnavailable) return false;
+            try { return _FLSecondsSinceNativeMouseDown() < seconds; }
+            catch (EntryPointNotFoundException)
+            {
+                _downSignalUnavailable = true;
                 return false;
             }
             catch (Exception) { return false; }
@@ -137,6 +155,7 @@ namespace BirdGame
 #if UNITY_STANDALONE_OSX && !UNITY_EDITOR
             _FLMouseResetCounters();
             _FLKeyboardClearState();
+            NativeMouseDownWithin(0f); // 预热:进壁纸时就装好原生按下监视器,首次拖拽不缺信号
 #endif
             previousClickCount = 0;
             previousRightClickCount = 0;
@@ -216,7 +235,10 @@ namespace BirdGame
                 // 覆盖闸门:光标被浏览器等其他窗口盖住时,这次按下属于那个窗口,
                 // 壁纸层不得抢拖(CGEventTap 是全局的,不判会把浏览器里的拖动
                 // 误转发成拖番茄钟)。整个按住周期沿用这个判定。
-                pressStartedOverOtherWindow = IsCursorCoveredByOtherWindow();
+                // 双信号:命中测试说"被覆盖"、但我们的窗口确实刚收到这次按下
+                // (窗口服务器路由结果)-> 以后者为准放行,防录屏叠层等误报。
+                pressStartedOverOtherWindow = IsCursorCoveredByOtherWindow()
+                                              && !NativeMouseDownWithin(0.25f);
                 currentDragTarget = pressStartedOverOtherWindow ? null : FindDragTarget(mousePosition);
             }
             // 按住中

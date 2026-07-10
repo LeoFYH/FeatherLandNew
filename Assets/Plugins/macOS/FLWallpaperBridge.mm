@@ -1063,7 +1063,7 @@ void _FLWallpaperRefresh(void) {
 // If C# can't find this symbol the bundle is stale.
 __attribute__((visibility("default")))
 const char *_FLWallpaperBuildStamp(void) {
-    return "FLWallpaperBridge rev=18-scroll-dragguard " __DATE__ " " __TIME__;
+    return "FLWallpaperBridge rev=19-hittest-guard " __DATE__ " " __TIME__;
 }
 
 // On-demand full diagnostic dump. C# calls this when it wants a snapshot
@@ -1284,53 +1284,70 @@ int _FLMouseGetRightButtonDown(void) {
     return g_rightButtonDown ? 1 : 0;
 }
 
-// rev=18: 光标上方是否被其他应用的可见窗口覆盖(即光标不在"裸桌面"上)。
-// 返回 1 = 有普通层级(layer>=0:应用窗口/Dock/菜单栏)的非本进程窗口盖住光标点;
-// 返回 0 = 光标下只有桌面/图标层,点击拖拽理应属于壁纸游戏。
-// 供 C# 侧做闸门:桌面上开着浏览器等窗口时,玩家在那些窗口里按住拖动/滚动,
-// 壁纸层不得误拖番茄钟等组件、误滚商店列表(CGEventTap 是全局的,不挡会误触)。
-// 只在拖拽起点判定与滚轮事件时调用,CGWindowListCopyWindowInfo 开销可接受。
+// rev=19: 光标上方是否被其他应用的【可交互】窗口覆盖(即光标不在"裸桌面"上)。
+//
+// rev=18 用 CGWindowListCopyWindowInfo 按几何+alpha 判定,实测误伤:macOS 录屏/
+// 屏幕共享会挂全屏、点击穿透、alpha=1 的边框指示窗,几何检测把整个屏幕都判成
+// "被覆盖",拖拽和滚轮转发被全屏闸死(发行商在录屏下测试,全部中招)。
+//
+// rev=19 改用窗口服务器的真实命中测试 windowNumberAtPoint —— 它会跳过
+// ignoresMouseEvents 的窗口(录屏边框、各类系统叠层都是点击穿透的,否则会挡住
+// 全系统点击),这正是"这次点击究竟属于谁"的权威答案。再按命中窗口分类:
+//   * 本进程窗口 / 未命中            -> 0 未覆盖
+//   * layer < 0(桌面图标/壁纸层)   -> 0 未覆盖(裸桌面)
+//   * 0 <= layer <= 101(普通窗口/浮动面板/Dock/菜单栏/弹出菜单等可交互带)-> 1 覆盖
+//   * layer > 101(录屏指示、辅助叠层等高层被动窗)-> 0 未覆盖(兜底,防漏网叠层)
 __attribute__((visibility("default")))
 int _FLIsCursorCoveredByOtherWindow(void) {
-    CGPoint p = CGPointMake(g_rawMouseX, g_rawMouseY);
-    pid_t myPid = getpid();
-    CFArrayRef list = CGWindowListCopyWindowInfo(
-        kCGWindowListOptionOnScreenOnly | kCGWindowListExcludeDesktopElements,
-        kCGNullWindowID);
-    if (list == NULL) return 0;
-    int covered = 0;
-    CFIndex count = CFArrayGetCount(list);
-    for (CFIndex i = 0; i < count; i++) {
-        CFDictionaryRef info = (CFDictionaryRef)CFArrayGetValueAtIndex(list, i);
+    __block int covered = 0;
+    FLRunOnMain(^{
+        // NSEvent.mouseLocation 与 windowNumberAtPoint 同为左下原点屏幕坐标
+        NSPoint p = [NSEvent mouseLocation];
+        NSInteger num = [NSWindow windowNumberAtPoint:p belowWindowWithWindowNumber:0];
+        if (num <= 0) return;                                   // 未命中任何窗口
 
-        // 桌面/壁纸层(layer<0)不算覆盖;应用窗口 layer==0,Dock/菜单栏 layer>0 均算
+        if ([NSApp windowWithWindowNumber:num] != nil) return;  // 本进程窗口(壁纸自身)
+
+        CFArrayRef arr = CGWindowListCopyWindowInfo(kCGWindowListOptionIncludingWindow,
+                                                    (CGWindowID)num);
+        if (arr == NULL) return;
         int layer = 0;
-        CFNumberRef layerRef = (CFNumberRef)CFDictionaryGetValue(info, kCGWindowLayer);
-        if (layerRef != NULL) CFNumberGetValue(layerRef, kCFNumberIntType, &layer);
-        if (layer < 0) continue;
+        if (CFArrayGetCount(arr) > 0) {
+            CFDictionaryRef info = (CFDictionaryRef)CFArrayGetValueAtIndex(arr, 0);
+            CFNumberRef layerRef = (CFNumberRef)CFDictionaryGetValue(info, kCGWindowLayer);
+            if (layerRef != NULL) CFNumberGetValue(layerRef, kCFNumberIntType, &layer);
+        }
+        CFRelease(arr);
 
-        // 本进程的窗口(壁纸窗口自身等)不算覆盖
-        int ownerPid = 0;
-        CFNumberRef pidRef = (CFNumberRef)CFDictionaryGetValue(info, kCGWindowOwnerPID);
-        if (pidRef != NULL) CFNumberGetValue(pidRef, kCFNumberIntType, &ownerPid);
-        if (ownerPid == (int)myPid) continue;
-
-        // 全透明窗口不算(部分后台辅助窗口 alpha=0 但常驻)
-        double alpha = 1.0;
-        CFNumberRef alphaRef = (CFNumberRef)CFDictionaryGetValue(info, kCGWindowAlpha);
-        if (alphaRef != NULL) CFNumberGetValue(alphaRef, kCFNumberDoubleType, &alpha);
-        if (alpha < 0.05) continue;
-
-        CGRect bounds = CGRectZero;
-        CFDictionaryRef boundsRef = (CFDictionaryRef)CFDictionaryGetValue(info, kCGWindowBounds);
-        if (boundsRef == NULL ||
-            !CGRectMakeWithDictionaryRepresentation(boundsRef, &bounds)) continue;
-        if (bounds.size.width < 2.0 || bounds.size.height < 2.0) continue;
-
-        if (CGRectContainsPoint(bounds, p)) { covered = 1; break; }
-    }
-    CFRelease(list);
+        covered = (layer >= 0 && layer <= 101) ? 1 : 0;
+    });
     return covered;
+}
+
+// rev=19: 第二信号 —— 本进程窗口最近一次真实收到 NSEvent 左键按下的时间。
+// macOS 窗口服务器把物理 mouseDown 路由给了我们的 FLWallpaperPanel,就是
+// "这次点击属于壁纸"的铁证(比任何几何推断都准)。C# 拖拽闸门用它兜底:
+// 命中测试误报"被覆盖"、但我们确实收到了按下 -> 照样允许拖拽。
+static double g_lastLocalMouseDownAt = -1.0e9;
+static id     g_localDownMonitor     = nil;
+
+static void FLEnsureLocalDownMonitor(void) {
+    if (g_localDownMonitor != nil) return;
+    g_localDownMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskLeftMouseDown
+                                                               handler:^NSEvent *(NSEvent *e) {
+        g_lastLocalMouseDownAt = CFAbsoluteTimeGetCurrent();
+        return e;   // 只观察,不拦截
+    }];
+}
+
+__attribute__((visibility("default")))
+double _FLSecondsSinceNativeMouseDown(void) {
+    __block double since = 1.0e9;
+    FLRunOnMain(^{
+        FLEnsureLocalDownMonitor();
+        since = CFAbsoluteTimeGetCurrent() - g_lastLocalMouseDownAt;
+    });
+    return since;
 }
 
 // Get wheel delta (clears after reading)
