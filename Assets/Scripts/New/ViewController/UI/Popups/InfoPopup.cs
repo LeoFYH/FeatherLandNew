@@ -375,7 +375,11 @@ namespace BirdGame
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             var birdConf = this.GetModel<IConfigModel>().BirdConfig.GetBird(data.birdType, mapIndex);
             icon.sprite = birdConf.preview;
-            icon.GetComponent<RectTransform>().sizeDelta = icon.sprite.rect.size * 0.5f;
+            // 限制图标最大高度，防止某些 preview sprite 原始像素尺寸过大时显示异常变大
+            const float maxIconHeight = 120f;
+            Vector2 spriteSize = icon.sprite.rect.size;
+            float scale = spriteSize.y > maxIconHeight ? maxIconHeight / spriteSize.y : 1f;
+            icon.GetComponent<RectTransform>().sizeDelta = spriteSize * scale * 0.5f;
             addtoDesktop.onClick.AddListener(() =>
             {
                 if (!data.isAddedToDesktop)
