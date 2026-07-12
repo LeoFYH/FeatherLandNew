@@ -1033,19 +1033,22 @@ namespace BirdGame
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
 
-            // 步骤 3: 老的转发器(场景里挂了才有)
+            // 步骤 3: 鼠标转发器 —— 拖拽驱动/滚轮转发/HUD让位全靠它。
+            // 场景里从来没挂过这个组件(Windows 的 SimpleMouseForwarder 是场景对象,
+            // Mac 版只写了脚本没挂,导致此前壁纸拖拽的 C# 驱动从未运行过),
+            // 这里运行时自动补建,DontDestroyOnLoad 后进出壁纸复用同一实例。
             try
             {
                 SimpleMouseForwarderMac mouseForwarder = UnityEngine.Object.FindObjectOfType<SimpleMouseForwarderMac>(true);
-                if (mouseForwarder != null)
+                if (mouseForwarder == null)
                 {
-                    mouseForwarder.gameObject.SetActive(true);
-                    Debug.Log("[FLLOG-CS] SimpleMouseForwarderMac 已启用");
+                    GameObject forwarderGo = new GameObject("SimpleMouseForwarderMac(Auto)");
+                    UnityEngine.Object.DontDestroyOnLoad(forwarderGo);
+                    mouseForwarder = forwarderGo.AddComponent<SimpleMouseForwarderMac>();
+                    Debug.Log("[FLLOG-CS] SimpleMouseForwarderMac 不在场景里 —— 已运行时自动创建");
                 }
-                else
-                {
-                    Debug.LogWarning("[FLLOG-CS] SimpleMouseForwarderMac 不在场景里(可选,不影响原生流)");
-                }
+                mouseForwarder.gameObject.SetActive(true);
+                Debug.Log("[FLLOG-CS] SimpleMouseForwarderMac 已启用");
             }
             catch (System.Exception e) { Debug.LogError($"[FLLOG-CS] forwarder 启用失败: {e}"); }
 

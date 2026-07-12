@@ -167,7 +167,8 @@ static __strong Class        g_fsSavedWindowClass = nil;
 static BOOL                  g_borderlessFsOn     = NO;
 
 // Mouse event forwarding state
-static CFMachPortRef         g_eventTap      = NULL;
+static CFMachPortRef         g_eventTap      = NULL;   // 鼠标 tap(点击计数/滚轮)
+static CFMachPortRef         g_keyTap        = NULL;   // 键盘 tap(rev=23 起独立,无辅助功能权限时不建)
 static CGEventTapLocation    g_tapLocation   = kCGHIDEventTap;
 static BOOL                  g_tapEnabled    = NO;
 
@@ -826,11 +827,9 @@ static CGEventRef FLMouseEventCallback(CGEventTapProxy proxy, CGEventType type,
         return event;
     }
 
-    // rev=21: 键盘分发 —— tap 掩码一直含键盘,但历史上只注册了本回调,
-    // FLKeyboardEventCallback 从未被调到(键盘状态 API 永远读 0 的死功能)。
-    if (type == kCGEventKeyDown || type == kCGEventKeyUp) {
-        return FLKeyboardEventCallback(proxy, type, event, refcon);
-    }
+    // rev=23: 键盘事件不再进本 tap(独立成 g_keyTap)。无辅助功能权限时,
+    // 掩码里混着键盘会让系统把整个 tap 反复禁用(实测日志 type=-1 循环),
+    // 连带鼠标事件一起死 —— 拆开后键盘权限问题不再殃及鼠标。
 
     // Check if event is within Unity window bounds
     if (!FLIsEventInUnityWindow(event)) {
@@ -921,6 +920,14 @@ static CGEventRef FLMouseEventCallback(CGEventTapProxy proxy, CGEventType type,
 // Keyboard event callback
 static CGEventRef FLKeyboardEventCallback(CGEventTapProxy proxy, CGEventType type,
                                           CGEventRef event, void *refcon) {
+    // 自愈同鼠标 tap:被系统禁用时重启(权限被撤销时会反复触发,只影响本 tap)
+    if (type == kCGEventTapDisabledByTimeout || type == kCGEventTapDisabledByUserInput) {
+        if (g_keyTap != NULL) {
+            CGEventTapEnable(g_keyTap, true);
+        }
+        return event;
+    }
+
     if (!g_wallpaperOn || !g_tapEnabled) {
         return event;
     }
@@ -972,48 +979,47 @@ static BOOL FLCreateEventTap(void) {
         NSLog(@"[FLWallpaper] 请在系统设置 > 隐私与安全性 > 辅助功能 中启用本应用");
     }
 
-    // Create mouse event tap
-    // rev=21 致命修复:补上 Dragged —— macOS 按住鼠标移动时只发 LeftMouseDragged/
-    // RightMouseDragged(不发 MouseMoved),此前掩码漏掉它们,按住期间 g_mouseX/Y
-    // 冻结在按下点,C# 拖拽驱动的移动距离恒为 0,永远过不了启动阈值 = 拖拽全废。
+    // rev=23: 鼠标 tap 只负责点击计数 + 滚轮增量。位置/按键状态已改为
+    // NSEvent 轮询(无需权限),不再需要 Moved/Dragged 事件流 —— 掩码里去掉
+    // 它们能省掉绝大多数回调开销(旁听 tap 每个事件都会唤醒本进程)。
     CGEventMask mouseMask = (1 << kCGEventLeftMouseDown) |
                             (1 << kCGEventLeftMouseUp) |
                             (1 << kCGEventRightMouseDown) |
                             (1 << kCGEventRightMouseUp) |
-                            (1 << kCGEventMouseMoved) |
-                            (1 << kCGEventLeftMouseDragged) |
-                            (1 << kCGEventRightMouseDragged) |
                             (1 << kCGEventScrollWheel);
 
-    // Create keyboard event tap
     CGEventMask keyboardMask = (1 << kCGEventKeyDown) |
                                (1 << kCGEventKeyUp);
 
     // rev=21: Default(同步过滤)→ ListenOnly(旁听)。回调从来都原样 return event,
     // 却让全系统每个鼠标/键盘事件同步等待 Unity 主循环,帧率一抖整机输入跟着卡,
     // 还大幅提高被系统按超时禁用的概率。
+    // rev=23: 鼠标/键盘拆成两个 tap。实测日志(2026-07-13):无辅助功能权限时,
+    // 混合掩码的 tap 被系统以 kCGEventTapDisabledByUserInput 反复禁用,自愈
+    // 重启也只是循环拉锯,鼠标事件跟着一起死。拆开后键盘权限问题只影响键盘。
     g_eventTap = CGEventTapCreate(
         g_tapLocation,
         kCGHeadInsertEventTap,
         kCGEventTapOptionListenOnly,
-        mouseMask | keyboardMask,
+        mouseMask,
         FLMouseEventCallback,
         NULL
     );
 
     if (g_eventTap == NULL) {
-        NSLog(@"[FLWallpaper] Failed to create event tap - may need accessibility permissions");
+        NSLog(@"[FLWallpaper] Failed to create mouse event tap - may need accessibility permissions");
         NSLog(@"[FLWallpaper] 请在系统设置 > 隐私与安全性 > 辅助功能 中启用本应用");
+        NSLog(@"[FLWallpaper] (拖拽/点击不受影响 —— 位置/按键走 NSEvent 轮询;受影响的是滚轮转发)");
         return NO;
     }
 
-    // Add the event tap to the run loop
+    // Add the mouse tap to the run loop
     CFRunLoopSourceRef runLoopSource = CFMachPortCreateRunLoopSource(
-        kCFAllocatorDefault, 
-        g_eventTap, 
+        kCFAllocatorDefault,
+        g_eventTap,
         0
     );
-    
+
     if (runLoopSource == NULL) {
         NSLog(@"[FLWallpaper] Failed to create run loop source");
         CFRelease(g_eventTap);
@@ -1024,11 +1030,41 @@ static BOOL FLCreateEventTap(void) {
     CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, kCFRunLoopCommonModes);
     CFRelease(runLoopSource);
 
-    // Enable the event tap
+    // Enable the mouse tap
     CGEventTapEnable(g_eventTap, true);
     g_tapEnabled = YES;
+    NSLog(@"[FLWallpaper] Mouse event tap created successfully");
 
-    NSLog(@"[FLWallpaper] Event tap created successfully");
+    // 键盘 tap:没权限时系统会立刻禁用它并反复拉锯,干脆不建(键盘状态 API 读 0,
+    // 与历史行为一致);有权限则正常工作。
+    if (isTrusted) {
+        g_keyTap = CGEventTapCreate(
+            g_tapLocation,
+            kCGHeadInsertEventTap,
+            kCGEventTapOptionListenOnly,
+            keyboardMask,
+            FLKeyboardEventCallback,
+            NULL
+        );
+        if (g_keyTap != NULL) {
+            CFRunLoopSourceRef keySource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, g_keyTap, 0);
+            if (keySource != NULL) {
+                CFRunLoopAddSource(CFRunLoopGetCurrent(), keySource, kCFRunLoopCommonModes);
+                CFRelease(keySource);
+                CGEventTapEnable(g_keyTap, true);
+                NSLog(@"[FLWallpaper] Keyboard event tap created successfully");
+            } else {
+                CFRelease(g_keyTap);
+                g_keyTap = NULL;
+                NSLog(@"[FLWallpaper] Keyboard tap run loop source failed - keyboard state disabled");
+            }
+        } else {
+            NSLog(@"[FLWallpaper] Keyboard tap create failed - keyboard state disabled");
+        }
+    } else {
+        NSLog(@"[FLWallpaper] 无辅助功能权限 —— 跳过键盘 tap(键盘状态 API 恒 0)");
+    }
+
     return YES;
 }
 
@@ -1037,9 +1073,15 @@ static void FLDestroyEventTap(void) {
         CGEventTapEnable(g_eventTap, false);
         CFRelease(g_eventTap);
         g_eventTap = NULL;
-        g_tapEnabled = NO;
-        NSLog(@"[FLWallpaper] Event tap destroyed");
+        NSLog(@"[FLWallpaper] Mouse event tap destroyed");
     }
+    if (g_keyTap != NULL) {
+        CGEventTapEnable(g_keyTap, false);
+        CFRelease(g_keyTap);
+        g_keyTap = NULL;
+        NSLog(@"[FLWallpaper] Keyboard event tap destroyed");
+    }
+    g_tapEnabled = NO;
 }
 
 #pragma mark - Exported C API
@@ -1100,7 +1142,7 @@ void _FLWallpaperRefresh(void) {
 // If C# can't find this symbol the bundle is stale.
 __attribute__((visibility("default")))
 const char *_FLWallpaperBuildStamp(void) {
-    return "FLWallpaperBridge rev=22-point-coords " __DATE__ " " __TIME__;
+    return "FLWallpaperBridge rev=23-poll-input " __DATE__ " " __TIME__;
 }
 
 // On-demand full diagnostic dump. C# calls this when it wants a snapshot
@@ -1302,24 +1344,30 @@ int _FLMouseGetRightClickCount(void) {
     return g_rightClickCount;
 }
 
-// Get current mouse position。rev>=22: 左下原点"点"(pt)坐标,由 C# 侧按
-// Screen/主屏点尺寸比值换算成 Unity 像素;旧版返回的是原生猜算的像素坐标。
+// Get current mouse position。rev>=22 协议:左下原点"点"(pt)坐标,由 C# 侧按
+// Screen/主屏点尺寸比值换算成 Unity 像素。
+// rev=23:改为实时轮询 [NSEvent mouseLocation](本就是左下原点点坐标,无需翻转)
+// —— 不再依赖 event tap 缓存。实测日志(2026-07-13)证明无辅助功能权限时系统会
+// 反复禁用 tap(kCGEventTapDisabledByUserInput),缓存位置冻结=拖拽必死;
+// mouseLocation 轮询不需要任何权限,按住期间照样实时更新,tap 死活不影响拖拽。
 __attribute__((visibility("default")))
 void _FLMouseGetPosition(double *outX, double *outY) {
-    if (outX != NULL) *outX = g_mouseX;
-    if (outY != NULL) *outY = g_mouseY;
+    NSPoint loc = [NSEvent mouseLocation];
+    if (outX != NULL) *outX = loc.x;
+    if (outY != NULL) *outY = loc.y;
 }
 
-// Get left button state
+// Get left button state。rev=23:改读 [NSEvent pressedMouseButtons](实时全局
+// 按键位图,bit0=左键,无需权限),同上不再依赖 tap 缓存。
 __attribute__((visibility("default")))
 int _FLMouseGetLeftButtonDown(void) {
-    return g_leftButtonDown ? 1 : 0;
+    return ([NSEvent pressedMouseButtons] & 1) ? 1 : 0;
 }
 
-// Get right button state
+// Get right button state(bit1=右键)
 __attribute__((visibility("default")))
 int _FLMouseGetRightButtonDown(void) {
-    return g_rightButtonDown ? 1 : 0;
+    return ([NSEvent pressedMouseButtons] & 2) ? 1 : 0;
 }
 
 // rev=20: 光标上方是否被其他应用的【普通应用窗口】覆盖。现只用于滚轮转发闸门
