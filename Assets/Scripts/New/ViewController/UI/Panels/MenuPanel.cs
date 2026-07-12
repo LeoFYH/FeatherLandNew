@@ -206,6 +206,15 @@ namespace BirdGame
             settingButton.onValueChanged.AddListener(isOn =>
             {
                 if (isSyncingSettingButton) return;
+                // 开蛋流程期间设置完全不可用(开蛋就只能开蛋):静默回弹开关,不弹面板。
+                // 覆盖:场上有未开的蛋(刚购买落地) + 点蛋后的开蛋动画
+                if (Egg.IsHatching || this.GetModel<IBirdModel>().UnopenEggs > 0)
+                {
+                    isSyncingSettingButton = true;
+                    settingButton.isOn = !isOn;
+                    isSyncingSettingButton = false;
+                    return;
+                }
                 if (isOn)
                 {
                     uiSystem.HidePopup(UIPopup.ShopPopup);

@@ -445,6 +445,10 @@ namespace BirdGame
             // 优先处理 ESC 键 → 始终可用（不受任何限制，包括输入框焦点、弹窗显示、未开启的蛋等）
             if (GetKeyDownAny(KeyCode.Escape))
             {
+                // 例外:开蛋流程期间 ESC 完全禁用(开蛋就只能开蛋),吞掉按键不做任何事。
+                // 覆盖整个流程:场上有未开的蛋(刚购买落地) + 点蛋后的开蛋动画
+                if (Egg.IsHatching || this.GetModel<IBirdModel>().UnopenEggs > 0)
+                    return;
                 if (menuPanel != null)
                 {
                     var settingPopup = this.GetSystem<IUISystem>().GetPopup<UIBase>(UIPopup.SettingPopup);

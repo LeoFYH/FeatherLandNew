@@ -199,9 +199,9 @@ public class WallpaperModeController : ViewControllerBase
     /// </summary>
     private void Update()
     {
-        // 壁纸模式下按ESC键退出
+        // 壁纸模式下按ESC键退出(开蛋动画期间禁用,开蛋就只能开蛋)
 #if UNITY_STANDALONE_WIN
-        if (Input.GetKeyDown(KeyCode.Escape) && isWallpaperModeActive && this.GetModel<IGameModel>().IsShortcutKeyOn.Value)
+        if (Input.GetKeyDown(KeyCode.Escape) && isWallpaperModeActive && this.GetModel<IGameModel>().IsShortcutKeyOn.Value && !Egg.IsHatching && this.GetModel<IBirdModel>().UnopenEggs <= 0)
         {
             ExitWallpaperMode();
         }
@@ -218,8 +218,8 @@ public class WallpaperModeController : ViewControllerBase
             }
         }
 #elif UNITY_STANDALONE_OSX
-        // 等价于 Win 端的 ESC 退出
-        if (Input.GetKeyDown(KeyCode.Escape) && isWallpaperModeActive && this.GetModel<IGameModel>().IsShortcutKeyOn.Value)
+        // 等价于 Win 端的 ESC 退出(开蛋动画期间同样禁用)
+        if (Input.GetKeyDown(KeyCode.Escape) && isWallpaperModeActive && this.GetModel<IGameModel>().IsShortcutKeyOn.Value && !Egg.IsHatching && this.GetModel<IBirdModel>().UnopenEggs <= 0)
         {
             ExitWallpaperMode();
         }
