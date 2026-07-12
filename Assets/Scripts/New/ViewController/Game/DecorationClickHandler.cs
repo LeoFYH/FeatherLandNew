@@ -24,8 +24,14 @@ namespace BirdGame
 
         public void Initialize(int id, int index, Vector3? savedPosition = null)
         {
+            Initialize(id, index, this.GetModel<ISaveModel>().BirdInfoData.currentMap, savedPosition);
+        }
+
+        public void Initialize(int id, int index, int sceneId, Vector3? savedPosition = null)
+        {
             decorationId = id;
             decorationIndex = index;
+            this.sceneId = sceneId;
             controller?.SetSp(index);
             
             // 安全访问配置数据，避免索引越界

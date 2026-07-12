@@ -577,7 +577,7 @@ namespace BirdGame
 
                 currentIndex = index;
                 DecorationClickHandler clickHandler = decoration.GetComponentInChildren<DecorationClickHandler>();
-                clickHandler.Initialize(decorationId, currentIndex);
+                clickHandler.Initialize(decorationId, currentIndex, mapIndex);
             });
             // // 优先使用场景Sprite，如果没有则使用icon
             // Sprite spriteToUse = decorationItem.sceneSprite != null ? decorationItem.sceneSprite : decorationItem.icon;
@@ -752,8 +752,8 @@ namespace BirdGame
                 
                 // 添加点击检测组件
                 DecorationClickHandler clickHandler = currentPlacingDecoration.AddComponent<DecorationClickHandler>();
-                clickHandler.Initialize(currentPlacingDecorationId, currentIndex, currentPlacingDecoration.transform.position);
                 int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+                clickHandler.Initialize(currentPlacingDecorationId, currentIndex, mapIndex, currentPlacingDecoration.transform.position);
                 // 更新已购买的装饰品数量
                 var accountData = this.GetModel<ISaveModel>().AccountData;
                 Debug.Log("index:" + currentIndex);
@@ -839,6 +839,7 @@ namespace BirdGame
                 
                 // 只加载一次 Prefab，然后多次实例化，避免异步问题
                 int finalId = i;
+                int finalMapIndex = mapIndex;
                 this.GetSystem<IAssetSystem>().LoadAssetAsync<GameObject>(decorationItem.prefab.AssetGUID,
                     obj =>
                     {
@@ -849,7 +850,7 @@ namespace BirdGame
                             DecorationClickHandler clickHandler = decoration.GetComponentInChildren<DecorationClickHandler>();
                             if (clickHandler != null)
                             {
-                                clickHandler.Initialize(finalId, j, decorationInfo.position[j]);
+                                clickHandler.Initialize(finalId, j, finalMapIndex, decorationInfo.position[j]);
                             }
                             else
                             {

@@ -21,7 +21,26 @@ namespace BirdGame
             mainCamera = Camera.main;
             spriteRenderer = GetComponentInChildren<SpriteRenderer>();
             var clickHandler = GetComponent<DecorationClickHandler>();
-            info = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[clickHandler.sceneId].decorations[clickHandler.decorationId];
+            
+            // 安全访问配置数据，避免 sceneId / decorationId 越界导致崩溃
+            var shopConfig = this.GetModel<IConfigModel>().ShopConfig;
+            if (clickHandler != null && shopConfig?.sceneDecorations != null &&
+                clickHandler.sceneId >= 0 && clickHandler.sceneId < shopConfig.sceneDecorations.Count)
+            {
+                var sceneDecoration = shopConfig.sceneDecorations[clickHandler.sceneId];
+                if (sceneDecoration?.decorations != null &&
+                    clickHandler.decorationId >= 0 && clickHandler.decorationId < sceneDecoration.decorations.Length)
+                {
+                    info = sceneDecoration.decorations[clickHandler.decorationId];
+                }
+            }
+            
+            if (info == null)
+            {
+                Debug.LogError($"DecorationDrag: 无法获取装饰配置，sceneId={clickHandler?.sceneId}, decorationId={clickHandler?.decorationId}，已禁用拖拽逻辑。");
+                enabled = false;
+                return;
+            }
             
             // // 添加碰撞器以便更好地检测鼠标
             // if (spriteRenderer.GetComponent<Collider2D>() == null)
