@@ -337,11 +337,18 @@ static void FLRunOnMain(dispatch_block_t block) {
     }
 }
 
-// Convert CGPoint from screen coordinates (bottom-left origin) to Unity coordinates (top-left origin)
+// CGEvent 屏幕坐标(左上原点,单位:点 pt)-> Unity 屏幕坐标(左下原点,单位:像素 px)。
+// rev=21 修复:此前漏乘 backingScaleFactor,Retina(2x)屏上 C# 拿到的坐标只有真实
+// 像素的一半 —— FindDragTarget/ForwardWheelToUI 的 raycast 全部命中错位:
+// 商店滚轮转发打不中 ScrollRect(触控板"滑不动"的真根源之一)、拖拽找错目标。
+// (点击不受影响:点击走原生 NSEvent 流,由 Unity 自己换算坐标。)
 static void FLConvertToUnityCoordinates(CGPoint screenPoint, double *outX, double *outY) {
-    NSRect screenFrame = [[NSScreen mainScreen] frame];
-    *outX = screenPoint.x;
-    *outY = screenFrame.size.height - screenPoint.y;
+    NSScreen *screen = [NSScreen mainScreen];
+    NSRect screenFrame = [screen frame];
+    double scale = [screen backingScaleFactor];
+    if (scale <= 0.0) scale = 1.0;
+    *outX = screenPoint.x * scale;
+    *outY = (screenFrame.size.height - screenPoint.y) * scale;
 }
 
 #pragma mark - Class Swap (enables click delivery to borderless window)
@@ -795,12 +802,32 @@ static BOOL FLIsEventInUnityWindow(CGEventRef event) {
     return inWindow;
 }
 
+// 前置声明:键盘事件与鼠标共用一个 tap,由本回调分发过去
+static CGEventRef FLKeyboardEventCallback(CGEventTapProxy proxy, CGEventType type,
+                                          CGEventRef event, void *refcon);
+
 // CGEventTap callback - captures global mouse events
-static CGEventRef FLMouseEventCallback(CGEventTapProxy proxy, CGEventType type, 
+static CGEventRef FLMouseEventCallback(CGEventTapProxy proxy, CGEventType type,
                                        CGEventRef event, void *refcon) {
+    // rev=21 自愈:Unity 主线程卡顿(换图/GC)超阈值时系统会禁用 tap 且不再回调,
+    // 不重启的话鼠标状态全冻结,壁纸输入整体死掉直到重进壁纸("时好时坏"元凶之一)。
+    if (type == kCGEventTapDisabledByTimeout || type == kCGEventTapDisabledByUserInput) {
+        if (g_eventTap != NULL) {
+            CGEventTapEnable(g_eventTap, true);
+            NSLog(@"[FLWallpaper] event tap 被系统禁用(type=%d),已自动重启", (int)type);
+        }
+        return event;
+    }
+
     // Only process events when wallpaper mode is active
     if (!g_wallpaperOn || !g_tapEnabled) {
         return event;
+    }
+
+    // rev=21: 键盘分发 —— tap 掩码一直含键盘,但历史上只注册了本回调,
+    // FLKeyboardEventCallback 从未被调到(键盘状态 API 永远读 0 的死功能)。
+    if (type == kCGEventKeyDown || type == kCGEventKeyUp) {
+        return FLKeyboardEventCallback(proxy, type, event, refcon);
     }
 
     // Check if event is within Unity window bounds
@@ -944,21 +971,29 @@ static BOOL FLCreateEventTap(void) {
     }
 
     // Create mouse event tap
+    // rev=21 致命修复:补上 Dragged —— macOS 按住鼠标移动时只发 LeftMouseDragged/
+    // RightMouseDragged(不发 MouseMoved),此前掩码漏掉它们,按住期间 g_mouseX/Y
+    // 冻结在按下点,C# 拖拽驱动的移动距离恒为 0,永远过不了启动阈值 = 拖拽全废。
     CGEventMask mouseMask = (1 << kCGEventLeftMouseDown) |
                             (1 << kCGEventLeftMouseUp) |
                             (1 << kCGEventRightMouseDown) |
                             (1 << kCGEventRightMouseUp) |
                             (1 << kCGEventMouseMoved) |
+                            (1 << kCGEventLeftMouseDragged) |
+                            (1 << kCGEventRightMouseDragged) |
                             (1 << kCGEventScrollWheel);
 
     // Create keyboard event tap
-    CGEventMask keyboardMask = (1 << kCGEventKeyDown) | 
+    CGEventMask keyboardMask = (1 << kCGEventKeyDown) |
                                (1 << kCGEventKeyUp);
 
+    // rev=21: Default(同步过滤)→ ListenOnly(旁听)。回调从来都原样 return event,
+    // 却让全系统每个鼠标/键盘事件同步等待 Unity 主循环,帧率一抖整机输入跟着卡,
+    // 还大幅提高被系统按超时禁用的概率。
     g_eventTap = CGEventTapCreate(
         g_tapLocation,
         kCGHeadInsertEventTap,
-        kCGEventTapOptionDefault,
+        kCGEventTapOptionListenOnly,
         mouseMask | keyboardMask,
         FLMouseEventCallback,
         NULL
@@ -1063,7 +1098,7 @@ void _FLWallpaperRefresh(void) {
 // If C# can't find this symbol the bundle is stale.
 __attribute__((visibility("default")))
 const char *_FLWallpaperBuildStamp(void) {
-    return "FLWallpaperBridge rev=19-hittest-guard " __DATE__ " " __TIME__;
+    return "FLWallpaperBridge rev=21-dragged-retina " __DATE__ " " __TIME__;
 }
 
 // On-demand full diagnostic dump. C# calls this when it wants a snapshot
@@ -1284,19 +1319,16 @@ int _FLMouseGetRightButtonDown(void) {
     return g_rightButtonDown ? 1 : 0;
 }
 
-// rev=19: 光标上方是否被其他应用的【可交互】窗口覆盖(即光标不在"裸桌面"上)。
+// rev=20: 光标上方是否被其他应用的【普通应用窗口】覆盖。现只用于滚轮转发闸门
+// (拖拽闸门已改用 C# 侧 Unity Input 归属判定 —— 系统把 mouseDown 路由给谁,
+//  谁就是点击的主人,不做几何猜测)。
 //
-// rev=18 用 CGWindowListCopyWindowInfo 按几何+alpha 判定,实测误伤:macOS 录屏/
-// 屏幕共享会挂全屏、点击穿透、alpha=1 的边框指示窗,几何检测把整个屏幕都判成
-// "被覆盖",拖拽和滚轮转发被全屏闸死(发行商在录屏下测试,全部中招)。
-//
-// rev=19 改用窗口服务器的真实命中测试 windowNumberAtPoint —— 它会跳过
-// ignoresMouseEvents 的窗口(录屏边框、各类系统叠层都是点击穿透的,否则会挡住
-// 全系统点击),这正是"这次点击究竟属于谁"的权威答案。再按命中窗口分类:
-//   * 本进程窗口 / 未命中            -> 0 未覆盖
-//   * layer < 0(桌面图标/壁纸层)   -> 0 未覆盖(裸桌面)
-//   * 0 <= layer <= 101(普通窗口/浮动面板/Dock/菜单栏/弹出菜单等可交互带)-> 1 覆盖
-//   * layer > 101(录屏指示、辅助叠层等高层被动窗)-> 0 未覆盖(兜底,防漏网叠层)
+// 历史教训:rev=18 用 CGWindowListCopyWindowInfo 几何+alpha 判定,被 macOS 录屏/
+// 共享的全屏点击穿透指示窗误伤成"全屏被覆盖",拖拽滚轮全废;rev=19 的
+// windowNumberAtPoint + layer∈[0,101] 带仍可能把 25 层(状态层)的录屏工具窗
+// 算成覆盖。rev=20 收窄:只有 layer==0(真实普通应用窗口:浏览器/Finder 等)
+// 才算覆盖;桌面层(<0)、Dock(20)/菜单栏(24)/状态层(25)/更高的被动叠层一律放行。
+// 代价:光标悬在 Dock/菜单栏上滚动会漏给壁纸,属边缘小瑕疵,远好于滚动被闸死。
 __attribute__((visibility("default")))
 int _FLIsCursorCoveredByOtherWindow(void) {
     __block int covered = 0;
@@ -1319,7 +1351,7 @@ int _FLIsCursorCoveredByOtherWindow(void) {
         }
         CFRelease(arr);
 
-        covered = (layer >= 0 && layer <= 101) ? 1 : 0;
+        covered = (layer == 0) ? 1 : 0;
     });
     return covered;
 }
@@ -1333,9 +1365,15 @@ static id     g_localDownMonitor     = nil;
 
 static void FLEnsureLocalDownMonitor(void) {
     if (g_localDownMonitor != nil) return;
-    g_localDownMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskLeftMouseDown
+    // rev=21: 同时监听 Up —— 一次按下结束后立刻使时间戳失效,防止
+    // "点完游戏 0.3s 内又按在浏览器上"被旧时间戳误判为属于游戏。
+    g_localDownMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:
+                              (NSEventMaskLeftMouseDown | NSEventMaskLeftMouseUp)
                                                                handler:^NSEvent *(NSEvent *e) {
-        g_lastLocalMouseDownAt = CFAbsoluteTimeGetCurrent();
+        if (e.type == NSEventTypeLeftMouseDown)
+            g_lastLocalMouseDownAt = CFAbsoluteTimeGetCurrent();
+        else
+            g_lastLocalMouseDownAt = -1.0e9;   // up:本次按下归属判定已结束
         return e;   // 只观察,不拦截
     }];
 }
@@ -1364,6 +1402,12 @@ __attribute__((visibility("default")))
 void _FLMouseResetCounters(void) {
     g_clickCount = 0;
     g_rightClickCount = 0;
+    // rev=21: 同时清按钮/滚轮态。退出壁纸会先销毁 tap,若当时左键正按着,
+    // mouseUp 永远收不到,g_leftButtonDown 卡 YES —— 重进壁纸首帧就会出现
+    // "幻影按下沿",拖拽状态机被陈旧起点污染。C# OnEnable/OnDisable 都调本函数。
+    g_leftButtonDown = NO;
+    g_rightButtonDown = NO;
+    g_wheelDelta = 0.0f;
 }
 
 // Keyboard state API

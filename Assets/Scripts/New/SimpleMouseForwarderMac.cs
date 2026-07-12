@@ -125,7 +125,7 @@ namespace BirdGame
         // 各拖拽组件自带 isDraggingFromHook 防重入,与原生事件流不会双触发。
         private bool wasLeftButtonDown = false;
         private bool isLeftMouseDragging = false;
-        private bool pressStartedOverOtherWindow = false;
+        private bool pressBelongsToGame = false;
         private Vector2 dragStartPosition;
         private Vector2 lastDragPosition;
         private float dragStartTime;
@@ -162,6 +162,7 @@ namespace BirdGame
             // 拖拽状态复位,防止跨模式切换残留
             wasLeftButtonDown = false;
             isLeftMouseDragging = false;
+            pressBelongsToGame = false;
             currentDragTarget = null;
             // HUD 让出菜单栏/Dock 区域;MenuPanel 可能尚未实例化,失败则 Update 里重试
             _uiInsetRetryTimer = 0f;
@@ -232,26 +233,31 @@ namespace BirdGame
                 lastDragPosition = mousePosition;
                 dragStartTime = Time.time;
                 isLeftMouseDragging = false;
-                // 覆盖闸门:光标被浏览器等其他窗口盖住时,这次按下属于那个窗口,
-                // 壁纸层不得抢拖(CGEventTap 是全局的,不判会把浏览器里的拖动
-                // 误转发成拖番茄钟)。整个按住周期沿用这个判定。
-                // 双信号:命中测试说"被覆盖"、但我们的窗口确实刚收到这次按下
-                // (窗口服务器路由结果)-> 以后者为准放行,防录屏叠层等误报。
-                pressStartedOverOtherWindow = IsCursorCoveredByOtherWindow()
-                                              && !NativeMouseDownWithin(0.25f);
-                currentDragTarget = pressStartedOverOtherWindow ? null : FindDragTarget(mousePosition);
+                // 归属判定(rev=20,纯 C#):壁纸点击链路正常时,属于游戏的按下
+                // 会以真实 NSEvent 流进 Unity —— Input.GetMouseButton(0) 能看到
+                // (FLClickProbe 的日志就靠它)。点在浏览器/Finder 等窗口上的按下,
+                // 系统路由给那个 App,Unity 永远看不到。这是系统级路由的权威结果,
+                // 不做任何几何猜测,录屏/共享的全屏叠层不会再造成误拦
+                // (rev=18/19 的窗口列表几何判定被这类点击穿透叠层误伤过两轮)。
+                pressBelongsToGame = Input.GetMouseButtonDown(0) || Input.GetMouseButton(0)
+                                     || NativeMouseDownWithin(0.3f);
+                currentDragTarget = pressBelongsToGame ? FindDragTarget(mousePosition) : null;
             }
             // 按住中
             else if (leftDown && wasLeftButtonDown)
             {
                 if (!isLeftMouseDragging)
                 {
+                    // Unity 的 Input 可能比 CGEventTap 轮询晚一帧到账:按住期间补判归属
+                    if (!pressBelongsToGame && (Input.GetMouseButton(0) || NativeMouseDownWithin(0.3f)))
+                        pressBelongsToGame = true;
+
                     // 与 Windows 端相同的启动阈值:防止快速点击/手抖误判为拖拽
                     float timeSinceDown = Time.time - dragStartTime;
                     float distanceMoved = Vector2.Distance(mousePosition, dragStartPosition);
                     if (timeSinceDown >= DRAG_TIME_THRESHOLD && distanceMoved > DRAG_DISTANCE_THRESHOLD)
                     {
-                        if (currentDragTarget == null && !pressStartedOverOtherWindow)
+                        if (currentDragTarget == null && pressBelongsToGame)
                             currentDragTarget = FindDragTarget(dragStartPosition);
 
                         if (currentDragTarget != null)
@@ -365,8 +371,10 @@ namespace BirdGame
                     return result.gameObject;
 
                 // Fill/Handle 命中时也能找到父级滑条,与 Windows 端一致
-                var slider = result.gameObject.GetComponent<SliderBarClickHandler>()
-                             ?? result.gameObject.GetComponentInParent<SliderBarClickHandler>();
+                // (不用 ?? —— UnityEngine.Object 的销毁态需走 Unity 重载的 null 判断)
+                var slider = result.gameObject.GetComponent<SliderBarClickHandler>();
+                if (slider == null)
+                    slider = result.gameObject.GetComponentInParent<SliderBarClickHandler>();
                 if (slider != null)
                     return slider.gameObject;
             }

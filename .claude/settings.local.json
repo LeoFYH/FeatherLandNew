@@ -104,7 +104,10 @@
       "Read(//c/Users/11752/AppData/Local/Unity/**)",
       "PowerShell(Get-Process -Name \"Unity\",\"Unity Hub\",\"Unity.Licensing.Client\",\"UnityHub\" -ErrorAction SilentlyContinue)",
       "Bash(PYTHONIOENCODING=utf-8 python)",
-      "Bash(sed -i 's/rev=18-scroll-dragguard/rev=19-hittest-guard/' Assets/Plugins/macOS/FLWallpaperBridge.mm)"
+      "Bash(sed -i 's/rev=18-scroll-dragguard/rev=19-hittest-guard/' Assets/Plugins/macOS/FLWallpaperBridge.mm)",
+      "PowerShell(git -C E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew log --oneline -15 -- Assets/Plugins/macOS/FLWallpaperBridge.mm)",
+      "PowerShell(git -C E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew log --all -S \"kCGEventLeftMouseDragged\" --oneline -- Assets/Plugins/macOS/FLWallpaperBridge.mm)",
+      "PowerShell(git -C E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew log --oneline -8 -- Assets/Scripts/New/SimpleMouseForwarderMac.cs)"
     ]
   }
 }
