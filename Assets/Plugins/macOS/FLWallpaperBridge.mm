@@ -337,18 +337,20 @@ static void FLRunOnMain(dispatch_block_t block) {
     }
 }
 
-// CGEvent 屏幕坐标(左上原点,单位:点 pt)-> Unity 屏幕坐标(左下原点,单位:像素 px)。
-// rev=21 修复:此前漏乘 backingScaleFactor,Retina(2x)屏上 C# 拿到的坐标只有真实
-// 像素的一半 —— FindDragTarget/ForwardWheelToUI 的 raycast 全部命中错位:
-// 商店滚轮转发打不中 ScrollRect(触控板"滑不动"的真根源之一)、拖拽找错目标。
+// CGEvent 屏幕坐标(左上原点,单位:点 pt)-> 左下原点"点"坐标(只翻转 Y,不缩放)。
+// rev=22:不再在原生侧乘 backingScaleFactor —— rev=21 盲乘 scale 押注 Unity
+// 后备缓冲一定是 Retina 原生像素,一旦实际不是(窗口背板未挂 Retina/缩放模式差异),
+// 所有坐标偏 2 倍,FindDragTarget/ForwardWheelToUI 的 raycast 全体脱靶,拖拽直接
+// 全废,还会经 isDraggingFromHook 压制原本可用的原生 EventSystem 拖拽。
+// 现在原生只报"点",C# 侧(SimpleMouseForwarderMac)用 Screen.width/height ÷
+// _FLWallpaperGetMainScreenFrame 点尺寸的实测比值换算成 Unity 像素 —— 与真实
+// 后备缓冲严格一致,Retina 开/关/任意缩放模式都正确。C# 按 BuildStamp 的 rev
+// 区分新旧 bundle:rev>=22 走点坐标换算,旧 bundle 维持原样(ABI 兼容)。
 // (点击不受影响:点击走原生 NSEvent 流,由 Unity 自己换算坐标。)
 static void FLConvertToUnityCoordinates(CGPoint screenPoint, double *outX, double *outY) {
-    NSScreen *screen = [NSScreen mainScreen];
-    NSRect screenFrame = [screen frame];
-    double scale = [screen backingScaleFactor];
-    if (scale <= 0.0) scale = 1.0;
-    *outX = screenPoint.x * scale;
-    *outY = (screenFrame.size.height - screenPoint.y) * scale;
+    NSRect screenFrame = [[NSScreen mainScreen] frame];
+    *outX = screenPoint.x;
+    *outY = screenFrame.size.height - screenPoint.y;
 }
 
 #pragma mark - Class Swap (enables click delivery to borderless window)
@@ -1098,7 +1100,7 @@ void _FLWallpaperRefresh(void) {
 // If C# can't find this symbol the bundle is stale.
 __attribute__((visibility("default")))
 const char *_FLWallpaperBuildStamp(void) {
-    return "FLWallpaperBridge rev=21-dragged-retina " __DATE__ " " __TIME__;
+    return "FLWallpaperBridge rev=22-point-coords " __DATE__ " " __TIME__;
 }
 
 // On-demand full diagnostic dump. C# calls this when it wants a snapshot
@@ -1300,7 +1302,8 @@ int _FLMouseGetRightClickCount(void) {
     return g_rightClickCount;
 }
 
-// Get current mouse position (Unity coordinates)
+// Get current mouse position。rev>=22: 左下原点"点"(pt)坐标,由 C# 侧按
+// Screen/主屏点尺寸比值换算成 Unity 像素;旧版返回的是原生猜算的像素坐标。
 __attribute__((visibility("default")))
 void _FLMouseGetPosition(double *outX, double *outY) {
     if (outX != NULL) *outX = g_mouseX;

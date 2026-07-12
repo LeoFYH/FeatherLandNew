@@ -107,7 +107,10 @@
       "Bash(sed -i 's/rev=18-scroll-dragguard/rev=19-hittest-guard/' Assets/Plugins/macOS/FLWallpaperBridge.mm)",
       "PowerShell(git -C E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew log --oneline -15 -- Assets/Plugins/macOS/FLWallpaperBridge.mm)",
       "PowerShell(git -C E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew log --all -S \"kCGEventLeftMouseDragged\" --oneline -- Assets/Plugins/macOS/FLWallpaperBridge.mm)",
-      "PowerShell(git -C E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew log --oneline -8 -- Assets/Scripts/New/SimpleMouseForwarderMac.cs)"
+      "PowerShell(git -C E:\\\\Unity\\\\Projects\\\\Work\\\\FeatherLandNew log --oneline -8 -- Assets/Scripts/New/SimpleMouseForwarderMac.cs)",
+      "PowerShell($guids = @{}; Get-Content 'Assets/Scripts/New/ViewController/UI/DragMove.cs.meta','Assets/Scripts/New/ViewController/UI/DragAspect.cs.meta' | Select-String 'guid:'; Select-String -Path 'Assets/Prefabs/UI/Popups/ClockPopup.prefab' -Pattern 'm_Script: \\\\{fileID: 11500000, guid: \\([0-9a-f]+\\)' | ForEach-Object { $_.Matches[0].Groups[1].Value } | Sort-Object -Unique)",
+      "PowerShell($content = Get-Content 'Assets/Prefabs/UI/Popups/ClockPopup.prefab' -Raw; $idx = $content.IndexOf\\('m_GameObject: {fileID: 2111134610708619145}'\\); $chunks = [regex]::Matches\\($content, '\\(?s\\)--- !u!\\(\\\\d+\\) &\\(\\\\d+\\)\\\\r?\\\\n\\(.{0,400}\\)'\\) | Where-Object { $_.Groups[3].Value -match 'm_GameObject: \\\\{fileID: 2111134610708619145\\\\}' }; foreach \\($c in $chunks\\) { 'CLASSID=' + $c.Groups[1].Value + ' anchor=' + $c.Groups[2].Value; \\($c.Groups[3].Value -split \"`n\" | Select-Object -First 12\\) -join \"`n\"; '---' })",
+      "PowerShell($content = Get-Content 'Assets/Prefabs/UI/Popups/ClockPopup.prefab' -Raw; $m = [regex]::Match\\($content, '\\(?s\\)--- !u!114 &3424464407090510018\\\\r?\\\\n\\(.{0,900}\\)'\\); $m.Groups[1].Value)"
     ]
   }
 }

@@ -83,6 +83,13 @@ namespace BirdGame
         [DllImport("FLWallpaperBridge")]
         private static extern double _FLSecondsSinceNativeMouseDown();
 
+        [DllImport("FLWallpaperBridge")]
+        private static extern int _FLWallpaperGetMainScreenFrame(
+            out double x, out double y, out double w, out double h, int fullFrame);
+
+        [DllImport("FLWallpaperBridge")]
+        private static extern IntPtr _FLWallpaperBuildStamp();
+
         // 光标是否被其他应用窗口(浏览器等)盖住。旧 bundle 缺该符号时返回 false,
         // 维持修复前行为(不拦截),绝不让缺符号把输入整个炸掉。
         private static bool _coverCheckUnavailable;
@@ -112,6 +119,61 @@ namespace BirdGame
                 return false;
             }
             catch (Exception) { return false; }
+        }
+
+        // ---- 坐标模式(rev=22) ----
+        // 原生 rev>=22 返回"点"(pt)坐标,这里按 Unity 实际后备缓冲与屏幕点尺寸的
+        // 实测比值换算成像素,与 Input.mousePosition 严格同一坐标系。rev=21 在原生
+        // 侧盲乘 backingScaleFactor,一旦 Unity 后备缓冲不是它猜的倍率,raycast 全
+        // 体脱靶 = 拖拽/滚轮转发全废;实测比值不存在猜错的可能。
+        // 旧 bundle(rev<22,含 Windows 机器打包时回退的仓库预编译 bundle)返回的
+        // 已是换算过的坐标,原样使用,不重复缩放。
+        private static bool _stampChecked;
+        private static bool _nativeGivesPoints;
+        private static float _ptToPxX = 1f, _ptToPxY = 1f;
+        private static int _scaleCachedW, _scaleCachedH;
+
+        private static void EnsureCoordinateMode()
+        {
+            if (_stampChecked) return;
+            _stampChecked = true;
+            int rev = 0;
+            try
+            {
+                IntPtr p = _FLWallpaperBuildStamp();
+                string stamp = p != IntPtr.Zero ? Marshal.PtrToStringAnsi(p) : "";
+                var m = System.Text.RegularExpressions.Regex.Match(stamp ?? "", @"rev=(\d+)");
+                if (m.Success) int.TryParse(m.Groups[1].Value, out rev);
+            }
+            catch (Exception) { rev = 0; }
+            _nativeGivesPoints = rev >= 22;
+            Debug.Log($"[SimpleMouseForwarderMac] 原生坐标模式 rev={rev}: " +
+                      (_nativeGivesPoints ? "点坐标,C#按实测比值换算像素" : "旧bundle已换算,原样使用"));
+        }
+
+        // 比值缓存按 Screen 尺寸失效(进出壁纸/换分辨率会变);壁纸窗口撑满主屏,
+        // 所以 Screen 像素 ÷ 主屏点尺寸 就是精确的 pt->px 比值。
+        private static void RefreshPointToPixelScale()
+        {
+            if (Screen.width == _scaleCachedW && Screen.height == _scaleCachedH) return;
+            _scaleCachedW = Screen.width;
+            _scaleCachedH = Screen.height;
+            try
+            {
+                if (_FLWallpaperGetMainScreenFrame(out _, out _, out double fw, out double fh, 1) != 0
+                    && fw > 0 && fh > 0)
+                {
+                    _ptToPxX = (float)(Screen.width / fw);
+                    _ptToPxY = (float)(Screen.height / fh);
+                    Debug.Log($"[SimpleMouseForwarderMac] pt->px 比值更新: x={_ptToPxX:F3} y={_ptToPxY:F3} " +
+                              $"(screen={Screen.width}x{Screen.height}, frame={fw}x{fh}pt)");
+                }
+            }
+            catch (Exception)
+            {
+                _ptToPxX = 1f;
+                _ptToPxY = 1f;
+            }
         }
 #endif
         
@@ -156,6 +218,8 @@ namespace BirdGame
             _FLMouseResetCounters();
             _FLKeyboardClearState();
             NativeMouseDownWithin(0f); // 预热:进壁纸时就装好原生按下监视器,首次拖拽不缺信号
+            EnsureCoordinateMode();    // 识别 bundle 坐标模式(rev>=22 点坐标)
+            _scaleCachedW = 0;         // 进壁纸后 Screen 尺寸可能刚变,强制重算 pt->px
 #endif
             previousClickCount = 0;
             previousRightClickCount = 0;
@@ -233,15 +297,24 @@ namespace BirdGame
                 lastDragPosition = mousePosition;
                 dragStartTime = Time.time;
                 isLeftMouseDragging = false;
-                // 归属判定(rev=20,纯 C#):壁纸点击链路正常时,属于游戏的按下
-                // 会以真实 NSEvent 流进 Unity —— Input.GetMouseButton(0) 能看到
-                // (FLClickProbe 的日志就靠它)。点在浏览器/Finder 等窗口上的按下,
-                // 系统路由给那个 App,Unity 永远看不到。这是系统级路由的权威结果,
-                // 不做任何几何猜测,录屏/共享的全屏叠层不会再造成误拦
-                // (rev=18/19 的窗口列表几何判定被这类点击穿透叠层误伤过两轮)。
-                pressBelongsToGame = Input.GetMouseButtonDown(0) || Input.GetMouseButton(0)
-                                     || NativeMouseDownWithin(0.3f);
+                // 归属判定,三信号任一命中即放行:
+                // 1/2) Unity Input / NSEvent 监视器 —— 窗口服务器把这次按下路由给了
+                //      我们(权威"属于游戏")。但壁纸面板是 NonactivatingPanel、应用
+                //      常年无焦点,浏览器等前台窗口在场时这两个信号都可能缺席,
+                //      不能把它们当唯一依据(否则番茄钟在有浮窗时永远拖不动)。
+                // 3) 兜底:光标下不是其他 App 的普通窗口(windowNumberAtPoint 命中
+                //    测试,rev=20 已收窄到 layer==0,录屏/共享的点击穿透叠层不会误报)
+                //    —— 按在裸壁纸上的操作,无论 Unity 侧信号是否到账,都属于游戏。
+                //    真正按在浏览器上时:信号1/2必缺席、信号3必判"被盖",仍会拦住。
+                bool inputSeesDown = Input.GetMouseButtonDown(0) || Input.GetMouseButton(0);
+                bool nativeSawDown = NativeMouseDownWithin(0.3f);
+                bool coveredAtPress = IsCursorCoveredByOtherWindow();
+                pressBelongsToGame = inputSeesDown || nativeSawDown || !coveredAtPress;
                 currentDragTarget = pressBelongsToGame ? FindDragTarget(mousePosition) : null;
+                // 常开单行诊断:下次 Player.log 能直接看到拖拽为何没启动
+                Debug.Log($"[SimpleMouseForwarderMac] 按下沿 tap={mousePosition} input={(Vector2)Input.mousePosition} " +
+                          $"screen={Screen.width}x{Screen.height} 信号(in={inputSeesDown},native={nativeSawDown},covered={coveredAtPress}) " +
+                          $"belongs={pressBelongsToGame} target={(currentDragTarget != null ? currentDragTarget.name : "无")}");
             }
             // 按住中
             else if (leftDown && wasLeftButtonDown)
@@ -402,7 +475,15 @@ namespace BirdGame
 #if UNITY_STANDALONE_OSX && !UNITY_EDITOR
             double x, y;
             _FLMouseGetPosition(out x, out y);
-            mousePosition = new Vector2((float)x, (float)y);
+            if (_nativeGivesPoints)
+            {
+                RefreshPointToPixelScale();
+                mousePosition = new Vector2((float)x * _ptToPxX, (float)y * _ptToPxY);
+            }
+            else
+            {
+                mousePosition = new Vector2((float)x, (float)y);
+            }
             
             leftButtonDown = _FLMouseGetLeftButtonDown() != 0;
             rightButtonDown = _FLMouseGetRightButtonDown() != 0;
