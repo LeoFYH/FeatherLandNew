@@ -1124,20 +1124,12 @@
       <HintPath>Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="NavMeshPlus">
-      <HintPath>Library\ScriptAssemblies\NavMeshPlus.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Unity.RenderPipeline.Universal.ShaderLibrary">
       <HintPath>Library\ScriptAssemblies\Unity.RenderPipeline.Universal.ShaderLibrary.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Universal.Shaders">
       <HintPath>Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Shaders.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="NavMeshPlusEditor">
-      <HintPath>Library\ScriptAssemblies\NavMeshPlusEditor.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Core.Runtime.Shared">
@@ -1238,6 +1230,7 @@
     <ProjectReference Include="Unity.Addressables.Editor.csproj" />
     <ProjectReference Include="Unity.Searcher.Editor.csproj" />
     <ProjectReference Include="Unity.Rider.Editor.csproj" />
+    <ProjectReference Include="NavMeshPlus.csproj" />
     <ProjectReference Include="PsdPlugin.csproj" />
     <ProjectReference Include="UniTask.Linq.csproj" />
     <ProjectReference Include="Unity.2D.Common.Editor.csproj" />
@@ -1245,6 +1238,7 @@
     <ProjectReference Include="Unity.2D.Common.Path.Editor.csproj" />
     <ProjectReference Include="Unity.MemoryProfiler.Editor.csproj" />
     <ProjectReference Include="Unity.2D.IK.Editor.csproj" />
+    <ProjectReference Include="NavMeshPlusEditor.csproj" />
     <ProjectReference Include="Unity.ResourceManager.csproj" />
     <ProjectReference Include="Unity.2D.SpriteShape.Runtime.csproj" />
     <ProjectReference Include="Unity.2D.IK.Runtime.csproj" />
