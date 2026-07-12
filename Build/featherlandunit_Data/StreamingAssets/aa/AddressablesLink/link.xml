@@ -57,7 +57,9 @@
     <type fullname="BirdGame.NoteItem" preserve="all" />
     <type fullname="BirdGame.NotePopup" preserve="all" />
     <type fullname="BirdGame.NotwalkableController" preserve="all" />
+    <type fullname="BirdGame.NumPanel" preserve="all" />
     <type fullname="BirdGame.OpenEggAnim" preserve="all" />
+    <type fullname="BirdGame.PhotoPopup" preserve="all" />
     <type fullname="BirdGame.PointerEvent" preserve="all" />
     <type fullname="BirdGame.PromptPopup" preserve="all" />
     <type fullname="BirdGame.RadioConfig" preserve="all" />
@@ -94,26 +96,25 @@
     <type fullname="HiyodoGame.VideoPrepare" preserve="all" />
     <type fullname="HookTMPInputHandler" preserve="all" />
     <type fullname="NavigationManager" preserve="all" />
-    <type fullname="NumPanel" preserve="all" />
     <type fullname="ScrollRectMouseWheelHandler" preserve="all" />
     <type fullname="SliderBarClickHandler" preserve="all" />
     <type fullname="UIButtonHoverScale" preserve="all" />
     <type fullname="WalkableArea" preserve="all" />
     <type fullname="UIButtonHoverScale/OnClickAction" preserve="nothing" serialized="true" />
     <type fullname="UIButtonHoverScale/OnMouseEnterAction" preserve="nothing" serialized="true" />
-    <type fullname="BirdGame.AudioItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.BirdClassItem" preserve="nothing" serialized="true" />
+    <type fullname="BirdGame.SceneBird" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.CursorItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.DecorationItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.EggBirdItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.EggItem" preserve="nothing" serialized="true" />
-    <type fullname="BirdGame.MapItemConfig" preserve="nothing" serialized="true" />
-    <type fullname="BirdGame.SceneBird" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.SceneDecoration" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.SceneEgg" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.ToolItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.ToolSelection" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.UIColorItem" preserve="nothing" serialized="true" />
+    <type fullname="BirdGame.MapItemConfig" preserve="nothing" serialized="true" />
+    <type fullname="BirdGame.AudioItem" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.AssetReferenceSpriteAtlas" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.DecorationEffect" preserve="nothing" serialized="true" />
     <type fullname="BirdGame.OtherItem" preserve="nothing" serialized="true" />
@@ -133,8 +134,8 @@
   </assembly>
   <assembly fullname="Unity.Addressables, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
     <type fullname="UnityEngine.AddressableAssets.Addressables" preserve="all" />
-    <type fullname="UnityEngine.AddressableAssets.AssetReference" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.AddressableAssets.AssetReferenceGameObject" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.AddressableAssets.AssetReference" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="Unity.RenderPipelines.Universal.2D.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.Rendering.Universal.ShadowCaster2D" preserve="all" />
@@ -160,7 +161,10 @@
     <type fullname="TMPro.TMP_FontFeatureTable" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_FontWeightPair" preserve="nothing" serialized="true" />
     <type fullname="TMPro.VertexGradient" preserve="nothing" serialized="true" />
+    <type fullname="TMPro.GlyphAnchorPoint" preserve="nothing" serialized="true" />
     <type fullname="TMPro.LigatureSubstitutionRecord" preserve="nothing" serialized="true" />
+    <type fullname="TMPro.MarkPositionAdjustment" preserve="nothing" serialized="true" />
+    <type fullname="TMPro.MarkToBaseAdjustmentRecord" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_InputField/OnChangeEvent" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_InputField/SelectionEvent" preserve="nothing" serialized="true" />
     <type fullname="TMPro.TMP_InputField/SubmitEvent" preserve="nothing" serialized="true" />

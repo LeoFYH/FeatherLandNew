@@ -587,6 +587,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1659420146123112946}
   - component: {fileID: 8383863404206202628}
+  - component: {fileID: 9876543210987654321}
   m_Layer: 0
   m_Name: LightAnim
   m_TagString: Untagged
@@ -633,6 +634,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &9876543210987654321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6894580093345309254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa452b8003a64a5898dedad1ea6372f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8127691403313734445
 GameObject:
   m_ObjectHideFlags: 0
