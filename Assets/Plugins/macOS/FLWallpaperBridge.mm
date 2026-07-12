@@ -464,6 +464,63 @@ static void FLDisableNativeClickDelivery(NSWindow *window) {
     g_savedWindowClass = nil;
 }
 
+#pragma mark - Synthetic MouseMoved Pump (rev=24, 壁纸 hover 修复)
+
+// 非激活 app 收不到系统的 mouseMoved NSEvent —— 壁纸面板(NonactivatingPanel)
+// 常年无焦点,Unity 的 Input.mousePosition 只在点击等事件到达时更新,两次点击
+// 之间是冻结的。一切基于它的 hover 检测(UIButtonHoverScale.IsMouseOverButton、
+// EventSystem 的 PointerEnter/tooltip)都时灵时不灵 —— "白噪音图标的音量条
+// 有时不出现"就是这个。
+//
+// 修复:壁纸期间 60Hz 定时器读当前光标位置,位置变了就合成一个
+// NSEventTypeMouseMoved 投递给自己窗口(postEvent 只进本进程事件队列,
+// 不影响系统),Unity 侧鼠标位置随真实光标持续同步。
+// 只在无按键时投递:按住期间要么有真实 Dragged 流(原生收到过 down),
+// 要么 C# 侧轮询驱动拖拽,不需要合成,也避免干扰按住状态。
+static dispatch_source_t g_moveTimer      = nil;
+static NSPoint           g_lastPostedMove = {-1.0e9, -1.0e9};
+
+static void FLStartMouseMovePump(void) {
+    if (g_moveTimer != nil) return;
+    g_moveTimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
+    if (g_moveTimer == nil) return;
+    dispatch_source_set_timer(g_moveTimer,
+                              DISPATCH_TIME_NOW,
+                              (uint64_t)(16 * NSEC_PER_MSEC),   // ~60Hz
+                              (uint64_t)(4 * NSEC_PER_MSEC));
+    dispatch_source_set_event_handler(g_moveTimer, ^{
+        if (!g_wallpaperOn) return;
+        if ([NSEvent pressedMouseButtons] != 0) return;   // 按住期间不合成
+        NSWindow *w = g_unityWindow;
+        if (w == nil) return;
+        NSPoint scr = [NSEvent mouseLocation];
+        if (fabs(scr.x - g_lastPostedMove.x) < 0.5 && fabs(scr.y - g_lastPostedMove.y) < 0.5) return;
+        g_lastPostedMove = scr;
+        NSRect fr = [w frame];
+        NSEvent *e = [NSEvent mouseEventWithType:NSEventTypeMouseMoved
+                                        location:NSMakePoint(scr.x - fr.origin.x, scr.y - fr.origin.y)
+                                   modifierFlags:0
+                                       timestamp:[[NSProcessInfo processInfo] systemUptime]
+                                    windowNumber:[w windowNumber]
+                                         context:nil
+                                     eventNumber:0
+                                      clickCount:0
+                                        pressure:0];
+        [NSApp postEvent:e atStart:NO];
+    });
+    dispatch_resume(g_moveTimer);
+    NSLog(@"[FLWallpaper] mouse-move pump started (60Hz synthetic mouseMoved,壁纸 hover 保活)");
+}
+
+static void FLStopMouseMovePump(void) {
+    if (g_moveTimer != nil) {
+        dispatch_source_cancel(g_moveTimer);
+        g_moveTimer = nil;
+        g_lastPostedMove = NSMakePoint(-1.0e9, -1.0e9);
+        NSLog(@"[FLWallpaper] mouse-move pump stopped");
+    }
+}
+
 #pragma mark - Wallpaper Window Management
 
 // 等待全屏退出完成
@@ -704,12 +761,20 @@ static void FLApplyWallpaper(void) {
 
     g_wallpaperOn = YES;
     NSLog(@"[FLLOG][APPLY] g_wallpaperOn=YES");
+
+    // rev=24: 壁纸 hover 保活(合成 mouseMoved,详见 pump 注释)
+    FLStartMouseMovePump();
+
     FLLogAllWindows(@"APPLY-DONE");
     NSLog(@"[FLLOG] ====== FLApplyWallpaper EXIT ===============");
 }
 
 static void FLRestoreWindow(void) {
     NSLog(@"[FLLOG] ====== FLRestoreWindow ENTER ===============");
+
+    // 停掉壁纸期专属的合成 mouseMoved 泵(正常模式系统自己会发)
+    FLStopMouseMovePump();
+
     NSWindow *window = FLLocateUnityWindow();
     if (window == nil) {
         NSLog(@"[FLLOG][RESTORE] no window — abort");
@@ -1142,7 +1207,7 @@ void _FLWallpaperRefresh(void) {
 // If C# can't find this symbol the bundle is stale.
 __attribute__((visibility("default")))
 const char *_FLWallpaperBuildStamp(void) {
-    return "FLWallpaperBridge rev=23-poll-input " __DATE__ " " __TIME__;
+    return "FLWallpaperBridge rev=24-hover-pump " __DATE__ " " __TIME__;
 }
 
 // On-demand full diagnostic dump. C# calls this when it wants a snapshot

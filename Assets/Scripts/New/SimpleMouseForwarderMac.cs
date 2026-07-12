@@ -194,7 +194,26 @@ namespace BirdGame
         private GameObject currentDragTarget;
         private const float DRAG_TIME_THRESHOLD = 0.1f;    // 与 Windows 端一致
         private const float DRAG_DISTANCE_THRESHOLD = 5f;  // 与 Windows 端一致
-        
+
+        // ---- 点击去重(rev=24) ----
+        // Mac 壁纸的原生 NSEvent 点击"时好时坏":到了的话 Unity Input/EventSystem
+        // 自己就会完整处理一次点击;此前旁路计数照抄 tap,和 Input 跨帧各到一次,
+        // 所有 "Input.GetMouseButtonDown(0) || clickCount>prev" 式消费者
+        // (UIButtonHoverScale/Brid/GameEntry/InfoPopup 等)把同一次物理点击处理
+        // 两遍 —— 双音效/静音开了又关/弹窗开了又关的根源(2026-07-13 日志实锤)。
+        // 现在:整个按住周期 Unity Input 都没见到这次按下,才由旁路补发
+        // (clickCount++ 喂计数消费者 + SimulateMouseClick 喂普通 uGUI,对齐
+        // Windows 端 hook 行为);且延一帧决定,防原生恰好迟到一帧造成双触发。
+        private bool pressSeenByInput = false;       // 本次左键按住期间 Unity Input 是否见过
+        private bool pendingBackfillClick = false;   // 释放后延一帧的补发决定
+        private Vector2 pendingBackfillPos;
+        private bool pendingBackfillWasDrag;
+        // 右键同构(消费者只读计数,无 UI 模拟)
+        private bool wasRightButtonDown = false;
+        private bool rightPressBelongs = false;
+        private bool rightPressSeenByInput = false;
+        private bool pendingRightBackfill = false;
+
         private void Awake()
         {
             instance = this;
@@ -223,10 +242,16 @@ namespace BirdGame
 #endif
             previousClickCount = 0;
             previousRightClickCount = 0;
-            // 拖拽状态复位,防止跨模式切换残留
+            // 拖拽/点击补发状态复位,防止跨模式切换残留
             wasLeftButtonDown = false;
             isLeftMouseDragging = false;
             pressBelongsToGame = false;
+            pressSeenByInput = false;
+            pendingBackfillClick = false;
+            wasRightButtonDown = false;
+            rightPressBelongs = false;
+            rightPressSeenByInput = false;
+            pendingRightBackfill = false;
             currentDragTarget = null;
             // HUD 让出菜单栏/Dock 区域;MenuPanel 可能尚未实例化,失败则 Update 里重试
             _uiInsetRetryTimer = 0f;
@@ -251,6 +276,9 @@ namespace BirdGame
             }
             isLeftMouseDragging = false;
             wasLeftButtonDown = false;
+            pendingBackfillClick = false;
+            pendingRightBackfill = false;
+            wasRightButtonDown = false;
             MacWallpaperUIInset.Restore();
             Debug.Log("[SimpleMouseForwarderMac] 已禁用");
         }
@@ -277,6 +305,7 @@ namespace BirdGame
             UpdateKeyboardState();
             HandleMouseClicks();
             HandleMouseDrag();
+            HandleRightClickBackfill();
             HandleMouseWheel();
         }
 
@@ -289,6 +318,25 @@ namespace BirdGame
         {
 #if UNITY_STANDALONE_OSX && !UNITY_EDITOR
             bool leftDown = leftButtonDown;
+
+            // 上一帧释放时挂起的补发:此刻再看一眼 Input,原生点击若迟到一帧
+            // 已自行处理,取消补发;确认原生全程缺席才补,保证单链路。
+            if (pendingBackfillClick)
+            {
+                pendingBackfillClick = false;
+                if (Input.GetMouseButtonDown(0) || Input.GetMouseButton(0))
+                {
+                    Debug.Log("[SimpleMouseForwarderMac] 补发取消:原生点击迟到一帧,已由原生处理");
+                }
+                else
+                {
+                    clickCount++;
+                    Debug.Log($"[SimpleMouseForwarderMac] 补发点击 #{clickCount} at {pendingBackfillPos}" +
+                              (pendingBackfillWasDrag ? " (拖拽结束,只计数不模拟UI)" : " (原生NSEvent未达,计数+模拟UI)"));
+                    if (!pendingBackfillWasDrag)
+                        SimulateMouseClick(pendingBackfillPos);
+                }
+            }
 
             // 按下沿:记录起点并预找目标(此刻鼠标正压在目标上,最准)
             if (leftDown && !wasLeftButtonDown)
@@ -310,6 +358,7 @@ namespace BirdGame
                 bool nativeSawDown = NativeMouseDownWithin(0.3f);
                 bool coveredAtPress = IsCursorCoveredByOtherWindow();
                 pressBelongsToGame = inputSeesDown || nativeSawDown || !coveredAtPress;
+                pressSeenByInput = inputSeesDown;
                 currentDragTarget = pressBelongsToGame ? FindDragTarget(mousePosition) : null;
                 // 常开单行诊断:下次 Player.log 能直接看到拖拽为何没启动
                 Debug.Log($"[SimpleMouseForwarderMac] 按下沿 tap={mousePosition} input={(Vector2)Input.mousePosition} " +
@@ -319,10 +368,14 @@ namespace BirdGame
             // 按住中
             else if (leftDown && wasLeftButtonDown)
             {
+                // Unity 的 Input 可能比按键轮询晚一帧到账:按住期间持续记录
+                // "原生是否见过这次按下"(补发去重的依据),并补判归属
+                bool inputNow = Input.GetMouseButtonDown(0) || Input.GetMouseButton(0);
+                if (inputNow) pressSeenByInput = true;
+
                 if (!isLeftMouseDragging)
                 {
-                    // Unity 的 Input 可能比 CGEventTap 轮询晚一帧到账:按住期间补判归属
-                    if (!pressBelongsToGame && (Input.GetMouseButton(0) || NativeMouseDownWithin(0.3f)))
+                    if (!pressBelongsToGame && (inputNow || NativeMouseDownWithin(0.3f)))
                         pressBelongsToGame = true;
 
                     // 与 Windows 端相同的启动阈值:防止快速点击/手抖误判为拖拽
@@ -353,6 +406,17 @@ namespace BirdGame
             // 抬起沿
             else if (!leftDown && wasLeftButtonDown)
             {
+                if (Input.GetMouseButtonDown(0) || Input.GetMouseButton(0))
+                    pressSeenByInput = true;
+
+                // 原生 NSEvent 全程缺席且按下属于游戏 -> 挂起补发(下一帧终审)
+                if (pressBelongsToGame && !pressSeenByInput)
+                {
+                    pendingBackfillClick = true;
+                    pendingBackfillPos = dragStartPosition;
+                    pendingBackfillWasDrag = isLeftMouseDragging;
+                }
+
                 if (currentDragTarget != null)
                 {
                     // 目标可能在拖拽期间被销毁(如关闭弹窗),防御式访问
@@ -364,6 +428,51 @@ namespace BirdGame
             }
 
             wasLeftButtonDown = leftDown;
+#endif
+        }
+
+        /// <summary>
+        /// 右键点击去重补发(与左键同构):Unity Input 全程没见到这次右键按下,
+        /// 才补 rightClickCount(Brid 右键互动等消费者用),延一帧终审防双触发。
+        /// </summary>
+        private void HandleRightClickBackfill()
+        {
+#if UNITY_STANDALONE_OSX && !UNITY_EDITOR
+            bool rightDown = rightButtonDown;
+
+            if (pendingRightBackfill)
+            {
+                pendingRightBackfill = false;
+                if (Input.GetMouseButtonDown(1) || Input.GetMouseButton(1))
+                {
+                    Debug.Log("[SimpleMouseForwarderMac] 右键补发取消:原生迟到一帧,已由原生处理");
+                }
+                else
+                {
+                    rightClickCount++;
+                    Debug.Log($"[SimpleMouseForwarderMac] 补发右键 #{rightClickCount} (原生NSEvent未达,钩子兜底)");
+                }
+            }
+
+            if (rightDown && !wasRightButtonDown)
+            {
+                rightPressSeenByInput = Input.GetMouseButtonDown(1) || Input.GetMouseButton(1);
+                rightPressBelongs = rightPressSeenByInput || !IsCursorCoveredByOtherWindow();
+            }
+            else if (rightDown && wasRightButtonDown)
+            {
+                if (Input.GetMouseButtonDown(1) || Input.GetMouseButton(1))
+                    rightPressSeenByInput = true;
+            }
+            else if (!rightDown && wasRightButtonDown)
+            {
+                if (Input.GetMouseButtonDown(1) || Input.GetMouseButton(1))
+                    rightPressSeenByInput = true;
+                if (rightPressBelongs && !rightPressSeenByInput)
+                    pendingRightBackfill = true;
+            }
+
+            wasRightButtonDown = rightDown;
 #endif
         }
 
@@ -534,49 +643,29 @@ namespace BirdGame
         private void HandleMouseClicks()
         {
 #if UNITY_STANDALONE_OSX && !UNITY_EDITOR
-            int currentClickCount = _FLMouseGetClickCount();
-            int currentRightClickCount = _FLMouseGetRightClickCount();
-            
-            // 调试日志
-            if (currentClickCount > previousClickCount || currentRightClickCount > previousRightClickCount)
-            {
-                Debug.Log($"[SimpleMouseForwarderMac] 检测到点击: left={currentClickCount}(prev={previousClickCount}), right={currentRightClickCount}(prev={previousRightClickCount})");
-            }
-            
-            // 检测左键点击 —— 只累加计数，不再调用 SimulateMouseClick。
+            // rev=24: 原生 tap 计数不再灌进公开 clickCount/rightClickCount。
             //
-            // 原生层（FLWallpaperBridge.mm）的 NSWindow / NSView 子类替换让
-            // borderless 窗口可以成为 key window 并接受 acceptsFirstMouse,
-            // 真实的 NSEvent 会自然流到 Unity (Input.GetMouseButton* 与 EventSystem
-            // 都能直接收到点击)。这里再调一次 ExecuteEvents 会让按钮被双击。
+            // 原生 NSEvent 点击到达 Unity 时,Input/EventSystem 自己会完整处理一次;
+            // 旁路计数若照抄 tap,和 Input 跨帧各到一次,所有
+            // "Input.GetMouseButtonDown || clickCount>prev" 式消费者
+            // (UIButtonHoverScale/Brid/GameEntry/InfoPopup 等)会把同一次物理点击
+            // 处理两遍 —— 双音效/静音开了又关/Toggle 开了又关的根源(2026-07-13
+            // Mac 实测日志确认原生与 tap 双活)。
             //
-            // 保留 clickCount 累加是因为 MouseForwarder.clickCount 被 Brid.cs /
-            // GameEntry.cs / GameManager.cs / InfoPopup.cs 等多处当作 "壁纸模式下
-            // 有点击" 的旁路信号读，删掉会破坏 Win 端共用接口的语义。
-            if (currentClickCount > previousClickCount)
+            // 公开计数现在只由 HandleMouseDrag/HandleRightClickBackfill 的补发
+            // 路径驱动:整个按住周期 Unity Input 都没见到,才补计数
+            // (+SimulateMouseClick 喂普通 uGUI,对齐 Windows 端 hook 行为),
+            // 保证一次物理点击恰好一条链路生效。
+            int nativeTapClicks = _FLMouseGetClickCount();
+            int nativeTapRight = _FLMouseGetRightClickCount();
+            if (nativeTapClicks != previousClickCount || nativeTapRight != previousRightClickCount)
             {
-                int clicks = currentClickCount - previousClickCount;
-                for (int i = 0; i < clicks; i++)
-                {
-                    clickCount++;
-                    Debug.Log($"[SimpleMouseForwarderMac] 左键点击 #{clickCount} at {mousePosition} (native flow handles UI)");
-                }
+                if (showDebugLog)
+                    Debug.Log($"[SimpleMouseForwarderMac] 原生tap计数 left={nativeTapClicks} right={nativeTapRight} (仅诊断,不驱动点击)");
+                previousClickCount = nativeTapClicks;
+                previousRightClickCount = nativeTapRight;
             }
 
-            // 右键同理 —— 只累加计数。
-            if (currentRightClickCount > previousRightClickCount)
-            {
-                int clicks = currentRightClickCount - previousRightClickCount;
-                for (int i = 0; i < clicks; i++)
-                {
-                    rightClickCount++;
-                    Debug.Log($"[SimpleMouseForwarderMac] 右键点击 #{rightClickCount} at {mousePosition} (native flow handles UI)");
-                }
-            }
-            
-            previousClickCount = currentClickCount;
-            previousRightClickCount = currentRightClickCount;
-            
             // 清除每帧的按键状态
             pressedKeysThisFrame.Clear();
 #endif
