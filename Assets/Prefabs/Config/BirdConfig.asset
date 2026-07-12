@@ -563,71 +563,6 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 37a4b1207e9302a4082a2fa702a003f2, type: 2}
       - {fileID: 11400000, guid: 95710ab4f3732d04f953bbd75e5e0005, type: 2}
   - birdClasses:
-    - birdName: Cormorant
-      canView: 1
-      type: 1
-      birds:
-      - {fileID: 11400000, guid: ea7df4ac50548be4495dc4a10e814fe0, type: 2}
-      - {fileID: 11400000, guid: bffbeb0d172f5e949b4cd82d874f658e, type: 2}
-      - {fileID: 11400000, guid: 640e343b29c738b45a6503f860becf1f, type: 2}
-      - {fileID: 11400000, guid: 9eeb7cf6e844ac648b99a5f6510e2bbc, type: 2}
-    - birdName: Egret
-      canView: 1
-      type: 1
-      birds:
-      - {fileID: 11400000, guid: e564c752b8523fe4f9499847e589e5ab, type: 2}
-      - {fileID: 11400000, guid: aa49fa18ebb8f664d9b62b49da281ddd, type: 2}
-      - {fileID: 11400000, guid: 2ae2986baf1c3b14ca47ff783f4564f6, type: 2}
-      - {fileID: 11400000, guid: 553192dbdd8b7394c812b49f35bd637d, type: 2}
-    - birdName: Pelican
-      canView: 1
-      type: 1
-      birds:
-      - {fileID: 11400000, guid: 3220682be6af8c0469d93c163c23b8d9, type: 2}
-      - {fileID: 11400000, guid: 923386b06aef7394a9e6a3dd1beff7f7, type: 2}
-      - {fileID: 11400000, guid: 06c7c76ec36f6ec42a906d33fcbbc208, type: 2}
-      - {fileID: 11400000, guid: 3e341e0177b092c48b0d962d3e91f00d, type: 2}
-    - birdName: Powdered Head Duck
-      canView: 1
-      type: 0
-      birds:
-      - {fileID: 11400000, guid: dcee55749a65d7f4ba2530a8c3124ef0, type: 2}
-      - {fileID: 11400000, guid: 565d47cb6717765459460a34cd368328, type: 2}
-      - {fileID: 11400000, guid: f1c0b1ef98796aa4da8f0d738973f684, type: 2}
-      - {fileID: 11400000, guid: 6e8a259bcf31f9d45b39a23458f81cc1, type: 2}
-    - birdName: Red-crowned Crane
-      canView: 1
-      type: 1
-      birds:
-      - {fileID: 11400000, guid: b74ec422572d69a47b77ad027c8cac64, type: 2}
-      - {fileID: 11400000, guid: 5c7129485a45161488fb4a1a2b77cbf8, type: 2}
-      - {fileID: 11400000, guid: 99d4457f61f12034aa7aaebb697f3d3a, type: 2}
-      - {fileID: 11400000, guid: e9ea37b4bf76f9a4597e57c9510ccab0, type: 2}
-    - birdName: Wild goose
-      canView: 1
-      type: 1
-      birds:
-      - {fileID: 11400000, guid: 2685cad766dddb645af91040d089c1c2, type: 2}
-      - {fileID: 11400000, guid: 0b79ff3ba809ea0439a7f0807374e205, type: 2}
-      - {fileID: 11400000, guid: 24c86cb9d9af32d4abf024b4591b1d92, type: 2}
-      - {fileID: 11400000, guid: 54e6e013a7a1d7a4c87a4e7b6fb3571e, type: 2}
-    - birdName: Night Heron
-      canView: 1
-      type: 1
-      birds:
-      - {fileID: 11400000, guid: c63c9ba6821f56b4db8297c9f2565275, type: 2}
-      - {fileID: 11400000, guid: 05494cd0f7ad78e4fa8662bc5c5226d7, type: 2}
-      - {fileID: 11400000, guid: 6e1d662f2fddd494680c9d37ed623907, type: 2}
-      - {fileID: 11400000, guid: 2756c48d3e2a9a6418e3cc362eff5282, type: 2}
-    - birdName: Dove
-      canView: 1
-      type: 1
-      birds:
-      - {fileID: 11400000, guid: 113e5e4e7c6603543bb9cbda645da60a, type: 2}
-      - {fileID: 11400000, guid: 43219c932dc765a4981ee23c28395fd6, type: 2}
-      - {fileID: 11400000, guid: 28b2dd4e03e7bbd49a78da945971c63c, type: 2}
-      - {fileID: 11400000, guid: 1f827e312407fb343a293450d6a3b025, type: 2}
-  - birdClasses:
     - birdName: Grey Plover
       canView: 1
       type: 0
@@ -708,3 +643,68 @@ MonoBehaviour:
       - {fileID: 11400000, guid: b34a7d76821a2d1408527f90c14b02c8, type: 2}
       - {fileID: 11400000, guid: a75d0db8c3b27784e962a76910de9bfb, type: 2}
       - {fileID: 11400000, guid: 7f2c1f6b5724fc24783e56916b9ce655, type: 2}
+  - birdClasses:
+    - birdName: Cormorant
+      canView: 1
+      type: 1
+      birds:
+      - {fileID: 11400000, guid: ea7df4ac50548be4495dc4a10e814fe0, type: 2}
+      - {fileID: 11400000, guid: bffbeb0d172f5e949b4cd82d874f658e, type: 2}
+      - {fileID: 11400000, guid: 640e343b29c738b45a6503f860becf1f, type: 2}
+      - {fileID: 11400000, guid: 9eeb7cf6e844ac648b99a5f6510e2bbc, type: 2}
+    - birdName: Egret
+      canView: 1
+      type: 1
+      birds:
+      - {fileID: 11400000, guid: e564c752b8523fe4f9499847e589e5ab, type: 2}
+      - {fileID: 11400000, guid: aa49fa18ebb8f664d9b62b49da281ddd, type: 2}
+      - {fileID: 11400000, guid: 2ae2986baf1c3b14ca47ff783f4564f6, type: 2}
+      - {fileID: 11400000, guid: 553192dbdd8b7394c812b49f35bd637d, type: 2}
+    - birdName: Pelican
+      canView: 1
+      type: 1
+      birds:
+      - {fileID: 11400000, guid: 3220682be6af8c0469d93c163c23b8d9, type: 2}
+      - {fileID: 11400000, guid: 923386b06aef7394a9e6a3dd1beff7f7, type: 2}
+      - {fileID: 11400000, guid: 06c7c76ec36f6ec42a906d33fcbbc208, type: 2}
+      - {fileID: 11400000, guid: 3e341e0177b092c48b0d962d3e91f00d, type: 2}
+    - birdName: Powdered Head Duck
+      canView: 1
+      type: 0
+      birds:
+      - {fileID: 11400000, guid: dcee55749a65d7f4ba2530a8c3124ef0, type: 2}
+      - {fileID: 11400000, guid: 565d47cb6717765459460a34cd368328, type: 2}
+      - {fileID: 11400000, guid: f1c0b1ef98796aa4da8f0d738973f684, type: 2}
+      - {fileID: 11400000, guid: 6e8a259bcf31f9d45b39a23458f81cc1, type: 2}
+    - birdName: Red-crowned Crane
+      canView: 1
+      type: 1
+      birds:
+      - {fileID: 11400000, guid: b74ec422572d69a47b77ad027c8cac64, type: 2}
+      - {fileID: 11400000, guid: 5c7129485a45161488fb4a1a2b77cbf8, type: 2}
+      - {fileID: 11400000, guid: 99d4457f61f12034aa7aaebb697f3d3a, type: 2}
+      - {fileID: 11400000, guid: e9ea37b4bf76f9a4597e57c9510ccab0, type: 2}
+    - birdName: Wild goose
+      canView: 1
+      type: 1
+      birds:
+      - {fileID: 11400000, guid: 2685cad766dddb645af91040d089c1c2, type: 2}
+      - {fileID: 11400000, guid: 0b79ff3ba809ea0439a7f0807374e205, type: 2}
+      - {fileID: 11400000, guid: 24c86cb9d9af32d4abf024b4591b1d92, type: 2}
+      - {fileID: 11400000, guid: 54e6e013a7a1d7a4c87a4e7b6fb3571e, type: 2}
+    - birdName: Night Heron
+      canView: 1
+      type: 1
+      birds:
+      - {fileID: 11400000, guid: c63c9ba6821f56b4db8297c9f2565275, type: 2}
+      - {fileID: 11400000, guid: 05494cd0f7ad78e4fa8662bc5c5226d7, type: 2}
+      - {fileID: 11400000, guid: 6e1d662f2fddd494680c9d37ed623907, type: 2}
+      - {fileID: 11400000, guid: 2756c48d3e2a9a6418e3cc362eff5282, type: 2}
+    - birdName: Dove
+      canView: 1
+      type: 1
+      birds:
+      - {fileID: 11400000, guid: 113e5e4e7c6603543bb9cbda645da60a, type: 2}
+      - {fileID: 11400000, guid: 43219c932dc765a4981ee23c28395fd6, type: 2}
+      - {fileID: 11400000, guid: 28b2dd4e03e7bbd49a78da945971c63c, type: 2}
+      - {fileID: 11400000, guid: 1f827e312407fb343a293450d6a3b025, type: 2}

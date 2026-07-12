@@ -375,17 +375,11 @@ namespace BirdGame
             int mapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
             var birdConf = this.GetModel<IConfigModel>().BirdConfig.GetBird(data.birdType, mapIndex);
             icon.sprite = birdConf.preview;
-            // 定框等比适配,不跟随素材导入分辨率。
-            // 旧写法 sprite.rect.size * 0.5 依赖贴图导入后的像素尺寸:内存优化时
-            // 部分图集(如海边 1.1.png)漏加 Standalone maxTextureSize=256 覆盖,
-            // rect 是全尺寸(1000+px),图标直接撑爆面板(发行商反馈的海鸥等)。
-            // 全项目其他 UI(图鉴/管理页等)都是定高等比写法,这里对齐。
-            {
-                Vector2 spriteSize = icon.sprite.rect.size;
-                const float fitWidth = 150f, fitHeight = 115f; // 与 prefab BirdIcon 设计框一致
-                float fit = Mathf.Min(fitWidth / spriteSize.x, fitHeight / spriteSize.y);
-                icon.GetComponent<RectTransform>().sizeDelta = spriteSize * fit;
-            }
+            // 限制图标最大高度，防止某些 preview sprite 原始像素尺寸过大时显示异常变大
+            const float maxIconHeight = 120f;
+            Vector2 spriteSize = icon.sprite.rect.size;
+            float scale = spriteSize.y > maxIconHeight ? maxIconHeight / spriteSize.y : 1f;
+            icon.GetComponent<RectTransform>().sizeDelta = spriteSize * scale * 0.5f;
             addtoDesktop.onClick.AddListener(() =>
             {
                 if (!data.isAddedToDesktop)

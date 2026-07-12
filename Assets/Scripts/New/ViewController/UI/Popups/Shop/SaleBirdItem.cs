@@ -31,6 +31,12 @@ namespace BirdGame
             onSaleEvent = action;
             salePrice = birdPrice;
             var bird = this.GetModel<IConfigModel>().BirdConfig.GetBird(id, mapIndex);
+            if (bird == null)
+            {
+                Debug.LogError($"SaleBirdItem: 找不到鸟类配置，birdType={id}, mapIndex={mapIndex}，跳过此条目显示。");
+                gameObject.SetActive(false);
+                return;
+            }
             icon.sprite = bird.preview;
             float scale = 115f / icon.sprite.rect.size.y; 
             icon.GetComponent<RectTransform>().sizeDelta = icon.sprite.rect.size * scale;
