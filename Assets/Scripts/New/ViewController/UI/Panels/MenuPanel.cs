@@ -52,7 +52,36 @@ namespace BirdGame
         private bool isSyncingIllustratedButton = false; // 标志位：正在同步 illustratedButton 状态
         private bool isSyncingMapButton = false; // 标志位：正在同步 mapButton 状态
         private bool isSyncingSettingButton = false; // 标志位：正在同步 settingButton 状态
-        
+
+        // —— 弹窗 Toggle 双触发去抖（Mac 壁纸,2026-07-13 日志实锤）——
+        // 同一次物理点击会让 Clock/Note/Radio 的 onValueChanged 连续触发两次
+        // (相邻两次方向相反,间隔一个点击周期):弹窗被"开了立刻关"或"关了立刻开",
+        // 表现为点不开/关不掉/双音效。日志签名:抬起瞬间打出"不存在XXXPopup,无法
+        // 关闭!"而异步 ShowPopup 的加载随后才完成。
+        // 对策:0.25s 内出现的第二次翻转视为同一次点击的重复事件——静默回弹开关
+        // 状态(不触发回调)并忽略,保证一次点击只执行一次开/关。
+        private float _lastPopupToggleTime = -10f;
+        private bool _isRebouncingPopupToggle = false;
+
+        private bool DebouncePopupToggle(Toggle toggle, bool isOn, string tag)
+        {
+            if (_isRebouncingPopupToggle) return true; // 回弹自身引发的回调,直接忽略
+
+            float now = Time.unscaledTime;
+            if (now - _lastPopupToggleTime < 0.25f)
+            {
+                _isRebouncingPopupToggle = true;
+                toggle.isOn = !isOn; // 回弹到第一次翻转后的状态
+                _isRebouncingPopupToggle = false;
+                Debug.Log($"[MenuPanel] {tag}Toggle 双触发去抖:忽略 {(isOn ? "开" : "关")} (距上次 {now - _lastPopupToggleTime:F3}s)");
+                return true;
+            }
+            _lastPopupToggleTime = now;
+            // 常开诊断:记录每次真实生效的翻转来源,下一份 Player.log 可直接定位双触发源头
+            Debug.Log($"[MenuPanel] {tag}Toggle -> {(isOn ? "开" : "关")}\n{UnityEngine.StackTraceUtility.ExtractStackTrace()}");
+            return false;
+        }
+
         public override void OnShowPanel()
         {
             
@@ -74,10 +103,13 @@ namespace BirdGame
             if (illustratedButton != null) { isSyncingIllustratedButton = true; illustratedButton.isOn = false; isSyncingIllustratedButton = false; }
             if (mapButton != null) { isSyncingMapButton = true; mapButton.isOn = false; isSyncingMapButton = false; }
             if (settingButton != null) { isSyncingSettingButton = true; settingButton.isOn = false; isSyncingSettingButton = false; }
-            // 这几个没有sync flag，但其HidePopup回调对已关闭的popup是no-op，安全
+            // 程序化同步:置 _isRebouncingPopupToggle 让去抖忽略,不当作用户点击
+            // (其 HidePopup 回调对已关闭的 popup 是 no-op,安全)
+            _isRebouncingPopupToggle = true;
             if (noteToggle != null) noteToggle.isOn = false;
             if (radioToggle != null) radioToggle.isOn = false;
             if (clockToggle != null) clockToggle.isOn = false;
+            _isRebouncingPopupToggle = false;
         }
 
         /// <summary> 关闭与 Tutorial 互斥的 4 个弹窗并同步 Toggle（打开 Tutorial 前调用） </summary>
@@ -130,6 +162,7 @@ namespace BirdGame
             
             noteToggle.onValueChanged.AddListener(isOn =>
             {
+                if (DebouncePopupToggle(noteToggle, isOn, "Note")) return;
                 if (isOn)
                 {
                     uiSystem.ShowPopup(UIPopup.NotePopup);
@@ -139,9 +172,10 @@ namespace BirdGame
                     uiSystem.HidePopup(UIPopup.NotePopup);
                 }
             });
-            
+
             radioToggle.onValueChanged.AddListener(isOn =>
             {
+                if (DebouncePopupToggle(radioToggle, isOn, "Radio")) return;
                 if (isOn)
                 {
                     uiSystem.ShowPopup(UIPopup.RadioPopup);
@@ -151,9 +185,10 @@ namespace BirdGame
                     uiSystem.HidePopup(UIPopup.RadioPopup);
                 }
             });
-            
+
             clockToggle.onValueChanged.AddListener(isOn =>
             {
+                if (DebouncePopupToggle(clockToggle, isOn, "Clock")) return;
                 if (isOn)
                 {
                     uiSystem.ShowPopup(UIPopup.ClockPopup);
@@ -169,6 +204,7 @@ namespace BirdGame
                 telescopeToggle.isOn = this.GetModel<IGameModel>().TelescopeEnabled.Value;
                 telescopeToggle.onValueChanged.AddListener(isOn =>
                 {
+                    if (DebouncePopupToggle(telescopeToggle, isOn, "Telescope")) return;
                     this.GetModel<IGameModel>().TelescopeEnabled.Value = isOn;
                 });
             }
@@ -178,6 +214,7 @@ namespace BirdGame
                 cameraToggle.isOn = this.GetModel<IGameModel>().CameraCaptureEnabled.Value;
                 cameraToggle.onValueChanged.AddListener(isOn =>
                 {
+                    if (DebouncePopupToggle(cameraToggle, isOn, "Camera")) return;
                     if (isOn)
                     {
                         // 强制关闭所有popup并同步其他工具toggle的视觉状态，然后开启相机
@@ -187,10 +224,15 @@ namespace BirdGame
                     this.GetModel<IGameModel>().CameraCaptureEnabled.Value = isOn;
                 });
                 // 拍完照/点击其他UI后CameraCaptureController会把model置false，需要把toggle视觉也同步
+                // (程序化同步,置 _isRebouncingPopupToggle 让去抖忽略,不当作用户点击)
                 this.GetModel<IGameModel>().CameraCaptureEnabled.Register(v =>
                 {
                     if (cameraToggle.isOn != v)
+                    {
+                        _isRebouncingPopupToggle = true;
                         cameraToggle.isOn = v;
+                        _isRebouncingPopupToggle = false;
+                    }
                 }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
                 // 让 CameraCaptureController 知道 cameraToggle 的 GameObject，

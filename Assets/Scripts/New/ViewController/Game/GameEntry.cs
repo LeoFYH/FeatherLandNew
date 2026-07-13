@@ -198,8 +198,14 @@ namespace BirdGame
                 
                 // 检查是否点击到UI元素
                 // In wallpaper mode, IsPointerOverGameObject() may not be reliable, so use RaycastAll instead
+                //
+                // rev=24 修复:壁纸模式下【无条件】走 RaycastAll,不再要求 clickFromForwarder。
+                // Mac 点击去重后,原生 NSEvent 点击不再冒 clickCount(防双触发),若仍按
+                // clickFromForwarder 分支,原生点击会落进 IsPointerOverGameObject()(壁纸下
+                // 不可靠返回 false)→ 点 UI 被误判成"点空白"→ 按下瞬间关掉刚要打开的弹窗
+                // (2026-07-13 Mac 日志:点 ClockToggle 出现"不存在ClockPopup无法关闭"+开了又关)。
                 bool isPointerOverUI = false;
-                if (clickFromForwarder && this.GetUtility<IFullScreenUtility>().EnableWallpaperMode)
+                if (this.GetUtility<IFullScreenUtility>().EnableWallpaperMode)
                 {
                     // 壁纸模式下使用RaycastAll进行检测
                     // Performance optimization: Reuse objects instead of creating new ones
