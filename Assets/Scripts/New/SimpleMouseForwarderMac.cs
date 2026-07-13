@@ -301,12 +301,45 @@ namespace BirdGame
                 }
             }
 
+            ForceEventSystemFocused();
             UpdateMouseState();
             UpdateKeyboardState();
             HandleMouseClicks();
             HandleMouseDrag();
             HandleRightClickBackfill();
             HandleMouseWheel();
+        }
+
+        // 壁纸模式焦点门修复(2026-07-13 实锤):浏览器等抢走系统焦点后,Unity 的
+        // EventSystem 因 m_HasFocus=false 跳过全部指针处理(ShouldIgnoreEventsOnNoFocus
+        // 门)——被网页遮一次后 PointerEnter/Exit 全灭:环境音悬浮音量条只剩遮挡前
+        // 已停留的那个卡在显示态,其他图标 hover 不再出条(点击不受影响,补发的
+        // ExecuteEvents 不走这个门)。壁纸窗口本就常年无焦点,这里每帧把 m_HasFocus
+        // 拨回 true,让指针处理在壁纸期间持续工作。仅壁纸模式生效(本组件禁用即停)。
+        private static System.Reflection.FieldInfo _esFocusField;
+        private static bool _esFocusFieldSearched;
+
+        private void ForceEventSystemFocused()
+        {
+#if UNITY_STANDALONE_OSX && !UNITY_EDITOR
+            var es = EventSystem.current;
+            if (es == null) return;
+            if (!_esFocusFieldSearched)
+            {
+                _esFocusFieldSearched = true;
+                _esFocusField = typeof(EventSystem).GetField("m_HasFocus",
+                    System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                if (_esFocusField == null)
+                    Debug.LogWarning("[SimpleMouseForwarderMac] EventSystem.m_HasFocus 字段不存在(Unity版本差异),焦点门修复停用");
+                else
+                    Debug.Log("[SimpleMouseForwarderMac] 焦点门修复已启用(壁纸期间强制 EventSystem 处理指针)");
+            }
+            if (_esFocusField != null)
+            {
+                try { _esFocusField.SetValue(es, true); }
+                catch (Exception) { }
+            }
+#endif
         }
 
         /// <summary>
