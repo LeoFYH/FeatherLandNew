@@ -279,6 +279,16 @@ namespace BirdGame
             pendingBackfillClick = false;
             pendingRightBackfill = false;
             wasRightButtonDown = false;
+            // 退出壁纸:给还悬停着的 PointerEvent 补发离开,音量条不留在屏上
+            if (_hoveredPointerEvent != null)
+            {
+#if UNITY_STANDALONE_OSX && !UNITY_EDITOR
+                if (_hoveredPointerEvent.activeInHierarchy)
+                    DispatchPointerHandler(_hoveredPointerEvent, false);
+#endif
+                _hoveredPointerEvent = null;
+            }
+            _lastPointerHoverPos = new Vector2(-99999f, -99999f);
             MacWallpaperUIInset.Restore();
             Debug.Log("[SimpleMouseForwarderMac] 已禁用");
         }
@@ -308,7 +318,119 @@ namespace BirdGame
             HandleMouseDrag();
             HandleRightClickBackfill();
             HandleMouseWheel();
+            HandlePointerEventHover();
         }
+
+        // ---- PointerEvent 悬停模拟(对齐 Windows 端,2026-07-13) ----
+        // 环境音悬浮音量条由 PointerEvent 组件(挂在 Fire/River 等图标上)的
+        // OnPointerEnter/Exit 控制 slider.SetActive —— 完全依赖 EventSystem 的
+        // 指针派发。壁纸下 app 常年无焦点、原生 mouseMoved 时有时无,EventSystem
+        // 的 enter/exit 派发不可靠:表现为"hover 不出音量条 + 之前出过的那条
+        // 卡在显示态"。Windows 端 SimpleMouseForwarder 一直有悬停模拟
+        // (RaycastAll 找 PointerEvent → ExecuteEvents 直发 enter/exit,绕开
+        // EventSystem),Mac 版此前漏移植,这里补齐。
+        // 只驱动 PointerEvent(音量条):文字标签/缩放由 UIButtonHoverScale 自
+        // 轮询、不依赖派发;Selectable 高亮走原生,不掺和,避免双派发冲突。
+        // slider.SetActive(true/false) 幂等,与 EventSystem 偶发的原生派发重复无害。
+        private GameObject _hoveredPointerEvent;
+        private Vector2 _lastPointerHoverPos = new Vector2(-99999f, -99999f);
+        private const float POINTER_HOVER_MOVE_THRESHOLD = 2f; // 与 Windows 端一致
+
+        private void HandlePointerEventHover()
+        {
+#if UNITY_STANDALONE_OSX && !UNITY_EDITOR
+            // 已悬停对象被销毁/失活(如弹窗关闭):直接清引用,音量条随对象一起没了
+            if (_hoveredPointerEvent != null && !_hoveredPointerEvent.activeInHierarchy)
+                _hoveredPointerEvent = null;
+
+            // 兜底清扫:EventSystem 在 app 短暂拿到焦点的窗口期可能自己派发过
+            // enter 打开了某个音量条,随后焦点被抢、exit 永远不来 —— 本状态机对
+            // 此不知情(Fire 卡条案例)。低频(约每半秒)扫一遍,把不属于当前悬停
+            // 对象的、还开着的条关掉。场上 PointerEvent 至多 6 个(收音机环境音),
+            // 未开收音机时为 0,开销可忽略。放在移动阈值早退之前,鼠标静止也能自愈。
+            if (Time.frameCount % 30 == 0)
+            {
+                var all = UnityEngine.Object.FindObjectsOfType<PointerEvent>();
+                foreach (var pe in all)
+                {
+                    if (pe != null && pe.slider != null && pe.slider.activeSelf
+                        && pe.gameObject != _hoveredPointerEvent)
+                    {
+                        DispatchPointerHandler(pe.gameObject, false);
+                    }
+                }
+            }
+
+            // 鼠标没动就不做 raycast(泵驱动下位置持续更新,静止时零开销)
+            if (Vector2.Distance(mousePosition, _lastPointerHoverPos) < POINTER_HOVER_MOVE_THRESHOLD)
+                return;
+            _lastPointerHoverPos = mousePosition;
+
+            GameObject target = FindPointerEventTarget(mousePosition);
+            if (target != _hoveredPointerEvent)
+            {
+                if (_hoveredPointerEvent != null)
+                    DispatchPointerHandler(_hoveredPointerEvent, false);
+                _hoveredPointerEvent = target;
+                if (_hoveredPointerEvent != null)
+                {
+                    DispatchPointerHandler(_hoveredPointerEvent, true);
+                    if (showDebugLog)
+                        Debug.Log($"[SimpleMouseForwarderMac] 指针进入(模拟): {_hoveredPointerEvent.name}");
+                }
+            }
+#endif
+        }
+
+#if UNITY_STANDALONE_OSX && !UNITY_EDITOR
+        /// <summary> 与 Windows 端 FindPointerEventTarget 相同:raycast 命中链上向父级找 PointerEvent </summary>
+        private static GameObject FindPointerEventTarget(Vector2 screenPosition)
+        {
+            if (cachedEventSystem == null)
+            {
+                cachedEventSystem = EventSystem.current;
+                if (cachedEventSystem == null) return null;
+            }
+            if (reusablePointerData == null)
+                reusablePointerData = new PointerEventData(cachedEventSystem);
+
+            reusablePointerData.position = screenPosition;
+            reusablePointerData.button = PointerEventData.InputButton.Left;
+
+            reusableRaycastResults.Clear();
+            cachedEventSystem.RaycastAll(reusablePointerData, reusableRaycastResults);
+
+            foreach (var result in reusableRaycastResults)
+            {
+                Transform current = result.gameObject.transform;
+                while (current != null)
+                {
+                    var pointerEvent = current.GetComponent<PointerEvent>();
+                    if (pointerEvent != null)
+                        return current.gameObject;
+                    current = current.parent;
+                }
+            }
+            return null;
+        }
+
+        private static void DispatchPointerHandler(GameObject target, bool enter)
+        {
+            if (target == null || cachedEventSystem == null) return;
+            var data = new PointerEventData(cachedEventSystem) { position = mousePosition };
+            try
+            {
+                if (enter)
+                    ExecuteEvents.Execute(target, data, ExecuteEvents.pointerEnterHandler);
+                else
+                    ExecuteEvents.Execute(target, data, ExecuteEvents.pointerExitHandler);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[SimpleMouseForwarderMac] 指针{(enter ? "进入" : "离开")}派发异常: {e.Message}");
+            }
+        }
+#endif
 
         // 壁纸模式焦点门修复(2026-07-13 实锤):浏览器等抢走系统焦点后,Unity 的
         // EventSystem 因 m_HasFocus=false 跳过全部指针处理(ShouldIgnoreEventsOnNoFocus
