@@ -45,6 +45,11 @@ namespace BirdGame
             {
                 RefreshButtonStatus();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            // 商店开着时右键删除场景装饰 → 立即刷新(删除不动金币,靠 Coins 监听刷不到)
+            this.RegisterEvent<OnDecorationChangedEvent>(e =>
+            {
+                RefreshButtonStatus();
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
             RefreshButtonStatus();
         }
 
@@ -60,7 +65,12 @@ namespace BirdGame
             priceText.text = $"${price}";
             buyButton.targetGraphic.color = Color.white;
 
-            if (currentCount >= totalCount)
+            // 已装备判定与购买拦截使用同一套权威:占位索引满 或 数量达上限 都算已购。
+            // 此前只看 usedFixedPositionIndices —— 该列表每次进图按"位置±0.1容差"
+            // 重建,装饰被拖动过/配置坐标改过就会匹配失败被清空,出现
+            // "count=1 买不了却亮着价格"的死局(shy plant bug,2026-07-13)。
+            bool quantityFull = decorationItem.maxQuantity > 0 && decorationInfo.count >= decorationItem.maxQuantity;
+            if (currentCount >= totalCount || quantityFull)
             {
                 buyButton.interactable = false;
                 priceText.text = this.GetSystem<ILocalizationSystem>().GetString("Purchased");
@@ -111,12 +121,6 @@ namespace BirdGame
 
                 if (price <= this.GetModel<IAccountModel>().Coins.Value)
                 {
-                    // 扣除金币
-                    this.GetModel<IAccountModel>().Coins.Value -= price;
-                    
-                    // 播放购买音效（延迟0.5秒，和sell bird一样）
-                    this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
-
                     var decorationInfo = accountData.sceneDecorationInfos[mapIndex].decorations[id];
                     var decorationItem = this.GetModel<IConfigModel>().ShopConfig.sceneDecorations[mapIndex]
                         .decorations[id];
@@ -146,6 +150,13 @@ namespace BirdGame
                         this.GetSystem<IUISystem>().ShowPrompt(errorText);
                         return;
                     }
+
+                    // 扣除金币 —— 必须在 availableIndex 检查之后:此前先扣钱、
+                    // 无可用位置时直接 return,钱就白扣了(2026-07-13 修复)
+                    this.GetModel<IAccountModel>().Coins.Value -= price;
+
+                    // 播放购买音效（延迟0.5秒，和sell bird一样）
+                    this.GetSystem<IAudioSystem>().PlayEffect(EffectType.Buy);
 
                     // 使用找到的索引创建装饰物
                     this.GetSystem<IGameSystem>().CreateFixedDecoration(id, availableIndex);

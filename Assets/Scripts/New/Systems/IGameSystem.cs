@@ -727,8 +727,24 @@ namespace BirdGame
                         Debug.Log($"销毁装饰品 {decorationId}，释放 fixedPositions 索引 {fixedPositionIndex}，剩余数量: {decorationInfo.count}");
                     }
                 }
-                
+                else
+                {
+                    // 位置匹配失败(装饰被拖动过/配置坐标改过,±0.1容差对不上)时也必须
+                    // 释放占位,否则 usedFixedPositionIndices 残留 → count=0 但商店
+                    // 永远判"已装备"(松果卖掉后仍显示已装备的 bug,2026-07-13)。
+                    // 保证占位数不超过实际剩余装饰数:多出来的就是本次该释放的。
+                    while (decorationInfo.usedFixedPositionIndices.Count > positionList.Count)
+                    {
+                        int freed = decorationInfo.usedFixedPositionIndices[decorationInfo.usedFixedPositionIndices.Count - 1];
+                        decorationInfo.usedFixedPositionIndices.RemoveAt(decorationInfo.usedFixedPositionIndices.Count - 1);
+                        Debug.Log($"销毁装饰品 {decorationId}，位置匹配失败,按数量收敛释放索引 {freed}，剩余数量: {decorationInfo.count}");
+                    }
+                }
+
                 Debug.Log($"销毁装饰品 {decorationId}，使用索引 {actualIndex}（传入索引: {index}），剩余数量: {decorationInfo.count}");
+
+                // 广播装饰变更:商店开着时装饰条目立即刷新(否则删除后仍灰显"已装备")
+                this.SendEvent<OnDecorationChangedEvent>();
             }
             else
             {
@@ -823,6 +839,23 @@ namespace BirdGame
                             }
                         }
                         
+                        // 位置匹配失败(装饰被拖动过/配置坐标改过)或匹配到的索引已被
+                        // 占用(两个装饰匹配到同一点)时,分配第一个空闲索引兜底——
+                        // 此前直接丢弃,导致 count=1 但 usedFixedPositionIndices 为空,
+                        // 商店亮价签、点购买又被限购拦截的死局(shy plant bug,2026-07-13)。
+                        // 这也让"配置移动固定点坐标"对老存档变得安全。
+                        if (matchedIndex < 0 || decorationInfo.usedFixedPositionIndices.Contains(matchedIndex))
+                        {
+                            for (int k = 0; k < decorationItem.fixedPositions.Length; k++)
+                            {
+                                if (!decorationInfo.usedFixedPositionIndices.Contains(k))
+                                {
+                                    matchedIndex = k;
+                                    break;
+                                }
+                            }
+                        }
+
                         // 如果找到匹配的索引且未在列表中，添加到已使用列表
                         if (matchedIndex >= 0 && !decorationInfo.usedFixedPositionIndices.Contains(matchedIndex))
                         {
