@@ -26,6 +26,7 @@ namespace BirdGame
         public TMP_Dropdown volumeDropdown;
         public TMP_Dropdown languageDropdown;
         public Button quitButton;
+        public Button creditsButton;
         public Button tutorialButton;
         public Button clearSaveButton; // 添加清除存档按钮
         public Sprite itemSprite;
@@ -45,6 +46,8 @@ namespace BirdGame
         private float deleteY;
         private float tutorailY;
         private float quitY;
+
+        private float creditsY;
         private float languageY;
         private float volumeY;
         private float autoFeedY;
@@ -52,6 +55,7 @@ namespace BirdGame
         private RectTransform deleteRect;
         private RectTransform tutorialRect;
         private RectTransform quitRect;
+        private RectTransform creditsRect;
         private RectTransform languageRect;
         private RectTransform volumeRect;
         private RectTransform autoFeedRect;
@@ -235,6 +239,7 @@ namespace BirdGame
             deleteRect = clearSaveButton.GetComponent<RectTransform>();
             tutorialRect = tutorialButton.GetComponent<RectTransform>();
             quitRect = quitButton.GetComponent<RectTransform>();
+            creditsRect = creditsButton.GetComponent<RectTransform>();
             languageRect = languageDropdown.GetComponent<RectTransform>();
             volumeRect = volumeDropdown.GetComponent<RectTransform>();
             autoFeedRect = autoFeedingToggle.GetComponent<RectTransform>();
@@ -243,6 +248,7 @@ namespace BirdGame
             deleteY = deleteRect.anchoredPosition.y;
             tutorailY = tutorialRect.anchoredPosition.y;
             quitY = quitRect.anchoredPosition.y;
+            creditsY = creditsRect.anchoredPosition.y;
             languageY = languageRect.anchoredPosition.y;
             volumeY = volumeRect.anchoredPosition.y;
             autoFeedY = autoFeedRect.anchoredPosition.y;
@@ -257,6 +263,11 @@ namespace BirdGame
             {
                 // 直接退出游戏，不再弹出退出确认/问卷弹窗
                 this.GetSystem<IGameSystem>().QuitGame();
+            });
+
+            creditsButton.onClick.AddListener(() =>
+            {
+                this.GetSystem<IUISystem>().ShowPopup(UIPopup.CreditsPopup);
             });
             
             closeButton.onClick.AddListener(() =>
@@ -434,7 +445,7 @@ namespace BirdGame
 
             if (isScreenExpend)
             {
-                volumeRect.anchoredPosition = new Vector2(0, volumeY - 204);
+                volumeRect.anchoredPosition = new Vector2(0, volumeY - 240);
             }
             else
             {
@@ -452,9 +463,10 @@ namespace BirdGame
             }
 
 
-            moveHeight = (isScreenExpend ? 204 : 0) + (isVloumeExpend? 384 : 0) + (isLanguageExpend ? 530 : 0);
+            moveHeight = (isScreenExpend ? 240 : 0) + (isVloumeExpend? 384 : 0) + (isLanguageExpend ? 550 : 0);
 
             deleteRect.anchoredPosition = new Vector2(0, deleteY - moveHeight); 
+            creditsRect.anchoredPosition = new Vector2(0, creditsY - moveHeight);
             tutorialRect.anchoredPosition = new Vector2(0, tutorailY - moveHeight);
             quitRect.anchoredPosition = new Vector2(0, quitY - moveHeight);
             autoFeedRect.anchoredPosition = new Vector2(0, autoFeedY - moveHeight);

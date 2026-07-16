@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 524291022262379566}
   - component: {fileID: 4119815781326748290}
   - component: {fileID: 6641885385576359116}
+  - component: {fileID: 7798090938807864754}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Decoration
@@ -267,6 +268,28 @@ MonoBehaviour:
   backgroundPadding: {x: 10, y: 5}
   cornerRadius: 10
   isHovering: 0
+--- !u!95 &7798090938807864754
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6464892538229381413}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 944842a71021d2b4e93ccd95d91586cb, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &7099460407733767612
 GameObject:
   m_ObjectHideFlags: 0

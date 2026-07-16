@@ -21,6 +21,7 @@ namespace BirdGame
         
         public virtual void OnShowPanel()
         {
+            if(_group == null) return;
             _group.alpha = 0;
             transform.localScale = new Vector3(0.3f * _originScale.x, 0.3f * _originScale.y, 1f * _originScale.z);
             transform.DOScale(_originScale, 0.2f).SetEase(Ease.InSine);
@@ -29,6 +30,7 @@ namespace BirdGame
 
         public virtual void OnHidePanel(Action onComplate = null)
         {
+            if(_group == null) return;
             transform.DOScale(new Vector3(0.3f * _originScale.x, 0.3f * _originScale.y, 1f * _originScale.z), 0.2f).SetEase(Ease.OutSine);
             _group.DOFade(0f, 0.2f).SetEase(Ease.OutSine).OnComplete(() =>
             {

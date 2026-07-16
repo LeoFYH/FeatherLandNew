@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using QFramework;
 using UnityEngine.UI;
 
@@ -15,6 +15,7 @@ namespace BirdGame
             effectSlider.onValueChanged.AddListener(v =>
             {
                 this.GetModel<ISaveModel>().MusicSettingData.effectVolume = v;
+                this.GetSystem<IAudioSystem>().RefreshMasterVolume();
             });
         }
     }

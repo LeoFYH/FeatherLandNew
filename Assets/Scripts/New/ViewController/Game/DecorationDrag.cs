@@ -9,6 +9,7 @@ namespace BirdGame
         public bool enableHookSupport = true;
 
         private bool isDragging = false;
+        public bool IsDragging => isDragging;
         private Vector3 offset;
         private Camera mainCamera;
         private SpriteRenderer spriteRenderer;

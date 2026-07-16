@@ -427,7 +427,7 @@ namespace BirdGame
             birdAudio.pitch = 1.0f;
             birdAudio.reverbZoneMix = 1f;
             birdAudio.spatialBlend = 0f;
-            birdAudio.volume = GetMasterVolume();
+            birdAudio.volume = this.GetModel<ISaveModel>().MusicSettingData.effectVolume * GetMasterVolume();
             birdAudio.Play();
         }
 
@@ -723,10 +723,8 @@ namespace BirdGame
         public void RandomPlayPetting(BirdBodyType type)
         {
             var musicSetting = this.GetModel<ISaveModel>().MusicSettingData;
-            float birdVolume = musicSetting.birdVolumeConfigured
-                ? musicSetting.birdVolume
-                : musicSetting.birdVolume;
-            if (birdVolume <= 0f) return;
+            float effectVolume = musicSetting.effectVolume;
+            if (effectVolume <= 0f) return;
 
             var config = this.GetModel<IConfigModel>().RadioConfig;
             int index = 0;
@@ -747,7 +745,7 @@ namespace BirdGame
             {
                 pettingAudio.clip = clip;
                 pettingAudio.outputAudioMixerGroup = config.pettingClips[index].group;
-                pettingAudio.volume = birdVolume * 1.00f * GetMasterVolume();
+                pettingAudio.volume = effectVolume * GetMasterVolume();
                 pettingAudio.Play();
             });
         }
@@ -764,9 +762,8 @@ namespace BirdGame
                 environmentAudios[i].volume = radioModel.EnvironmentVolumes[i].Value * radioModel.EnvironmentVolume.Value * masterVolume;
             }
 
-            float birdVolume = saveModel.birdVolumeConfigured ? saveModel.birdVolume : saveModel.birdVolume;
-            pettingAudio.volume = birdVolume * 2.00f * masterVolume;
-            birdAudio.volume = masterVolume;
+            pettingAudio.volume = saveModel.effectVolume * masterVolume;
+            birdAudio.volume = saveModel.effectVolume * masterVolume;
 
             foreach (var effectAudio in effectAudios)
             {

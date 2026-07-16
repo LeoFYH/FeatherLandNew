@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 7149505083618974007}
   - component: {fileID: 8741748814961617775}
   - component: {fileID: 8749197535666878525}
+  - component: {fileID: 5819684496429357179}
+  - component: {fileID: 6928417699101658170}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Decoration
@@ -235,6 +237,45 @@ MonoBehaviour:
   backgroundPadding: {x: 10, y: 5}
   cornerRadius: 10
   isHovering: 0
+--- !u!95 &5819684496429357179
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1987841749456683779}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 7fcf91d444d2dd24590ce13eb8f3da67, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6928417699101658170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1987841749456683779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45e2f1db630b7c048bc99e7b5b6f4336, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 0.5
+  moveDistance: 1
+  startDirection: 1
+  flipSprite: 1
+  spriteFacesLeft: 1
 --- !u!1 &2929794707948516033
 GameObject:
   m_ObjectHideFlags: 0

@@ -36,6 +36,7 @@ namespace BirdGame
         AddCoinPopup,
         ConfirmPopup,
         PhotoPopup,
+        CreditsPopup
     }
 
     public interface IUISystem : ISystem
