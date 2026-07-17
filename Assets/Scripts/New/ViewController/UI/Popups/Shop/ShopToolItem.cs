@@ -48,6 +48,33 @@ namespace BirdGame
                 gameModel.SelectedToolDic.Add(index, new BindableProperty<int>());
             }
 
+            // 容量升级:默认选中第一个未购买的档位(全买完则停在最后一档)。
+            // 此前默认停在档位0,已买过低档时打开商店显示"升到30/已购买"而当前
+            // 容量已更高,观感矛盾(2026-07-16)。必须在下方描述/图标渲染之前设置。
+            if (item.selections[0].type == ToolType.BirdMaxCount)
+            {
+                int capMapIndex = this.GetModel<ISaveModel>().BirdInfoData.currentMap;
+                while (saveModel.AccountData.sceneTools.Count <= capMapIndex)
+                {
+                    saveModel.AccountData.sceneTools.Add(new SceneToolInfo());
+                }
+                while (saveModel.AccountData.sceneTools[capMapIndex].tools.Count <= index)
+                {
+                    saveModel.AccountData.sceneTools[capMapIndex].tools.Add(new ToolInfo());
+                }
+                var capUnlocked = saveModel.AccountData.sceneTools[capMapIndex].tools[index].unlockedList;
+                int defaultTier = item.selections.Length - 1;
+                for (int i = 0; i < item.selections.Length; i++)
+                {
+                    if (!capUnlocked.Contains(i + 1)) // 购买记录带 +1 偏移(见购买逻辑)
+                    {
+                        defaultTier = i;
+                        break;
+                    }
+                }
+                gameModel.SelectedToolDic[index].Value = defaultTier;
+            }
+
             var sp = item.selections[gameModel.SelectedToolDic[index].Value].icon;
             icon.sprite = sp;
             if (sp != null)
@@ -648,7 +675,11 @@ namespace BirdGame
                                 this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList.Add(0);
                             }
 
-                            this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList[mapIndex] += 20;
+                            // 容量=基础值+本档 addCount,直接设置(非累加):档位语义是"升到 X",
+                            // 配置保证 base+addCount==档位标签(30/40/80)。此前写死 +=20,
+                            // 买"升到30"实际变 40,标签/描述/实际容量永远对不上(2026-07-16 修复);
+                            // 设置式对已错档的旧存档也能在下次购买时自愈。
+                            this.GetModel<ISaveModel>().BirdInfoData.addedBirdCountList[mapIndex] = selectedTool.addCount;
                             //this.GetModel<IBirdModel>().AddedBirdCount += 10;
                             //this.GetModel<ISaveModel>().AccountData.addedMaxBirdValue += selectedTool.addCount;
                             //this.GetSystem<IBirdSystem>().SyncBirdDataToSave();
