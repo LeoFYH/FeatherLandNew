@@ -185,7 +185,6 @@
     <Compile Include="Assets\Scripts\HouseToggle.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\EffectVolume.cs" />
     <Compile Include="Assets\Scripts\New\Commands\LoadGameCommand.cs" />
-    <Compile Include="Assets\Scripts\New\ViewController\UI\CreditsRoll.cs" />
     <Compile Include="Assets\Scripts\Managers\PauseManager.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Panels\LoadingPanel.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\MapPopup.cs" />
@@ -309,6 +308,7 @@
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Clock\AddButton.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Radio\EnvironmentViewController.cs" />
     <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\Note\NoteItem.cs" />
+    <Compile Include="Assets\Scripts\New\ViewController\UI\Popups\CreditsPopup.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

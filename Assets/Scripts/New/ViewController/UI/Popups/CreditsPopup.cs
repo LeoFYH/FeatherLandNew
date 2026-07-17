@@ -10,7 +10,7 @@ namespace BirdGame
     /// 将本脚本挂载到 Credits 面板的根节点，并把人员名单内容的 RectTransform 拖到 content 字段即可。
     /// 内容会从当前位置开始向上滚动，直到完全滚出可视区域。
     /// </summary>
-    public class CreditsRoll : UIBase
+    public class CreditsPopup : UIBase
     {
         [Header("内容设置")]
         [Tooltip("滚动内容的 RectTransform（所有制作人员名单条目的父节点）")]
@@ -39,17 +39,26 @@ namespace BirdGame
         private Vector2 initialAnchoredPosition;
         private float loopDelayTimer;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+
             if (content != null)
             {
                 initialAnchoredPosition = content.anchoredPosition;
             }
 
-            closeButton.onClick.AddListener(() =>
+            if (closeButton != null)
             {
-                this.GetSystem<IUISystem>().HidePopup(UIPopup.CreditsPopup);
-            });
+                closeButton.onClick.AddListener(() =>
+                {
+                    this.GetSystem<IUISystem>().HidePopup(UIPopup.CreditsPopup);
+                });
+            }
+            else
+            {
+                Debug.LogWarning("[CreditsPopup] closeButton 未赋值，无法通过点击关闭");
+            }
         }
 
         private void OnEnable()

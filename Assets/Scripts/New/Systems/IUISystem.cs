@@ -223,8 +223,8 @@ namespace BirdGame
                     return;
                 }
 
-                pop.OnShowPanel();
                 popupDic.Add(popup, pop);
+                pop.OnShowPanel();
                 onComplete?.Invoke();
             });
         }
