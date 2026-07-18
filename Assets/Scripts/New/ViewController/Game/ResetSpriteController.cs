@@ -6,14 +6,11 @@ namespace BirdGame
     public class ResetSpriteController : ViewControllerBase
     {
         public Sprite[] sps;
-        public GameObject[] anims;
+        public GameObject light;
         public SpriteRenderer sr;
-
-        private int id;
 
         public void SetSp(int index)
         {
-            id = index;
             if (sps == null || sps.Length == 0)
                 return;
             if (sps.Length <= index)
@@ -31,13 +28,11 @@ namespace BirdGame
             {
                 if(evt.index == 2)
                 {
-                    sr.enabled = false;
-                    anims[id].SetActive(true);
+                    light.SetActive(true);
                 }
                 else
                 {
-                    sr.enabled = true;
-                    anims[id].SetActive(false);
+                    light.SetActive(false);
                 }
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
         }
