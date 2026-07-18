@@ -254,7 +254,16 @@ namespace BirdGame
         private static IntPtr KeyboardHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
             // Performance optimization: Use cached enableForwarding to avoid instance access
-            if (nCode >= 0 && instance != null && cachedEnableForwarding && isOnDesktop)
+            //
+            // 键盘用严格闸门 keyboardGateOpen 而非 isOnDesktop(2026-07-17):
+            // isOnDesktop 把"前台窗口无标题"也当成桌面 —— 无边框全屏视频窗口恰恰
+            // 常无标题,玩家在视频里按 1/2/3/Esc 等会被游戏吞成快捷键(切模式/开弹窗
+            // 且模式写档),即玩家反馈"壁纸下开全屏视频游戏自己关闭"。严格闸门要求
+            // 前台确为桌面层/游戏窗口/输入法代理窗(类名白名单)。鼠标路径不动
+            // (isOnDesktop 照旧,点击另有 IsDesktopOrGameWindow 白名单兜底)。
+            try
+            {
+            if (nCode >= 0 && instance != null && cachedEnableForwarding && keyboardGateOpen)
             {
                 int message = wParam.ToInt32();
                 KBDLLHOOKSTRUCT hookStruct = Marshal.PtrToStructure<KBDLLHOOKSTRUCT>(lParam);
@@ -291,6 +300,11 @@ namespace BirdGame
                         pressedKeys.Remove(keyCode);
                     }
                 }
+            }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning($"[SimpleMouseForwarder] 键盘钩子异常(已兜住): {e.Message}");
             }
 
             return CallNextHookEx(_keyboardHookID, nCode, wParam, lParam);
@@ -564,6 +578,12 @@ namespace BirdGame
                 return CallNextHookEx(_hookID, nCode, wParam, lParam);
             }
             
+            // 整体兜底(2026-07-17,只包不改内部逻辑):钩子回调里的托管异常若外泄,
+            // IL2CPP 下会穿越 user32 钩子分发边界直接原生闪退。壁纸下其他应用全屏
+            // 切换/对象销毁瞬间,引擎 API(Camera.main/RaycastAll/GetComponent 等)
+            // 都可能抛异常 —— 此前只有 WM_LBUTTONUP 分支有 try-catch。
+            try
+            {
             if (instance != null && isOnDesktop)
             {
                 int message = wParam.ToInt32();
@@ -996,6 +1016,11 @@ namespace BirdGame
                     // Reset
                     wheelDelta = 0f;
                 }
+            }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning($"[SimpleMouseForwarder] 鼠标钩子异常(已兜住,防止钩子边界原生崩溃): {e.Message}");
             }
 
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
@@ -1672,6 +1697,34 @@ namespace BirdGame
             return string.Empty;
         }
 
+        // 键盘钩子闸门专用:前台窗口是否属于桌面层/游戏自身/壁纸输入法代理窗。
+        // 按【类名】白名单判定(与鼠标点击的 IsDesktopOrGameWindow 同一套类名),
+        // 不再信任"标题为空"——全屏视频窗口常无标题,标题判定对键盘太宽松。
+        // 字段留在平台守卫外(非 Windows 恒 false 即闸门常闭);助手函数因引用
+        // WIN-only 的 ImeProxyWindow,必须在守卫内。
+        private static bool keyboardGateOpen = false;
+
+#if UNITY_STANDALONE_WIN
+        private static bool IsForegroundDesktopWindow()
+        {
+            IntPtr hwnd = GetForegroundWindow();
+            if (hwnd == IntPtr.Zero) return false; // 前台过渡态:从严,宁可丢一次按键
+
+            // 壁纸模式下输入框聚焦时,前台是我们自建的输入法代理窗
+            if (hwnd == HookTMPInputHandler.ImeProxyWindow.Hwnd) return true;
+
+            const int nChars = 256;
+            var className = new System.Text.StringBuilder(nChars);
+            GetClassName(hwnd, className, nChars);
+            string cls = className.ToString();
+            return cls == "Progman"
+                || cls == "WorkerW"
+                || cls == "SHELLDLL_DefView"
+                || cls == "SysListView32"
+                || cls == "UnityWndClass";
+        }
+#endif
+
         private void Update()
         {
 #if UNITY_STANDALONE_WIN
@@ -1702,6 +1755,10 @@ namespace BirdGame
                 wallpaperModeActive = fullScreen != null && fullScreen.IsWallpaperModeActive();
             }
             isOnDesktop = wallpaperModeActive && (cachedForegroundWindowTitle == "Program Manager" || cachedForegroundWindowTitle == string.Empty);
+
+            // 键盘钩子严格闸门(2026-07-17,详见 KeyboardHookCallback 注释):
+            // 每帧按前台窗口【类名】判定,前台为空/非桌面层时键盘一律放行给系统。
+            keyboardGateOpen = wallpaperModeActive && IsForegroundDesktopWindow();
             
             // Performance optimization: Update cached values periodically
             if (Time.frameCount % 60 == 0) // Update every 60 frames (~1 second at 60fps)

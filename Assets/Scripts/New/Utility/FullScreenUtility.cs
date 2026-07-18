@@ -20,6 +20,8 @@ namespace BirdGame
         void FullscreenMode();
         void WindowedMode();
         bool IsWallpaperModeActive();
+        /// <summary>壁纸父窗口看门狗:Windows 壁纸模式下定期调用,WorkerW 失效时自动重挂或回退全屏。非 Windows 平台为空操作。</summary>
+        void CheckWallpaperHealth();
         /// <summary>Try to give the game window keyboard focus then immediately send it back in Z-order so IME might work while staying in wallpaper. Returns true if attempted.</summary>
         bool TryGiveFocusThenSendBackInWallpaper();
         bool IsRunningAsAdministrator();
@@ -39,6 +41,9 @@ namespace BirdGame
 
         [DllImport("user32.dll", SetLastError = true)]
         private static extern IntPtr GetParent(IntPtr hWnd);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool IsWindow(IntPtr hWnd);
 
         /// <summary>GW_HWNDNEXT = 2 (below in Z-order), GW_HWNDPREV = 3 (above).</summary>
         [DllImport("user32.dll", SetLastError = true)]
@@ -528,6 +533,9 @@ namespace BirdGame
 
                 // 更新状态标记
                 isWallpaperMode = true;
+                // 记录实际父窗口供看门狗校验(宽松挂载时可能为 0,看门狗会跳过父检查)
+                wallpaperParentHandle = GetParent(windowHandle);
+                wallpaperRemountFails = 0;
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
                 Debug.Log($"[WallpaperMode] 激活 - {(int)workingArea.width}x{(int)workingArea.height}, " +
@@ -549,7 +557,9 @@ namespace BirdGame
                 // Activate window and set focus
                 // Note: In wallpaper mode, window is a child of desktop, so focus behavior may differ.
                 // 宽松挂载下窗口可能仍是顶级窗口，激活会把它抬到前景遮挡图标，因此跳过。
-                if (!usedLenientAttach)
+                // 看门狗静默重挂时也跳过——重挂多发生在其他应用全屏播放期间,
+                // 此时 SetForegroundWindow 会把游戏抢到视频前面,极其扰民。
+                if (!usedLenientAttach && !remountSilently)
                 {
                     ActivateWindow();
                 }
@@ -935,6 +945,57 @@ namespace BirdGame
 
         public bool IsRunningAsAdministrator() => false;
         public bool RequestAdministratorPrivileges() => false;
+
+        // ---------------- 壁纸父窗口看门狗(2026-07-17) ----------------
+        // 玩家反馈:壁纸模式下打开其他全屏视频,游戏"自己关闭/有时闪退"。
+        // 根因之一:游戏窗口 SetParent 在 WorkerW 下,独占全屏/显示模式切换/
+        // Explorer 重启可能让系统回收重建 WorkerW —— 父窗口失效后壁纸脱离桌面,
+        // 此前无任何检测与自救。GameEntry.Update 在壁纸模式下约每 2 秒调用一次:
+        // 父窗口健在则近零开销;失效则静默重挂(不抢前台),连续 3 次失败回退全屏。
+        // 注:若父窗口销毁时本窗口被系统连带销毁,进程已在退出流程中,此处无法
+        // 挽救——那种情形需玩家日志确认后另行处理(如改挂载方案)。
+        private IntPtr wallpaperParentHandle = IntPtr.Zero;
+        private int wallpaperRemountFails = 0;
+        private bool remountSilently = false;
+
+        public void CheckWallpaperHealth()
+        {
+#if !UNITY_EDITOR
+            if (!isWallpaperMode || windowHandle == IntPtr.Zero)
+                return;
+            if (!IsWindow(windowHandle))
+                return; // 自身窗口已被销毁,无能为力
+            if (wallpaperParentHandle == IntPtr.Zero)
+                return; // 宽松挂载(顶级窗口)本就无父窗口,不校验
+
+            IntPtr currentParent = GetParent(windowHandle);
+            if (currentParent == wallpaperParentHandle && IsWindow(wallpaperParentHandle))
+                return; // 健康
+
+            Debug.LogWarning($"[WallpaperWatchdog] 桌面父窗口失效(记录={wallpaperParentHandle}, 当前={currentParent}, 父存活={IsWindow(wallpaperParentHandle)}),静默重挂");
+            isWallpaperMode = false; // 允许 WallpaperMode 重入
+            remountSilently = true;
+            try { WallpaperMode(); }
+            finally { remountSilently = false; }
+
+            if (isWallpaperMode)
+            {
+                wallpaperRemountFails = 0;
+                Debug.Log("[WallpaperWatchdog] 重挂成功");
+            }
+            else
+            {
+                wallpaperRemountFails++;
+                Debug.LogWarning($"[WallpaperWatchdog] 重挂失败({wallpaperRemountFails}/3)");
+                if (wallpaperRemountFails >= 3)
+                {
+                    wallpaperRemountFails = 0;
+                    Debug.LogError("[WallpaperWatchdog] 连续重挂失败,回退全屏模式");
+                    FullscreenMode();
+                }
+            }
+#endif
+        }
 #elif UNITY_STANDALONE_OSX
         // ===================== macOS 实现 =====================
         // 原生实现位于 Assets/Plugins/macOS/FLWallpaperBridge.mm。
@@ -989,6 +1050,9 @@ namespace BirdGame
 
         // macOS 端用 Unity 的 Display API 判断多屏（Mac 没有 EnumDisplayMonitors）
         public bool HasMultipleMonitors => Display.displays != null && Display.displays.Length > 1;
+
+        /// <summary> Windows 专用的壁纸父窗口看门狗;macOS 无 SetParent 挂载机制,空操作。 </summary>
+        public void CheckWallpaperHealth() { }
 
         public void WallpaperMode()
         {

@@ -1202,6 +1202,9 @@ public class HookTMPInputHandler : MonoBehaviour, IPointerClickHandler, IPointer
 
         private static IntPtr _hwnd = IntPtr.Zero;
         private static IntPtr _classAtom = IntPtr.Zero;
+
+        /// <summary> 代理窗句柄(只读)。键盘钩子的前台白名单用它识别"正在代理窗里打字"。 </summary>
+        public static IntPtr Hwnd => _hwnd;
         private static readonly ConcurrentQueue<PendingInput> _queue = new ConcurrentQueue<PendingInput>();
 
         private delegate IntPtr WndProcDelegate(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);

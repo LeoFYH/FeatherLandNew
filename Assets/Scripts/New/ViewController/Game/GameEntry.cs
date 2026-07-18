@@ -168,11 +168,27 @@ namespace BirdGame
             this.GetSystem<IMonoSystem>().SendEvent(new ChangeScreenModeEvent { mode = mode });
         }
 
+        private float wallpaperWatchdogTimer = 0f;
+
         private void Update()
         {
             onUpdate?.Invoke();
             this.GetSystem<ISteamSystem>().RunCallbacks();
             CheckCursor();
+
+#if UNITY_STANDALONE_WIN
+            // 壁纸父窗口看门狗(约2秒一次):其他应用全屏/显示切换可能让系统回收
+            // WorkerW,失效时 FullScreenUtility 静默重挂,防止壁纸脱离桌面
+            // (玩家反馈:壁纸下开全屏视频游戏"自己关闭",2026-07-17)
+            wallpaperWatchdogTimer += Time.unscaledDeltaTime;
+            if (wallpaperWatchdogTimer >= 2f)
+            {
+                wallpaperWatchdogTimer = 0f;
+                var fsUtil = this.GetUtility<IFullScreenUtility>();
+                if (fsUtil != null && fsUtil.EnableWallpaperMode)
+                    fsUtil.CheckWallpaperHealth();
+            }
+#endif
             
             // 检测快捷键（仅在非输入状态下）
             HandleKeyboardShortcuts();
