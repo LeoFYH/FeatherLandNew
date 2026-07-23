@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using QFramework;
 #if STEAMWORKS_NET && (UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX)
@@ -72,6 +73,8 @@ namespace BirdGame
         private float previousCoins;
         private int totalBirdSpeciesCount; // 全图鉴总数
         private HashSet<int> extinctBirdIds = new HashSet<int>(); // 所有灭绝鸟ID
+        private Coroutine timeAchievementCheckCoroutine;
+        private static readonly WaitForSecondsRealtime TimeAchievementCheckInterval = new WaitForSecondsRealtime(30f);
 
         protected override void OnInit()
         {
@@ -90,12 +93,9 @@ namespace BirdGame
             // 缓存鸟配置信息
             CacheBirdConfigData();
 
-            // 时间成就
-            int hour = DateTime.Now.Hour;
-            if (hour >= 6 && hour < 7)
-                Unlock(DAWN_CHORUS);
-            if (hour >= 2 && hour < 4)
-                Unlock(NIGHT_OWL);
+            // 时间成就：启动时立即检查，并在运行期间持续检查
+            CheckTimeAchievements();
+            StartTimeAchievementCheck();
 
             // 连续登录
             string today = DateTime.Now.ToString("yyyy-MM-dd");
@@ -239,6 +239,53 @@ namespace BirdGame
         public void OnPomodoroCompleted() => Unlock(IN_THE_ZONE);
 
         // ==================== 内部方法 ====================
+
+        private void StartTimeAchievementCheck()
+        {
+            if (timeAchievementCheckCoroutine != null ||
+                (IsUnlocked(DAWN_CHORUS) && IsUnlocked(NIGHT_OWL)))
+            {
+                return;
+            }
+
+            timeAchievementCheckCoroutine =
+                this.GetSystem<IMonoSystem>().StartCoroutine(MonitorTimeAchievements());
+        }
+
+        private IEnumerator MonitorTimeAchievements()
+        {
+            while (!IsUnlocked(DAWN_CHORUS) || !IsUnlocked(NIGHT_OWL))
+            {
+                yield return TimeAchievementCheckInterval;
+
+                int unlockedCount = data?.unlockedAchievements?.Count ?? 0;
+                CheckTimeAchievements();
+
+                // 运行期间解锁后立即保存，避免退出前丢失本地记录
+                if (data?.unlockedAchievements != null &&
+                    data.unlockedAchievements.Count > unlockedCount)
+                {
+                    this.GetSystem<ISaveSystem>().SaveData();
+                }
+            }
+
+            timeAchievementCheckCoroutine = null;
+        }
+
+        private void CheckTimeAchievements()
+        {
+            int hour = DateTime.Now.Hour;
+            if (hour >= 6 && hour < 7)
+                Unlock(DAWN_CHORUS);
+            if (hour >= 2 && hour < 4)
+                Unlock(NIGHT_OWL);
+        }
+
+        private bool IsUnlocked(string id)
+        {
+            return data?.unlockedAchievements != null &&
+                   data.unlockedAchievements.Contains(id);
+        }
 
         private void Unlock(string id)
         {
