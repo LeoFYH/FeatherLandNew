@@ -59,16 +59,19 @@ namespace BirdGame
         private void ChangeSize()
         {
             float targetAspect = referenceWidth / referenceHeight;
-            float currentAspect = (float)cachedScreenWidth / cachedScreenHeight;
+            float currentAspect = cachedScreenHeight > 0
+                ? (float)cachedScreenWidth / cachedScreenHeight
+                : targetAspect;
 
-            if (currentAspect > targetAspect)
+            if (currentAspect < targetAspect)
             {
-                // 屏幕更宽了，需要增大Size来显示更多上下内容
-                baseOrthoSize = referenceOrthoSize * (targetAspect / currentAspect);
+                // 窄屏增加纵向视野，保证参考分辨率的完整宽度不会被裁掉。
+                baseOrthoSize = referenceOrthoSize * targetAspect / currentAspect;
             }
             else
             {
-                // 屏幕更窄或比例相同，保持原始的Orthographic Size
+                // 宽屏（包括 21:9）保持完整高度，并自然显示更多左右内容。
+                // 旧逻辑会在宽屏上减小 Size，导致画面被放大、上下内容和鸟被裁掉。
                 baseOrthoSize = referenceOrthoSize;
             }
             camera.orthographicSize = baseOrthoSize * zoomFactor;
@@ -173,8 +176,15 @@ namespace BirdGame
         /// </summary>
         private Vector3 ClampToWorldBounds(Vector3 pos, float zoom)
         {
-            float maxOffsetX = Mathf.Max(0f, baseOrthoSize * camera.aspect * (1f - zoom));
-            float maxOffsetY = Mathf.Max(0f, baseOrthoSize * (1f - zoom));
+            float targetAspect = referenceWidth / referenceHeight;
+            float worldHalfWidth = referenceOrthoSize * targetAspect;
+            float worldHalfHeight = referenceOrthoSize;
+            float viewHalfWidth = baseOrthoSize * zoom * camera.aspect;
+            float viewHalfHeight = baseOrthoSize * zoom;
+
+            // 缩放后只允许在原始 16:9 游戏区域内平移；超宽屏多出的区域不能把相机拖进场景外。
+            float maxOffsetX = Mathf.Max(0f, worldHalfWidth - viewHalfWidth);
+            float maxOffsetY = Mathf.Max(0f, worldHalfHeight - viewHalfHeight);
             float x = Mathf.Clamp(pos.x, baseCameraPosition.x - maxOffsetX, baseCameraPosition.x + maxOffsetX);
             float y = Mathf.Clamp(pos.y, baseCameraPosition.y - maxOffsetY, baseCameraPosition.y + maxOffsetY);
             return new Vector3(x, y, pos.z);

@@ -275,9 +275,9 @@ namespace BirdGame
         private void CheckTimeAchievements()
         {
             int hour = DateTime.Now.Hour;
-            if (hour >= 6 && hour < 7)
+            if (hour >= 5 && hour < 9)
                 Unlock(DAWN_CHORUS);
-            if (hour >= 2 && hour < 4)
+            if (hour >= 23 || hour < 3)
                 Unlock(NIGHT_OWL);
         }
 

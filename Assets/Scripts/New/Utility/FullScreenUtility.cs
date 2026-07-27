@@ -55,6 +55,9 @@ namespace BirdGame
         [DllImport("user32.dll", SetLastError = true)]
         private static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
 
+        [DllImport("kernel32.dll")]
+        private static extern void SetLastError(uint dwErrCode);
+
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
@@ -110,6 +113,7 @@ namespace BirdGame
 
         // ---------------- constants ----------------
         private const uint WS_OVERLAPPEDWINDOW = 0x00000000 | 0x00C00000 | 0x00080000 | 0x00040000 | 0x00020000 | 0x00010000;
+        private const uint WS_CHILD = 0x40000000;
         private const uint WS_POPUP = 0x80000000;
         private const uint WS_VISIBLE = 0x10000000;
         private const uint WS_CAPTION = 0x00C00000;
@@ -157,6 +161,7 @@ namespace BirdGame
 
         private const int GW_HWNDNEXT = 2;
         private const int GW_HWNDPREV = 3;
+        private const uint MONITORINFOF_PRIMARY = 0x00000001;
 
         // ---------------- members ----------------
         private int workAreaWidth;
@@ -355,6 +360,7 @@ namespace BirdGame
                 ShowWindow(windowHandle, SW_SHOW);
 
                 isWallpaperMode = false;
+                wallpaperParentHandle = IntPtr.Zero;
 
                 SimpleMouseForwarder mouseForwarder = UnityEngine.Object.FindObjectOfType<SimpleMouseForwarder>(true);
                 if (mouseForwarder != null)
@@ -417,10 +423,13 @@ namespace BirdGame
                 // 向ProgMan发送消息，确保Win11能正确找到WorkerW
                 SendMessage(hProgman, 0x052C, new IntPtr(13), new IntPtr(1));
 
-                // 设置窗口样式：无边框弹出窗口
+                // SetParent 不会自动切换 WS_POPUP / WS_CHILD。
+                // 必须先把 Unity 顶级窗口改成子窗口，否则部分 Win10 双屏环境中
+                // SetParent 会失败，后续窗口落到不可见层，只剩声音。
                 int newStyle = GetWindowLong(windowHandle, GWL_STYLE);
                 newStyle &= ~unchecked((int)WS_OVERLAPPEDWINDOW);
-                newStyle |= unchecked((int)WS_POPUP);
+                newStyle &= ~unchecked((int)WS_POPUP);
+                newStyle |= unchecked((int)WS_CHILD);
                 newStyle |= unchecked((int)WS_VISIBLE);
                 SetWindowLongPtr(windowHandle, GWL_STYLE, new IntPtr((long)newStyle));
 
@@ -455,15 +464,17 @@ namespace BirdGame
                     {
                         if (candidate == IntPtr.Zero) continue;
 
+                        SetLastError(0);
                         SetParent(windowHandle, candidate);
+                        int setParentError = Marshal.GetLastWin32Error();
                         IntPtr actualParent = GetParent(windowHandle);
                         if (actualParent == candidate)
                         {
                             desktopParent = candidate;
-                            Debug.Log($"[WallpaperMode] 挂载成功: round={round + 1}, parent={desktopParent}");
+                            Debug.Log($"[WallpaperMode] 挂载成功: round={round + 1}, parent={desktopParent}, error={setParentError}");
                             break;
                         }
-                        else if (allowLenientAttach && actualParent == IntPtr.Zero)
+                        else if (allowLenientAttach && actualParent == IntPtr.Zero && setParentError == 0)
                         {
                             // 宽松路径：允许在句柄校验不稳定机型继续尝试显示。
                             // 后续会使用屏幕坐标定位并跳过 ActivateWindow，减少遮挡图标风险。
@@ -474,13 +485,14 @@ namespace BirdGame
                         }
                         else
                         {
-                            Debug.LogWarning($"[WallpaperMode] 挂载校验失败: round={round + 1}, candidate={candidate}, actual={actualParent}");
+                            Debug.LogWarning($"[WallpaperMode] 挂载校验失败: round={round + 1}, candidate={candidate}, actual={actualParent}, error={setParentError}");
                         }
                     }
                 }
 
-                // 严格校验全部失败后，尝试宽松挂载：用第一个非 Progman 候选重新 SetParent
-                if (desktopParent == IntPtr.Zero)
+                // 仅对白名单环境保留宽松挂载。普通环境绝不能把失败当成功，
+                // 否则会进入“有声音但画面不可见”的假壁纸状态。
+                if (desktopParent == IntPtr.Zero && allowLenientAttach)
                 {
                     SendMessage(hProgman, 0x052C, new IntPtr(13), new IntPtr(1));
                     var fallbackCandidates = new System.Collections.Generic.List<IntPtr>();
@@ -489,11 +501,18 @@ namespace BirdGame
                     foreach (IntPtr candidate in fallbackCandidates)
                     {
                         if (candidate == IntPtr.Zero || candidate == hProgman) continue;
+
+                        SetLastError(0);
                         SetParent(windowHandle, candidate);
-                        desktopParent = candidate;
-                        usedLenientAttach = true;
-                        Debug.LogWarning($"[WallpaperMode] 严格校验全部失败，宽松挂载到: {candidate}");
-                        break;
+                        int setParentError = Marshal.GetLastWin32Error();
+                        IntPtr actualParent = GetParent(windowHandle);
+                        if (actualParent == candidate || (actualParent == IntPtr.Zero && setParentError == 0))
+                        {
+                            desktopParent = candidate;
+                            usedLenientAttach = actualParent == IntPtr.Zero;
+                            Debug.LogWarning($"[WallpaperMode] 白名单宽松挂载到: {candidate}, actual={actualParent}, error={setParentError}");
+                            break;
+                        }
                     }
                 }
 
@@ -504,9 +523,12 @@ namespace BirdGame
                     return;
                 }
 
-                // 多显示器时仅支持主屏，强制使用主显示器
-                int displayIndex = HasMultipleMonitors ? 0 : targetDisplay;
-                Rect workingArea = GetScreenWorkingArea(displayIndex);
+                // 多显示器时仅支持主屏。EnumDisplayMonitors 的返回顺序不保证主屏为 0，
+                // 必须依据 MONITORINFOF_PRIMARY 标志选取。
+                int monitorCount = GetMonitorCount();
+                Rect workingArea = monitorCount > 1
+                    ? GetPrimaryScreenWorkingArea()
+                    : GetScreenWorkingArea(targetDisplay);
                 int w = (int)workingArea.width;
                 int h = (int)workingArea.height;
                 if (w <= 0 || h <= 0)
@@ -539,6 +561,7 @@ namespace BirdGame
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
                 Debug.Log($"[WallpaperMode] 激活 - {(int)workingArea.width}x{(int)workingArea.height}, " +
+                    $"area=({(int)workingArea.x},{(int)workingArea.y}), monitors={monitorCount}, " +
                     $"OS={SystemInfo.operatingSystem}, parent={desktopParent}, lenient={usedLenientAttach}, " +
                     $"actualParent={GetParent(windowHandle)}");
                 
@@ -602,6 +625,37 @@ namespace BirdGame
         public bool HasMultipleMonitors => GetMonitorCount() > 1;
 
         /// <summary>
+        /// 按 Win32 主显示器标记获取工作区，避免双屏排列或枚举顺序导致选错屏幕。
+        /// </summary>
+        private Rect GetPrimaryScreenWorkingArea()
+        {
+            s_monitorHandles = new IntPtr[16];
+            s_monitorCount = 0;
+            if (EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, EnumMonitorsCallback, IntPtr.Zero))
+            {
+                for (int i = 0; i < s_monitorCount; i++)
+                {
+                    var mi = new MONITORINFO { cbSize = Marshal.SizeOf(typeof(MONITORINFO)) };
+                    if (GetMonitorInfo(s_monitorHandles[i], ref mi) &&
+                        (mi.dwFlags & MONITORINFOF_PRIMARY) != 0)
+                    {
+                        return RectFromMonitorWorkArea(mi.rcWork);
+                    }
+                }
+            }
+
+            SystemParametersInfo(SPI_GETWORKAREA, 0, out RECT workArea, 0);
+            return RectFromMonitorWorkArea(workArea);
+        }
+
+        private static Rect RectFromMonitorWorkArea(RECT workArea)
+        {
+            int width = Mathf.Max(1, workArea.Right - workArea.Left);
+            int height = Mathf.Max(1, workArea.Bottom - workArea.Top);
+            return new Rect(workArea.Left, workArea.Top, width, height);
+        }
+
+        /// <summary>
         /// 获取指定显示器的工作区（排除任务栏）。多显示器下使用 Win32 按显示器索引取对应工作区。
         /// </summary>
         private Rect GetScreenWorkingArea(int displayIndex)
@@ -613,9 +667,7 @@ namespace BirdGame
             {
                 // 回退：使用主屏工作区
                 SystemParametersInfo(SPI_GETWORKAREA, 0, out RECT workArea, 0);
-                int w = workArea.Right - workArea.Left;
-                int h = workArea.Bottom - workArea.Top;
-                return new Rect(workArea.Left, workArea.Top, Mathf.Max(1, w), Mathf.Max(1, h));
+                return RectFromMonitorWorkArea(workArea);
             }
 
             // 限定到有效索引（多显示器时 primary 多为 0）
@@ -626,18 +678,10 @@ namespace BirdGame
             if (!GetMonitorInfo(hMon, ref mi))
             {
                 SystemParametersInfo(SPI_GETWORKAREA, 0, out RECT workArea, 0);
-                int w = workArea.Right - workArea.Left;
-                int h = workArea.Bottom - workArea.Top;
-                return new Rect(workArea.Left, workArea.Top, Mathf.Max(1, w), Mathf.Max(1, h));
+                return RectFromMonitorWorkArea(workArea);
             }
 
-            RECT r = mi.rcWork;
-            int width = r.Right - r.Left;
-            int height = r.Bottom - r.Top;
-            // 防止无效尺寸导致崩溃
-            width = Mathf.Max(1, width);
-            height = Mathf.Max(1, height);
-            return new Rect(r.Left, r.Top, width, height);
+            return RectFromMonitorWorkArea(mi.rcWork);
         }
 
         /// <summary>
@@ -817,6 +861,7 @@ namespace BirdGame
                 SetWindowLongPtr(windowHandle, GWL_EXSTYLE, new IntPtr((long)currExStyle));
                 
                 isWallpaperMode = false;
+                wallpaperParentHandle = IntPtr.Zero;
                 Debug.Log("[FullscreenMode] 从壁纸模式退出");
             }
 
@@ -825,6 +870,7 @@ namespace BirdGame
             int screenHeight = GetSystemMetrics(1); // SM_CYSCREEN
 
             int style = GetWindowLong(windowHandle, GWL_STYLE);
+            style &= ~unchecked((int)WS_CHILD);
             style &= ~unchecked((int)WS_OVERLAPPEDWINDOW);
             style |= unchecked((int)WS_POPUP);
             SetWindowLong(windowHandle, GWL_STYLE, (int)style);
@@ -862,24 +908,27 @@ namespace BirdGame
             if (isWallpaperMode)
             {
                 SetParent(windowHandle, IntPtr.Zero);
-                // 获取当前窗口样式，修改后重新应用
-                // int currStyle = GetWindowLong(windowHandle, GWL_STYLE);
-                
-                // // currStyle |= unchecked((int)(WS_OVERLAPPEDWINDOW | WS_VISIBLE));
-                
-                // SetWindowLongPtr(windowHandle, GWL_STYLE, new IntPtr((long)currStyle));
-                int currExStyle = GetWindowLong(windowHandle, GWL_EXSTYLE);
-                currExStyle &= ~WS_EX_TOOLWINDOW;
-                currExStyle &= ~WS_EX_LAYERED;
-                // // currExStyle &= ~WS_EX_APPWINDOW;
-                // // currExStyle &= ~WS_EX_TRANSPARENT;
-                SetWindowLongPtr(windowHandle, GWL_EXSTYLE, new IntPtr((long)currExStyle));
+
+                if (originalStyle != IntPtr.Zero)
+                    SetWindowLongPtr(windowHandle, GWL_STYLE, originalStyle);
+                else
+                {
+                    int currStyle = GetWindowLong(windowHandle, GWL_STYLE);
+                    currStyle &= ~unchecked((int)WS_CHILD);
+                    currStyle &= ~unchecked((int)WS_POPUP);
+                    currStyle |= unchecked((int)(WS_OVERLAPPEDWINDOW | WS_VISIBLE));
+                    SetWindowLongPtr(windowHandle, GWL_STYLE, new IntPtr((long)currStyle));
+                }
+
+                if (originalExStyle != IntPtr.Zero)
+                    SetWindowLongPtr(windowHandle, GWL_EXSTYLE, originalExStyle);
                 SetWindowPos(windowHandle, IntPtr.Zero, 0, 0, 0, 0,
                      SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
                 ShowWindow(windowHandle, SW_SHOW);
                 // 不再修改窗口的尺寸和位置
                 isWallpaperMode = false;
+                wallpaperParentHandle = IntPtr.Zero;
                 Debug.Log("[WindowedMode] 从壁纸模式退出");
             }
 
@@ -1000,8 +1049,8 @@ namespace BirdGame
         // ===================== macOS 实现 =====================
         // 原生实现位于 Assets/Plugins/macOS/FLWallpaperBridge.mm。
         // macOS standalone 不会自动编译 .mm 源文件，所以 Editor 端的
-        // FLWallpaperBuildPostprocessor 在构建 .app 时用 clang 把它编成
-        // FLWallpaperBridge.bundle 放到 .app/Contents/Plugins/,
+        // FLWallpaperPrebuildProcessor 在 Player 构建前用 clang 把它编成
+        // FLWallpaperBridge.bundle，再由 Unity 放到 .app/Contents/PlugIns/ 并一起签名，
         // 这里通过 [DllImport("FLWallpaperBridge")] 加载。
         //
         // 设计原则（对应 Windows 版本）：
@@ -1036,7 +1085,7 @@ namespace BirdGame
             try { action(); }
             catch (System.EntryPointNotFoundException)
             {
-                Debug.LogError($"[FLLOG-CS] !!! 原生符号 {tag} 不存在 —— .bundle 是旧的!!! 必须在 Mac 上 rebuild 让 PostProcessBuild 重编 .bundle (或先删掉 Assets/Plugins/macOS/FLWallpaperBridge.bundle 让仓库不再覆盖)");
+                Debug.LogError($"[FLLOG-CS] !!! 原生符号 {tag} 不存在 —— .bundle 是旧的!!! 请在 Mac Unity 中使用 Tools/Build/构建 macOS Steam 版，让构建前处理器重编原生桥");
             }
             catch (System.Exception e)
             {
