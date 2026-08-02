@@ -113,8 +113,18 @@ namespace BirdGame.EditorTools
 
             if (Application.platform == RuntimePlatform.OSXEditor)
             {
+                EnsureExecutablePermissions(executablePath, builtBridgePath);
                 ValidateUniversalBinary(executablePath, "macOS Player");
                 ValidateCodeSignatureIfPresent(appPath);
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "[MacSteamBuild] 本机是 Windows：NTFS 不保存 Unix 可执行权限，" +
+                    "把这个 app 直接压缩或用普通方式上传，Mac 玩家会报“Missing game executable”。\n" +
+                    "必须用 SteamBuild/app_build_mac_3661430.vdf 走 steamcmd 上传" +
+                    "（脚本内已用 FileProperties 标记 executable），" +
+                    "详见 SteamBuild/README_Mac上传必读.md。");
             }
 
             Debug.Log(
@@ -220,6 +230,29 @@ namespace BirdGame.EditorTools
             ValidateUniversalBinaryAndSymbols(BundleBinaryPath);
 
             Debug.Log($"[MacSteamBuild] 已在 Player 构建前编译通用原生桥：{BundleBinaryPath}");
+        }
+
+        /// <summary>
+        /// Steam 端“Missing game executable”最常见根因：.app 内二进制丢失可执行权限。
+        /// 在 Mac 上构建/验证时强制补上，避免拷贝环节（NTFS 中转、压缩工具）弄丢后带病上传。
+        /// </summary>
+        private static void EnsureExecutablePermissions(string executablePath, string builtBridgePath)
+        {
+            ChmodExecutable(executablePath, "macOS Player 主执行文件");
+
+            string bridgeBinary = Path.Combine(builtBridgePath, "Contents", "MacOS", BundleName);
+            if (File.Exists(bridgeBinary))
+                ChmodExecutable(bridgeBinary, "FLWallpaperBridge");
+        }
+
+        private static void ChmodExecutable(string path, string label)
+        {
+            ProcessResult chmod = RunProcess("/bin/chmod", $"+x {Quote(path)}");
+            if (chmod.ExitCode != 0)
+            {
+                throw new BuildFailedException(
+                    $"{label} 设置可执行权限失败：{path}\n{chmod.StandardError}");
+            }
         }
 
         private static void ValidateBundleLayout(string bundlePath, string label)

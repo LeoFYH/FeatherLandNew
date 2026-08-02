@@ -184,6 +184,71 @@ namespace BirdGame
                 radioAudio.loop = v;
             });
             GameObject.DontDestroyOnLoad(obj);
+            InitAudioDeviceRecovery();
+        }
+
+        /// <summary>
+        /// 音频设备韧性：
+        /// 1) 启动时若音频引擎初始化失败（无有效输出设备），尝试以 48kHz 重启一次；
+        /// 2) 运行中系统默认输出设备变化（拔插耳机、切换扬声器、驱动重启）时，
+        ///    Unity 不会自动切换到新设备，必须调用 AudioSettings.Reset 重新绑定，
+        ///    否则游戏会从此完全无声（玩家表现：其他游戏有声、只有本游戏静音）。
+        /// </summary>
+        private void InitAudioDeviceRecovery()
+        {
+            var config = AudioSettings.GetConfiguration();
+            if (config.sampleRate <= 0)
+            {
+                Debug.LogWarning("[Audio] 音频引擎初始化异常（sampleRate=0），尝试以 48kHz 重启音频输出");
+                config.sampleRate = 48000;
+                AudioSettings.Reset(config);
+            }
+
+            AudioSettings.OnAudioConfigurationChanged += OnAudioConfigurationChanged;
+        }
+
+        private void OnAudioConfigurationChanged(bool deviceWasChanged)
+        {
+            if (deviceWasChanged)
+            {
+                Debug.Log("[Audio] 检测到系统音频设备变化，重新绑定输出设备");
+                AudioSettings.Reset(AudioSettings.GetConfiguration());
+            }
+
+            // AudioSettings.Reset 会停掉所有 AudioSource（我们主动 Reset 时本回调
+            // 会以 deviceWasChanged=false 再进一次），统一在这里恢复播放状态
+            ResumeAudioAfterDeviceChange();
+        }
+
+        private void ResumeAudioAfterDeviceChange()
+        {
+            // 环境音是常驻 loop，直接恢复
+            int resumedEnvironments = 0;
+            foreach (var audio in environmentAudios)
+            {
+                if (audio != null && audio.clip != null && !audio.isPlaying)
+                {
+                    audio.Play();
+                    resumedEnvironments++;
+                }
+            }
+
+            // 电台按记录的进度恢复（CheckForSongEnd 一直在写 CurrentTime）
+            bool resumedRadio = false;
+            if (radioModel != null && radioModel.PlayingSong.Value
+                && radioAudio != null && radioAudio.clip != null && !radioAudio.isPlaying)
+            {
+                radioAudio.Play();
+                radioAudio.time = Mathf.Clamp(radioModel.CurrentTime.Value, 0f,
+                    Mathf.Max(0f, radioAudio.clip.length - 0.1f));
+                if (musicPlayingCoroutine != null)
+                    this.GetSystem<IMonoSystem>().StopCoroutine(musicPlayingCoroutine);
+                musicPlayingCoroutine = this.GetSystem<IMonoSystem>().StartCoroutine(CheckForSongEnd());
+                resumedRadio = true;
+            }
+
+            RefreshMasterVolume();
+            Debug.Log($"[Audio] 音频输出重置完成，恢复播放：环境音{resumedEnvironments}路，电台{(resumedRadio ? "已续播" : "无需恢复")}");
         }
 
         public void PlaySong()

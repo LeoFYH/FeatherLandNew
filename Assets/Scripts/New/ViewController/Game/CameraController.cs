@@ -58,22 +58,10 @@ namespace BirdGame
 
         private void ChangeSize()
         {
-            float targetAspect = referenceWidth / referenceHeight;
-            float currentAspect = cachedScreenHeight > 0
-                ? (float)cachedScreenWidth / cachedScreenHeight
-                : targetAspect;
-
-            if (currentAspect < targetAspect)
-            {
-                // 窄屏增加纵向视野，保证参考分辨率的完整宽度不会被裁掉。
-                baseOrthoSize = referenceOrthoSize * targetAspect / currentAspect;
-            }
-            else
-            {
-                // 宽屏（包括 21:9）保持完整高度，并自然显示更多左右内容。
-                // 旧逻辑会在宽屏上减小 Size，导致画面被放大、上下内容和鸟被裁掉。
-                baseOrthoSize = referenceOrthoSize;
-            }
+            // 始终保持设计高度铺满屏幕：
+            // - 16:10、4:3 等较窄屏幕自然裁掉少量左右内容，不在上下露出黑边。
+            // - 21:9 等宽屏保持完整高度，并自然显示更多左右内容。
+            baseOrthoSize = referenceOrthoSize;
             camera.orthographicSize = baseOrthoSize * zoomFactor;
         }
 

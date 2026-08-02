@@ -1,0 +1,61 @@
+// FeatherLand macOS Steam 上传脚本（SteamPipe / steamcmd）
+//
+// 解决的问题：Mac 玩家启动报
+//   "Missing game executable - .../Feather Land/FeatherLand.app"
+// 根因：在 Windows（NTFS）上构建或中转过的 .app，内部二进制的 Unix 可执行
+// 权限位全部丢失；SteamPipe 从 Windows 上传时也不会自动补。玩家下载到的
+// FeatherLand.app 没有可执行权限，Steam 就认为"可执行文件缺失"。
+// 本脚本用 FileProperties/executable 在 Steam 侧强制打上执行位。
+//
+// 用法（在 steamcmd 中执行，Windows / Mac 通用）：
+//   steamcmd +login <Steamworks账号> +run_app_build <本文件的绝对路径> +quit
+// 上传成功后：partner.steamgames.com → App 3661430 → SteamPipe → Builds
+// 把新 build 设为 default 分支并 Preview change → Set Build Live。
+"AppBuild"
+{
+	"AppID" "3661430"
+	"Desc" "macOS FeatherLand.app (exec-bit fix)"
+
+	// 内容根目录：Tools/Build/构建 macOS Steam 版 菜单的输出目录，
+	// 里面应当只有 FeatherLand.app（BurstDebugInformation 已被下面排除）
+	"ContentRoot" "..\Builds\macOS\SteamUpload\"
+	// SteamPipe 日志与缓存输出目录（自动创建，勿放进 ContentRoot）
+	"BuildOutput" "..\Builds\SteamPipeOutput\"
+
+	"Depots"
+	{
+		// ⚠️ 上传前必须核对：这里要填 Steamworks 后台里 macOS Depot 的 ID
+		//（partner.steamgames.com → App 3661430 → SteamPipe → Depots）。
+		// 按 Steam 常见约定预填了 AppID+2；如果后台不一致，改成后台的值。
+		"3661432"
+		{
+			"FileMapping"
+			{
+				"LocalPath" "*"
+				"DepotPath" "."
+				"recursive" "1"
+			}
+			"FileExclusion" "*.DS_Store"
+			"FileExclusion" "*BurstDebugInformation_DoNotShip*"
+
+			// ★ 关键修复：给 .app 内需要执行权限的文件打 executable 标记。
+			// 主执行文件（Contents/MacOS/featherlandunit）没有它就会报
+			// "Missing game executable"。
+			"FileProperties"
+			{
+				"LocalPath" "FeatherLand.app/Contents/MacOS/*"
+				"Attributes" "executable"
+			}
+			"FileProperties"
+			{
+				"LocalPath" "FeatherLand.app/Contents/PlugIns/FLWallpaperBridge.bundle/Contents/MacOS/FLWallpaperBridge"
+				"Attributes" "executable"
+			}
+			"FileProperties"
+			{
+				"LocalPath" "FeatherLand.app/Contents/PlugIns/steam_api.bundle/Contents/MacOS/libsteam_api.dylib"
+				"Attributes" "executable"
+			}
+		}
+	}
+}
