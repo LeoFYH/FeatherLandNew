@@ -22,28 +22,10 @@ namespace BirdGame
         protected override void OnInit()
         {
 #if STEAMWORKS_NET && (UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX)
-            try
-            {
-                // 尝试初始化 SteamAPI
-                if (SteamAPI.Init())
-                {
-                    Debug.Log("SteamAPI initialized successfully!");
-                    // 获取用户名称（测试用）
-                    string playerName = SteamFriends.GetPersonaName();
-                    Debug.Log("Player's name: " + playerName);
-                }
-                else
-                {
-                    Debug.LogError("SteamAPI.Init() failed! Make sure:");
-                    Debug.LogError("1. Steam client is running.");
-                    Debug.LogError("2. The game was launched through Steam.");
-                    Debug.LogError("3. You have a valid steam_appid.txt file.");
-                }
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogError("SteamAPI failed to initialize: " + e.Message);
-            }
+            // SteamManager 在 Awake 中统一负责 SteamAPI 的初始化、回调和关闭。
+            // 这里再次 Init/RunCallbacks/Shutdown 会造成同一会话重复管理 SteamAPI。
+            if (!SteamManager.Initialized)
+                Debug.LogWarning("SteamManager is not initialized. Steam features will retry when available.");
 #endif
 
             timeStart = Time.time;
@@ -51,18 +33,12 @@ namespace BirdGame
 
         public void RunCallbacks()
         {
-#if STEAMWORKS_NET && (UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX)
-            if (!SteamManager.Initialized) return;
-            SteamAPI.RunCallbacks();
-#endif
+            // SteamManager.Update() 已统一执行 SteamAPI.RunCallbacks()。
         }
 
         public void ShutDown()
         {
-#if STEAMWORKS_NET && (UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX)
-            if (!SteamManager.Initialized) return;
-            SteamAPI.Shutdown();
-#endif
+            // SteamManager.OnDestroy() 已统一执行 SteamAPI.Shutdown()。
         }
 
         public void AddBirdUnlocked(int birdId)

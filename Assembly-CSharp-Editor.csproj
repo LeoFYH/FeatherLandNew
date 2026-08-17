@@ -686,7 +686,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="websocket-sharp">
-      <HintPath>Library\PackageCache\com.gamelovers.mcp-unity@aade29c7dd84\Editor\Lib\websocket-sharp.dll</HintPath>
+      <HintPath>Packages\com.gamelovers.mcp-unity\Editor\Lib\websocket-sharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="EPPlus">
@@ -1461,10 +1461,6 @@
       <HintPath>Library\ScriptAssemblies\Unity.Multiplayer.Center.Common.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="McpUnity.Editor">
-      <HintPath>Library\ScriptAssemblies\McpUnity.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Unity.VisualScripting.Flow.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Flow.Editor.dll</HintPath>
       <Private>False</Private>
@@ -1569,10 +1565,6 @@
       <HintPath>Library\ScriptAssemblies\Unity.Rendering.LightTransport.Runtime.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Unity.Cursor.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.Cursor.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Unity.InputSystem">
       <HintPath>Library\ScriptAssemblies\Unity.InputSystem.dll</HintPath>
       <Private>False</Private>
@@ -1592,9 +1584,11 @@
     <ProjectReference Include="UniTask.DOTween.csproj" />
     <ProjectReference Include="com.rlabrecque.steamworks.net.csproj" />
     <ProjectReference Include="QFramework.csproj" />
+    <ProjectReference Include="McpUnity.Editor.csproj" />
     <ProjectReference Include="OutlineFx.Editor.csproj" />
     <ProjectReference Include="Coffee.UIEffect.csproj" />
     <ProjectReference Include="UniTask.TextMeshPro.csproj" />
+    <ProjectReference Include="Unity.Cursor.Editor.csproj" />
   </ItemGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
   <ItemGroup>

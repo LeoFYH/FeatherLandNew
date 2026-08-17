@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using QFramework;
 #if STEAMWORKS_NET && (UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX)
 using Steamworks;
@@ -75,6 +76,11 @@ namespace BirdGame
         private HashSet<int> extinctBirdIds = new HashSet<int>(); // 所有灭绝鸟ID
         private Coroutine timeAchievementCheckCoroutine;
         private static readonly WaitForSecondsRealtime TimeAchievementCheckInterval = new WaitForSecondsRealtime(30f);
+#if STEAMWORKS_NET && (UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX)
+        private Coroutine steamAchievementSyncCoroutine;
+        private bool steamStatsReady;
+        private static readonly WaitForSecondsRealtime SteamInitializationCheckInterval = new WaitForSecondsRealtime(1f);
+#endif
 
         protected override void OnInit()
         {
@@ -89,6 +95,8 @@ namespace BirdGame
                 data = new AchievementData();
                 this.GetModel<ISaveModel>().AchievementData = data;
             }
+            if (data.unlockedAchievements == null)
+                data.unlockedAchievements = new List<string>();
 
             // 缓存鸟配置信息
             CacheBirdConfigData();
@@ -97,20 +105,8 @@ namespace BirdGame
             CheckTimeAchievements();
             StartTimeAchievementCheck();
 
-            // 连续登录
-            string today = DateTime.Now.ToString("yyyy-MM-dd");
-            if (data.lastLoginDate == today)
-            {
-                // 今天已登录，不变
-            }
-            else
-            {
-                string yesterday = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
-                data.consecutiveLoginDays = (data.lastLoginDate == yesterday)
-                    ? data.consecutiveLoginDays + 1
-                    : 1;
-                data.lastLoginDate = today;
-            }
+            // 连续登录按本地自然日计算。旧存档仍使用 yyyy-MM-dd，无需迁移或清零。
+            UpdateConsecutiveLoginDays();
             if (data.consecutiveLoginDays >= 30)
                 Unlock(MIGRATORY_SOUL);
 
@@ -137,6 +133,7 @@ namespace BirdGame
             RetroactiveCheck();
 
             this.GetSystem<ISaveSystem>().SaveData();
+            StartSteamAchievementSync();
         }
 
         // ==================== 触发方法 ====================
@@ -287,36 +284,159 @@ namespace BirdGame
                    data.unlockedAchievements.Contains(id);
         }
 
+        private void UpdateConsecutiveLoginDays()
+        {
+            DateTime today = DateTime.Today;
+            string todayText = today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+            if (!DateTime.TryParseExact(data.lastLoginDate, "yyyy-MM-dd",
+                    CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime lastLogin))
+            {
+                data.consecutiveLoginDays = 1;
+                data.lastLoginDate = todayText;
+                return;
+            }
+
+            int elapsedDays = (today - lastLogin.Date).Days;
+            if (elapsedDays == 0)
+            {
+                // 修复极少数旧存档中“日期是今天但连续天数为 0”的状态。
+                data.consecutiveLoginDays = Math.Max(1, data.consecutiveLoginDays);
+                return;
+            }
+
+            if (elapsedDays == 1)
+            {
+                data.consecutiveLoginDays = Math.Max(1, data.consecutiveLoginDays) + 1;
+                data.lastLoginDate = todayText;
+                return;
+            }
+
+            if (elapsedDays > 1)
+            {
+                data.consecutiveLoginDays = 1;
+                data.lastLoginDate = todayText;
+                return;
+            }
+
+            // 系统时间向过去跳变时不清空已经累计的天数，也不把回拨日期计为新的一天。
+            Debug.LogWarning($"[Achievement] 检测到系统日期早于上次登录日期，保留连续登录进度。上次={data.lastLoginDate}, 当前={todayText}");
+        }
+
         private void Unlock(string id)
         {
-            if (data != null && data.unlockedAchievements.Contains(id))
+            if (data == null)
                 return;
+
+            if (data.unlockedAchievements == null)
+                data.unlockedAchievements = new List<string>();
+
+            bool isNewLocalUnlock = !data.unlockedAchievements.Contains(id);
+            if (isNewLocalUnlock)
+                data.unlockedAchievements.Add(id);
 
 #if STEAMWORKS_NET && (UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX)
-            if (!SteamManager.Initialized)
+            // 本地“已解锁”不能代表 Steam 已收到。旧逻辑在离线解锁后会永远提前 return，
+            // 导致候鸟之心等成就在 Steam 恢复后也无法补发。
+            if (!steamStatsReady)
             {
-                // 离线模式：只记录本地
-                data?.unlockedAchievements.Add(id);
-                Debug.Log($"[Achievement] 离线记录: {id}");
+                if (isNewLocalUnlock)
+                    Debug.Log($"[Achievement] 本地已达成，等待同步到 Steam: {id}");
+                StartSteamAchievementSync();
                 return;
             }
 
-            SteamUserStats.GetAchievement(id, out bool alreadyUnlocked);
-            if (alreadyUnlocked)
-            {
-                data?.unlockedAchievements.Add(id);
-                return;
-            }
-
-            SteamUserStats.SetAchievement(id);
-            SteamUserStats.StoreStats();
-            data?.unlockedAchievements.Add(id);
-            Debug.Log($"[Achievement] 解锁成就: {id}");
+            if (TrySetSteamAchievement(id, out bool changed) && changed)
+                StoreSteamAchievements();
 #else
-            data?.unlockedAchievements.Add(id);
-            Debug.Log($"[Achievement] Local unlock: {id}");
+            if (isNewLocalUnlock)
+                Debug.Log($"[Achievement] Local unlock: {id}");
 #endif
         }
+
+        private void StartSteamAchievementSync()
+        {
+#if STEAMWORKS_NET && (UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX)
+            if (steamStatsReady || steamAchievementSyncCoroutine != null)
+                return;
+
+            steamAchievementSyncCoroutine =
+                this.GetSystem<IMonoSystem>().StartCoroutine(WaitForSteamAndSyncAchievements());
+#endif
+        }
+
+#if STEAMWORKS_NET && (UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX)
+        private IEnumerator WaitForSteamAndSyncAchievements()
+        {
+            // 先让 StartCoroutine 的返回值写入字段，避免协程首帧结束后留下“假运行”状态。
+            yield return null;
+
+            const int maxWaitSeconds = 30;
+            for (int i = 0; i < maxWaitSeconds && !SteamManager.Initialized; i++)
+                yield return SteamInitializationCheckInterval;
+
+            steamAchievementSyncCoroutine = null;
+            if (!SteamManager.Initialized)
+            {
+                Debug.LogWarning("[Achievement] Steam 未初始化，本次仅保留本地成就，下次启动会自动补发。");
+                yield break;
+            }
+
+            // 当前 Steamworks.NET 版本会在游戏进程启动前自动同步当前用户统计，
+            // SteamManager 初始化完成后即可读取并补发本地成就。
+            steamStatsReady = true;
+            SyncLocalAchievementsToSteam();
+        }
+
+        private void SyncLocalAchievementsToSteam()
+        {
+            if (data?.unlockedAchievements == null || data.unlockedAchievements.Count == 0)
+                return;
+
+            bool changed = false;
+            for (int i = 0; i < data.unlockedAchievements.Count; i++)
+            {
+                string id = data.unlockedAchievements[i];
+                if (string.IsNullOrEmpty(id))
+                    continue;
+
+                if (TrySetSteamAchievement(id, out bool achievementChanged))
+                    changed |= achievementChanged;
+            }
+
+            if (changed)
+                StoreSteamAchievements();
+        }
+
+        private bool TrySetSteamAchievement(string id, out bool changed)
+        {
+            changed = false;
+            if (!SteamUserStats.GetAchievement(id, out bool alreadyUnlocked))
+            {
+                Debug.LogWarning($"[Achievement] Steam 无法读取成就 ID: {id}");
+                return false;
+            }
+
+            if (alreadyUnlocked)
+                return true;
+
+            if (!SteamUserStats.SetAchievement(id))
+            {
+                Debug.LogWarning($"[Achievement] Steam 无法设置成就 ID: {id}");
+                return false;
+            }
+
+            changed = true;
+            Debug.Log($"[Achievement] 已提交到 Steam: {id}");
+            return true;
+        }
+
+        private void StoreSteamAchievements()
+        {
+            if (!SteamUserStats.StoreStats())
+                Debug.LogWarning("[Achievement] Steam StoreStats 失败，下次启动会再次同步。");
+        }
+#endif
 
         private void CheckGoldAchievements()
         {

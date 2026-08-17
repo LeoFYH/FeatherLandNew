@@ -12,7 +12,11 @@
       "version": "file:com.gamelovers.mcp-unity",
       "depth": 0,
       "source": "embedded",
-      "dependencies": {}
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.2.1",
+        "com.unity.editorcoroutines": "1.0.0",
+        "com.unity.test-framework": "1.3.3"
+      }
     },
     "com.h8man.2d.navmeshplus": {
       "version": "file:com.h8man.2d.navmeshplus",
@@ -198,7 +202,9 @@
       "version": "file:com.unity.ide.cursor",
       "depth": 0,
       "source": "embedded",
-      "dependencies": {}
+      "dependencies": {
+        "com.unity.test-framework": "1.1.9"
+      }
     },
     "com.unity.ide.rider": {
       "version": "3.0.40",
